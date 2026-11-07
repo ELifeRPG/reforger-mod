@@ -28,6 +28,8 @@ enum ELIFE_EATMScreen
 class ELIFE_ATMSideLabel
 {
 	string m_sId;
+	Widget m_wRoot;
+	Widget m_wTab;
 	TextWidget m_wText;
 	bool m_bEnabled;
 }
@@ -62,7 +64,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//! Canvas px around a label that still counts as clicking it. The buttons are far enough apart that neighbours can't touch.
 	protected const float LABEL_HIT_PADDING = 8;
 
-	//! Content areas in canvas px. Each keeps clear of the labels its screen shows.
+	//! Content areas in canvas px. Each keeps clear of the tabs its screen shows; the card inside hugs its content.
 	protected const float CONTENT_LEFT = 48;
 	protected const float CONTENT_WIDTH = 928;
 	protected const float CONTENT_TOP = 84;
@@ -70,11 +72,12 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected const float ABOVE_R4_BOTTOM = 690;
 	protected const float BELOW_R1_TOP = 176;
 	protected const float BELOW_R2_TOP = 372;
-	protected const float CONFIRM_WIDTH = 680;
+	//! Clear of a right-hand tab with the longest label.
+	protected const float CONFIRM_WIDTH = 640;
 	//! Keeps clear of the account labels on the right.
 	protected const float ACCOUNTS_TEXT_WIDTH = 400;
 	//! Canvas px from a button's centre to the centre of the bank and balance line under its label.
-	protected const float ACCOUNT_DETAIL_OFFSET = 44;
+	protected const float ACCOUNT_DETAIL_OFFSET = 60;
 	protected const float AMOUNT_LEFT = 232;
 	protected const float AMOUNT_WIDTH = 488;
 	//! Above WideNotice, which sits in the gap between the third and fourth button rows.
@@ -101,6 +104,17 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected const int ACTIVITY_DOTS = 3;
 	protected const int ACTIVITY_STEP_MS = 350;
 	protected const int PRESS_FLASH_MS = 150;
+	//! A new page's content rises this far into place while it fades in.
+	protected const float ENTER_RISE = 16;
+	//! The counted sum climbs in steps of the smallest note.
+	protected const int COUNT_STEP = 20;
+
+	//! The four type roles; the figure shrinks down to its minimum rather than being cut off.
+	protected const int TYPE_FIGURE = 120;
+	protected const int TYPE_FIGURE_MIN = 64;
+	protected const int TYPE_HEADING = 56;
+	protected const int TYPE_BODY = 40;
+	protected const int TYPE_SECONDARY = 32;
 
 	//! Stand-in withdrawals for bystanders: a random multiple of the step, with a fee of 1-2 percent.
 	protected const int STAND_IN_AMOUNT_STEP = 50;
@@ -128,6 +142,13 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected Widget m_wRows;
 	protected TextWidget m_wAccountNumber;
 	protected TextWidget m_wPageMark;
+	protected TextWidget m_wMachineId;
+	protected ref array<TextWidget> m_aSteps = {};
+	protected ELIFE_EATMScreen m_eEnteredScreen = -1;
+	protected int m_iEnterStartTick;
+	protected bool m_bMotionRunning;
+	protected float m_fStackLeft;
+	protected float m_fStackTop;
 	protected TextWidget m_wBankName;
 	protected TextWidget m_wHeading;
 	protected Widget m_wLine1;
@@ -164,6 +185,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected ELIFE_EATMScreen m_eConfirmOrigin = ELIFE_EATMScreen.AMOUNT;
 	//! Which booking the amount, confirm, processing and result pages are about. A bystander follows the occupant's.
 	protected ELIFE_EATMBookingKind m_eKind = ELIFE_EATMBookingKind.WITHDRAW;
+	protected bool m_bCountAsked;
+	//! Once the counted sum is refused, Back on the presets leads home instead of asking for it again.
+	protected bool m_bCountRefused;
 	protected int m_iTransactionPage;
 	protected string m_sTyped;
 
@@ -327,6 +351,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (m_eView == ELIFE_EATMScreen.COUNTING)
 			SetView(ELIFE_EATMScreen.AMOUNT);
 
+		if (m_bCountAsked)
+			m_bCountRefused = true;
+
 		m_iQuoteAsked = 0;
 		m_eNotice = reason;
 		Render();
@@ -436,6 +463,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_bStatementAfterResult = false;
 		m_eMirrorSeen = ELIFE_EATMScreen.IDLE;
 		m_eKind = ELIFE_EATMBookingKind.WITHDRAW;
+		m_bCountRefused = false;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -993,7 +1021,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			m_eKind = ELIFE_EATMBookingKind.DEPOSIT;
 			SetView(ELIFE_EATMScreen.COUNTING);
 			m_iCountStartTick = System.GetTickCount();
-			AskQuote(Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT), link);
+			m_bCountRefused = false;
+			AskQuote(Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT), link, true);
 		}
 		else if (id == BUTTON_R3 && HasSeveralAccounts())
 		{
@@ -1029,6 +1058,13 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		{
 			m_sTyped = "";
 			SetView(ELIFE_EATMScreen.OTHER_AMOUNT);
+			return;
+		}
+
+		if (id == BUTTON_R4 && IsDeposit() && !m_bCountRefused && GetCarriedCash() > 0)
+		{
+			//! Back to the counted sum, recounted in case the inventory changed meanwhile.
+			AskQuote(Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT), link, true);
 			return;
 		}
 
@@ -1083,10 +1119,17 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//------------------------------------------------------------------------------------------------
 	protected void PressConfirm(string id, notnull ELIFE_ATMCharacterComponent link)
 	{
-		if (id == BUTTON_R3 || id == KEY_CANCEL)
+		if (id == BUTTON_R3)
 		{
 			m_iQuoteId = 0;
 			SetView(m_eConfirmOrigin);
+			return;
+		}
+
+		if (id == BUTTON_L4 || id == KEY_CANCEL)
+		{
+			m_iQuoteId = 0;
+			SetView(ELIFE_EATMScreen.HOME);
 			return;
 		}
 
@@ -1118,13 +1161,14 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! A second request while one travels would make the first answer's quote id stale.
-	protected void AskQuote(int amount, notnull ELIFE_ATMCharacterComponent link)
+	protected void AskQuote(int amount, notnull ELIFE_ATMCharacterComponent link, bool isCount = false)
 	{
 		if (m_iQuoteAsked != 0)
 			return;
 
 		m_eNotice = ELIFE_EATMReason.NONE;
 		m_iQuoteAsked = amount;
+		m_bCountAsked = isCount;
 		link.RequestQuote(GetOwner(), m_eKind, amount);
 	}
 
@@ -1301,8 +1345,6 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_wNotice = FindWrappedText(contentRoot, "Notice");
 		m_wWideNotice = FindWrappedText(contentRoot, "WideNotice");
 		m_wActivity = TextWidget.Cast(contentRoot.FindAnyWidget("Activity"));
-		if (m_wActivity)
-			m_wActivity.SetColor(Accent());
 
 		Widget ring = contentRoot.FindAnyWidget("Border");
 		if (ring)
@@ -1312,9 +1354,28 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (mark)
 			mark.SetText(ELIFE_PhoneStyle.CURRENCY_SYMBOL);
 
-		TextWidget machineId = TextWidget.Cast(contentRoot.FindAnyWidget("MachineId"));
-		if (machineId && m_ATM)
-			machineId.SetText(m_ATM.GetMachineId());
+		m_wMachineId = TextWidget.Cast(contentRoot.FindAnyWidget("MachineId"));
+		if (m_wMachineId && m_ATM)
+			m_wMachineId.SetText(m_ATM.GetMachineId());
+
+		m_aSteps.Clear();
+		array<string> stepNames = {"StepAmount", "StepConfirm", "StepDone"};
+		foreach (string stepName : stepNames)
+		{
+			TextWidget step = TextWidget.Cast(contentRoot.FindAnyWidget(stepName));
+			if (step)
+				m_aSteps.Insert(step);
+		}
+
+		if (m_aSteps.Count() == 3)
+		{
+			m_aSteps[0].SetText("#ELIFE-ATM_Step_Amount");
+			m_aSteps[1].SetText("#ELIFE-ATM_Step_Confirm");
+			m_aSteps[2].SetText("#ELIFE-ATM_Step_Done");
+		}
+
+		m_eEnteredScreen = -1;
+		ApplyStyle(contentRoot);
 
 		BuildLabels(contentRoot.FindAnyWidget("ScreenFrame"));
 		BuildAccountDetail(contentRoot, "AccountDetail1", BUTTON_CENTRE_1);
@@ -1327,6 +1388,45 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 		Render();
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Sizes and resting colours; the layout's own values are only the editor preview.
+	protected void ApplyStyle(notnull Widget root)
+	{
+		Color primary = ELIFE_PhoneStyle.TextPrimary();
+		Color secondary = ELIFE_PhoneStyle.TextSecondary();
+
+		ELIFE_PhoneStyle.SetColorOf(root, "Background", ELIFE_PhoneStyle.Ink());
+		ELIFE_PhoneStyle.SetColorOf(root, "StripHairline", ELIFE_PhoneStyle.Hairline());
+
+		ELIFE_PhoneStyle.SetTypeOf(root, "Figure", TYPE_FIGURE, true, primary);
+		if (m_wFigure)
+			m_wFigure.SetMinFontSize(TYPE_FIGURE_MIN);
+
+		ELIFE_PhoneStyle.SetTypeOf(root, "Heading", TYPE_HEADING, true, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Activity", TYPE_HEADING, true, Accent());
+
+		ELIFE_PhoneStyle.SetTypeOf(root, "BankMark", TYPE_BODY, true, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Body", TYPE_BODY, false, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "AccountNumber", TYPE_BODY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Caption", TYPE_BODY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Line1Label", TYPE_BODY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Line2Label", TYPE_BODY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Line1Value", TYPE_BODY, true, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Line2Value", TYPE_BODY, true, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "Notice", TYPE_BODY, false, ELIFE_PhoneStyle.Negative());
+		ELIFE_PhoneStyle.SetTypeOf(root, "WideNotice", TYPE_BODY, false, ELIFE_PhoneStyle.Negative());
+
+		ELIFE_PhoneStyle.SetTypeOf(root, "BankName", TYPE_SECONDARY, false, primary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "PageMark", TYPE_SECONDARY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "MachineId", TYPE_SECONDARY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "StepAmount", TYPE_SECONDARY, false, ELIFE_PhoneStyle.TextTertiary());
+		ELIFE_PhoneStyle.SetTypeOf(root, "StepConfirm", TYPE_SECONDARY, false, ELIFE_PhoneStyle.TextTertiary());
+		ELIFE_PhoneStyle.SetTypeOf(root, "StepDone", TYPE_SECONDARY, false, ELIFE_PhoneStyle.TextTertiary());
+		ELIFE_PhoneStyle.SetTypeOf(root, "AccountDetail1", TYPE_SECONDARY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "AccountDetail2", TYPE_SECONDARY, false, secondary);
+		ELIFE_PhoneStyle.SetTypeOf(root, "AccountDetail3", TYPE_SECONDARY, false, secondary);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1360,32 +1460,43 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//! Hugs its edge and centres on the button, however wide the localized text comes out.
 	protected void BuildLabel(notnull Widget frame, string id, bool rightEdge, float centreY)
 	{
-		TextWidget text = TextWidget.Cast(GetGame().GetWorkspace().CreateWidgets(LAYOUT_SIDE_LABEL, frame));
-		if (!text)
+		Widget root = GetGame().GetWorkspace().CreateWidgets(LAYOUT_SIDE_LABEL, frame);
+		if (!root)
 			return;
 
-		FrameSlot.SetSizeToContent(text, true);
+		TextWidget text = TextWidget.Cast(root.FindAnyWidget("Text"));
+		Widget tab = root.FindAnyWidget("Tab");
+		if (!text || !tab)
+		{
+			root.RemoveFromHierarchy();
+			return;
+		}
+
+		ELIFE_PhoneStyle.SetTypeOf(root, "Text", TYPE_BODY, false);
+		FrameSlot.SetSizeToContent(root, true);
 		if (rightEdge)
 		{
-			FrameSlot.SetAnchor(text, 1, 0);
-			FrameSlot.SetAlignment(text, 1, 0.5);
-			FrameSlot.SetPos(text, -ELIFE_PhoneStyle.SPACE_3, centreY);
+			FrameSlot.SetAnchor(root, 1, 0);
+			FrameSlot.SetAlignment(root, 1, 0.5);
+			FrameSlot.SetPos(root, -ELIFE_PhoneStyle.SPACE_2, centreY);
 		}
 		else
 		{
-			FrameSlot.SetAnchor(text, 0, 0);
-			FrameSlot.SetAlignment(text, 0, 0.5);
-			FrameSlot.SetPos(text, ELIFE_PhoneStyle.SPACE_3, centreY);
+			FrameSlot.SetAnchor(root, 0, 0);
+			FrameSlot.SetAlignment(root, 0, 0.5);
+			FrameSlot.SetPos(root, ELIFE_PhoneStyle.SPACE_2, centreY);
 		}
 
 		ELIFE_ATMSideLabel label = new ELIFE_ATMSideLabel();
 		label.m_sId = id;
+		label.m_wRoot = root;
+		label.m_wTab = tab;
 		label.m_wText = text;
 		m_aLabels.Insert(label);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Hugs the right edge under its button's label, like the label itself.
+	//! Under its button's tab, aligned with the label text inside it.
 	protected void BuildAccountDetail(notnull Widget root, string name, float centreY)
 	{
 		TextWidget detail = TextWidget.Cast(root.FindAnyWidget(name));
@@ -1395,7 +1506,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		FrameSlot.SetSizeToContent(detail, true);
 		FrameSlot.SetAnchor(detail, 1, 0);
 		FrameSlot.SetAlignment(detail, 1, 0.5);
-		FrameSlot.SetPos(detail, -ELIFE_PhoneStyle.SPACE_3, centreY + ACCOUNT_DETAIL_OFFSET);
+		FrameSlot.SetPos(detail, -(ELIFE_PhoneStyle.SPACE_2 + ELIFE_PhoneStyle.SPACE_3), centreY + ACCOUNT_DETAIL_OFFSET);
 		m_aAccountDetails.Insert(detail);
 	}
 
@@ -1408,6 +1519,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_wRows = null;
 		m_wAccountNumber = null;
 		m_wPageMark = null;
+		m_wMachineId = null;
+		m_aSteps.Clear();
+		StopMotion();
 		m_wBankName = null;
 		m_aAccountDetails.Clear();
 		m_wHeading = null;
@@ -1443,6 +1557,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		RenderStrip(screen);
 		RenderContent(screen);
 		UpdateActivity(screen);
+		EnterScreen(screen);
 
 		//! A bystander sees the occupant's labels too, but only a session has a menu to press them with.
 		if (m_bSessionOpen || (!IsLocalOccupant() && m_eResult == ELIFE_EATMReason.NONE))
@@ -1501,6 +1616,112 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			m_wPageMark.SetTextFormat("#ELIFE-ATM_Tx_Page", m_iTransactionPage + 1, GetTransactionPageCount());
 		else
 			m_wPageMark.SetText("");
+
+		//! The steps take the machine id's place while a booking runs.
+		int current = GetBookingStep(screen);
+		if (m_wMachineId)
+			m_wMachineId.SetVisible(current < 0);
+
+		foreach (int i, TextWidget step : m_aSteps)
+		{
+			step.SetVisible(current >= 0);
+			if (i == current)
+				step.SetColor(Accent());
+			else
+				step.SetColor(ELIFE_PhoneStyle.TextTertiary());
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Amount, Confirm or Done, or -1 outside a booking. A result without an amount is a refused session, not a booking.
+	protected int GetBookingStep(ELIFE_EATMScreen screen)
+	{
+		switch (screen)
+		{
+			case ELIFE_EATMScreen.AMOUNT:
+			case ELIFE_EATMScreen.OTHER_AMOUNT:
+			case ELIFE_EATMScreen.COUNTING:
+				return 0;
+			case ELIFE_EATMScreen.CONFIRM:
+			case ELIFE_EATMScreen.PROCESSING:
+			case ELIFE_EATMScreen.CHECKING:
+				return 1;
+			case ELIFE_EATMScreen.RESULT:
+				if (m_iResultAmount > 0)
+					return 2;
+
+				break;
+		}
+
+		return -1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every new page fades in and rises into place; the counting page also counts up to the carried sum.
+	protected void EnterScreen(ELIFE_EATMScreen screen)
+	{
+		if (screen == m_eEnteredScreen)
+			return;
+
+		m_eEnteredScreen = screen;
+		m_iEnterStartTick = System.GetTickCount();
+		StepMotion();
+
+		if (!m_bMotionRunning)
+		{
+			m_bMotionRunning = true;
+			GetGame().GetCallqueue().CallLater(StepMotion, ELIFE_PhoneStyle.TICK_MS, true);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StepMotion()
+	{
+		if (!m_wStackArea || !m_wRows)
+		{
+			StopMotion();
+			return;
+		}
+
+		float elapsed = System.GetTickCount() - m_iEnterStartTick;
+		float enter = EaseOut(elapsed / ELIFE_PhoneStyle.DURATION_STATE_MS);
+		m_wStackArea.SetOpacity(enter);
+		m_wRows.SetOpacity(enter);
+		FrameSlot.SetPos(m_wStackArea, m_fStackLeft, m_fStackTop + (1 - enter) * ENTER_RISE);
+
+		bool counting = m_eEnteredScreen == ELIFE_EATMScreen.COUNTING && m_wFigure && m_wFigure.IsVisible();
+		float count = EaseOut(elapsed / ELIFE_ATMComponent.PROCESSING_MIN_MS);
+		if (counting)
+			m_wFigure.SetText(Whole(GetCountShown(count)));
+
+		if (enter >= 1 && (!counting || count >= 1))
+			StopMotion();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int GetCountShown(float progress)
+	{
+		int target = Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT);
+		if (progress >= 1)
+			return target;
+
+		return Math.Floor(target * progress / COUNT_STEP) * COUNT_STEP;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StopMotion()
+	{
+		GetGame().GetCallqueue().Remove(StepMotion);
+		m_bMotionRunning = false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Cubic ease-out, clamped: fast start, soft landing, no overshoot.
+	protected float EaseOut(float t)
+	{
+		t = Math.Clamp(t, 0, 1);
+		float rest = 1 - t;
+		return 1 - rest * rest * rest;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1579,6 +1800,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 					ShowText(m_wHeading, "#ELIFE-ATM_Idle_Withdraw");
 
 				ShowText(m_wBody, "#ELIFE-ATM_Ready");
+				m_wBody.SetColor(ELIFE_PhoneStyle.TextSecondary());
 				return;
 			case ELIFE_EATMScreen.LOADING:
 				PlaceStack(CONTENT_LEFT, CONTENT_TOP, CONTENT_WIDTH, CONTENT_BOTTOM);
@@ -1602,7 +1824,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				ShowText(m_wHeading, "#ELIFE-ATM_Accounts_Title");
 				return;
 			case ELIFE_EATMScreen.HOME:
-				PlaceStack(CONTENT_LEFT, BELOW_R1_TOP, CONTENT_WIDTH, CONTENT_BOTTOM);
+				PlaceStack(CONTENT_LEFT, BELOW_R1_TOP, CONFIRM_WIDTH, CONTENT_BOTTOM);
 				if (HasAccount())
 					ShowText(m_wAccountNumber, m_Statement.account.GetDisplayNumber());
 
@@ -1637,6 +1859,20 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			case ELIFE_EATMScreen.COUNTING:
 				PlaceStack(CONTENT_LEFT, CONTENT_TOP, CONTENT_WIDTH, ABOVE_R4_BOTTOM);
 				ShowText(m_wHeading, "#ELIFE-ATM_Counting");
+
+				//! Only the occupant knows the sum; a bystander sees the dots alone. A re-render keeps the count where it is.
+				if (IsLocalOccupant())
+				{
+					float progress;
+					if (m_eEnteredScreen == ELIFE_EATMScreen.COUNTING)
+					{
+						float countElapsed = System.GetTickCount() - m_iEnterStartTick;
+						progress = EaseOut(countElapsed / ELIFE_ATMComponent.PROCESSING_MIN_MS);
+					}
+
+					ShowFigure(Whole(GetCountShown(progress)), Accent());
+				}
+
 				return;
 			case ELIFE_EATMScreen.CHECKING:
 				PlaceStack(CONTENT_LEFT, CONTENT_TOP, CONTENT_WIDTH, CONTENT_BOTTOM);
@@ -1730,18 +1966,19 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! The cash that changes hands is the figure: what lands in the inventory, or what was counted in.
-	//! Fee and balance change follow as two short lines, as one sentence would wrap at a random word.
 	protected void RenderConfirm()
 	{
 		ShowText(m_wCaption, ForKind("#ELIFE-ATM_Confirm_Receive", "#ELIFE-ATM_Counted"));
 		ShowFigure(Whole(m_iQuoteAmount), Accent());
+		string balanceKey = ForKind("#ELIFE-ATM_FromBalance", "#ELIFE-ATM_ToBalance");
+		if (m_iQuoteFeeCents <= 0)
+		{
+			ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, balanceKey, Money(m_iQuoteTotalCents));
+			return;
+		}
 
-		string balance = WidgetManager.Translate(ForKind("#ELIFE-ATM_Confirm_Debit", "#ELIFE-ATM_Confirm_Credit"), Money(m_iQuoteTotalCents));
-		if (m_iQuoteFeeCents > 0)
-			balance = WidgetManager.Translate("#ELIFE-ATM_Confirm_Fee", Money(m_iQuoteFeeCents)) + "\n" + balance;
-
-		ShowText(m_wBody, balance);
-		m_wBody.SetColor(ELIFE_PhoneStyle.TextSecondary());
+		ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, "#ELIFE-ATM_Fee", Money(m_iQuoteFeeCents));
+		ShowLine(m_wLine2, m_wLine2Label, m_wLine2Value, balanceKey, Money(m_iQuoteTotalCents));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1800,6 +2037,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				SetLabel(BUTTON_R4, "#ELIFE-ATM_Action_Back");
 				return;
 			case ELIFE_EATMScreen.CONFIRM:
+				SetLabel(BUTTON_L4, "#ELIFE-ATM_Action_Cancel");
 				SetLabel(BUTTON_R3, "#ELIFE-ATM_Action_ChangeAmount");
 				SetLabel(BUTTON_R4, "#ELIFE-ATM_Action_Confirm");
 				return;
@@ -1889,6 +2127,16 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Light text fails on the deep gold (3.2:1), dark ink passes (5.3:1); on the deep blue it's the reverse.
+	protected Color OnAccentDeep()
+	{
+		if (m_ATM && m_ATM.IsBranchMachine())
+			return ELIFE_PhoneStyle.Ink();
+
+		return ELIFE_PhoneStyle.TextPrimary();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The colour of the E badge on this machine's case, so screen and case read as one machine.
 	protected Color RingColor()
 	{
@@ -1901,16 +2149,31 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//------------------------------------------------------------------------------------------------
 	protected void PaintLabels()
 	{
+		//! A tab only behind what can be pressed; a disabled label keeps its text so the choice stays visible.
 		foreach (ELIFE_ATMSideLabel label : m_aLabels)
 		{
+			label.m_wRoot.SetVisible(label.m_wText.GetText() != "");
+			label.m_wTab.SetVisible(label.m_bEnabled);
+
 			if (!label.m_bEnabled)
+			{
 				label.m_wText.SetColor(ELIFE_PhoneStyle.TextTertiary());
+			}
 			else if (label.m_sId == m_sPressedButton)
-				label.m_wText.SetColor(AccentDeep());
+			{
+				label.m_wTab.SetColor(Accent());
+				label.m_wText.SetColor(ELIFE_PhoneStyle.Ink());
+			}
 			else if (label.m_sId == m_sHoveredButton)
-				label.m_wText.SetColor(Accent());
+			{
+				label.m_wTab.SetColor(AccentDeep());
+				label.m_wText.SetColor(OnAccentDeep());
+			}
 			else
+			{
+				label.m_wTab.SetColor(ELIFE_PhoneStyle.SurfaceRaised());
 				label.m_wText.SetColor(ELIFE_PhoneStyle.TextPrimary());
+			}
 		}
 	}
 
@@ -1933,8 +2196,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				continue;
 
 			float left, top, width, height;
-			label.m_wText.GetScreenPos(left, top);
-			label.m_wText.GetScreenSize(width, height);
+			label.m_wRoot.GetScreenPos(left, top);
+			label.m_wRoot.GetScreenSize(width, height);
 
 			if (x >= left - padding && x <= left + width + padding && y >= top - padding && y <= top + height + padding)
 				return label.m_sId;
@@ -1946,6 +2209,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//------------------------------------------------------------------------------------------------
 	protected void PlaceStack(float left, float top, float width, float bottom)
 	{
+		m_fStackLeft = left;
+		m_fStackTop = top;
 		FrameSlot.SetPos(m_wStackArea, left, top);
 		FrameSlot.SetSize(m_wStackArea, width, bottom - top);
 	}
@@ -2072,6 +2337,10 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				continue;
 
 			AlignableSlot.SetHorizontalAlign(row, LayoutHorizontalAlign.Stretch);
+			ELIFE_PhoneStyle.SetTypeOf(row, "RowKind", TYPE_SECONDARY, false, ELIFE_PhoneStyle.TextPrimary());
+			ELIFE_PhoneStyle.SetTypeOf(row, "RowAmount", TYPE_SECONDARY, true);
+			ELIFE_PhoneStyle.SetTypeOf(row, "RowMeta", TYPE_SECONDARY, false, ELIFE_PhoneStyle.TextSecondary());
+			ELIFE_PhoneStyle.SetColorOf(row, "RowHairline", ELIFE_PhoneStyle.Hairline());
 			FillRow(row, m_Statement.items[i]);
 		}
 
@@ -2143,6 +2412,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		GetGame().GetCallqueue().Remove(ClearLingeringResult);
 		GetGame().GetCallqueue().Remove(ClearPressed);
 		StopActivity();
+		StopMotion();
 		RemoveResultTimers();
 	}
 }

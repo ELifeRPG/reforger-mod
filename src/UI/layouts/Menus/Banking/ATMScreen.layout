@@ -78,6 +78,45 @@ OverlayWidgetClass {
        "Min Font Size" 32
        "Horizontal Alignment" 2
       }
+      TextWidgetClass "{D980FD0E9A1D1A1A}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+       Name "StepAmount"
+       Slot LayoutSlot "{8B37275A310E8E22}" {
+        VerticalAlign 1
+        Padding 24 0 0 0
+       }
+       "Is Visible" 0
+       Color 0.1878 0.2051 0.2672 1
+       Text ""
+       "Font Size" 32
+       "Min Font Size" 32
+       "Horizontal Alignment" 2
+      }
+      TextWidgetClass "{D2FC5DF8ADE9A4C2}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+       Name "StepConfirm"
+       Slot LayoutSlot "{67EFDF4260293729}" {
+        VerticalAlign 1
+        Padding 24 0 0 0
+       }
+       "Is Visible" 0
+       Color 0.1878 0.2051 0.2672 1
+       Text ""
+       "Font Size" 32
+       "Min Font Size" 32
+       "Horizontal Alignment" 2
+      }
+      TextWidgetClass "{F6D2F0B005BC83E4}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+       Name "StepDone"
+       Slot LayoutSlot "{5F67D7C9D1CDFD05}" {
+        VerticalAlign 1
+        Padding 24 0 0 0
+       }
+       "Is Visible" 0
+       Color 0.1878 0.2051 0.2672 1
+       Text ""
+       "Font Size" 32
+       "Min Font Size" 32
+       "Horizontal Alignment" 2
+      }
       TextWidgetClass "{FF36B5432ABA4AF9}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
        Name "MachineId"
        Slot LayoutSlot "{5B4FEEBEB53D6605}" {
@@ -155,11 +194,39 @@ OverlayWidgetClass {
          "Min Font Size" 40
          "Horizontal Alignment" Left
         }
+        TextWidgetClass "{A94DE25429CD0912}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+         Name "Caption"
+         Slot LayoutSlot "{EFC77FC04DAAD016}" {
+          HorizontalAlign 3
+          Padding 0 16 0 0
+         }
+         "Is Visible" 0
+         Color 0.366 0.4024 0.5025 1
+         Text ""
+         "Font Size" 40
+         "Min Font Size" 40
+         "Horizontal Alignment" Left
+        }
+        TextWidgetClass "{2D913B4772497FEF}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+         Name "Figure"
+         Slot LayoutSlot "{2A286B290ECB4250}" {
+          HorizontalAlign 3
+         }
+         "Is Visible" 0
+         Color 0.8378 0.8626 0.9222 1
+         Text ""
+         "Font Size" 120
+         "Min Font Size" 64
+         "Horizontal Alignment" Left
+         FontProperties FontProperties "{411A71618CE6661C}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
         HorizontalLayoutWidgetClass "{2BB41240C2E7045F}" {
          Name "Line1"
          Slot LayoutSlot "{CB91625229469F4E}" {
           HorizontalAlign 3
-          Padding 0 0 0 8
+          Padding 0 24 0 8
          }
          "Is Visible" 0
          {
@@ -227,34 +294,6 @@ OverlayWidgetClass {
             Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
            }
           }
-         }
-        }
-        TextWidgetClass "{A94DE25429CD0912}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
-         Name "Caption"
-         Slot LayoutSlot "{EFC77FC04DAAD016}" {
-          HorizontalAlign 3
-          Padding 0 16 0 0
-         }
-         "Is Visible" 0
-         Color 0.366 0.4024 0.5025 1
-         Text ""
-         "Font Size" 40
-         "Min Font Size" 40
-         "Horizontal Alignment" Left
-        }
-        TextWidgetClass "{2D913B4772497FEF}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
-         Name "Figure"
-         Slot LayoutSlot "{2A286B290ECB4250}" {
-          HorizontalAlign 3
-         }
-         "Is Visible" 0
-         Color 0.8378 0.8626 0.9222 1
-         Text ""
-         "Font Size" 120
-         "Min Font Size" 120
-         "Horizontal Alignment" Left
-         FontProperties FontProperties "{411A71618CE6661C}" {
-          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
          }
         }
         TextWidgetClass "{ECD46BCEB3148166}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {

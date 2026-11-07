@@ -110,6 +110,8 @@ class ELIFE_PhoneStyle
 	//------------------------------------------------------------------------------------------------
 	static Color Ink() { return Srgb(0.051, 0.059, 0.082); }                 //!< #0D0F15
 	static Color Surface() { return Srgb(0.090, 0.102, 0.137); }             //!< #171A23
+	//! A control resting on a Surface, e.g. the ATM's side tabs.
+	static Color SurfaceRaised() { return Srgb(0.137, 0.153, 0.204); }       //!< #232734
 	static Color Hairline() { return Srgb(0.216, 0.239, 0.298); }            //!< #373D4C
 	static Color TextPrimary() { return Srgb(0.925, 0.937, 0.965); }         //!< #ECEFF6
 	static Color TextSecondary() { return Srgb(0.639, 0.667, 0.737); }       //!< #A3AABC

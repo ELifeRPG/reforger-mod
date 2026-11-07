@@ -1746,22 +1746,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{692EBC468ED3764E}" {
-   Id "ELIFE-ATM_Confirm_Fee"
-   Target_en_us "Fee: %1"
-   Target_de_de "Gebühr: %1"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{3A77CA21F16B3B18}" {
-   Id "ELIFE-ATM_Confirm_Credit"
-   Target_en_us "%1 goes to your balance."
-   Target_de_de "%1 gehen auf dein Konto."
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{BE56FF18B0E56755}" {
    Id "ELIFE-ATM_Confirm_Receive"
    Target_en_us "You receive"
@@ -1770,10 +1754,42 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{8EF3116C30D65D3D}" {
-   Id "ELIFE-ATM_Confirm_Debit"
-   Target_en_us "%1 comes off your balance."
-   Target_de_de "%1 gehen von deinem Konto ab."
+  CustomStringTableItem "{A69690B2787BDD9F}" {
+   Id "ELIFE-ATM_FromBalance"
+   Target_en_us "From your balance"
+   Target_de_de "Von deinem Konto"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DCCA0ABB10C8634D}" {
+   Id "ELIFE-ATM_ToBalance"
+   Target_en_us "To your balance"
+   Target_de_de "Auf dein Konto"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5D331609CFBC24A9}" {
+   Id "ELIFE-ATM_Step_Amount"
+   Target_en_us "Amount"
+   Target_de_de "Betrag"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{071DE2E7B37B3E05}" {
+   Id "ELIFE-ATM_Step_Confirm"
+   Target_en_us "Confirm"
+   Target_de_de "Bestätigen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{245CCA9406D08071}" {
+   Id "ELIFE-ATM_Step_Done"
+   Target_en_us "Done"
+   Target_de_de "Fertig"
    Modified 1793293896
    Author "Robin"
    LastChanged "Robin"

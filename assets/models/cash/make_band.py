@@ -1,4 +1,4 @@
-"""Draws the paper band of the Ŧ10,000 brick (1024 x 256), modelled on real currency straps.
+"""Draws the paper band of the 10 000 Ŧ brick (1024 x 256), modelled on real currency straps.
 
 The band wraps the brick's short side, so u runs once around it: top face 0-448, side 448-512, bottom 512-960,
 side 960-1024 (a 7 cm top, 1 cm side, 7 cm bottom, 1 cm side). v runs across the band's 4 cm width.
@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw, ImageFont
 W, H = 1024, 256
 FONTS = "/usr/share/fonts/noto/"
 
-# Colour-coded kraft, as real straps are by denomination; printed in the Ŧ100 note's teal.
+# Colour-coded kraft, as real straps are by denomination; printed in the 100 Ŧ note's teal.
 KRAFT = (201, 164, 84)
 KRAFT_DARK = (176, 140, 66)
 INK = (31, 92, 96)
@@ -59,8 +59,8 @@ def draw_top(d):
     cx = (x0 + x1) / 2
     rules(d, x0, x1)
     centred(d, (cx, 44), "BANQUE D'EVERON", font("NotoSerif-Bold.ttf", 24), INK)
-    centred(d, (cx, 120), "Ŧ 10 000", font("NotoSerif-Bold.ttf", 82), INK)
-    centred(d, (cx, 196), "100 × Ŧ 100", font("NotoSans-Bold.ttf", 28), INK)
+    centred(d, (cx, 120), "10 000 Ŧ", font("NotoSerif-Bold.ttf", 82), INK)
+    centred(d, (cx, 196), "100 × 100 Ŧ", font("NotoSans-Bold.ttf", 28), INK)
 
 
 def handwriting(d, x, y, width, wobble, seed):

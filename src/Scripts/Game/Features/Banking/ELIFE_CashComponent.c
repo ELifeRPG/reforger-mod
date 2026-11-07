@@ -8,18 +8,18 @@ class ELIFE_CashComponentClass : ScriptComponentClass
 //! Server-authoritative amount. No RPCs here: clients don't reliably own items, so requests go through ELIFE_CashCharacterComponent.
 class ELIFE_CashComponent : ScriptComponent
 {
-	//! One realistic bundle: 100 notes of Ŧ100, about 1 cm high.
+	//! One realistic bundle: 100 notes of 100 Ŧ, about 1 cm high.
 	static const int MAX_AMOUNT = 10000;
 
 	protected static const ResourceName CASH_PREFAB = "{4B8E888EFE59EE44}Prefabs/Items/Cash/Cash.et";
 
-	//! Five looks by amount: a few Ŧ20, Ŧ50 or Ŧ100 notes, then a stack, then a banded brick of Ŧ100 notes.
+	//! Five looks by amount: a few 20, 50 or 100 Ŧ notes, then a stack, then a banded brick of 100 Ŧ notes.
 	protected static const int NOTE_50_FROM = 100;
 	protected static const int NOTE_100_FROM = 500;
 	protected static const int MEDIUM_FROM = 1000;
 	protected static const int LARGE_FROM = 5000;
 
-	//! The models' note material, swapped for the smaller notes. The Ŧ100 is the models' own.
+	//! The models' note material, swapped for the smaller notes. The 100 Ŧ note is the models' own.
 	protected static const string NOTE_MATERIAL_SLOT = "Cash_Note";
 	protected static const ResourceName NOTE_20_MATERIAL = "{FC681CB84C4EB339}Assets/Items/Cash/Data/Cash_Note_20.emat";
 	protected static const ResourceName NOTE_50_MATERIAL = "{6CED029AAD3513AA}Assets/Items/Cash/Data/Cash_Note_50.emat";

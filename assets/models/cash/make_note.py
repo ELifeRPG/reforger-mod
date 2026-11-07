@@ -163,8 +163,8 @@ def draw_front(img):
     centred(d, (615, top + 372), "TOLARS", serif_b(40), ACCENT)
     signature(d, 485, top + 418)
     d.text((640, top + NOTE_H - 70), DESIGN["serial"], font=sans_b(26), fill=RED)
-    d.text((50, top + 40), "Ŧ " + VALUE, font=serif_b(30), fill=INK)
-    d.text((50, top + NOTE_H - 72), "Ŧ " + VALUE, font=serif_b(30), fill=INK)
+    d.text((50, top + 40), VALUE + " Ŧ", font=serif_b(30), fill=INK)
+    d.text((50, top + NOTE_H - 72), VALUE + " Ŧ", font=serif_b(30), fill=INK)
 
 
 def watermark_window(img, cx, cy):
@@ -220,7 +220,7 @@ def draw_back(img):
     # The value large and alone, bottom right; the bank's name small at the top.
     centred(d, (868, top + NOTE_H - 90), VALUE, serif_b(120), INK)
     centred(d, (790, top + 62), "BANQUE D'EVERON", serif_b(30), INK)
-    d.text((176, top + NOTE_H - 70), "Ŧ " + VALUE, font=serif_b(30), fill=INK)
+    d.text((176, top + NOTE_H - 70), VALUE + " Ŧ", font=serif_b(30), fill=INK)
 
 
 def island_mask(size, ox, oy):
@@ -259,7 +259,7 @@ def compass_rose(d, cx, cy, radius, outer, inner):
 
 
 def draw_island(img, top):
-    """Ŧ100: the whole island as a hatched chart, with a compass rose at sea."""
+    """100 Ŧ: the whole island as a hatched chart, with a compass rose at sea."""
     land = island_mask(380, 240, top + 52)
     depth_contours(img, land, (13, 7), INK_LIGHT)
     fill_hatched(img, land, 6, 30)
@@ -271,7 +271,7 @@ def draw_island(img, top):
 
 
 def draw_compass_ring(img, top):
-    """Ŧ50: a large compass rose inside a bezel with degree marks, like a ship's compass."""
+    """50 Ŧ: a large compass rose inside a bezel with degree marks, like a ship's compass."""
     d = ImageDraw.Draw(img)
     cx, cy = 500, top + 236
     for r in (150, 172):
@@ -288,7 +288,7 @@ def draw_compass_ring(img, top):
 
 
 def draw_sea(img, top):
-    """Ŧ20: sunrise over the sea, engraved: rays in the sky, the sun on the horizon, scalloped waves below."""
+    """20 Ŧ: sunrise over the sea, engraved: rays in the sky, the sun on the horizon, scalloped waves below."""
     x0, y0, x1, y1 = 180, top + 96, 760, top + 392
     horizon = y0 + int((y1 - y0) * 0.5)
     sun_x = (x0 + x1) // 2

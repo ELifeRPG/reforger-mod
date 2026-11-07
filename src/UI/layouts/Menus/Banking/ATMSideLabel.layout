@@ -1,11 +1,30 @@
-TextWidgetClass {
+OverlayWidgetClass {
  Name "ATMSideLabel"
- Clipping Ancestor
- Color 0.8378 0.8626 0.9222 1
- Text ""
- "Font Size" 40
- "Min Font Size" 40
- FontProperties FontProperties "{DA71FB37E7CFDCBC}" {
-  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+ {
+  SmartPanelWidgetClass "{D5608A1E5FC5D194}" {
+   Name "Tab"
+   Slot OverlayWidgetSlot "{29CCE04DA9B46F32}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   Color 0.0159 0.0185 0.0284 1
+   style rounded_12px
+   "no focus" 1
+  }
+  TextWidgetClass "{64755B0B51F3D6DC}" {
+   Name "Text"
+   Slot OverlayWidgetSlot "{C3415D36848FECFA}" {
+    HorizontalAlign 1
+    VerticalAlign 1
+    Padding 24 12 24 12
+   }
+   Color 0.8378 0.8626 0.9222 1
+   Text ""
+   "Font Size" 40
+   "Min Font Size" 40
+   FontProperties FontProperties "{DA71FB37E7CFDCBC}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
  }
 }
