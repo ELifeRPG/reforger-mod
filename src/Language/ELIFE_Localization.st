@@ -2394,5 +2394,453 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{B17AFAE7E442889B}" {
+   Id "ELIFE-Clerk_Title"
+   Target_en_us "Bank clerk"
+   Target_de_de "Bankangestellter"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{83AE160DFF28DCE8}" {
+   Id "ELIFE-Clerk_Talk"
+   Target_en_us "Talk to the clerk"
+   Target_de_de "Mit dem Bankangestellten sprechen"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{ADC99C1D8CF78A30}" {
+   Id "ELIFE-Clerk_Greeting"
+   Target_en_us "Good day. How can I help you?"
+   Target_de_de "Guten Tag. Wie kann ich Ihnen helfen?"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{72A97C9711AC41C4}" {
+   Id "ELIFE-Clerk_Transfer"
+   Target_en_us "Transfer money"
+   Target_de_de "Geld überweisen"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A2B3C7CB861BB673}" {
+   Id "ELIFE-Clerk_OpenAccount"
+   Target_en_us "Open an account"
+   Target_de_de "Konto eröffnen"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B35EC476EA029CFA}" {
+   Id "ELIFE-Clerk_Goodbye"
+   Target_en_us "Goodbye"
+   Target_de_de "Auf Wiedersehen"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D6DEE8885AAE6011}" {
+   Id "ELIFE-Clerk_Busy"
+   Target_en_us "The clerk is serving another customer. Please wait a moment."
+   Target_de_de "Der Bankangestellte bedient gerade einen anderen Kunden. Bitte warten Sie einen Moment."
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{71667DC1AD10FE5B}" {
+   Id "ELIFE-Clerk_Busy_Short"
+   Target_en_us "Busy"
+   Target_de_de "Beschäftigt"
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B12534C1AE94C497}" {
+   Id "ELIFE-Clerk_OutOfRange"
+   Target_en_us "Step closer to the counter."
+   Target_de_de "Treten Sie näher an den Schalter."
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{61D51DB766D78997}" {
+   Id "ELIFE-Clerk_Unavailable"
+   Target_en_us "The bank can't be reached right now. Please try again later."
+   Target_de_de "Die Bank ist gerade nicht erreichbar. Bitte versuchen Sie es später erneut."
+   Modified 1794100000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A7D97163FA81D09E}" {
+   Id "ELIFE-Clerk_OpenAccount_Message"
+   Target_en_us "I can open a personal account at %1 for you right away."
+   Target_de_de "Ich kann Ihnen sofort ein Privatkonto bei der %1 eröffnen."
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1FB9D2EB0F032BEF}" {
+   Id "ELIFE-Clerk_OpenAccount_Confirm"
+   Target_en_us "Open account"
+   Target_de_de "Konto eröffnen"
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F1F20CF98178BEFF}" {
+   Id "ELIFE-Clerk_Back"
+   Target_en_us "Back"
+   Target_de_de "Zurück"
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BAC83DBB7654D75E}" {
+   Id "ELIFE-Clerk_Working"
+   Target_en_us "One moment, please …"
+   Target_de_de "Einen Moment bitte …"
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B37CD24173F535E8}" {
+   Id "ELIFE-Clerk_Opened_Title"
+   Target_en_us "Account opened"
+   Target_de_de "Konto eröffnet"
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AC7D7151187F2C79}" {
+   Id "ELIFE-Clerk_Opened_Message"
+   Target_en_us "Your new account is ready."
+   Target_de_de "Ihr neues Konto ist eröffnet."
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{85B3B2E5DB972757}" {
+   Id "ELIFE-Clerk_Opened_Hint"
+   Target_en_us "Your new account %1 is open."
+   Target_de_de "Ihr neues Konto %1 ist eröffnet."
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{94645BCCDBAD65C9}" {
+   Id "ELIFE-Clerk_Done"
+   Target_en_us "Done"
+   Target_de_de "Fertig"
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4E08014692CA4932}" {
+   Id "ELIFE-Clerk_OpenFailed"
+   Target_en_us "The account couldn't be opened. Please try again later."
+   Target_de_de "Das Konto konnte nicht eröffnet werden. Bitte versuchen Sie es später erneut."
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{43F321731F7F693A}" {
+   Id "ELIFE-Clerk_AlreadyOpened"
+   Target_en_us "You've just opened an account. One per visit, please."
+   Target_de_de "Sie haben gerade ein Konto eröffnet. Bitte nur eines pro Besuch."
+   Modified 1794110000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3C18B0474E563C92}" {
+   Id "ELIFE-Clerk_Transfer_Message"
+   Target_en_us "Transfers are booked at once. The fee is set by the bank of the account you pay from."
+   Target_de_de "Überweisungen werden sofort gebucht. Die Gebühr legt die Bank des Kontos fest, von dem Sie zahlen."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9015C77F374098E4}" {
+   Id "ELIFE-Clerk_Transfer_From"
+   Target_en_us "From"
+   Target_de_de "Von"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BF08D3F6C57E490F}" {
+   Id "ELIFE-Clerk_Transfer_To"
+   Target_en_us "To"
+   Target_de_de "An"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A4A208D9E64E8707}" {
+   Id "ELIFE-Clerk_Transfer_Number"
+   Target_en_us "Account number"
+   Target_de_de "Kontonummer"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{77015B8E19E63B6D}" {
+   Id "ELIFE-Clerk_Transfer_Amount"
+   Target_en_us "Amount"
+   Target_de_de "Betrag"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1209535645784B16}" {
+   Id "ELIFE-Clerk_Transfer_OtherAccount"
+   Target_en_us "Another account …"
+   Target_de_de "Anderes Konto …"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DFBC1BF516737DE8}" {
+   Id "ELIFE-Clerk_Transfer_NoAccount"
+   Target_en_us "You don't have an account to pay from yet. I can open one for you."
+   Target_de_de "Sie haben noch kein Konto, von dem Sie zahlen können. Ich kann Ihnen gern eines eröffnen."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E63B752E80CAE189}" {
+   Id "ELIFE-Clerk_Transfer_Limit"
+   Target_en_us "At most %1 per transfer."
+   Target_de_de "Höchstens %1 pro Überweisung."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2275EDFFC13520BA}" {
+   Id "ELIFE-Clerk_Transfer_Summary"
+   Target_en_us "Balance %1 · Fee %2 · Total %3"
+   Target_de_de "Kontostand %1 · Gebühr %2 · Gesamt %3"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{33CA2F7A7860C37E}" {
+   Id "ELIFE-Clerk_TransferDone_Title"
+   Target_en_us "Transfer sent"
+   Target_de_de "Überweisung ausgeführt"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9D67ACB0AB2CAE36}" {
+   Id "ELIFE-Clerk_TransferDone_Message"
+   Target_en_us "Done, the transfer is booked."
+   Target_de_de "Erledigt, die Überweisung ist gebucht."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{952C3F31FC5BB49E}" {
+   Id "ELIFE-Clerk_TransferDone_Hint"
+   Target_en_us "%1 has been transferred."
+   Target_de_de "%1 wurden überwiesen."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{76574342EE9F5CC4}" {
+   Id "ELIFE-Clerk_Reason_InvalidAmount"
+   Target_en_us "Please enter an amount of at least 1 Ŧ."
+   Target_de_de "Bitte geben Sie einen Betrag von mindestens 1 Ŧ ein."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AE2EE4051E18B2DE}" {
+   Id "ELIFE-Clerk_Reason_NotEnoughMoney"
+   Target_en_us "There isn't enough money on this account for the amount and the fee."
+   Target_de_de "Auf diesem Konto ist nicht genug Geld für Betrag und Gebühr."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F9520A9217DB566B}" {
+   Id "ELIFE-Clerk_Reason_InvalidTarget"
+   Target_en_us "That isn't a valid account number. Please check it."
+   Target_de_de "Das ist keine gültige Kontonummer. Bitte prüfen Sie sie."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3ED94B6A9E5E371C}" {
+   Id "ELIFE-Clerk_Reason_TargetNotFound"
+   Target_en_us "There's no account with this number."
+   Target_de_de "Es gibt kein Konto mit dieser Nummer."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{67F9EA9F5278ECC2}" {
+   Id "ELIFE-Clerk_Reason_SameAccount"
+   Target_en_us "You can't transfer to the account you pay from."
+   Target_de_de "Sie können nicht auf das Konto überweisen, von dem Sie zahlen."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{ED9F910A3FC0C1BD}" {
+   Id "ELIFE-Clerk_Reason_QuoteExpired"
+   Target_en_us "This offer has expired. Please go back and check the transfer again."
+   Target_de_de "Dieses Angebot ist abgelaufen. Bitte gehen Sie zurück und prüfen Sie die Überweisung erneut."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EA282AF3B29D5650}" {
+   Id "ELIFE-Clerk_Reason_AccountBusy"
+   Target_en_us "Another booking on this account is running. Please try again in a moment."
+   Target_de_de "Auf diesem Konto läuft gerade eine andere Buchung. Bitte versuchen Sie es gleich noch einmal."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4DE7C4F8E7891323}" {
+   Id "ELIFE-Clerk_Reason_TransferFailed"
+   Target_en_us "The bank refused the transfer. Nothing was booked."
+   Target_de_de "Die Bank hat die Überweisung abgelehnt. Es wurde nichts gebucht."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{961135D48103B2DF}" {
+   Id "ELIFE-Clerk_Reason_UnknownOutcome"
+   Target_en_us "The bank didn't answer. Check your statement at an ATM before trying again."
+   Target_de_de "Die Bank hat nicht geantwortet. Prüfen Sie Ihre Kontoauszüge am Geldautomaten, bevor Sie es erneut versuchen."
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{75D595E84AFD9277}" {
+   Id "ELIFE-Clerk_Transfer_Balance"
+   Target_en_us "Balance %1"
+   Target_de_de "Kontostand %1"
+   Modified 1794121000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{389D81956F412E85}" {
+   Id "ELIFE-Clerk_Label_BookingFee"
+   Target_en_us "Fee per booking"
+   Target_de_de "Gebühr pro Buchung"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E10FA9B8FADA5F02}" {
+   Id "ELIFE-Clerk_FeeTerms"
+   Target_en_us "%1 plus %2 % of the amount"
+   Target_de_de "%1 plus %2 % des Betrags"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{153D3F7CC21C0A9F}" {
+   Id "ELIFE-Clerk_Opened_Closing"
+   Target_en_us "You can use it at any ATM right away."
+   Target_de_de "Sie können es sofort an jedem Geldautomaten nutzen."
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D876CDD7E48EA660}" {
+   Id "ELIFE-Clerk_Label_Fee"
+   Target_en_us "Fee"
+   Target_de_de "Gebühr"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1F2707A265841202}" {
+   Id "ELIFE-Clerk_Label_NewBalance"
+   Target_en_us "New balance"
+   Target_de_de "Neuer Kontostand"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EA2845E88176D96B}" {
+   Id "ELIFE-Slip_Title"
+   Target_en_us "TRANSFER SLIP"
+   Target_de_de "ÜBERWEISUNG"
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B8CF8A5793AEDBFC}" {
+   Id "ELIFE-Slip_Submit"
+   Target_en_us "Sign and hand over"
+   Target_de_de "Unterschreiben und abgeben"
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6E72FE18D243C429}" {
+   Id "ELIFE-Slip_Cancel"
+   Target_en_us "Cancel"
+   Target_de_de "Abbrechen"
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9B2F256445EFB212}" {
+   Id "ELIFE-Slip_Signature"
+   Target_en_us "Signature"
+   Target_de_de "Unterschrift"
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B2130BC0C1966AE8}" {
+   Id "ELIFE-Slip_Hint_Mouse"
+   Target_en_us "Click a field and type. The arrows change the accounts. Esc goes back to the clerk."
+   Target_de_de "Feld anklicken und tippen. Die Pfeile wechseln die Konten. Esc geht zurück zum Bankangestellten."
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{156F95B2D21AB248}" {
+   Id "ELIFE-Slip_Hint_Pad"
+   Target_en_us "D-pad: move and change accounts. A: fill in or choose. B: back to the clerk."
+   Target_de_de "Steuerkreuz: bewegen und Konten wechseln. A: ausfüllen oder wählen. B: zurück zum Bankangestellten."
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FD07175FC4A3BF0C}" {
+   Id "ELIFE-Slip_Hint_Edit"
+   Target_en_us "Up and down change the box, left and right move to the next. X clears it. A or B: done."
+   Target_de_de "Hoch und runter ändern das Kästchen, links und rechts wechseln. X leert es. A oder B: fertig."
+   Modified 1794130000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0D3DB661F1C005B4}" {
+   Id "ELIFE-Slip_Own"
+   Target_en_us "%1 · own account"
+   Target_de_de "%1 · eigenes Konto"
+   Modified 1794131000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5BD1E48D3891A814}" {
+   Id "ELIFE-Slip_Recent"
+   Target_en_us "%1 · recent"
+   Target_de_de "%1 · zuletzt"
+   Modified 1794131000
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

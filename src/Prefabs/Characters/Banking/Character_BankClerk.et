@@ -1,0 +1,27 @@
+SCR_ChimeraCharacter : "{626874113CAE4387}Prefabs/Characters/Factions/CIV/Businessman/Character_CIV_Businessman_3.et" {
+ ID "520EC961A090B1EE"
+ components {
+  SCR_CharacterIdentityComponent "{5584CBC63E092DBC}" {
+   Identity Identity "{5584CBC6363C648B}" {
+    VisualIdentity VisualIdentity "{56E6D9456009D1C4}" {
+     Head "{143245D81F2BAB94}Prefabs/Characters/Heads/Head_White_10.et"
+    }
+   }
+  }
+  ELIFE_BankClerkComponent "{B80E89F5C2D29465}" {
+  }
+  ActionsManagerComponent "{520EA1D2F659CE02}" {
+   additionalActions {
+    ELIFE_BankClerkTalkAction "{65BBB0C3AD7E380A}" {
+     ParentContextList {
+      "Chest"
+     }
+     UIInfo UIInfo "{0BF06F16A5E47D97}" {
+      Name "#ELIFE-Clerk_Talk"
+     }
+     VisibilityRange 2.5
+    }
+   }
+  }
+ }
+}

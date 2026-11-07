@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{E2F1AA299C290781}Configs/Banking/ELIFE_ClerkDialogs.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -1,0 +1,736 @@
+FrameWidgetClass {
+ Name "TransferSlipRoot"
+ "Ignore Cursor" 0
+ {
+  OverlayWidgetClass "{ECE96CD018A6EAEC}" {
+   Name "Stage"
+   Slot FrameWidgetSlot "{BA10811989F5C636}" {
+    Anchor 0 0 1 1
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 0
+    OffsetRight 0
+    SizeY 0
+    OffsetBottom 0
+   }
+   {
+    ImageWidgetClass "{8E6D145D48F84166}" {
+     Name "Dim"
+     Slot OverlayWidgetSlot "{B9D8116D1BF1E1AE}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 0 0 0 0.6
+    }
+    SizeLayoutWidgetClass "{D57DBB04060F50B8}" {
+     Name "PaperSize"
+     Slot OverlayWidgetSlot "{2F2BA752171CB384}" {
+      HorizontalAlign 1
+      VerticalAlign 1
+     }
+     AllowWidthOverride 1
+     WidthOverride 840
+     {
+      OverlayWidgetClass "{60CA2598EC204877}" {
+       Name "Paper"
+       Slot LayoutSlot "{606EAED0A1B79CAE}" {
+       }
+       {
+        ImageWidgetClass "{9B6132A400F6A0C8}" {
+         Name "PaperShadow"
+         Slot OverlayWidgetSlot "{F77FCBDCD497500F}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+          Padding 10 10 -10 -10
+         }
+         Color 0 0 0 0.35
+        }
+        ImageWidgetClass "{E2CC2C0C0C18875D}" {
+         Name "PaperFill"
+         Slot OverlayWidgetSlot "{8925C72F416A9BAF}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 0.88 0.85 0.77 1
+        }
+        VerticalLayoutWidgetClass "{0F15D33C0EB3A801}" {
+         Name "Sheet"
+         Slot OverlayWidgetSlot "{3495E65AA8F20EEF}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+          Padding 56 44 56 36
+         }
+         "Fill Origin" Top
+         {
+          HorizontalLayoutWidgetClass "{ADFC70BC1DD73014}" {
+           Name "Header"
+           Slot LayoutSlot "{5ED958771A418A4E}" {
+            HorizontalAlign 3
+           }
+           {
+            TextWidgetClass "{DF366CC1A5DFBCFB}" {
+             Name "Title"
+             Slot LayoutSlot "{CA507BFFC6A2984E}" {
+              VerticalAlign 2
+              SizeMode Fill
+             }
+             Color 0.012 0.016 0.03 1
+             Text ""
+             "Font Size" 44
+             "Min Font Size" 44
+             "Horizontal Alignment" Left
+             FontProperties FontProperties "{D259AA730A4F3765}" {
+              Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+             }
+            }
+            TextWidgetClass "{2C4D865A1F996B09}" {
+             Name "BankName"
+             Slot LayoutSlot "{2C75C963D77475CD}" {
+              VerticalAlign 2
+              Padding 16 0 0 6
+             }
+             Color 0.012 0.016 0.03 1
+             Text ""
+             "Font Size" 24
+             "Min Font Size" 24
+             "Horizontal Alignment" Right
+             FontProperties FontProperties "{4FCF0E81AB1FE6BE}" {
+              Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+             }
+            }
+           }
+          }
+          ImageWidgetClass "{DDD1B99AFF65A55C}" {
+           Name "RuleTop"
+           Slot LayoutSlot "{348B212D768AB3FD}" {
+            HorizontalAlign 3
+            Padding 0 10 0 4
+           }
+           Color 0.012 0.016 0.03 1
+           Size 4 3
+          }
+          TextWidgetClass "{82B377E80BA4521A}" {
+           Name "Intro"
+           Slot LayoutSlot "{BE0C9F999E45B66E}" {
+            HorizontalAlign 3
+            Padding 0 6 0 6
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 22
+           "Min Font Size" 22
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{C2E1B7FA5EF92F7E}" {
+            Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+           }
+          }
+          OverlayWidgetClass "{3A95BB83B58A0973}" {
+           Name "RowFrom"
+           Slot LayoutSlot "{9E83A93840EDF062}" {
+            HorizontalAlign 3
+            Padding 0 10 0 0
+           }
+           {
+            ImageWidgetClass "{DBECAB85E7DEB5B4}" {
+             Name "RowFromFocus"
+             Slot OverlayWidgetSlot "{F9A41AC1F52DD281}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 0 0 0 0
+            }
+            HorizontalLayoutWidgetClass "{8C88951965A6783E}" {
+             Name "RowFromLine"
+             Slot OverlayWidgetSlot "{98AECA8DBCD7A5AB}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+              Padding 16 10 16 10
+             }
+             {
+              SizeLayoutWidgetClass "{7226895700B5D89C}" {
+               Name "FromLabelSize"
+               Slot LayoutSlot "{F503BCB9BD6709BD}" {
+                VerticalAlign 1
+               }
+               AllowWidthOverride 1
+               WidthOverride 190
+               {
+                TextWidgetClass "{00212B62002C2E46}" {
+                 Name "FromLabel"
+                 Slot OverlayWidgetSlot "{9BAB75D21DA5B52F}" {
+                  HorizontalAlign 0
+                  VerticalAlign 1
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 24
+                 "Min Font Size" 24
+                 "Horizontal Alignment" Left
+                 FontProperties FontProperties "{2521184341776E49}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+              ButtonWidgetClass "{2699D6AE841EFA2B}" {
+               Name "FromPrev"
+               Slot LayoutSlot "{AC9B5A9EFBF6145F}" {
+                VerticalAlign 1
+               }
+               Color 1 1 1 0
+               style blank
+               "no focus" 1
+               {
+                TextWidgetClass "{0ACFEAE15BCD0B27}" {
+                 Name "FromPrevText"
+                 Slot ButtonWidgetSlot "{B235B660CF59C9C2}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 14 0 14 0
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text "‹"
+                 "Font Size" 40
+                 "Min Font Size" 40
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{7228F81DC9B90414}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+              TextWidgetClass "{63268D016726A016}" {
+               Name "FromValue"
+               Slot LayoutSlot "{B4BAB5D4058B8531}" {
+                VerticalAlign 1
+                SizeMode Fill
+               }
+               Color 0.012 0.016 0.03 1
+               Text ""
+               "Font Size" 30
+               "Min Font Size" 30
+               "Horizontal Alignment" Center
+               FontProperties FontProperties "{FE35B12CAA1875CB}" {
+                Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+               }
+              }
+              ButtonWidgetClass "{82A6135E368C19C5}" {
+               Name "FromNext"
+               Slot LayoutSlot "{F54B14FE5A28A3AA}" {
+                VerticalAlign 1
+               }
+               Color 1 1 1 0
+               style blank
+               "no focus" 1
+               {
+                TextWidgetClass "{525A18CA5F0FB579}" {
+                 Name "FromNextText"
+                 Slot ButtonWidgetSlot "{4965E41AF802B97B}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 14 0 14 0
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text "›"
+                 "Font Size" 40
+                 "Min Font Size" 40
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{BC414F6CFB66332E}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+          OverlayWidgetClass "{743D36F1FB402541}" {
+           Name "RowTo"
+           Slot LayoutSlot "{4473A0329A20D059}" {
+            HorizontalAlign 3
+            Padding 0 10 0 0
+           }
+           {
+            ImageWidgetClass "{C3C72A1A376B3FC0}" {
+             Name "RowToFocus"
+             Slot OverlayWidgetSlot "{F0449AD83768421A}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 0 0 0 0
+            }
+            HorizontalLayoutWidgetClass "{70C83D9CEE709955}" {
+             Name "RowToLine"
+             Slot OverlayWidgetSlot "{64370BA2F04A1CBD}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+              Padding 16 10 16 10
+             }
+             {
+              SizeLayoutWidgetClass "{7480043C577B37DF}" {
+               Name "ToLabelSize"
+               Slot LayoutSlot "{30C56BE5E7B2E0F4}" {
+                VerticalAlign 1
+               }
+               AllowWidthOverride 1
+               WidthOverride 190
+               {
+                TextWidgetClass "{E6B9AEE9A67C9155}" {
+                 Name "ToLabel"
+                 Slot OverlayWidgetSlot "{1EFCC3DB68FA7051}" {
+                  HorizontalAlign 0
+                  VerticalAlign 1
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 24
+                 "Min Font Size" 24
+                 "Horizontal Alignment" Left
+                 FontProperties FontProperties "{A6AE9A4001CD6748}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+              ButtonWidgetClass "{D11E636BC92562FC}" {
+               Name "ToPrev"
+               Slot LayoutSlot "{48928F31157E8C97}" {
+                VerticalAlign 1
+               }
+               Color 1 1 1 0
+               style blank
+               "no focus" 1
+               {
+                TextWidgetClass "{7F4ACA95243A958E}" {
+                 Name "ToPrevText"
+                 Slot ButtonWidgetSlot "{D98AD474831849BD}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 14 0 14 0
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text "‹"
+                 "Font Size" 40
+                 "Min Font Size" 40
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{171463B4EE2976D1}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+              TextWidgetClass "{58A0E70CDB02C659}" {
+               Name "ToValue"
+               Slot LayoutSlot "{1FABBB41B01E3201}" {
+                VerticalAlign 1
+                SizeMode Fill
+               }
+               Color 0.012 0.016 0.03 1
+               Text ""
+               "Font Size" 30
+               "Min Font Size" 30
+               "Horizontal Alignment" Center
+               FontProperties FontProperties "{6398EEBC362B7143}" {
+                Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+               }
+              }
+              ButtonWidgetClass "{E94B3B53BD29A85A}" {
+               Name "ToNext"
+               Slot LayoutSlot "{183972D114E6CB4E}" {
+                VerticalAlign 1
+               }
+               Color 1 1 1 0
+               style blank
+               "no focus" 1
+               {
+                TextWidgetClass "{4B2B8DDACC2F10E9}" {
+                 Name "ToNextText"
+                 Slot ButtonWidgetSlot "{004DBEA7680FADE2}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 14 0 14 0
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text "›"
+                 "Font Size" 40
+                 "Min Font Size" 40
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{FB53A528C3FF6B7A}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+          OverlayWidgetClass "{95DF8EC7C199600F}" {
+           Name "RowNumber"
+           Slot LayoutSlot "{FFAE441EDB55B9D1}" {
+            HorizontalAlign 3
+            Padding 0 10 0 0
+           }
+           {
+            ImageWidgetClass "{BFA7424080F8B4B8}" {
+             Name "RowNumberFocus"
+             Slot OverlayWidgetSlot "{26E5DD30B4AC40DA}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 0 0 0 0
+            }
+            ButtonWidgetClass "{E15391B361DF235E}" {
+             Name "NumberField"
+             Slot OverlayWidgetSlot "{2D965378C57C064E}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 1 1 1 0
+             style blank
+             "no focus" 1
+             {
+              VerticalLayoutWidgetClass "{9527B0DF287AAA2E}" {
+               Name "RowNumberLine"
+               Slot ButtonWidgetSlot "{FFDD45FA92BBF1B0}" {
+                HorizontalAlign 3
+                VerticalAlign 3
+                Padding 16 10 16 10
+               }
+               "Fill Origin" Top
+               {
+                TextWidgetClass "{FCA28A455C233C53}" {
+                 Name "NumberLabel"
+                 Slot LayoutSlot "{84C2D330FEBC9C76}" {
+                  HorizontalAlign 0
+                  Padding 0 0 0 8
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 24
+                 "Min Font Size" 24
+                 "Horizontal Alignment" Left
+                 FontProperties FontProperties "{088A5722819F2514}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+                HorizontalLayoutWidgetClass "{BE6DBC86C8FAEC1B}" {
+                 Name "NumberBoxes"
+                 Slot LayoutSlot "{576CC3E031DBA138}" {
+                  HorizontalAlign 1
+                 }
+                }
+               }
+              }
+             }
+            }
+            EditBoxWidgetClass "{20BBC2ABAEAE7F20}" {
+             Name "NumberEdit"
+             Slot OverlayWidgetSlot "{AB2ABE8A6A8A09E4}" {
+              HorizontalAlign 0
+              VerticalAlign 2
+             }
+             Opacity 0
+             Clipping True
+             style blank
+             "Font Size" 10
+             "Use placeholder text" 0
+            }
+           }
+          }
+          OverlayWidgetClass "{50C7557DE8D9E264}" {
+           Name "RowAmount"
+           Slot LayoutSlot "{2E80D67638F8EF7B}" {
+            HorizontalAlign 3
+            Padding 0 10 0 0
+           }
+           {
+            ImageWidgetClass "{EC185A55F21D21AA}" {
+             Name "RowAmountFocus"
+             Slot OverlayWidgetSlot "{E5E5A0430B8FFC9F}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 0 0 0 0
+            }
+            ButtonWidgetClass "{7ED901201AFEBEE8}" {
+             Name "AmountField"
+             Slot OverlayWidgetSlot "{6564432555915764}" {
+              HorizontalAlign 3
+              VerticalAlign 3
+             }
+             Color 1 1 1 0
+             style blank
+             "no focus" 1
+             {
+              HorizontalLayoutWidgetClass "{508FDC277E5FE0CB}" {
+               Name "RowAmountLine"
+               Slot ButtonWidgetSlot "{2A2DFBC2C321D23D}" {
+                HorizontalAlign 3
+                VerticalAlign 3
+                Padding 16 10 16 10
+               }
+               {
+                SizeLayoutWidgetClass "{FD21F10F1EB3ABFE}" {
+                 Name "AmountLabelSize"
+                 Slot LayoutSlot "{D2E625F87148FE19}" {
+                  VerticalAlign 1
+                 }
+                 AllowWidthOverride 1
+                 WidthOverride 190
+                 {
+                  TextWidgetClass "{1F61985F8CE6CA52}" {
+                   Name "AmountLabel"
+                   Slot OverlayWidgetSlot "{A6B23ADB74096212}" {
+                    HorizontalAlign 0
+                    VerticalAlign 1
+                   }
+                   Color 0.012 0.016 0.03 1
+                   Text ""
+                   "Font Size" 24
+                   "Min Font Size" 24
+                   "Horizontal Alignment" Left
+                   FontProperties FontProperties "{0B3DF13CC8815545}" {
+                    Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                   }
+                  }
+                 }
+                }
+                HorizontalLayoutWidgetClass "{D3EB3B265EB56E36}" {
+                 Name "AmountBoxes"
+                 Slot LayoutSlot "{6381C7D794DB6076}" {
+                  VerticalAlign 1
+                 }
+                }
+                TextWidgetClass "{C101E60907262671}" {
+                 Name "AmountUnit"
+                 Slot LayoutSlot "{FA943DE83A1D075D}" {
+                  VerticalAlign 1
+                  Padding 12 0 0 0
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text "Ŧ"
+                 "Font Size" 30
+                 "Min Font Size" 30
+                 "Horizontal Alignment" Left
+                 FontProperties FontProperties "{13C310D7C2A9E115}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+             }
+            }
+            EditBoxWidgetClass "{49F0DB1849271D71}" {
+             Name "AmountEdit"
+             Slot OverlayWidgetSlot "{7A86E1F7D38E9424}" {
+              HorizontalAlign 0
+              VerticalAlign 2
+             }
+             Opacity 0
+             Clipping True
+             style blank
+             "Font Size" 10
+             "Use placeholder text" 0
+            }
+           }
+          }
+          ImageWidgetClass "{862B9B9DCCEBE109}" {
+           Name "RuleMid"
+           Slot LayoutSlot "{F57BB2C3DE93DF8F}" {
+            HorizontalAlign 3
+            Padding 0 22 0 10
+           }
+           Color 0.012 0.016 0.03 1
+           Size 4 2
+          }
+          TextWidgetClass "{FC39D5A78A5F71A8}" {
+           Name "Summary"
+           Slot LayoutSlot "{6E0ED5D4883A58FA}" {
+            HorizontalAlign 3
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 26
+           "Min Font Size" 26
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{7511D301A8FCF25D}" {
+            Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+           }
+          }
+          TextWidgetClass "{6496ED0A8F7EBBAE}" {
+           Name "Notice"
+           Slot LayoutSlot "{9FF6CECEFF6D3EE2}" {
+            HorizontalAlign 3
+            Padding 0 8 0 0
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 26
+           "Min Font Size" 26
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{BC54E8591C136783}" {
+            Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+           }
+          }
+          HorizontalLayoutWidgetClass "{C78D619D2A97840C}" {
+           Name "Actions"
+           Slot LayoutSlot "{07DA2C410533447E}" {
+            HorizontalAlign 0
+            Padding 0 30 0 0
+           }
+           {
+            ButtonWidgetClass "{723C3F36A7AE034D}" {
+             Name "Submit"
+             Slot LayoutSlot "{0581FC3C010F8A70}" {
+              VerticalAlign 1
+              Padding 0 0 16 0
+             }
+             Color 1 1 1 0
+             style blank
+             "no focus" 1
+             {
+              OverlayWidgetClass "{5B21DD41659F2BBE}" {
+               Name "SubmitBody"
+               Slot ButtonWidgetSlot "{0CA199C056358588}" {
+                HorizontalAlign 3
+                VerticalAlign 3
+               }
+               {
+                ImageWidgetClass "{147A6036FD0CA166}" {
+                 Name "SubmitFill"
+                 Slot OverlayWidgetSlot "{02FA76741E102FEF}" {
+                  HorizontalAlign 3
+                  VerticalAlign 3
+                 }
+                 Color 0.012 0.016 0.03 1
+                }
+                TextWidgetClass "{7E09CFC0B3332458}" {
+                 Name "SubmitText"
+                 Slot OverlayWidgetSlot "{BA27D599C35646B3}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 28 12 28 12
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 28
+                 "Min Font Size" 28
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{CA58A4DAB267D980}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+             }
+            }
+            ButtonWidgetClass "{90C856EB70657703}" {
+             Name "Cancel"
+             Slot LayoutSlot "{6FCEE9C8EB92636A}" {
+              VerticalAlign 1
+              Padding 0 0 16 0
+             }
+             Color 1 1 1 0
+             style blank
+             "no focus" 1
+             {
+              OverlayWidgetClass "{11C595C7338413CE}" {
+               Name "CancelBody"
+               Slot ButtonWidgetSlot "{FC2260F990FD5B8D}" {
+                HorizontalAlign 3
+                VerticalAlign 3
+               }
+               {
+                ImageWidgetClass "{E01D6F80D8C5B3CC}" {
+                 Name "CancelFill"
+                 Slot OverlayWidgetSlot "{7F5F3FC6E0EDFF53}" {
+                  HorizontalAlign 3
+                  VerticalAlign 3
+                 }
+                 Color 0.012 0.016 0.03 1
+                }
+                TextWidgetClass "{04BDE3B6116237D4}" {
+                 Name "CancelText"
+                 Slot OverlayWidgetSlot "{B9AE851CBAC77032}" {
+                  HorizontalAlign 1
+                  VerticalAlign 1
+                  Padding 28 12 28 12
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 28
+                 "Min Font Size" 28
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{32679EC2EF15187A}" {
+                  Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+          HorizontalLayoutWidgetClass "{291A92A80204B73E}" {
+           Name "SignatureLine"
+           Slot LayoutSlot "{5BB1893AD385DB35}" {
+            HorizontalAlign 3
+            Padding 0 30 0 0
+           }
+           {
+            TextWidgetClass "{908ABF0479A93561}" {
+             Name "SignatureLabel"
+             Slot LayoutSlot "{774C3A9123EB1113}" {
+              VerticalAlign 2
+              Padding 0 0 12 0
+             }
+             Color 0.012 0.016 0.03 1
+             Text ""
+             "Font Size" 20
+             "Min Font Size" 20
+             "Horizontal Alignment" Left
+             FontProperties FontProperties "{CD01B9643C450BC7}" {
+              Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+             }
+            }
+            ImageWidgetClass "{55532B5C68015554}" {
+             Name "SignatureRule"
+             Slot LayoutSlot "{A2FF25B7B43703BB}" {
+              VerticalAlign 2
+              Padding 0 0 0 6
+              SizeMode Fill
+             }
+             Color 0.012 0.016 0.03 1
+             Size 4 1
+            }
+           }
+          }
+          TextWidgetClass "{EF96627D340C93B4}" {
+           Name "Hint"
+           Slot LayoutSlot "{3E893BE9EA9B186F}" {
+            HorizontalAlign 3
+            Padding 0 18 0 0
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 20
+           "Min Font Size" 20
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{9E29181C2BBDED84}" {
+            Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

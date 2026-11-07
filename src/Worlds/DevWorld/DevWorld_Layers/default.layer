@@ -28,27 +28,33 @@ $grp ELIFE_PrefabSpawn {
   m_rnPrefab "{E8692A5A14D74B83}Prefabs/Items/Equipment/Phone/Phone_Silver.et"
  }
 }
-GenericEntity : "{4B8E888EFE59EE44}Prefabs/Items/Cash/Cash.et" {
- components {
-  ELIFE_CashComponent "{E668C13FE22956C5}" {
-   m_iInitialAmount 200
-  }
- }
- coords 7.5 0.05 4.5
-}
-GenericEntity : "{4B8E888EFE59EE44}Prefabs/Items/Cash/Cash.et" {
- components {
-  ELIFE_CashComponent "{E668C13FE22956C5}" {
-   m_iInitialAmount 200
-  }
- }
- coords 8 0.05 4.5
-}
-GenericEntity : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank.et" {
- coords 6.5 0 6.2
- angles 0 180 0
+ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankClerkSpot.et" {
+ coords 9.007 0 5.947
+ angles 0 178.199 0
 }
 GenericEntity : "{20AFC1514925B919}Prefabs/Props/Commercial/ATM_01_Branch.et" {
  coords 7.7 0 6.2
+ angles 0 180 0
+}
+$grp GenericEntity : "{4B8E888EFE59EE44}Prefabs/Items/Cash/Cash.et" {
+ {
+  components {
+   ELIFE_CashComponent "{E668C13FE22956C5}" {
+    m_iInitialAmount 200
+   }
+  }
+  coords 7.5 0.05 4.5
+ }
+ {
+  components {
+   ELIFE_CashComponent "{E668C13FE22956C5}" {
+    m_iInitialAmount 200
+   }
+  }
+  coords 8 0.05 4.5
+ }
+}
+GenericEntity : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank.et" {
+ coords 6.5 0 6.2
  angles 0 180 0
 }

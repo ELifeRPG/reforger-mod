@@ -1,0 +1,56 @@
+ELIFE_BankClerkSpot {
+ ID "6A1C3E5B7D9F0246"
+ m_rnPrefab "{1CDE9638206258F4}Prefabs/Characters/Banking/Character_BankClerk.et"
+ respawnDelay 10
+ firstSpawn 0
+ m_sBankCode "FEBK"
+ m_aClerkPrefabs {
+  "{1CDE9638206258F4}Prefabs/Characters/Banking/Character_BankClerk.et"
+  "{3E10ADCC7D6B093E}Prefabs/Characters/Banking/Character_BankClerk_B.et"
+  "{11F617014538410D}Prefabs/Characters/Banking/Character_BankClerk_C.et"
+  "{E456260443A19245}Prefabs/Characters/Banking/Character_BankClerk_D.et"
+  "{4918E193C8129C55}Prefabs/Characters/Banking/Character_BankClerk_E.et"
+ }
+ {
+  GenericEntity {
+   ID "7A1E2C3D4B5F6071"
+   components {
+    MeshObject "{1706F5B4D3C2E1A7}" {
+     Object "{7449DAACFEBE36CC}Assets/Characters/Uniforms/Jacket_Suit_01/Jacket_Suit_01.xob"
+    }
+    Hierarchy "{5B6C7D8E9F0A1B21}" {
+    }
+   }
+  }
+  GenericEntity {
+   ID "7A1E2C3D4B5F6072"
+   components {
+    MeshObject "{2706F5B4D3C2E1A7}" {
+     Object "{FCFED36B06EE1D26}Assets/Characters/Uniforms/Pants_Suit_01/Pants_Suit_01.xob"
+    }
+    Hierarchy "{5B6C7D8E9F0A1B22}" {
+    }
+   }
+  }
+  GenericEntity {
+   ID "7A1E2C3D4B5F6073"
+   components {
+    MeshObject "{3706F5B4D3C2E1A7}" {
+     Object "{349EF65230313C3E}Assets/Characters/Footwear/CombatBoots_Soviet_01/CombatBoots_Soviet_01.xob"
+    }
+    Hierarchy "{5B6C7D8E9F0A1B23}" {
+    }
+   }
+  }
+  GenericEntity {
+   ID "7A1E2C3D4B5F6074"
+   components {
+    MeshObject "{4706F5B4D3C2E1A7}" {
+     Object "{1B62FD11B234D24D}Assets/Characters/Heads/Head_White_10/Head_White_10.xob"
+    }
+    Hierarchy "{5B6C7D8E9F0A1B24}" {
+    }
+   }
+  }
+ }
+}

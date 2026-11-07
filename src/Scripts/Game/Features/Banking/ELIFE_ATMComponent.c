@@ -239,6 +239,23 @@ class ELIFE_ATMComponent : ScriptComponent
 	protected ref ELIFE_BaseRestCallback m_FlowCallback;
 
 	//------------------------------------------------------------------------------------------------
+	//! Server-only. For other desks that book on an account (the bank clerk), so they and the ATMs never overlap.
+	static bool TryLockAccount(string accountNumber)
+	{
+		if (s_aBusyAccounts.Contains(accountNumber))
+			return false;
+
+		s_aBusyAccounts.Insert(accountNumber);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static void UnlockAccount(string accountNumber)
+	{
+		s_aBusyAccounts.RemoveItem(accountNumber);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
 	{
 		super.OnPostInit(owner);

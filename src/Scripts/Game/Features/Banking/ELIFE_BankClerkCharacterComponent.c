@@ -1,0 +1,249 @@
+//------------------------------------------------------------------------------------------------
+[EntityEditorProps(category: "ELifeRPG/Banking", description: "Carries bank clerk requests to the server and its answers back to the owning client")]
+class ELIFE_BankClerkCharacterComponentClass : ScriptComponentClass
+{
+}
+
+//------------------------------------------------------------------------------------------------
+//! The clerk is server-owned, so the customer's traffic rides on the character the client owns. No money logic here.
+class ELIFE_BankClerkCharacterComponent : ScriptComponent
+{
+	//------------------------------------------------------------------------------------------------
+	void RequestOpen(notnull IEntity clerk)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_Open, clerkId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void RequestClose(notnull IEntity clerk)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_Close, clerkId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void RequestOpenAccount(notnull IEntity clerk)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_OpenAccount, clerkId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void RequestTransferAccounts(notnull IEntity clerk)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_TransferAccounts, clerkId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void RequestTransferQuote(notnull IEntity clerk, string fromNumber, string targetNumber, int amount)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_TransferQuote, clerkId, fromNumber, targetNumber, amount);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void RequestTransferConfirm(notnull IEntity clerk, int quoteId)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_TransferConfirm, clerkId, quoteId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-side senders: on a client-owned character these route to the client, on a host's own they call directly.
+	void SendGrant(RplId clerkId, bool granted, int reason)
+	{
+		Rpc(RpcDo_Grant, clerkId, granted, reason);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendAccountOpened(RplId clerkId, bool opened, int reason, string accountNumber)
+	{
+		Rpc(RpcDo_AccountOpened, clerkId, opened, reason, accountNumber);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendClerkAccounts(RplId clerkId, int reason, string json)
+	{
+		Rpc(RpcDo_ClerkAccounts, clerkId, reason, json);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendTransferQuote(RplId clerkId, int reason, string json)
+	{
+		Rpc(RpcDo_TransferQuote, clerkId, reason, json);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendTransferResult(RplId clerkId, int reason, int amountCents, int feeCents, int balanceCents)
+	{
+		Rpc(RpcDo_TransferResult, clerkId, reason, amountCents, feeCents, balanceCents);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_Open(RplId clerkId)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "open");
+		int playerId = GetPlayerId();
+		if (clerk && playerId != 0)
+			clerk.RequestOpen(playerId, GetOwner(), this);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Not range-checked: walking away is one of the reasons to close.
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_Close(RplId clerkId)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "close");
+		if (clerk)
+			clerk.RequestClose(GetPlayerId());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The clerk checks the customer and range itself and answers with a reason.
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_OpenAccount(RplId clerkId)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "open account");
+		if (clerk)
+			clerk.RequestOpenAccount(GetPlayerId(), GetOwner(), this);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The clerk checks the customer and range itself and answers with a reason.
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_TransferAccounts(RplId clerkId)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "transfer accounts");
+		if (clerk)
+			clerk.RequestTransferAccounts(GetPlayerId(), GetOwner(), this);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_TransferQuote(RplId clerkId, string fromNumber, string targetNumber, int amount)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "transfer quote");
+		if (clerk)
+			clerk.RequestTransferQuote(GetPlayerId(), GetOwner(), this, fromNumber, targetNumber, amount);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_TransferConfirm(RplId clerkId, int quoteId)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "transfer confirm");
+		if (clerk)
+			clerk.RequestTransferConfirm(GetPlayerId(), GetOwner(), this, quoteId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_ClerkAccounts(RplId clerkId, int reason, string json)
+	{
+		ELIFE_BankClerkDialogBase.OnClerkAccounts(reason, json);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_TransferQuote(RplId clerkId, int reason, string json)
+	{
+		ELIFE_BankClerkDialogBase.OnTransferQuote(reason, json);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_TransferResult(RplId clerkId, int reason, int amountCents, int feeCents, int balanceCents)
+	{
+		ELIFE_BankClerkDialogBase.OnTransferResult(reason, amountCents, feeCents, balanceCents);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_AccountOpened(RplId clerkId, bool opened, int reason, string accountNumber)
+	{
+		ELIFE_BankClerkDialogBase.OnAccountOpened(opened, reason, accountNumber);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_Grant(RplId clerkId, bool granted, int reason)
+	{
+		IEntity clerkEntity = FindEntity(clerkId);
+		if (!clerkEntity)
+			return;
+
+		ELIFE_BankClerkComponent clerk = ELIFE_BankClerkComponent.Cast(clerkEntity.FindComponent(ELIFE_BankClerkComponent));
+		if (!clerk)
+			return;
+
+		if (granted)
+		{
+			if (!ELIFE_BankClerkDialogBase.Open(ELIFE_EClerkDialog.SERVICES, clerk, this))
+				RequestClose(clerkEntity);
+
+			return;
+		}
+
+		string message = "#ELIFE-Clerk_Unavailable";
+		if (reason == ELIFE_EClerkReason.BUSY)
+			message = "#ELIFE-Clerk_Busy";
+		else if (reason == ELIFE_EClerkReason.OUT_OF_RANGE)
+			message = "#ELIFE-Clerk_OutOfRange";
+
+		SCR_HintManagerComponent.ShowCustomHint(message, "#ELIFE-Clerk_Title");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected RplId GetClerkId(notnull IEntity clerk)
+	{
+		RplComponent rpl = RplComponent.Cast(clerk.FindComponent(RplComponent));
+		if (!rpl)
+			return RplId.Invalid();
+
+		return rpl.Id();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Derived from the character on the server, so a client can't speak for anyone else.
+	protected int GetPlayerId()
+	{
+		PlayerManager playerManager = GetGame().GetPlayerManager();
+		if (!playerManager)
+			return 0;
+
+		return playerManager.GetPlayerIdFromControlledEntity(GetOwner());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected IEntity FindEntity(RplId clerkId)
+	{
+		RplComponent rpl = RplComponent.Cast(Replication.FindItem(clerkId));
+		if (!rpl)
+			return null;
+
+		return rpl.GetEntity();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected ELIFE_BankClerkComponent FindClerk(RplId clerkId, string request)
+	{
+		IEntity entity = FindEntity(clerkId);
+		ELIFE_BankClerkComponent clerk;
+		if (entity)
+			clerk = ELIFE_BankClerkComponent.Cast(entity.FindComponent(ELIFE_BankClerkComponent));
+
+		if (!clerk)
+			Print(string.Format("ELIFE_BankClerkCharacterComponent | %1 rejected, not a clerk", request), LogLevel.WARNING);
+
+		return clerk;
+	}
+}
