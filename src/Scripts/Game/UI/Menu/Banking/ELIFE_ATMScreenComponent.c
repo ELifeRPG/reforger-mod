@@ -190,6 +190,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected bool m_bCountRefused;
 	protected int m_iTransactionPage;
 	protected string m_sTyped;
+	//! The gamepad's digit wheel: which place it turns, 0 being the leftmost.
+	protected int m_iWheelPos;
 
 	//! A refusal shown on the page that asked, in place of the result screen.
 	protected ELIFE_EATMReason m_eNotice;
@@ -241,6 +243,14 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_Interact.GetOnButtonPressed().Insert(OnPropButtonPressed);
 		m_Interact.GetOnButtonHover().Insert(OnPropButtonHover);
 		m_Interact.GetOnActiveChanged().Insert(OnInteractActiveChanged);
+		m_Interact.GetOnPadModeChanged().Insert(OnPadModeChanged);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OnPadModeChanged(bool padMode)
+	{
+		if (m_bSessionOpen)
+			Render();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1057,6 +1067,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (id == BUTTON_R3)
 		{
 			m_sTyped = "";
+			m_iWheelPos = GetWheelDigits() - 1;
 			SetView(ELIFE_EATMScreen.OTHER_AMOUNT);
 			return;
 		}
@@ -1665,6 +1676,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 		m_eEnteredScreen = screen;
 		m_iEnterStartTick = System.GetTickCount();
+		if (m_Interact)
+			m_Interact.ResetFocus();
+
 		StepMotion();
 
 		if (!m_bMotionRunning)
@@ -1891,7 +1905,11 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (!m_bSessionOpen || !m_Interact || !m_Interact.CanInspect() || ELIFE_WorldScreenInteractComponent.HasInspected())
 			return;
 
-		ShowText(m_wBody, "#ELIFE-ATM_Inspect_Hint");
+		if (IsPadMode())
+			ShowText(m_wBody, "#ELIFE-ATM_Inspect_Hint_Pad");
+		else
+			ShowText(m_wBody, "#ELIFE-ATM_Inspect_Hint");
+
 		m_wBody.SetColor(ELIFE_PhoneStyle.TextSecondary());
 	}
 
@@ -1914,12 +1932,22 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		PlaceStack(CONTENT_LEFT, CONTENT_TOP, CONFIRM_WIDTH, ABOVE_R4_BOTTOM);
 		ShowText(m_wHeading, "#ELIFE-ATM_Other_Title");
 
-		if (m_sTyped == "")
+		string hint = "#ELIFE-ATM_Other_Hint";
+		if (IsPadMode())
+		{
+			ShowFigure(GetWheelMarkup(), new Color(1, 1, 1, 1));
+			hint = "#ELIFE-ATM_Other_Hint_Pad";
+		}
+		else if (m_sTyped == "")
+		{
 			ShowFigure(Whole(0), ELIFE_PhoneStyle.TextTertiary());
+		}
 		else
+		{
 			ShowFigure(Whole(m_sTyped.ToInt()), ELIFE_PhoneStyle.TextPrimary());
+		}
 
-		m_wBody.SetTextFormat("#ELIFE-ATM_Other_Hint", Whole(ELIFE_ATMComponent.MAX_BOOKING_AMOUNT));
+		m_wBody.SetTextFormat(hint, Whole(ELIFE_ATMComponent.MAX_BOOKING_AMOUNT));
 		m_wBody.SetColor(ELIFE_PhoneStyle.TextSecondary());
 		m_wBody.SetVisible(true);
 		ShowRefusal(m_eNotice);
@@ -2175,6 +2203,166 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				label.m_wText.SetColor(ELIFE_PhoneStyle.TextPrimary());
 			}
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Side buttons with an enabled label. While typing an amount the D-pad turns the wheel instead.
+	override bool IsButtonNavigable(string id)
+	{
+		if (!m_bSessionOpen || ResolveScreen() == ELIFE_EATMScreen.OTHER_AMOUNT)
+			return false;
+
+		foreach (ELIFE_ATMSideLabel label : m_aLabels)
+		{
+			if (label.m_sId == id)
+				return label.m_bEnabled;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The right column holds each page's main actions, top first.
+	override string GetDefaultFocusButton()
+	{
+		array<string> order = {BUTTON_R1, BUTTON_R2, BUTTON_R3, BUTTON_R4, BUTTON_L1, BUTTON_L2, BUTTON_L3, BUTTON_L4};
+		foreach (string id : order)
+		{
+			if (IsButtonNavigable(id))
+				return id;
+		}
+
+		return "";
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Left and right pick the place, up and down roll its digit 0-9 without carrying, like a combination lock.
+	override bool HandleNavigate(int dx, int dy)
+	{
+		if (!m_bSessionOpen || ResolveScreen() != ELIFE_EATMScreen.OTHER_AMOUNT)
+			return false;
+
+		int digits = GetWheelDigits();
+		if (dx != 0)
+		{
+			m_iWheelPos = Math.Max(0, Math.Min(m_iWheelPos + dx, digits - 1));
+		}
+		else
+		{
+			int value = m_sTyped.ToInt();
+			int place = 1;
+			for (int i = m_iWheelPos + 1; i < digits; i++)
+			{
+				place *= 10;
+			}
+
+			int digit = (value / place) % 10;
+			int rolled = (digit - dy + 10) % 10;
+			value += (rolled - digit) * place;
+
+			m_sTyped = "";
+			if (value > 0)
+				m_sTyped = value.ToString();
+
+			m_eNotice = ELIFE_EATMReason.NONE;
+			m_iQuoteAsked = 0;
+		}
+
+		ELIFE_ATMCharacterComponent link = GetLink();
+		if (link)
+			SendKeepAlive(link);
+
+		SCR_UISoundEntity.SoundEvent(SCR_SoundEvent.FOCUS);
+		Render();
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Only the amount entry has nothing to focus and still something to do: A confirms the wheel's amount.
+	override bool HandleSelect()
+	{
+		if (!m_bSessionOpen || !m_Interact || ResolveScreen() != ELIFE_EATMScreen.OTHER_AMOUNT)
+			return false;
+
+		m_Interact.PressButton(KEY_CONFIRM);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The page's own back or cancel. Mid-booking there is none, so the menu closes and the booking finishes on its own.
+	override bool HandleBack()
+	{
+		if (!m_bSessionOpen || !m_Interact)
+			return false;
+
+		ELIFE_EATMScreen screen = ResolveScreen();
+		if (screen == ELIFE_EATMScreen.PROCESSING || screen == ELIFE_EATMScreen.CHECKING)
+			return false;
+
+		if (screen == ELIFE_EATMScreen.RESULT && m_eResult == ELIFE_EATMReason.PAID)
+			return false;
+
+		m_Interact.PressButton(KEY_CANCEL);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsPadMode()
+	{
+		return m_bSessionOpen && m_Interact && m_Interact.IsPadMode();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int GetWheelDigits()
+	{
+		int maxAmount = ELIFE_ATMComponent.MAX_BOOKING_AMOUNT;
+		return maxAmount.ToString().Length();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every place shown, leading zeros dimmed and the turning one in the accent. Grouped in threes like Whole().
+	protected string GetWheelMarkup()
+	{
+		int digits = GetWheelDigits();
+		string padded = m_sTyped;
+		while (padded.Length() < digits)
+		{
+			padded = "0" + padded;
+		}
+
+		string lead = ToMarkupColour(ELIFE_PhoneStyle.TextTertiary());
+		string value = ToMarkupColour(ELIFE_PhoneStyle.TextPrimary());
+		string active = ToMarkupColour(Accent());
+		int firstValue = digits - m_sTyped.Length();
+
+		string markup;
+		for (int i = 0; i < digits; i++)
+		{
+			if (i > 0 && (digits - i) % 3 == 0)
+				markup += " ";
+
+			string colour = value;
+			if (i == m_iWheelPos)
+				colour = active;
+			else if (i < firstValue)
+				colour = lead;
+
+			markup += string.Format("<color rgba=\"%1\">%2</color>", colour, padded.Get(i));
+		}
+
+		return markup + " " + ELIFE_PhoneStyle.CURRENCY_SYMBOL;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Widget colours are linear; markup takes 0-255 sRGB.
+	protected string ToMarkupColour(notnull Color color)
+	{
+		Color srgb = color.Copy();
+		srgb.LinearToSRGB();
+		int r = Math.Round(srgb.R() * 255);
+		int g = Math.Round(srgb.G() * 255);
+		int b = Math.Round(srgb.B() * 255);
+		return string.Format("%1,%2,%3,255", r, g, b);
 	}
 
 	//------------------------------------------------------------------------------------------------

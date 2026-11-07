@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------
-[EntityEditorProps(category: "ELifeRPG/WorldScreen", description: "Client-local. Lets the local player click a world screen's 3D canvas with the mouse.")]
+[EntityEditorProps(category: "ELifeRPG/WorldScreen", description: "Client-local. Lets the local player use a world screen with the mouse, keyboard or gamepad.")]
 class ELIFE_WorldScreenInteractComponentClass : ScriptComponentClass
 {
 }
@@ -186,6 +186,8 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 	protected float m_fDragTravel;
 
 	protected const float HOLD_SECONDS = 0.4;
+	//! Metres a button must lie ahead of the focused one to count as being in that direction.
+	protected const float NAV_MIN_AHEAD = 0.002;
 	//! Canvas px a press may wander, hand sway included, before it is neither a tap nor a hold.
 	protected const float PRESS_SLOP_PX = 12;
 
@@ -200,6 +202,9 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 	protected bool m_bHolding;
 
 	protected string m_sHoveredButton;
+	//! Gamepad focus stands in for the cursor while the gamepad is the last used device.
+	protected string m_sFocusedButton;
+	protected bool m_bPadMode;
 
 	protected const float INSPECT_BLEND_SECONDS = 0.25;
 	//! How long the inspect key is held to switch between the views.
@@ -226,6 +231,8 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 	protected ref ScriptInvoker m_OnButtonHover = new ScriptInvoker();
 	//! (bool active)
 	protected ref ScriptInvoker m_OnActiveChanged = new ScriptInvoker();
+	//! (bool padMode)
+	protected ref ScriptInvoker m_OnPadModeChanged = new ScriptInvoker();
 
 	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
@@ -274,6 +281,25 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 	ScriptInvoker GetOnActiveChanged()
 	{
 		return m_OnActiveChanged;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	ScriptInvoker GetOnPadModeChanged()
+	{
+		return m_OnPadModeChanged;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsPadMode()
+	{
+		return m_bPadMode;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A new page starts from its default focus.
+	void ResetFocus()
+	{
+		m_sFocusedButton = "";
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -383,6 +409,7 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 		DetachClickHandler();
 		UpdateHover(null, 0, 0);
 		SetHoveredButton("");
+		m_sFocusedButton = "";
 		OnInteractionReset();
 	}
 
@@ -412,7 +439,11 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 
 		AttachClickHandlerIfNeeded(inputRoot);
 
-		SetHoveredButton(FindButtonAtCursor());
+		UpdatePadMode();
+		if (m_bPadMode)
+			SetHoveredButton(EnsureFocus());
+		else
+			SetHoveredButton(FindButtonAtCursor());
 
 		UpdateScrollbarDrag();
 		UpdatePress(timeSlice);
@@ -1054,6 +1085,164 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 
 		OnButtonPressed(id);
 		SCR_UISoundEntity.SoundEvent(SCR_SoundEvent.CLICK);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Moves gamepad focus to the nearest navigable button in that direction, unless the page uses the direction itself.
+	void Navigate(int dx, int dy)
+	{
+		if (!m_ScreenRender || !IsInteractionAllowed())
+			return;
+
+		SetPadMode(true);
+		if (m_ScreenRender.HandleNavigate(dx, dy))
+			return;
+
+		string next = FindNeighbour(EnsureFocus(), dx, dy);
+		if (next.IsEmpty())
+			return;
+
+		m_sFocusedButton = next;
+		SetHoveredButton(next);
+		SCR_UISoundEntity.SoundEvent(SCR_SoundEvent.FOCUS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Presses the focused button, or lets the page handle a select with nothing focused.
+	void PressSelect()
+	{
+		if (!m_ScreenRender || !IsInteractionAllowed())
+			return;
+
+		SetPadMode(true);
+		string id = EnsureFocus();
+		if (id.IsEmpty())
+			m_ScreenRender.HandleSelect();
+		else
+			PressButton(id);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! False if the page has nothing to go back to, so the caller closes.
+	bool PressBack()
+	{
+		return m_ScreenRender && IsInteractionAllowed() && m_ScreenRender.HandleBack();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void UpdatePadMode()
+	{
+		InputManager inputManager = GetGame().GetInputManager();
+		if (inputManager)
+			SetPadMode(inputManager.GetLastUsedInputDevice() == EInputDeviceType.GAMEPAD);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SetPadMode(bool padMode)
+	{
+		if (padMode == m_bPadMode)
+			return;
+
+		m_bPadMode = padMode;
+		m_sFocusedButton = "";
+		m_OnPadModeChanged.Invoke(padMode);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Keeps focus on a navigable button, falling back to the page's default, then the first navigable one.
+	protected string EnsureFocus()
+	{
+		if (!m_sFocusedButton.IsEmpty() && HasButton(m_sFocusedButton) && m_ScreenRender.IsButtonNavigable(m_sFocusedButton))
+			return m_sFocusedButton;
+
+		m_sFocusedButton = "";
+		if (!m_aButtons)
+			return "";
+
+		string preferred = m_ScreenRender.GetDefaultFocusButton();
+		if (!preferred.IsEmpty() && HasButton(preferred) && m_ScreenRender.IsButtonNavigable(preferred))
+		{
+			m_sFocusedButton = preferred;
+			return preferred;
+		}
+
+		foreach (ELIFE_WorldScreenButton button : m_aButtons)
+		{
+			if (m_ScreenRender.IsButtonNavigable(button.m_sId))
+			{
+				m_sFocusedButton = button.m_sId;
+				break;
+			}
+		}
+
+		return m_sFocusedButton;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool HasButton(string id)
+	{
+		return FindButton(id) != null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected ELIFE_WorldScreenButton FindButton(string id)
+	{
+		if (!m_aButtons)
+			return null;
+
+		foreach (ELIFE_WorldScreenButton button : m_aButtons)
+		{
+			if (button.m_sId == id)
+				return button;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Nearest navigable button ahead in the direction, in the screen's own right/down axes. Sideways offset counts double.
+	protected string FindNeighbour(string fromId, int dx, int dy)
+	{
+		ELIFE_WorldScreenButton from = FindButton(fromId);
+		if (!from)
+			return "";
+
+		float fromX, fromY;
+		GetButtonPoint(from, fromX, fromY);
+
+		string best;
+		float bestScore = float.MAX;
+		foreach (ELIFE_WorldScreenButton button : m_aButtons)
+		{
+			if (button == from || !m_ScreenRender.IsButtonNavigable(button.m_sId))
+				continue;
+
+			float x, y;
+			GetButtonPoint(button, x, y);
+			float offsetX = x - fromX;
+			float offsetY = y - fromY;
+			float ahead = offsetX * dx + offsetY * dy;
+			if (ahead <= NAV_MIN_AHEAD)
+				continue;
+
+			float sideways = Math.AbsFloat(offsetX * dy) + Math.AbsFloat(offsetY * dx);
+			float score = ahead + sideways * 2;
+			if (score < bestScore)
+			{
+				bestScore = score;
+				best = button.m_sId;
+			}
+		}
+
+		return best;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void GetButtonPoint(notnull ELIFE_WorldScreenButton button, out float x, out float y)
+	{
+		vector centre = button.m_vOrigin + button.m_vRight * 0.5 + button.m_vDown * 0.5;
+		x = vector.Dot(centre, m_vScreenRight.Normalized());
+		y = vector.Dot(centre, m_vScreenUp.Normalized());
 	}
 
 	//------------------------------------------------------------------------------------------------

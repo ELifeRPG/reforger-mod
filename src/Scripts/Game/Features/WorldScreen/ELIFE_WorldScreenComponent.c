@@ -102,6 +102,41 @@ class ELIFE_WorldScreenComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Whether gamepad focus may land on this physical button right now.
+	bool IsButtonNavigable(string id)
+	{
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Where gamepad focus starts on a new page. Empty or not navigable falls back to the first navigable button.
+	string GetDefaultFocusButton()
+	{
+		return "";
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A gamepad direction (dy > 0 is down). True if the page used it itself, so focus doesn't move.
+	bool HandleNavigate(int dx, int dy)
+	{
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The gamepad's select with no button focused. True if the page used it.
+	bool HandleSelect()
+	{
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Back or cancel. False lets the menu close.
+	bool HandleBack()
+	{
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Holds the RTTextureWidget and the host its content is created in.
 	protected ResourceName GetCanvasLayout()
 	{

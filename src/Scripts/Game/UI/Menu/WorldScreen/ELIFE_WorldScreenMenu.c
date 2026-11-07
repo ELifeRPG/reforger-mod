@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------------------------
-//! Draws nothing: holds MenuContext (cursor, no gameplay input) while a world screen is in use, closes on
-//! back, and gives the bound ELIFE_WorldScreenInteractComponent a root widget for its click handler.
+//! Draws nothing: holds MenuContext (cursor, no gameplay input) while a world screen is in use, forwards keyboard
+//! and gamepad input, and gives the bound ELIFE_WorldScreenInteractComponent a root widget for its click handler.
 class ELIFE_WorldScreenMenu : ChimeraMenuBase
 {
 	protected ELIFE_WorldScreenInteractComponent m_BoundScreen;
@@ -15,6 +15,12 @@ class ELIFE_WorldScreenMenu : ChimeraMenuBase
 	protected ref array<bool> m_aDigitHeld = {false, false, false, false, false, false, false, false, false, false};
 	protected bool m_bClearHeld;
 	protected bool m_bConfirmHeld;
+	protected bool m_bSelectHeld;
+	//! Up, down, left, right. The actions repeat while held, so every rising edge is a step.
+	protected ref array<bool> m_aPadHeld = {false, false, false, false};
+	protected ref array<string> m_aPadActions = {"ELIFE_PadUp", "ELIFE_PadDown", "ELIFE_PadLeft", "ELIFE_PadRight"};
+	protected ref array<int> m_aPadDx = {0, 0, -1, 1};
+	protected ref array<int> m_aPadDy = {-1, 1, 0, 0};
 	protected bool m_bKeysActive;
 
 	//------------------------------------------------------------------------------------------------
@@ -69,8 +75,8 @@ class ELIFE_WorldScreenMenu : ChimeraMenuBase
 		if (!inputManager)
 			return;
 
-		inputManager.AddActionListener("MenuBack", EActionTrigger.DOWN, OnCloseAction);
-		inputManager.AddActionListener("MenuOpen", EActionTrigger.DOWN, OnCloseAction);
+		inputManager.AddActionListener("MenuBack", EActionTrigger.DOWN, OnBackAction);
+		inputManager.AddActionListener("MenuOpen", EActionTrigger.DOWN, OnOpenAction);
 #ifdef WORKBENCH
 		//! Not MenuBackWB: that is Backspace, which is the clear key here.
 		inputManager.AddActionListener("MenuOpenWB", EActionTrigger.DOWN, OnCloseAction);
@@ -130,6 +136,21 @@ class ELIFE_WorldScreenMenu : ChimeraMenuBase
 			m_BoundScreen.PressButton(KEY_CONFIRM);
 
 		m_bConfirmHeld = confirmDown;
+
+		foreach (int i, string action : m_aPadActions)
+		{
+			bool padDown = IsActionDown(action);
+			if (typing && padDown && !m_aPadHeld[i])
+				m_BoundScreen.Navigate(m_aPadDx[i], m_aPadDy[i]);
+
+			m_aPadHeld[i] = padDown;
+		}
+
+		bool selectDown = IsActionDown("ELIFE_PadSelect");
+		if (typing && selectDown && !m_bSelectHeld)
+			m_BoundScreen.PressSelect();
+
+		m_bSelectHeld = selectDown;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -154,8 +175,8 @@ class ELIFE_WorldScreenMenu : ChimeraMenuBase
 		InputManager inputManager = GetGame().GetInputManager();
 		if (inputManager)
 		{
-			inputManager.RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnCloseAction);
-			inputManager.RemoveActionListener("MenuOpen", EActionTrigger.DOWN, OnCloseAction);
+			inputManager.RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnBackAction);
+			inputManager.RemoveActionListener("MenuOpen", EActionTrigger.DOWN, OnOpenAction);
 #ifdef WORKBENCH
 			inputManager.RemoveActionListener("MenuOpenWB", EActionTrigger.DOWN, OnCloseAction);
 #endif
@@ -171,6 +192,31 @@ class ELIFE_WorldScreenMenu : ChimeraMenuBase
 	protected void OnCloseAction()
 	{
 		CloseMenu();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Esc or B: the page's back or cancel, and closing only where there is nothing to go back to.
+	protected void OnBackAction()
+	{
+		if (m_bIsClosing || !IsFocused())
+			return;
+
+		if (m_BoundScreen && m_BoundScreen.PressBack())
+			return;
+
+		CloseMenu();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Esc fires this too, so only the gamepad's menu button closes from here.
+	protected void OnOpenAction()
+	{
+		if (!IsFocused())
+			return;
+
+		InputManager inputManager = GetGame().GetInputManager();
+		if (inputManager && inputManager.GetLastUsedInputDevice() == EInputDeviceType.GAMEPAD)
+			CloseMenu();
 	}
 
 	//------------------------------------------------------------------------------------------------

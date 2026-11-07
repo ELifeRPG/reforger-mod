@@ -207,11 +207,12 @@ OverlayWidgetClass {
          "Min Font Size" 40
          "Horizontal Alignment" Left
         }
-        TextWidgetClass "{2D913B4772497FEF}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
+        RichTextWidgetClass "{2D913B4772497FEF}" {
          Name "Figure"
          Slot LayoutSlot "{2A286B290ECB4250}" {
           HorizontalAlign 3
          }
+         Clipping Ancestor
          "Is Visible" 0
          Color 0.8378 0.8626 0.9222 1
          Text ""

@@ -2378,5 +2378,21 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{3326FBBA4C2A0187}" {
+   Id "ELIFE-ATM_Inspect_Hint_Pad"
+   Target_en_us "Hold Y to zoom in or out"
+   Target_de_de "Halte Y zum Heran- oder Herauszoomen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6E7FC0955D6AF31D}" {
+   Id "ELIFE-ATM_Other_Hint_Pad"
+   Target_en_us "D-pad: pick a digit and change it, up to %1"
+   Target_de_de "Steuerkreuz: Ziffer wählen und ändern, bis zu %1"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }
