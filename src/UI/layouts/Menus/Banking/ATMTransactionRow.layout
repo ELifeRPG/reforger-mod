@@ -32,8 +32,8 @@ SizeLayoutWidgetClass {
          }
          Color 0.8378 0.8626 0.9222 1
          Text ""
-         "Font Size" 34
-         "Min Font Size" 34
+         "Font Size" 32
+         "Min Font Size" 32
          "Horizontal Alignment" Left
         }
         TextWidgetClass "{C730116859C6FC85}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
@@ -44,8 +44,8 @@ SizeLayoutWidgetClass {
          }
          Color 0.8378 0.8626 0.9222 1
          Text ""
-         "Font Size" 34
-         "Min Font Size" 34
+         "Font Size" 32
+         "Min Font Size" 32
          "Horizontal Alignment" 2
          FontProperties FontProperties "{AAE23B40DBD9562B}" {
           Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
@@ -60,8 +60,8 @@ SizeLayoutWidgetClass {
        }
        Color 0.366 0.4024 0.5025 1
        Text ""
-       "Font Size" 28
-       "Min Font Size" 28
+       "Font Size" 32
+       "Min Font Size" 32
        "Horizontal Alignment" Left
       }
      }

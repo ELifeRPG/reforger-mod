@@ -69,19 +69,19 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void RequestMirror(notnull IEntity atm, int screen, int page, bool typed, int reason)
+	void RequestMirror(notnull IEntity atm, int screen, int page, bool typed, int reason, int kind)
 	{
 		RplId atmId = GetAtmId(atm);
 		if (atmId.IsValid())
-			Rpc(RpcAsk_Mirror, atmId, screen, page, typed, reason);
+			Rpc(RpcAsk_Mirror, atmId, screen, page, typed, reason, kind);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void RequestQuote(notnull IEntity atm, int amount)
+	void RequestQuote(notnull IEntity atm, ELIFE_EATMBookingKind kind, int amount)
 	{
 		RplId atmId = GetAtmId(atm);
 		if (atmId.IsValid())
-			Rpc(RpcAsk_Quote, atmId, amount);
+			Rpc(RpcAsk_Quote, atmId, kind, amount);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -209,21 +209,21 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	//! No reach check: the screen keeps being mirrored after a paid withdrawal, when the player may have walked off.
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void RpcAsk_Mirror(RplId atmId, int screen, int page, bool typed, int reason)
+	protected void RpcAsk_Mirror(RplId atmId, int screen, int page, bool typed, int reason, int kind)
 	{
 		ELIFE_ATMComponent atm = FindATM(atmId, "mirror");
 		if (atm)
-			atm.SetMirror(GetPlayerId(), GetOwner(), screen, page, typed, reason);
+			atm.SetMirror(GetPlayerId(), GetOwner(), screen, page, typed, reason, kind);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! The ATM checks the range itself and answers with a reason.
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void RpcAsk_Quote(RplId atmId, int amount)
+	protected void RpcAsk_Quote(RplId atmId, int kind, int amount)
 	{
 		ELIFE_ATMComponent atm = FindATM(atmId, "quote");
 		if (atm)
-			atm.RequestQuote(GetPlayerId(), GetOwner(), this, amount);
+			atm.RequestQuote(GetPlayerId(), GetOwner(), this, kind, amount);
 	}
 
 	//------------------------------------------------------------------------------------------------

@@ -150,6 +150,10 @@ class ELIFE_PhoneStyle
 	static Color AccentDeepSettings() { return Srgb(0.369, 0.412, 0.502); }  //!< #5E6980
 	static Color AccentDeepStore() { return Srgb(0.557, 0.404, 0.827); }     //!< #8E67D3
 
+	//! ATMs outside a branch, from the eLife logo blue; branch ATMs use the Bank pair.
+	static Color AccentAtm() { return Srgb(0.537, 0.710, 0.992); }           //!< #89B5FD
+	static Color AccentDeepAtm() { return Srgb(0.161, 0.420, 0.847); }       //!< #296BD8
+
 	//! Money in and out.
 	static Color Positive() { return AccentMessages(); }
 	static Color Negative() { return Srgb(0.894, 0.576, 0.549); }            //!< #E4938C

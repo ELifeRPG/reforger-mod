@@ -50,6 +50,9 @@ class ELIFE_WorldScreenComponent : ScriptComponent
 
 	protected Widget m_wContentRoot;
 	protected ResourceName m_sAppliedScreenMaterial;
+	//! The prefab's own material overrides, which SetObject would otherwise drop.
+	protected string m_sPrefabRemaps;
+	protected bool m_bPrefabRemapsRead;
 
 	//------------------------------------------------------------------------------------------------
 	override void OnPostInit(IEntity owner)
@@ -194,8 +197,56 @@ class ELIFE_WorldScreenComponent : ScriptComponent
 			return;
 		}
 
-		owner.SetObject(obj, string.Format("$remap '%1' '%2';", m_sScreenSourceMaterial, material));
+		owner.SetObject(obj, GetPrefabRemaps() + string.Format("$remap '%1' '%2';", m_sScreenSourceMaterial, material));
 		m_sAppliedScreenMaterial = material;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A remap replaces every material assignment, so the prefab's others (such as a variant's badge colour) are repeated.
+	protected string GetPrefabRemaps()
+	{
+		if (m_bPrefabRemapsRead)
+			return m_sPrefabRemaps;
+
+		m_bPrefabRemapsRead = true;
+		EntityPrefabData prefabData = GetOwner().GetPrefabData();
+		BaseContainer prefab;
+		if (prefabData)
+			prefab = prefabData.GetPrefab();
+
+		BaseContainerList components;
+		if (prefab)
+			components = prefab.GetObjectArray("components");
+
+		if (!components)
+			return m_sPrefabRemaps;
+
+		for (int i = 0, count = components.Count(); i < count; i++)
+		{
+			BaseContainer component = components.Get(i);
+			if (!component || component.GetClassName() != "MeshObject")
+				continue;
+
+			BaseContainerList materials = component.GetObjectArray("Materials");
+			if (!materials)
+				break;
+
+			for (int j = 0, materialCount = materials.Count(); j < materialCount; j++)
+			{
+				BaseContainer assignment = materials.Get(j);
+				string source;
+				ResourceName assigned;
+				if (!assignment || !assignment.Get("SourceMaterial", source) || !assignment.Get("AssignedMaterial", assigned))
+					continue;
+
+				if (source != m_sScreenSourceMaterial && !source.IsEmpty() && !assigned.IsEmpty())
+					m_sPrefabRemaps += string.Format("$remap '%1' '%2';", source, assigned);
+			}
+
+			break;
+		}
+
+		return m_sPrefabRemaps;
 	}
 
 	//------------------------------------------------------------------------------------------------

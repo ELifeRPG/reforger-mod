@@ -1714,6 +1714,86 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{CDF890A474712B8C}" {
+   Id "ELIFE-ATM_Idle_Withdraw"
+   Target_en_us "Cash withdrawals"
+   Target_de_de "Bargeld abheben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9C3763DA798633FA}" {
+   Id "ELIFE-ATM_Idle_Branch"
+   Target_en_us "Withdrawals and deposits"
+   Target_de_de "Ein- und Auszahlungen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6B0E7D4595D8BE53}" {
+   Id "ELIFE-ATM_Counting"
+   Target_en_us "Counting your cash"
+   Target_de_de "Dein Bargeld wird gezählt"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{83197C95FB562CAE}" {
+   Id "ELIFE-ATM_Counted"
+   Target_en_us "Cash counted"
+   Target_de_de "Gezähltes Bargeld"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{692EBC468ED3764E}" {
+   Id "ELIFE-ATM_Confirm_Fee"
+   Target_en_us "Fee: %1"
+   Target_de_de "Gebühr: %1"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3A77CA21F16B3B18}" {
+   Id "ELIFE-ATM_Confirm_Credit"
+   Target_en_us "%1 goes to your balance."
+   Target_de_de "%1 gehen auf dein Konto."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BE56FF18B0E56755}" {
+   Id "ELIFE-ATM_Confirm_Receive"
+   Target_en_us "You receive"
+   Target_de_de "Du erhältst"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8EF3116C30D65D3D}" {
+   Id "ELIFE-ATM_Confirm_Debit"
+   Target_en_us "%1 comes off your balance."
+   Target_de_de "%1 gehen von deinem Konto ab."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6E41AD06DDD109CC}" {
+   Id "ELIFE-ATM_Limit"
+   Target_en_us "Limit"
+   Target_de_de "Limit"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E9A336E219C6DA76}" {
+   Id "ELIFE-ATM_Action_Cancel"
+   Target_en_us "Cancel"
+   Target_de_de "Abbrechen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
   CustomStringTableItem "{5F6ADDBF4099150E}" {
    Id "ELIFE-ATM_Loading"
    Target_en_us "Loading your account."
@@ -1914,26 +1994,10 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{00130426FD6AC140}" {
-   Id "ELIFE-ATM_Amount"
-   Target_en_us "Amount"
-   Target_de_de "Betrag"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{A51CB8EC8A98055E}" {
    Id "ELIFE-ATM_Fee"
    Target_en_us "Fee"
    Target_de_de "Gebühr"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{23F2A9AD870E7E77}" {
-   Id "ELIFE-ATM_Total"
-   Target_en_us "Total from balance"
-   Target_de_de "Gesamt vom Kontostand"
    Modified 1793293896
    Author "Robin"
    LastChanged "Robin"
@@ -2036,8 +2100,8 @@ StringTable {
   }
   CustomStringTableItem "{8665FF421501D9A3}" {
    Id "ELIFE-ATM_Reason_Busy"
-   Target_en_us "Another withdrawal is running on this account. Wait for it to finish, then try again."
-   Target_de_de "Für dieses Konto läuft bereits eine Abhebung. Warte, bis sie abgeschlossen ist, und versuche es dann erneut."
+   Target_en_us "Another booking is running on this account. Wait for it to finish, then try again."
+   Target_de_de "Für dieses Konto läuft bereits eine Buchung. Warte, bis sie abgeschlossen ist, und versuche es dann erneut."
    Modified 1793293896
    Author "Robin"
    LastChanged "Robin"
@@ -2146,11 +2210,155 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{F32A40A2D9D97D22}" {
+   Id "ELIFE-ATM_Hint_Deposit_Title"
+   Target_en_us "Cash deposited"
+   Target_de_de "Bargeld eingezahlt"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9F17520884A7BF70}" {
+   Id "ELIFE-ATM_Hint_Deposit"
+   Target_en_us "%1 was taken from your inventory."
+   Target_de_de "%1 wurde aus deinem Inventar genommen."
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
   CustomStringTableItem "{E58B26D70F1C9A34}" {
    Id "ELIFE-ATM_Inspect_Hint"
    Target_en_us "Hold R to zoom in or out"
    Target_de_de "Halte R zum Heran- oder Herauszoomen"
    Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2B1311F2F235A1A3}" {
+   Id "ELIFE-ATM_Action_Deposit"
+   Target_en_us "Deposit"
+   Target_de_de "Einzahlen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3D03C718872572FC}" {
+   Id "ELIFE-ATM_Deposit_Title"
+   Target_en_us "Choose an amount to deposit"
+   Target_de_de "Einzahlungsbetrag wählen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{20E89F3EF30E35D5}" {
+   Id "ELIFE-ATM_CashCarried"
+   Target_en_us "Cash carried"
+   Target_de_de "Bargeld dabei"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{74A539D25F131DE3}" {
+   Id "ELIFE-ATM_Checking_Deposit"
+   Target_en_us "We're checking your deposit. This can take up to a minute. Please wait."
+   Target_de_de "Wir prüfen deine Einzahlung. Das kann bis zu einer Minute dauern. Bitte warte."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C6DA7C5397E5ECAF}" {
+   Id "ELIFE-ATM_Processing_Deposit"
+   Target_en_us "Depositing %1"
+   Target_de_de "%1 werden eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{82913D04373AA38B}" {
+   Id "ELIFE-ATM_Processing_Deposit_Generic"
+   Target_en_us "Depositing your cash"
+   Target_de_de "Dein Bargeld wird eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A6ADA35F6955840D}" {
+   Id "ELIFE-ATM_Deposited"
+   Target_en_us "Deposited"
+   Target_de_de "Eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3E6221AC186520A8}" {
+   Id "ELIFE-ATM_NewBalance"
+   Target_en_us "New balance"
+   Target_de_de "Neuer Kontostand"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4E209EA3B1D2E242}" {
+   Id "ELIFE-ATM_Deposit_Complete"
+   Target_en_us "Deposit complete"
+   Target_de_de "Einzahlung abgeschlossen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6EDDA9924E958C40}" {
+   Id "ELIFE-ATM_Reason_InvalidAmount_Deposit"
+   Target_en_us "Enter an amount above the fee."
+   Target_de_de "Gib einen Betrag über der Gebühr ein."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D4F33F43ED14BB6C}" {
+   Id "ELIFE-ATM_Reason_AmountTooHigh_Deposit"
+   Target_en_us "Too high. The most you can deposit at once is %1."
+   Target_de_de "Zu hoch. Du kannst höchstens %1 auf einmal einzahlen."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{775A3DAE5C05033D}" {
+   Id "ELIFE-ATM_Reason_Denied_Deposit"
+   Target_en_us "The bank refused this deposit. Your cash was returned."
+   Target_de_de "Die Bank hat die Einzahlung abgelehnt. Dein Bargeld wurde zurückgegeben."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6D20086DE8063209}" {
+   Id "ELIFE-ATM_Reason_ContactStaff_Deposit"
+   Target_en_us "We couldn't confirm the outcome of your deposit. Cash held by the machine: %1. Contact staff."
+   Target_de_de "Wir konnten das Ergebnis deiner Einzahlung nicht bestätigen. Vom Automaten einbehalten: %1. Wende dich an das Team."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1745C59C03F0E804}" {
+   Id "ELIFE-ATM_Reason_NotDeposited"
+   Target_en_us "Your deposit didn't go through. Your cash was returned."
+   Target_de_de "Die Einzahlung wurde nicht ausgeführt. Dein Bargeld wurde zurückgegeben."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7F9D27F8987156D7}" {
+   Id "ELIFE-ATM_Reason_NotEnoughCash"
+   Target_en_us "You're not carrying that much cash."
+   Target_de_de "So viel Bargeld hast du nicht dabei."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E67DE450D775E595}" {
+   Id "ELIFE-ATM_Reason_NotOffered"
+   Target_en_us "This machine doesn't take deposits. Use one in a bank branch."
+   Target_de_de "Dieser Automat nimmt keine Einzahlungen an. Nutze einen in einer Bankfiliale."
+   Modified 1794068452
    Author "Robin"
    LastChanged "Robin"
   }

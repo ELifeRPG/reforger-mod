@@ -389,6 +389,94 @@ class ELIFE_CashComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	static int CountCarriedCash(notnull IEntity character)
+	{
+		array<ELIFE_CashComponent> stacks = {};
+		GetCarriedStacks(character, stacks);
+
+		int total;
+		foreach (ELIFE_CashComponent stack : stacks)
+		{
+			total += stack.GetAmount();
+		}
+
+		return total;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Takes the amount out of carried stacks, smallest first so fewer partial stacks stay behind,
+	//! and deletes the stacks it empties. Takes nothing unless the whole amount is there.
+	static bool TakeFromCarriedStacks(notnull IEntity character, int amount)
+	{
+		if (!Replication.IsServer() || amount <= 0)
+			return false;
+
+		array<ELIFE_CashComponent> stacks = {};
+		GetCarriedStacks(character, stacks);
+
+		int carried;
+		foreach (ELIFE_CashComponent carriedStack : stacks)
+		{
+			carried += carriedStack.GetAmount();
+		}
+
+		if (carried < amount)
+			return false;
+
+		SCR_InventoryStorageManagerComponent inventory = SCR_InventoryStorageManagerComponent.Cast(character.FindComponent(SCR_InventoryStorageManagerComponent));
+
+		int left = amount;
+		while (left > 0 && !stacks.IsEmpty())
+		{
+			ELIFE_CashComponent smallest = stacks[0];
+			foreach (ELIFE_CashComponent stack : stacks)
+			{
+				if (stack.GetAmount() < smallest.GetAmount())
+					smallest = stack;
+			}
+
+			stacks.RemoveItem(smallest);
+			int stackAmount = smallest.GetAmount();
+			if (stackAmount > left)
+			{
+				smallest.SetAmount(stackAmount - left);
+				left = 0;
+				break;
+			}
+
+			left -= stackAmount;
+			if (!inventory || !inventory.TryDeleteItem(smallest.GetOwner()))
+				SCR_EntityHelper.DeleteEntityAndChildren(smallest.GetOwner());
+		}
+
+		return left == 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Stacks in the inventory that aren't mid-move.
+	protected static void GetCarriedStacks(notnull IEntity character, notnull array<ELIFE_CashComponent> stacks)
+	{
+		SCR_InventoryStorageManagerComponent inventory = SCR_InventoryStorageManagerComponent.Cast(character.FindComponent(SCR_InventoryStorageManagerComponent));
+		if (!inventory)
+			return;
+
+		array<IEntity> items = {};
+		inventory.GetItems(items);
+		foreach (IEntity item : items)
+		{
+			ELIFE_CashComponent cash = ELIFE_CashComponent.Cast(item.FindComponent(ELIFE_CashComponent));
+			if (!cash || cash.GetAmount() <= 0)
+				continue;
+
+			InventoryItemComponent itemComponent = InventoryItemComponent.Cast(item.FindComponent(InventoryItemComponent));
+			if (itemComponent && itemComponent.IsLocked())
+				continue;
+
+			stacks.Insert(cash);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-only. Puts a new stack into the given storage, else anywhere in the inventory, else on the ground, which onGround reports.
 	static IEntity SpawnCash(int amount, notnull IEntity character, out bool onGround, BaseInventoryStorageComponent storage = null, bool toGround = false)
 	{

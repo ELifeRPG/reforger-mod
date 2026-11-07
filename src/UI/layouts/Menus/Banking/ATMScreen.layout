@@ -62,8 +62,8 @@ OverlayWidgetClass {
        }
        Color 0.8378 0.8626 0.9222 1
        Text ""
-       "Font Size" 34
-       "Min Font Size" 34
+       "Font Size" 32
+       "Min Font Size" 32
        "Horizontal Alignment" Left
       }
       TextWidgetClass "{6A1F3C90D2B84E17}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
@@ -74,8 +74,8 @@ OverlayWidgetClass {
        }
        Color 0.366 0.4024 0.5025 1
        Text ""
-       "Font Size" 34
-       "Min Font Size" 34
+       "Font Size" 32
+       "Min Font Size" 32
        "Horizontal Alignment" 2
       }
       TextWidgetClass "{FF36B5432ABA4AF9}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
@@ -86,8 +86,8 @@ OverlayWidgetClass {
        }
        Color 0.366 0.4024 0.5025 1
        Text ""
-       "Font Size" 34
-       "Min Font Size" 34
+       "Font Size" 32
+       "Min Font Size" 32
        "Horizontal Alignment" 2
       }
      }
@@ -310,8 +310,8 @@ OverlayWidgetClass {
      "Is Visible" 0
      Color 0.366 0.4024 0.5025 1
      Text ""
-     "Font Size" 28
-     "Min Font Size" 28
+     "Font Size" 32
+     "Min Font Size" 32
      "Horizontal Alignment" 2
     }
     TextWidgetClass "{C2846F1AE07D35B9}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
@@ -321,8 +321,8 @@ OverlayWidgetClass {
      "Is Visible" 0
      Color 0.366 0.4024 0.5025 1
      Text ""
-     "Font Size" 28
-     "Min Font Size" 28
+     "Font Size" 32
+     "Min Font Size" 32
      "Horizontal Alignment" 2
     }
     TextWidgetClass "{E95D07B3A18C64F2}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {
@@ -332,8 +332,8 @@ OverlayWidgetClass {
      "Is Visible" 0
      Color 0.366 0.4024 0.5025 1
      Text ""
-     "Font Size" 28
-     "Min Font Size" 28
+     "Font Size" 32
+     "Min Font Size" 32
      "Horizontal Alignment" 2
     }
     TextWidgetClass "{D05C8E37B1F2A964}" : "{E64DA8292CD7DBDD}UI/layouts/WidgetLibrary/TextWidgets/Text_InteractiveSmall.layout" {

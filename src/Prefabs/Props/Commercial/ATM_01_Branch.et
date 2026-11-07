@@ -1,0 +1,20 @@
+GenericEntity : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank.et" {
+ ID "5A9EB1422748D7A7"
+ components {
+  MeshObject "{5872F0EB7FA40561}" {
+   Materials {
+    MaterialAssignClass "{7FBFC1A24606C428}" {
+     SourceMaterial "ATM_Screen_Live"
+     AssignedMaterial "{F09B290779BF3044}Assets/WorldScreen/Data/WorldScreen_Idle.emat"
+    }
+    MaterialAssignClass "{D54A5BAA0B9FAC31}" {
+     SourceMaterial "ATM_Logo"
+     AssignedMaterial "{A283EC6004B38A6C}Assets/Props/Commercial/ATM_01/Data/ATM_Logo_Branch.emat"
+    }
+   }
+  }
+  ELIFE_ATMComponent "{A20D0366BD86192B}" {
+   m_bBranchMachine 1
+  }
+ }
+}

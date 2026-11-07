@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------
-[EntityEditorProps(category: "ELifeRPG/Banking", description: "Server-authoritative ATM: occupant lock, account data, quotes and withdrawals")]
+[EntityEditorProps(category: "ELifeRPG/Banking", description: "Server-authoritative ATM: occupant lock, account data, quotes and bookings")]
 class ELIFE_ATMComponentClass : ScriptComponentClass
 {
 }
@@ -36,7 +36,18 @@ enum ELIFE_EATMReason
 	NOT_WITHDRAWN,
 	PAID,
 	RETURNED,
-	CONTACT_STAFF
+	CONTACT_STAFF,
+	NOT_DEPOSITED,
+	NOT_ENOUGH_CASH,
+	NOT_OFFERED
+}
+
+//------------------------------------------------------------------------------------------------
+//! What a quote and the booking after it do. Deposits are a branch service.
+enum ELIFE_EATMBookingKind
+{
+	WITHDRAW,
+	DEPOSIT
 }
 
 //------------------------------------------------------------------------------------------------
@@ -85,9 +96,10 @@ class ELIFE_BankListDto : ELIFE_PhoneRawDto
 }
 
 //------------------------------------------------------------------------------------------------
-//! Everything a running withdrawal needs, fixed when it's confirmed. Lives only on the server.
-class ELIFE_ATMWithdrawal
+//! Everything a running booking needs, fixed when it's confirmed. Lives only on the server.
+class ELIFE_ATMBooking
 {
+	ELIFE_EATMBookingKind m_eKind;
 	string m_sMachineId;
 	int m_iPlayerId;
 	IEntity m_Character;
@@ -106,11 +118,21 @@ class ELIFE_ATMWithdrawal
 	bool m_bBalanceKnown;
 	float m_fCredit;
 	float m_fDeposit;
+	//! Cash taken from the player for a deposit, held until the booking is settled.
+	int m_iTaken;
+
+	//------------------------------------------------------------------------------------------------
+	bool IsDeposit()
+	{
+		return m_eKind == ELIFE_EATMBookingKind.DEPOSIT;
+	}
 
 	//------------------------------------------------------------------------------------------------
 	string Describe()
 	{
-		return string.Format("%1 player %2 character %3 account %4 amount %5 baseline %6 newest row '%7' paid %8", m_sMachineId, m_iPlayerId, m_sCharacterId, m_sAccountNumber, m_iAmount, m_fBaseline, m_sBaselineAt, m_iPaid);
+		//! Two parts, as Format takes at most nine arguments.
+		string who = string.Format("%1 %2 player %3 character %4 account %5", typename.EnumToString(ELIFE_EATMBookingKind, m_eKind), m_sMachineId, m_iPlayerId, m_sCharacterId, m_sAccountNumber);
+		return who + string.Format(" amount %1 baseline %2 newest row '%3' paid %4 taken %5", m_iAmount, m_fBaseline, m_sBaselineAt, m_iPaid, m_iTaken);
 	}
 }
 
@@ -119,11 +141,11 @@ class ELIFE_ATMWithdrawal
 //! ELIFE_ATMCharacterComponent. All API handlers live here, as a handler on a deleted character would be dropped.
 class ELIFE_ATMComponent : ScriptComponent
 {
-	static const int MAX_WITHDRAWAL = 100000;
-	//! The withdrawal screen stays at least this long, however fast the answer comes. Only the showing waits, not the money.
+	static const int MAX_BOOKING_AMOUNT = 100000;
+	//! The processing screen stays at least this long, however fast the answer comes. Only the showing waits, not the money.
 	static const int PROCESSING_MIN_MS = 800;
-	//! How long the result of a paid withdrawal stays on the screen. Nobody can use the machine until then.
-	static const int PAID_RESULT_MS = 8000;
+	//! How long the result of a completed booking stays on the screen. Nobody can use the machine until then.
+	static const int PAID_RESULT_MS = 4000;
 
 	protected static const int TICK_INTERVAL_MS = 1000;
 	//! Without a request or heartbeat for this long, the occupant's game has hung or lost its connection.
@@ -143,8 +165,11 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! Every account choice is a new load of three API calls.
 	protected static const int ACCOUNT_CHANGE_MIN_INTERVAL_MS = 500;
 
-	//! One withdrawal at a time per account, across every ATM on this server. Other servers of the hive can't see it.
+	//! One booking at a time per account, across every ATM on this server. Other servers of the hive can't see it.
 	protected static ref array<string> s_aBusyAccounts = {};
+
+	[Attribute("0", UIWidgets.CheckBox, "Stands in a bank branch, which adds the branch-only services. For now that's cash deposits.")]
+	protected bool m_bBranchMachine;
 
 	[RplProp(onRplName: "OnOccupantUpdated")]
 	protected int m_iOccupantPlayerId;
@@ -164,6 +189,8 @@ class ELIFE_ATMComponent : ScriptComponent
 	protected bool m_bMirrorTyped;
 	[RplProp(onRplName: "OnMirrorUpdated")]
 	protected int m_iMirrorReason;
+	[RplProp(onRplName: "OnMirrorUpdated")]
+	protected int m_iMirrorKind;
 
 	protected ELIFE_WorldScreenInteractComponent m_Interact;
 	protected ELIFE_ATMScreenComponent m_Screen;
@@ -204,10 +231,11 @@ class ELIFE_ATMComponent : ScriptComponent
 	protected int m_iQuoteId;
 	protected int m_iLastConsumedQuoteId;
 	protected int m_iQuoteAmount;
+	protected ELIFE_EATMBookingKind m_eQuoteKind;
 	protected float m_fQuoteFee;
 	protected int m_iQuoteTick;
 
-	protected ref ELIFE_ATMWithdrawal m_Withdrawal;
+	protected ref ELIFE_ATMBooking m_Booking;
 	protected ref ELIFE_BaseRestCallback m_FlowCallback;
 
 	//------------------------------------------------------------------------------------------------
@@ -234,6 +262,18 @@ class ELIFE_ATMComponent : ScriptComponent
 		int y = Math.Round(position[1] * 10);
 		int z = Math.Round(position[2] * 10);
 		return string.Format("ATM-%1-%2-%3", x, y, z);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsBranchMachine()
+	{
+		return m_bBranchMachine;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool OffersDeposits()
+	{
+		return m_bBranchMachine;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -279,13 +319,22 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	ELIFE_EATMBookingKind GetMirrorKind()
+	{
+		return m_iMirrorKind;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-only. Display only, so it needs no reach check, but a client can't claim a page or a payout that doesn't exist.
-	void SetMirror(int playerId, notnull IEntity character, int screen, int page, bool typed, int reason)
+	void SetMirror(int playerId, notnull IEntity character, int screen, int page, bool typed, int reason, int kind)
 	{
 		if (!IsOccupant(playerId, character))
 			return;
 
-		if (screen < ELIFE_EATMScreen.LOADING || screen > ELIFE_EATMScreen.RESULT || reason < ELIFE_EATMReason.NONE || reason > ELIFE_EATMReason.CONTACT_STAFF)
+		if (screen < ELIFE_EATMScreen.LOADING || screen > ELIFE_EATMScreen.COUNTING || reason < ELIFE_EATMReason.NONE || reason > ELIFE_EATMReason.NOT_OFFERED)
+			return;
+
+		if (kind != ELIFE_EATMBookingKind.WITHDRAW && (kind != ELIFE_EATMBookingKind.DEPOSIT || !m_bBranchMachine))
 			return;
 
 		if (reason == ELIFE_EATMReason.PAID && !m_bShowingPaid)
@@ -295,6 +344,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		m_iMirrorPage = Math.Max(page, 0);
 		m_bMirrorTyped = typed;
 		m_iMirrorReason = reason;
+		m_iMirrorKind = kind;
 		Replication.BumpMe();
 
 		//! onRplName doesn't fire on the authority itself.
@@ -316,7 +366,7 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server-only. A repeat from the occupant re-sends the grant, so reopening during a withdrawal works.
+	//! Server-only. A repeat from the occupant re-sends the grant, so reopening during a booking works.
 	void RequestOpen(int playerId, notnull IEntity character, notnull ELIFE_ATMCharacterComponent link)
 	{
 		if (m_iOccupantPlayerId != 0 && m_iOccupantPlayerId != playerId)
@@ -386,13 +436,13 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server-only. During a withdrawal the release waits until it has finished.
+	//! Server-only. During a booking the release waits until it has finished.
 	void RequestClose(int playerId)
 	{
 		if (playerId == 0 || playerId != m_iOccupantPlayerId || m_bShowingPaid)
 			return;
 
-		if (m_Withdrawal)
+		if (m_Booking)
 		{
 			m_bClosePending = true;
 			return;
@@ -432,7 +482,7 @@ class ELIFE_ATMComponent : ScriptComponent
 			return;
 
 		m_iLastRefreshTick = now;
-		if (!m_Withdrawal && m_iState == ELIFE_EATMState.LOAD_FAILED)
+		if (!m_Booking && m_iState == ELIFE_EATMState.LOAD_FAILED)
 			SetState(ELIFE_EATMState.LOADING);
 
 		StartLoad();
@@ -459,7 +509,7 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! A quote is for one account's fees, so it goes too. A dropped request is safe: the client only follows the state.
 	protected void ChangeAccount(int playerId, notnull IEntity character, string accountNumber)
 	{
-		if (!IsOccupant(playerId, character) || m_Withdrawal || m_bShowingPaid)
+		if (!IsOccupant(playerId, character) || m_Booking || m_bShowingPaid)
 			return;
 
 		int now = System.GetTickCount();
@@ -488,9 +538,9 @@ class ELIFE_ATMComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Server-only. The fee here is a preview; the backend's own figure is the final one.
-	void RequestQuote(int playerId, notnull IEntity character, notnull ELIFE_ATMCharacterComponent link, int amount)
+	void RequestQuote(int playerId, notnull IEntity character, notnull ELIFE_ATMCharacterComponent link, ELIFE_EATMBookingKind kind, int amount)
 	{
-		ELIFE_EATMReason reason = ValidateQuote(playerId, character, amount);
+		ELIFE_EATMReason reason = ValidateQuote(playerId, character, kind, amount);
 		if (reason != ELIFE_EATMReason.NONE)
 		{
 			Print(string.Format("ELIFE_ATMComponent | quote refused for player %1, amount %2, reason %3", playerId, amount, typename.EnumToString(ELIFE_EATMReason, reason)), LogLevel.WARNING);
@@ -502,10 +552,16 @@ class ELIFE_ATMComponent : ScriptComponent
 		m_iQuoteId = m_iNextQuoteId;
 		m_iNextQuoteId++;
 		m_iQuoteAmount = amount;
-		m_fQuoteFee = m_fFeeBase + amount * m_fFeeMultiplier;
+		m_eQuoteKind = kind;
+		m_fQuoteFee = GetFee(amount);
 		m_iQuoteTick = m_iLastRequestTick;
 
-		link.SendQuote(GetRplId(), m_iQuoteId, amount, ELIFE_PhoneBankingService.ToCents(m_fQuoteFee), ELIFE_PhoneBankingService.ToCents(amount + m_fQuoteFee));
+		//! What leaves the balance for a withdrawal, what reaches it for a deposit.
+		float total = amount + m_fQuoteFee;
+		if (kind == ELIFE_EATMBookingKind.DEPOSIT)
+			total = amount - m_fQuoteFee;
+
+		link.SendQuote(GetRplId(), m_iQuoteId, amount, ELIFE_PhoneBankingService.ToCents(m_fQuoteFee), ELIFE_PhoneBankingService.ToCents(total));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -530,23 +586,36 @@ class ELIFE_ATMComponent : ScriptComponent
 		m_iLastConsumedQuoteId = quoteId;
 		m_iQuoteId = 0;
 
-		m_Withdrawal = new ELIFE_ATMWithdrawal();
-		m_Withdrawal.m_sMachineId = GetMachineId();
-		m_Withdrawal.m_iPlayerId = playerId;
-		m_Withdrawal.m_Character = character;
-		m_Withdrawal.m_sCharacterId = m_sOccupantCharacterId;
-		m_Withdrawal.m_sAccountNumber = m_sAccountNumber;
-		m_Withdrawal.m_iAmount = m_iQuoteAmount;
-		m_Withdrawal.m_fQuotedFee = m_fQuoteFee;
-		m_Withdrawal.m_fFeeBase = m_fFeeBase;
-		m_Withdrawal.m_fFeeMultiplier = m_fFeeMultiplier;
+		m_Booking = new ELIFE_ATMBooking();
+		m_Booking.m_eKind = m_eQuoteKind;
+		m_Booking.m_sMachineId = GetMachineId();
+		m_Booking.m_iPlayerId = playerId;
+		m_Booking.m_Character = character;
+		m_Booking.m_sCharacterId = m_sOccupantCharacterId;
+		m_Booking.m_sAccountNumber = m_sAccountNumber;
+		m_Booking.m_iAmount = m_iQuoteAmount;
+		m_Booking.m_fQuotedFee = m_fQuoteFee;
+		m_Booking.m_fFeeBase = m_fFeeBase;
+		m_Booking.m_fFeeMultiplier = m_fFeeMultiplier;
 		s_aBusyAccounts.Insert(m_sAccountNumber);
 		SetState(ELIFE_EATMState.PROCESSING);
+
+		//! Taken first, so the cash can't be spent or dropped while the deposit runs.
+		if (m_Booking.IsDeposit())
+		{
+			if (!ELIFE_CashComponent.TakeFromCarriedStacks(character, m_Booking.m_iAmount))
+			{
+				AbortBooking(ELIFE_EATMReason.NOT_ENOUGH_CASH, "cash no longer carried");
+				return;
+			}
+
+			m_Booking.m_iTaken = m_Booking.m_iAmount;
+		}
 
 		ELIFE_Api api = ELIFE_Api.GetInstance();
 		if (!api)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
+			AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
 			return;
 		}
 
@@ -554,12 +623,12 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected ELIFE_EATMReason ValidateQuote(int playerId, notnull IEntity character, int amount)
+	protected ELIFE_EATMReason ValidateQuote(int playerId, notnull IEntity character, ELIFE_EATMBookingKind kind, int amount)
 	{
 		if (!IsOccupant(playerId, character))
 			return ELIFE_EATMReason.NOT_OCCUPANT;
 
-		if (m_Withdrawal || m_bShowingPaid)
+		if (m_Booking || m_bShowingPaid)
 			return ELIFE_EATMReason.BUSY;
 
 		if (!IsUsableBy(character))
@@ -568,7 +637,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		if (amount <= 0)
 			return ELIFE_EATMReason.INVALID_AMOUNT;
 
-		if (amount > MAX_WITHDRAWAL)
+		if (amount > MAX_BOOKING_AMOUNT)
 			return ELIFE_EATMReason.AMOUNT_TOO_HIGH;
 
 		if (m_sAccountNumber == "")
@@ -577,10 +646,34 @@ class ELIFE_ATMComponent : ScriptComponent
 		if (!m_bFeesKnown)
 			return ELIFE_EATMReason.DATA_UNAVAILABLE;
 
-		if (m_fLoadedBalance < amount + m_fFeeBase + amount * m_fFeeMultiplier)
+		if (kind == ELIFE_EATMBookingKind.DEPOSIT)
+		{
+			if (!m_bBranchMachine)
+				return ELIFE_EATMReason.NOT_OFFERED;
+
+			if (ELIFE_CashComponent.CountCarriedCash(character) < amount)
+				return ELIFE_EATMReason.NOT_ENOUGH_CASH;
+
+			if (GetFee(amount) >= amount)
+				return ELIFE_EATMReason.INVALID_AMOUNT;
+
+			return ELIFE_EATMReason.NONE;
+		}
+
+		if (kind != ELIFE_EATMBookingKind.WITHDRAW)
+			return ELIFE_EATMReason.NOT_OFFERED;
+
+		if (m_fLoadedBalance < amount + GetFee(amount))
 			return ELIFE_EATMReason.INSUFFICIENT_FUNDS;
 
 		return ELIFE_EATMReason.NONE;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The loaded account's terms. Both kinds pay the same fee.
+	protected float GetFee(int amount)
+	{
+		return m_fFeeBase + amount * m_fFeeMultiplier;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -589,7 +682,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		if (!IsOccupant(playerId, character))
 			return ELIFE_EATMReason.NOT_OCCUPANT;
 
-		if (m_Withdrawal || m_bShowingPaid)
+		if (m_Booking || m_bShowingPaid)
 			return ELIFE_EATMReason.BUSY;
 
 		if (quoteId == 0 || quoteId != m_iQuoteId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
@@ -614,7 +707,7 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! Polled, as nothing here needs a game-mode hook: a disconnect or a deleted character both show up as a changed controlled entity.
 	protected void Tick()
 	{
-		if (m_Withdrawal)
+		if (m_Booking)
 			return;
 
 		if (!IsOccupantConnected())
@@ -660,7 +753,7 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Never called during a withdrawal. A load still in flight notices the missing occupant and stops.
+	//! Never called during a booking. A load still in flight notices the missing occupant and stops.
 	protected void Release(string why)
 	{
 		GetGame().GetCallqueue().Remove(Tick);
@@ -803,12 +896,12 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A running withdrawal keeps its own state; it sets the idle one when it finishes.
+	//! A running booking keeps its own state; it sets the idle one when it finishes.
 	protected void EndLoad(ELIFE_EATMState resultState)
 	{
 		m_bLoadInFlight = false;
 
-		if (!m_Withdrawal)
+		if (!m_Booking)
 			SetState(resultState);
 	}
 
@@ -1074,33 +1167,33 @@ class ELIFE_ATMComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	void OnBaselineAccountFetched(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print(string.Format("ELIFE_ATMComponent | baseline account %1 arrived with no withdrawal running", accountNumber), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | baseline account %1 arrived with no booking running", accountNumber), LogLevel.ERROR);
 			return;
 		}
 
 		ELIFE_BankAccountSummary account = ELIFE_BankAccountSummary.Cast(data);
 		if (status != ELIFE_EApiStatusCode.SUCCESS || !account || account.number != accountNumber)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline account read failed");
+			AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline account read failed");
 			return;
 		}
 
-		if (account.characterId != m_Withdrawal.m_sCharacterId)
+		if (account.characterId != m_Booking.m_sCharacterId)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DENIED, "account is not the occupant's");
+			AbortBooking(ELIFE_EATMReason.DENIED, "account is not the occupant's");
 			return;
 		}
 
 		ELIFE_Api api = ELIFE_Api.GetInstance();
 		if (!api)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
+			AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
 			return;
 		}
 
-		m_Withdrawal.m_fBaseline = account.balance;
+		m_Booking.m_fBaseline = account.balance;
 		m_FlowCallback = api.ListBankAccountTransactions(accountNumber, this, "OnBaselineTransactionsFetched");
 	}
 
@@ -1108,15 +1201,15 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! Last stop before the one PUT.
 	void OnBaselineTransactionsFetched(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print(string.Format("ELIFE_ATMComponent | baseline rows of %1 arrived with no withdrawal running", accountNumber), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | baseline rows of %1 arrived with no booking running", accountNumber), LogLevel.ERROR);
 			return;
 		}
 
 		if (status != ELIFE_EApiStatusCode.SUCCESS || !m_FlowCallback || !IsArrayBody(m_FlowCallback.GetData()))
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline transactions read failed");
+			AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline transactions read failed");
 			return;
 		}
 
@@ -1125,42 +1218,50 @@ class ELIFE_ATMComponent : ScriptComponent
 
 		if (!rows.items.IsEmpty())
 		{
-			m_Withdrawal.m_sBaselineAt = rows.items[0].occurredAt;
-			if (m_Withdrawal.m_sBaselineAt == "")
+			m_Booking.m_sBaselineAt = rows.items[0].occurredAt;
+			if (m_Booking.m_sBaselineAt == "")
 			{
-				AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline transactions unreadable");
+				AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "baseline transactions unreadable");
 				return;
 			}
 		}
 
-		if (m_Withdrawal.m_fBaseline < m_Withdrawal.m_iAmount + m_Withdrawal.m_fQuotedFee)
+		if (!m_Booking.IsDeposit() && m_Booking.m_fBaseline < m_Booking.m_iAmount + m_Booking.m_fQuotedFee)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.INSUFFICIENT_FUNDS, "balance below amount + fee");
+			AbortBooking(ELIFE_EATMReason.INSUFFICIENT_FUNDS, "balance below amount + fee");
 			return;
 		}
 
 		ELIFE_Api api = ELIFE_Api.GetInstance();
 		if (!api)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
+			AbortBooking(ELIFE_EATMReason.DATA_UNAVAILABLE, "API not available");
+			return;
+		}
+
+		Print(string.Format("ELIFE_ATMComponent | booking: %1", m_Booking.Describe()), LogLevel.NORMAL);
+
+		if (m_Booking.IsDeposit())
+		{
+			ELIFE_DepositRequest deposit = new ELIFE_DepositRequest();
+			deposit.amount = m_Booking.m_iAmount;
+			m_FlowCallback = api.DepositToBankAccount(deposit, accountNumber, this, "OnBookingResult");
 			return;
 		}
 
 		ELIFE_WithdrawRequest request = new ELIFE_WithdrawRequest();
-		request.amount = m_Withdrawal.m_iAmount;
-		request.characterId = m_Withdrawal.m_sCharacterId;
-
-		Print(string.Format("ELIFE_ATMComponent | withdrawing: %1", m_Withdrawal.Describe()), LogLevel.NORMAL);
-		m_FlowCallback = api.WithdrawFromBankAccount(request, accountNumber, this, "OnWithdrawResult");
+		request.amount = m_Booking.m_iAmount;
+		request.characterId = m_Booking.m_sCharacterId;
+		m_FlowCallback = api.WithdrawFromBankAccount(request, accountNumber, this, "OnBookingResult");
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! No idempotency, and the Bridge retries PUTs: only a 200 with figures that add up, or a 403/404, is an answer.
-	void OnWithdrawResult(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
+	void OnBookingResult(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print(string.Format("ELIFE_ATMComponent | withdraw result for %1 arrived with no withdrawal running", accountNumber), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | booking result for %1 arrived with no booking running", accountNumber), LogLevel.ERROR);
 			return;
 		}
 
@@ -1175,28 +1276,47 @@ class ELIFE_ATMComponent : ScriptComponent
 		ELIFE_TransactionResult result = ELIFE_TransactionResult.Cast(data);
 		if (status == ELIFE_EApiStatusCode.SUCCESS && result)
 		{
-			float expected = m_Withdrawal.m_fBaseline - m_Withdrawal.m_iAmount - result.fee;
-			if (MoneyMatches(result.amount, m_Withdrawal.m_iAmount) && MoneyMatches(expected, result.newBalance))
+			float expected = m_Booking.m_fBaseline - m_Booking.m_iAmount - result.fee;
+			if (m_Booking.IsDeposit())
+				expected = m_Booking.m_fBaseline + m_Booking.m_iAmount - result.fee;
+
+			if (MoneyMatches(result.amount, m_Booking.m_iAmount) && MoneyMatches(expected, result.newBalance))
 			{
-				m_Withdrawal.m_fNewBalance = result.newBalance;
-				m_Withdrawal.m_bBalanceKnown = true;
-				PayOut(result.fee, 0);
+				m_Booking.m_fNewBalance = result.newBalance;
+				m_Booking.m_bBalanceKnown = true;
+				Settle(result.fee);
 				return;
 			}
 
-			Print(string.Format("ELIFE_ATMComponent | withdraw answered 200 with unexpected figures amount %1 fee %2 new balance %3: %4", result.amount, result.fee, result.newBalance, m_Withdrawal.Describe()), LogLevel.WARNING);
+			Print(string.Format("ELIFE_ATMComponent | booking answered 200 with unexpected figures amount %1 fee %2 new balance %3: %4", result.amount, result.fee, result.newBalance, m_Booking.Describe()), LogLevel.WARNING);
 			StartReconcile();
 			return;
 		}
 
 		if (status != ELIFE_EApiStatusCode.SUCCESS && (httpCode == HTTP_FORBIDDEN || httpCode == HTTP_NOT_FOUND))
 		{
-			AbortWithdrawal(ELIFE_EATMReason.DENIED, string.Format("withdraw refused, HTTP=%1", httpCode));
+			AbortBooking(ELIFE_EATMReason.DENIED, string.Format("booking refused, HTTP=%1", httpCode));
 			return;
 		}
 
-		Print(string.Format("ELIFE_ATMComponent | withdraw outcome unknown, RestResult=%1 HTTP=%2: %3", restResult, httpCode, m_Withdrawal.Describe()), LogLevel.WARNING);
+		Print(string.Format("ELIFE_ATMComponent | booking outcome unknown, RestResult=%1 HTTP=%2: %3", restResult, httpCode, m_Booking.Describe()), LogLevel.WARNING);
 		StartReconcile();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The booking went through once: a withdrawal pays out, a deposit already holds its cash.
+	protected void Settle(float fee)
+	{
+		if (!m_Booking.IsDeposit())
+		{
+			PayOut(fee, 0);
+			return;
+		}
+
+		m_Booking.m_fFee = fee;
+		Print(string.Format("ELIFE_ATMComponent | deposited, fee %1: %2", fee, m_Booking.Describe()), LogLevel.NORMAL);
+		SendBookingResult(ELIFE_EATMReason.PAID);
+		FinishBooking();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1209,9 +1329,9 @@ class ELIFE_ATMComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	protected void OnReconcileDue()
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print("ELIFE_ATMComponent | reconcile came due with no withdrawal running", LogLevel.ERROR);
+			Print("ELIFE_ATMComponent | reconcile came due with no booking running", LogLevel.ERROR);
 			return;
 		}
 
@@ -1222,17 +1342,18 @@ class ELIFE_ATMComponent : ScriptComponent
 			return;
 		}
 
-		m_FlowCallback = api.ListBankAccountTransactions(m_Withdrawal.m_sAccountNumber, this, "OnReconcileTransactionsFetched");
+		m_FlowCallback = api.ListBankAccountTransactions(m_Booking.m_sAccountNumber, this, "OnReconcileTransactionsFetched");
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Rows are newest first, so "newer than the baseline" is everything above the baseline row. occurredAt strings
-	//! vary in length, so they are matched rather than ordered. Another server's identical withdrawal in this window would count too.
+	//! vary in length, so they are matched rather than ordered. Another server's identical booking in this window would count too,
+	//! and so would anyone's deposit of the same amount, as deposits carry no character.
 	void OnReconcileTransactionsFetched(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print(string.Format("ELIFE_ATMComponent | reconcile rows of %1 arrived with no withdrawal running", accountNumber), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | reconcile rows of %1 arrived with no booking running", accountNumber), LogLevel.ERROR);
 			return;
 		}
 
@@ -1245,22 +1366,26 @@ class ELIFE_ATMComponent : ScriptComponent
 		ELIFE_BankStatementDto rows = new ELIFE_BankStatementDto();
 		rows.ExpandFromArray(m_FlowCallback.GetData());
 
+		string kind = ELIFE_BankAccountTransaction.KIND_WITHDRAWN;
+		if (m_Booking.IsDeposit())
+			kind = ELIFE_BankAccountTransaction.KIND_DEPOSITED;
+
 		bool baselineSeen;
 		int matches;
 		float firstFee;
 		float otherFees;
 		foreach (ELIFE_BankAccountTransaction row : rows.items)
 		{
-			if (m_Withdrawal.m_sBaselineAt != "" && row.occurredAt == m_Withdrawal.m_sBaselineAt)
+			if (m_Booking.m_sBaselineAt != "" && row.occurredAt == m_Booking.m_sBaselineAt)
 			{
 				baselineSeen = true;
 				break;
 			}
 
-			if (row.kind != ELIFE_BankAccountTransaction.KIND_WITHDRAWN || row.actingCharacterId != m_Withdrawal.m_sCharacterId)
+			if (row.kind != kind || (!m_Booking.IsDeposit() && row.actingCharacterId != m_Booking.m_sCharacterId))
 				continue;
 
-			if (!MoneyMatches(row.amount, m_Withdrawal.m_iAmount))
+			if (!MoneyMatches(row.amount, m_Booking.m_iAmount))
 				continue;
 
 			if (matches == 0)
@@ -1272,7 +1397,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		}
 
 		//! Also catches a parse that silently came back short, and a baseline pushed out of the 30-row window.
-		if (m_Withdrawal.m_sBaselineAt != "" && !baselineSeen)
+		if (m_Booking.m_sBaselineAt != "" && !baselineSeen)
 		{
 			ReportUnresolved("baseline row not found in the reconcile read");
 			return;
@@ -1286,20 +1411,31 @@ class ELIFE_ATMComponent : ScriptComponent
 
 		if (matches == 0)
 		{
-			AbortWithdrawal(ELIFE_EATMReason.NOT_WITHDRAWN, "no matching row in the ledger");
+			if (m_Booking.IsDeposit())
+				AbortBooking(ELIFE_EATMReason.NOT_DEPOSITED, "no matching row in the ledger");
+			else
+				AbortBooking(ELIFE_EATMReason.NOT_WITHDRAWN, "no matching row in the ledger");
+
 			return;
 		}
 
 		if (matches == 1)
 		{
-			Print(string.Format("ELIFE_ATMComponent | reconcile found the withdrawal, fee %1: %2", firstFee, m_Withdrawal.Describe()), LogLevel.WARNING);
-			PayOut(firstFee, 0);
+			Print(string.Format("ELIFE_ATMComponent | reconcile found the booking, fee %1: %2", firstFee, m_Booking.Describe()), LogLevel.WARNING);
+			Settle(firstFee);
+			return;
+		}
+
+		//! Credited more than once, or another deposit of the same amount landed: only staff can tell and undo it.
+		if (m_Booking.IsDeposit())
+		{
+			ReportUnresolved(string.Format("reconcile found %1 deposits of the amount", matches));
 			return;
 		}
 
 		//! Every extra row was charged in full, so its fee goes back too: the player loses exactly the one fee.
-		float extra = (matches - 1) * m_Withdrawal.m_iAmount + otherFees;
-		Print(string.Format("ELIFE_ATMComponent | reconcile found %1 withdrawals, returning %2: %3", matches, extra, m_Withdrawal.Describe()), LogLevel.ERROR);
+		float extra = (matches - 1) * m_Booking.m_iAmount + otherFees;
+		Print(string.Format("ELIFE_ATMComponent | reconcile found %1 withdrawals, returning %2: %3", matches, extra, m_Booking.Describe()), LogLevel.ERROR);
 		PayOut(firstFee, extra);
 	}
 
@@ -1307,31 +1443,28 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! The money has left the account. A crash from here to the last SpawnCash loses it - no API can prevent that yet.
 	protected void PayOut(float fee, float extraCredit)
 	{
-		m_Withdrawal.m_fFee = fee;
+		m_Booking.m_fFee = fee;
 
-		PlayerManager playerManager = GetGame().GetPlayerManager();
-		IEntity character = m_Withdrawal.m_Character;
-		bool present = character && playerManager && playerManager.IsPlayerConnected(m_Withdrawal.m_iPlayerId) && playerManager.GetPlayerControlledEntity(m_Withdrawal.m_iPlayerId) == character && IsAlive(character);
-
-		if (present)
+		IEntity character = m_Booking.m_Character;
+		if (IsPresent(character))
 		{
 			int dropped;
-			m_Withdrawal.m_iPaid = SpawnCashStacks(m_Withdrawal.m_iAmount, character, dropped);
-			m_Withdrawal.m_iDropped = dropped;
-			if (m_Withdrawal.m_iPaid < m_Withdrawal.m_iAmount)
-				Print(string.Format("ELIFE_ATMComponent | a cash stack failed to spawn: %1", m_Withdrawal.Describe()), LogLevel.ERROR);
+			m_Booking.m_iPaid = SpawnCashStacks(m_Booking.m_iAmount, character, dropped);
+			m_Booking.m_iDropped = dropped;
+			if (m_Booking.m_iPaid < m_Booking.m_iAmount)
+				Print(string.Format("ELIFE_ATMComponent | a cash stack failed to spawn: %1", m_Booking.Describe()), LogLevel.ERROR);
 		}
 		else
 		{
-			Print(string.Format("ELIFE_ATMComponent | character gone, no cash paid: %1", m_Withdrawal.Describe()), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | character gone, no cash paid: %1", m_Booking.Describe()), LogLevel.ERROR);
 		}
 
-		float credit = m_Withdrawal.m_iAmount - m_Withdrawal.m_iPaid + extraCredit;
+		float credit = m_Booking.m_iAmount - m_Booking.m_iPaid + extraCredit;
 		if (credit <= 0)
 		{
-			Print(string.Format("ELIFE_ATMComponent | paid out, fee %1: %2", fee, m_Withdrawal.Describe()), LogLevel.NORMAL);
-			SendWithdrawalResult(ELIFE_EATMReason.PAID);
-			FinishWithdrawal();
+			Print(string.Format("ELIFE_ATMComponent | paid out, fee %1: %2", fee, m_Booking.Describe()), LogLevel.NORMAL);
+			SendBookingResult(ELIFE_EATMReason.PAID);
+			FinishBooking();
 			return;
 		}
 
@@ -1379,30 +1512,30 @@ class ELIFE_ATMComponent : ScriptComponent
 	//! A deposit is charged the fee too, so it's grossed up: the credited amount equals what's owed. One try, never retried.
 	protected void DepositBack(float credit)
 	{
-		m_Withdrawal.m_fCredit = credit;
+		m_Booking.m_fCredit = credit;
 
-		float divisor = 1 - m_Withdrawal.m_fFeeMultiplier;
+		float divisor = 1 - m_Booking.m_fFeeMultiplier;
 		ELIFE_Api api = ELIFE_Api.GetInstance();
 		if (divisor <= 0 || !api)
 		{
-			ReportUnresolved(string.Format("deposit back of %1 impossible, fee multiplier %2 or no API", credit, m_Withdrawal.m_fFeeMultiplier));
+			ReportUnresolved(string.Format("deposit back of %1 impossible, fee multiplier %2 or no API", credit, m_Booking.m_fFeeMultiplier));
 			return;
 		}
 
-		m_Withdrawal.m_fDeposit = (credit + m_Withdrawal.m_fFeeBase) / divisor;
-		Print(string.Format("ELIFE_ATMComponent | depositing back, owed %1, sending %2: %3", credit, m_Withdrawal.m_fDeposit, m_Withdrawal.Describe()), LogLevel.ERROR);
+		m_Booking.m_fDeposit = (credit + m_Booking.m_fFeeBase) / divisor;
+		Print(string.Format("ELIFE_ATMComponent | depositing back, owed %1, sending %2: %3", credit, m_Booking.m_fDeposit, m_Booking.Describe()), LogLevel.ERROR);
 
 		ELIFE_DepositRequest request = new ELIFE_DepositRequest();
-		request.amount = m_Withdrawal.m_fDeposit;
-		m_FlowCallback = api.DepositToBankAccount(request, m_Withdrawal.m_sAccountNumber, this, "OnDepositBackResult");
+		request.amount = m_Booking.m_fDeposit;
+		m_FlowCallback = api.DepositToBankAccount(request, m_Booking.m_sAccountNumber, this, "OnDepositBackResult");
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void OnDepositBackResult(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_Withdrawal)
+		if (!m_Booking)
 		{
-			Print(string.Format("ELIFE_ATMComponent | deposit result for %1 arrived with no withdrawal running", accountNumber), LogLevel.ERROR);
+			Print(string.Format("ELIFE_ATMComponent | deposit result for %1 arrived with no booking running", accountNumber), LogLevel.ERROR);
 			return;
 		}
 
@@ -1413,68 +1546,105 @@ class ELIFE_ATMComponent : ScriptComponent
 			if (m_FlowCallback)
 				httpCode = m_FlowCallback.GetHttpCode();
 
-			ReportUnresolved(string.Format("deposit back of %1 (owed %2) failed, HTTP=%3", m_Withdrawal.m_fDeposit, m_Withdrawal.m_fCredit, httpCode));
+			ReportUnresolved(string.Format("deposit back of %1 (owed %2) failed, HTTP=%3", m_Booking.m_fDeposit, m_Booking.m_fCredit, httpCode));
 			return;
 		}
 
-		Print(string.Format("ELIFE_ATMComponent | deposited back %1 with fee %2, owed %3, new balance %4: %5", result.amount, result.fee, m_Withdrawal.m_fCredit, result.newBalance, m_Withdrawal.Describe()), LogLevel.ERROR);
+		Print(string.Format("ELIFE_ATMComponent | deposited back %1 with fee %2, owed %3, new balance %4: %5", result.amount, result.fee, m_Booking.m_fCredit, result.newBalance, m_Booking.Describe()), LogLevel.ERROR);
 
-		m_Withdrawal.m_fNewBalance = result.newBalance;
-		m_Withdrawal.m_bBalanceKnown = true;
-		SendWithdrawalResult(ELIFE_EATMReason.RETURNED);
-		FinishWithdrawal();
+		m_Booking.m_fNewBalance = result.newBalance;
+		m_Booking.m_bBalanceKnown = true;
+		SendBookingResult(ELIFE_EATMReason.RETURNED);
+		FinishBooking();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Definite: no money moved.
-	protected void AbortWithdrawal(ELIFE_EATMReason reason, string why)
+	//! Definite: no money moved. A deposit's cash goes back to the player.
+	protected void AbortBooking(ELIFE_EATMReason reason, string why)
 	{
-		Print(string.Format("ELIFE_ATMComponent | withdrawal not executed, %1: %2", why, m_Withdrawal.Describe()), LogLevel.WARNING);
-		SendWithdrawalResult(reason);
-		FinishWithdrawal();
+		Print(string.Format("ELIFE_ATMComponent | booking not executed, %1: %2", why, m_Booking.Describe()), LogLevel.WARNING);
+		ReturnTakenCash();
+		if (m_Booking.m_iTaken > 0)
+			reason = ELIFE_EATMReason.CONTACT_STAFF;
+
+		SendBookingResult(reason);
+		FinishBooking();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Into carried stacks first, then the ground, like a payout.
+	protected void ReturnTakenCash()
+	{
+		if (m_Booking.m_iTaken <= 0)
+			return;
+
+		IEntity character = m_Booking.m_Character;
+		if (!IsPresent(character))
+		{
+			Print(string.Format("ELIFE_ATMComponent | character gone, deposit cash not returned, UNRESOLVED: %1", m_Booking.Describe()), LogLevel.ERROR);
+			return;
+		}
+
+		int dropped;
+		int returned = SpawnCashStacks(m_Booking.m_iTaken, character, dropped);
+		m_Booking.m_iDropped = dropped;
+		if (returned < m_Booking.m_iTaken)
+			Print(string.Format("ELIFE_ATMComponent | only %1 of the deposit cash returned, UNRESOLVED: %2", returned, m_Booking.Describe()), LogLevel.ERROR);
+
+		m_Booking.m_iTaken -= returned;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsPresent(IEntity character)
+	{
+		PlayerManager playerManager = GetGame().GetPlayerManager();
+		return character && playerManager && playerManager.IsPlayerConnected(m_Booking.m_iPlayerId) && playerManager.GetPlayerControlledEntity(m_Booking.m_iPlayerId) == character && IsAlive(character);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Money may be in the wrong place and the mod can't tell or fix it; only staff with this log line can.
 	protected void ReportUnresolved(string why)
 	{
-		Print(string.Format("ELIFE_ATMComponent | UNRESOLVED, contact staff, %1: %2", why, m_Withdrawal.Describe()), LogLevel.ERROR);
-		SendWithdrawalResult(ELIFE_EATMReason.CONTACT_STAFF);
-		FinishWithdrawal();
+		Print(string.Format("ELIFE_ATMComponent | UNRESOLVED, contact staff, %1: %2", why, m_Booking.Describe()), LogLevel.ERROR);
+		SendBookingResult(ELIFE_EATMReason.CONTACT_STAFF);
+		FinishBooking();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void SendWithdrawalResult(ELIFE_EATMReason reason)
+	protected void SendBookingResult(ELIFE_EATMReason reason)
 	{
 		ELIFE_ATMCharacterComponent link = GetOccupantLink();
 		if (!link)
 		{
-			Print(string.Format("ELIFE_ATMComponent | result %1 not delivered, occupant gone: %2", typename.EnumToString(ELIFE_EATMReason, reason), m_Withdrawal.Describe()), LogLevel.WARNING);
+			Print(string.Format("ELIFE_ATMComponent | result %1 not delivered, occupant gone: %2", typename.EnumToString(ELIFE_EATMReason, reason), m_Booking.Describe()), LogLevel.WARNING);
 			return;
 		}
 
-		int amount = m_Withdrawal.m_iPaid;
-		if (reason != ELIFE_EATMReason.PAID && reason != ELIFE_EATMReason.RETURNED && reason != ELIFE_EATMReason.CONTACT_STAFF)
-			amount = m_Withdrawal.m_iAmount;
+		//! A withdrawal reports the cash paid out, an unresolved deposit the cash it still holds.
+		int amount = m_Booking.m_iAmount;
+		if (!m_Booking.IsDeposit() && (reason == ELIFE_EATMReason.PAID || reason == ELIFE_EATMReason.RETURNED || reason == ELIFE_EATMReason.CONTACT_STAFF))
+			amount = m_Booking.m_iPaid;
+		else if (m_Booking.IsDeposit() && reason == ELIFE_EATMReason.CONTACT_STAFF)
+			amount = m_Booking.m_iTaken;
 
 		if (reason == ELIFE_EATMReason.PAID)
 			BeginPaidHold();
 
-		link.SendResult(GetRplId(), reason, amount, ELIFE_PhoneBankingService.ToCents(m_Withdrawal.m_fFee), ELIFE_PhoneBankingService.ToCents(m_Withdrawal.m_fNewBalance), m_Withdrawal.m_bBalanceKnown, m_Withdrawal.m_iDropped);
+		link.SendResult(GetRplId(), reason, amount, ELIFE_PhoneBankingService.ToCents(m_Booking.m_fFee), ELIFE_PhoneBankingService.ToCents(m_Booking.m_fNewBalance), m_Booking.m_bBalanceKnown, m_Booking.m_iDropped);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! The lock comes free through a pending close or the next tick, so the idle clock restarts here.
-	protected void FinishWithdrawal()
+	protected void FinishBooking()
 	{
-		s_aBusyAccounts.RemoveItem(m_Withdrawal.m_sAccountNumber);
-		m_Withdrawal = null;
+		s_aBusyAccounts.RemoveItem(m_Booking.m_sAccountNumber);
+		m_Booking = null;
 		m_FlowCallback = null;
 		m_iLastRequestTick = System.GetTickCount();
 
 		if (m_bClosePending && !m_bShowingPaid)
 		{
-			Release("closed by the occupant during a withdrawal");
+			Release("closed by the occupant during a booking");
 			return;
 		}
 
@@ -1490,10 +1660,10 @@ class ELIFE_ATMComponent : ScriptComponent
 		GetGame().GetCallqueue().Remove(EndPaidHold);
 		GetGame().GetCallqueue().Remove(OnReconcileDue);
 
-		if (!m_Withdrawal)
+		if (!m_Booking)
 			return;
 
-		s_aBusyAccounts.RemoveItem(m_Withdrawal.m_sAccountNumber);
-		Print(string.Format("ELIFE_ATMComponent | ATM deleted during a withdrawal, UNRESOLVED: %1", m_Withdrawal.Describe()), LogLevel.ERROR);
+		s_aBusyAccounts.RemoveItem(m_Booking.m_sAccountNumber);
+		Print(string.Format("ELIFE_ATMComponent | ATM deleted during a booking, UNRESOLVED: %1", m_Booking.Describe()), LogLevel.ERROR);
 	}
 }

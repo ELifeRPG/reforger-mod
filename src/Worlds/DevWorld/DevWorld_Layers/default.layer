@@ -48,3 +48,7 @@ GenericEntity : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank.et" {
  coords 6.5 0 6.2
  angles 0 180 0
 }
+GenericEntity : "{20AFC1514925B919}Prefabs/Props/Commercial/ATM_01_Branch.et" {
+ coords 7.7 0 6.2
+ angles 0 180 0
+}

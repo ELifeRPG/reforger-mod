@@ -123,6 +123,8 @@ class ELIFE_WorldScreenInspectCamera : SCR_CameraBase
 //! By default it is driven by an ELIFE_WorldScreenMenu bound to this component.
 class ELIFE_WorldScreenInteractComponent : ScriptComponent
 {
+	protected static bool s_bInspected;
+
 	[Attribute("0 0 0", UIWidgets.Coords, "Top-left corner of the canvas on the mesh, in owner-local metres, as seen by a player facing the screen.", category: "World Screen")]
 	protected vector m_vScreenOrigin;
 
@@ -278,6 +280,13 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 	bool CanInspect()
 	{
 		return m_fInspectDistance > 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Whether the player has zoomed in on any screen since the game started; hints for it can stop then.
+	static bool HasInspected()
+	{
+		return s_bInspected;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -524,6 +533,7 @@ class ELIFE_WorldScreenInteractComponent : ScriptComponent
 		if (!m_InspectCamera)
 			return false;
 
+		s_bInspected = true;
 		//! The player's FOV setting, which m_fInspectDistance is tuned against; the current one could be mid-zoom.
 		m_InspectCamera.SetVerticalFOV(cameraManager.GetFirstPersonFOV());
 		m_InspectCamera.SetNearPlane(currentCamera.GetNearPlane());
