@@ -8,3 +8,6 @@
 
 ### ATM
 > "ATM" (https://blendswap.com/blend/13280) by kavabanga is licensed under CC0. Modified for ELifeRPG.
+
+### Bank clerk voices
+> Voice lines generated with [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) by hexgrad (voices am_puck, bm_lewis, am_michael), licensed under Apache-2.0, and re-voiced with [Chatterbox](https://github.com/resemble-ai/chatterbox) by Resemble AI, licensed under MIT. Generated audio carries Chatterbox's inaudible Perth watermark.

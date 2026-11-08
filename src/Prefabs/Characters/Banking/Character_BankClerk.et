@@ -8,6 +8,11 @@ SCR_ChimeraCharacter : "{626874113CAE4387}Prefabs/Characters/Factions/CIV/Busine
     }
    }
   }
+  SCR_CommunicationSoundComponent "{54FD05D0C92D071F}" {
+   Filenames {
+    "{609BC515708A6C91}Sounds/RadioProtocol/RadioProtocol_Report_FIA.acp" "{2BBB4A9DA10EE163}Sounds/RadioProtocol/RadioProtocol_Movement_FIA.acp" "{5B2A0174F1C27445}Sounds/RadioProtocol/RadioProtocol_Confirmations_FIA.acp" "{65F6CCB82ABA12FB}Sounds/RadioProtocol/RadioProtocol_Combat_FIA.acp" "{30C6D89341B1EA1A}Sounds/Character/Character_Voice_Code.acp" "{C9BE186498C3B447}Sounds/Character/Character_Voice_Animations.acp" "{EA06766D8B13B414}Sounds/RadioProtocol/RadioProtocol_Actions_FIA.acp" "{2B5C7E7FB00C9371}Sounds/RadioProtocol/RadioProtocol_Report_2_FIA.acp" "{5B2A0174F1C27446}Sounds/VO/BankClerk/ELIFE_BankClerk_VO_Puck.acp" "{F60E9539AAFDEB32}Sounds/VO/BankClerk/ELIFE_BankClerk_VO_Lewis.acp" "{A7003E09162429E0}Sounds/VO/BankClerk/ELIFE_BankClerk_VO_Michael.acp"
+   }
+  }
   ELIFE_BankClerkComponent "{B80E89F5C2D29465}" {
   }
   ActionsManagerComponent "{520EA1D2F659CE02}" {

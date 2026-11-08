@@ -2426,14 +2426,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{71667DC1AD10FE5B}" {
-   Id "ELIFE-Clerk_Busy_Short"
-   Target_en_us "Busy"
-   Target_de_de "Beschäftigt"
-   Modified 1794100000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{B12534C1AE94C497}" {
    Id "ELIFE-Clerk_OutOfRange"
    Target_en_us "Step closer to the counter."

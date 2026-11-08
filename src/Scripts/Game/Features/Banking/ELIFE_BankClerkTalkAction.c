@@ -1,5 +1,6 @@
 //------------------------------------------------------------------------------------------------
 //! Asks the server for the clerk's attention. The service dialog opens when the grant comes back.
+//! Also while he serves someone else: then he asks the player to wait, and the refusal shows as a hint.
 class ELIFE_BankClerkTalkAction : ScriptedUserAction
 {
 	protected ELIFE_BankClerkComponent m_Clerk;
@@ -13,7 +14,7 @@ class ELIFE_BankClerkTalkAction : ScriptedUserAction
 	//------------------------------------------------------------------------------------------------
 	override void PerformAction(IEntity pOwnerEntity, IEntity pUserEntity)
 	{
-		if (!m_Clerk || !m_Clerk.IsUsableBy(pUserEntity) || IsBusyWithOther())
+		if (!m_Clerk || !m_Clerk.IsUsableBy(pUserEntity))
 			return;
 
 		ELIFE_BankClerkCharacterComponent link = ELIFE_BankClerkCharacterComponent.Cast(pUserEntity.FindComponent(ELIFE_BankClerkCharacterComponent));
@@ -30,16 +31,7 @@ class ELIFE_BankClerkTalkAction : ScriptedUserAction
 	//------------------------------------------------------------------------------------------------
 	override bool CanBePerformedScript(IEntity user)
 	{
-		if (!m_Clerk || !m_Clerk.IsUsableBy(user))
-			return false;
-
-		if (IsBusyWithOther())
-		{
-			SetCannotPerformReason("#ELIFE-Clerk_Busy_Short");
-			return false;
-		}
-
-		return true;
+		return m_Clerk && m_Clerk.IsUsableBy(user);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -47,12 +39,5 @@ class ELIFE_BankClerkTalkAction : ScriptedUserAction
 	override bool HasLocalEffectOnlyScript()
 	{
 		return true;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected bool IsBusyWithOther()
-	{
-		int customer = m_Clerk.GetCustomerPlayerId();
-		return customer != 0 && customer != SCR_PlayerController.GetLocalPlayerId();
 	}
 }

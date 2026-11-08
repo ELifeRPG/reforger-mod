@@ -16,6 +16,9 @@ class ELIFE_BankClerkSpot : ELIFE_PrefabSpawn
 	[Attribute("-1", UIWidgets.EditBox, "Which of the clerk prefabs to use. -1 picks one from the spot's position.")]
 	protected int m_iClerkVariant;
 
+	[Attribute("-1", UIWidgets.EditBox, "Which voice the clerk speaks with (see ELIFE_EClerkVoice: 0 Puck, 1 Lewis, 2 Michael). -1 picks one from the spot's position, independently of the face.")]
+	protected int m_iClerkVoice;
+
 	protected bool m_bStandInHidden;
 
 	//------------------------------------------------------------------------------------------------
@@ -39,6 +42,21 @@ class ELIFE_BankClerkSpot : ELIFE_PrefabSpawn
 		int x = Math.Round(position[0] * 10);
 		int z = Math.Round(position[2] * 10);
 		int hash = (x * 73856093) ^ (z * 19349663);
+		return Math.AbsInt(hash) % count;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Different hash from the face, so any face can get any voice.
+	protected ELIFE_EClerkVoice GetVoice()
+	{
+		int count = ELIFE_EClerkVoice.COUNT;
+		if (m_iClerkVoice >= 0)
+			return Math.Min(m_iClerkVoice, count - 1);
+
+		vector position = GetOrigin();
+		int x = Math.Round(position[0] * 10);
+		int z = Math.Round(position[2] * 10);
+		int hash = (x * 49979687) ^ (z * 86028121);
 		return Math.AbsInt(hash) % count;
 	}
 
@@ -72,7 +90,10 @@ class ELIFE_BankClerkSpot : ELIFE_PrefabSpawn
 
 		ELIFE_BankClerkComponent clerk = ELIFE_BankClerkComponent.Cast(newEnt.FindComponent(ELIFE_BankClerkComponent));
 		if (clerk)
+		{
 			clerk.SetBankCode(m_sBankCode);
+			clerk.SetVoice(GetVoice());
+		}
 		else
 			Print(string.Format("ELIFE_BankClerkSpot | %1 has no ELIFE_BankClerkComponent", m_rnPrefab), LogLevel.ERROR);
 	}

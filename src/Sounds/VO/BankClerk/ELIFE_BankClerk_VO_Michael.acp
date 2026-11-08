@@ -1,0 +1,3436 @@
+AudioClass {
+ signals {
+  SignalClass "183309" {
+   id 183309
+   name "Signal 179"
+   tl 311.127 -88.329
+   res "{43C50EB8DB8DE747}Sounds/_SharedData/Signals/Weapons/Weapon_Shooting_Directivity.sig"
+   inputsport {
+    1
+   }
+   outputsport {
+    5
+   }
+   inputvalues {
+    0
+   }
+   inputvaluesmin {
+    0
+   }
+   inputvaluesmax {
+    1
+   }
+   path "{43C50EB8DB8DE747}Sounds/_SharedData/Signals/Weapons/Weapon_Shooting_Directivity.sig"
+  }
+  SignalClass "263181" {
+   id 263181
+   name "Character_Occlusion"
+   tl 512 8.727
+   res "{2DE6099BBD60C620}Sounds/_SharedData/Signals/Character/Character_Occlusion.sig"
+   inputsport {
+    2 8 20 50
+   }
+   outputsport {
+    36
+   }
+   inputvalues {
+    0 1 1 1000
+   }
+   inputvaluesmin {
+    0 0 0 0
+   }
+   inputvaluesmax {
+    1 1 1 10000
+   }
+   path "{2DE6099BBD60C620}Sounds/_SharedData/Signals/Character/Character_Occlusion.sig"
+  }
+  SignalClass "297997" {
+   id 297997
+   name "Signal Reverb"
+   tl 992.388 332.23
+   res "{76CBB40EF7F227B6}Sounds/_SharedData/Signals/Reverb/Reverb_Base.sig"
+   inputsport {
+    1 35 112
+   }
+   outputsport {
+    39 105 107 106 110
+   }
+   inputvalues {
+    40 0.04 16000
+   }
+   inputvaluesmin {
+    0 0 0
+   }
+   inputvaluesmax {
+    100 1 16000
+   }
+   path "{76CBB40EF7F227B6}Sounds/_SharedData/Signals/Reverb/Reverb_Base.sig"
+  }
+  SignalClass "311309" {
+   id 311309
+   name "Character_Spatiality"
+   tl 319.333 -256.33
+   res "{A801B27A708153A6}Sounds/_SharedData/Signals/Character/Character_Spatiality.sig"
+   inputsport {
+    3
+   }
+   outputsport {
+    9
+   }
+   inputvalues {
+    0
+   }
+   inputvaluesmin {
+    0
+   }
+   inputvaluesmax {
+    1
+   }
+   path "{A801B27A708153A6}Sounds/_SharedData/Signals/Character/Character_Spatiality.sig"
+  }
+ }
+ sounds {
+  SoundClass "409609" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 409609
+   name "SOUND_ELIFE_CLERK_MICHAEL_GREETING"
+   version 5
+   tl 792.27 329.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "410642:65" {
+       id 410642
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "413705" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 413705
+   name "SOUND_ELIFE_CLERK_MICHAEL_GREETING_2"
+   version 5
+   tl 792.27 729.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "414738:65" {
+       id 414738
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "417801" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 417801
+   name "SOUND_ELIFE_CLERK_MICHAEL_GREETING_3"
+   version 5
+   tl 792.27 1129.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "418834:65" {
+       id 418834
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "421897" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 421897
+   name "SOUND_ELIFE_CLERK_MICHAEL_BUSY"
+   version 5
+   tl 792.27 1529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "422930:65" {
+       id 422930
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "425993" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 425993
+   name "SOUND_ELIFE_CLERK_MICHAEL_BUSY_2"
+   version 5
+   tl 792.27 1929.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "427026:65" {
+       id 427026
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "430089" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 430089
+   name "SOUND_ELIFE_CLERK_MICHAEL_UNAVAILABLE"
+   version 5
+   tl 792.27 2329.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "431122:65" {
+       id 431122
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "434185" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 434185
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_FORM"
+   version 5
+   tl 792.27 2729.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "435218:65" {
+       id 435218
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "438281" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 438281
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_FORM_2"
+   version 5
+   tl 792.27 3129.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "439314:65" {
+       id 439314
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "442377" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 442377
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_PROCESSING"
+   version 5
+   tl 792.27 3529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "443410:65" {
+       id 443410
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "446473" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 446473
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_PROCESSING_2"
+   version 5
+   tl 792.27 3929.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "447506:65" {
+       id 447506
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "450569" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 450569
+   name "SOUND_ELIFE_CLERK_MICHAEL_CHECK_SLIP"
+   version 5
+   tl 792.27 4329.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "451602:65" {
+       id 451602
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "454665" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 454665
+   name "SOUND_ELIFE_CLERK_MICHAEL_NOT_ENOUGH_MONEY"
+   version 5
+   tl 792.27 4729.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "455698:65" {
+       id 455698
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "458761" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 458761
+   name "SOUND_ELIFE_CLERK_MICHAEL_TARGET_NOT_FOUND"
+   version 5
+   tl 792.27 5129.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "459794:65" {
+       id 459794
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "462857" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 462857
+   name "SOUND_ELIFE_CLERK_MICHAEL_ACCOUNT_BUSY"
+   version 5
+   tl 792.27 5529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "463890:65" {
+       id 463890
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "466953" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 466953
+   name "SOUND_ELIFE_CLERK_MICHAEL_QUOTE_EXPIRED"
+   version 5
+   tl 792.27 5929.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "467986:65" {
+       id 467986
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "471049" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 471049
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_DONE"
+   version 5
+   tl 792.27 6329.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "472082:65" {
+       id 472082
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "475145" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 475145
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_DONE_2"
+   version 5
+   tl 792.27 6729.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "476178:65" {
+       id 476178
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "479241" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 479241
+   name "SOUND_ELIFE_CLERK_MICHAEL_TRANSFER_DONE_3"
+   version 5
+   tl 792.27 7129.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "480274:65" {
+       id 480274
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "483337" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 483337
+   name "SOUND_ELIFE_CLERK_MICHAEL_ACCOUNT_OPENED"
+   version 5
+   tl 792.27 7529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "484370:65" {
+       id 484370
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "487433" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 487433
+   name "SOUND_ELIFE_CLERK_MICHAEL_ALREADY_OPENED"
+   version 5
+   tl 792.27 7929.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "488466:65" {
+       id 488466
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "491529" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 491529
+   name "SOUND_ELIFE_CLERK_MICHAEL_FAILED"
+   version 5
+   tl 792.27 8329.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "492562:65" {
+       id 492562
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "495625" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 495625
+   name "SOUND_ELIFE_CLERK_MICHAEL_UNKNOWN_OUTCOME"
+   version 5
+   tl 792.27 8729.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "496658:65" {
+       id 496658
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "499721" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 499721
+   name "SOUND_ELIFE_CLERK_MICHAEL_GOODBYE"
+   version 5
+   tl 792.27 9129.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "500754:65" {
+       id 500754
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "503817" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 503817
+   name "SOUND_ELIFE_CLERK_MICHAEL_GOODBYE_2"
+   version 5
+   tl 792.27 9529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "504850:65" {
+       id 504850
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "507913" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 507913
+   name "SOUND_ELIFE_CLERK_MICHAEL_GOODBYE_3"
+   version 5
+   tl 792.27 9929.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "508946:65" {
+       id 508946
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+ }
+ buses {
+  BusClass "411655" {
+   id 411655
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "412676:65" {
+       id 412676
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "415751" {
+   id 415751
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "416772:65" {
+       id 416772
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "419847" {
+   id 419847
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 1104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "420868:65" {
+       id 420868
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "423943" {
+   id 423943
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 1504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "424964:65" {
+       id 424964
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "428039" {
+   id 428039
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 1904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "429060:65" {
+       id 429060
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "432135" {
+   id 432135
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 2304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "433156:65" {
+       id 433156
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "436231" {
+   id 436231
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 2704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "437252:65" {
+       id 437252
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "440327" {
+   id 440327
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 3104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "441348:65" {
+       id 441348
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "444423" {
+   id 444423
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 3504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "445444:65" {
+       id 445444
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "448519" {
+   id 448519
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 3904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "449540:65" {
+       id 449540
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "452615" {
+   id 452615
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 4304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "453636:65" {
+       id 453636
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "456711" {
+   id 456711
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 4704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "457732:65" {
+       id 457732
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "460807" {
+   id 460807
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 5104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "461828:65" {
+       id 461828
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "464903" {
+   id 464903
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 5504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "465924:65" {
+       id 465924
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "468999" {
+   id 468999
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 5904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "470020:65" {
+       id 470020
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "473095" {
+   id 473095
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 6304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "474116:65" {
+       id 474116
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "477191" {
+   id 477191
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 6704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "478212:65" {
+       id 478212
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "481287" {
+   id 481287
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 7104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "482308:65" {
+       id 482308
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "485383" {
+   id 485383
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 7504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "486404:65" {
+       id 486404
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "489479" {
+   id 489479
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 7904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "490500:65" {
+       id 490500
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "493575" {
+   id 493575
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 8304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "494596:65" {
+       id 494596
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "497671" {
+   id 497671
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 8704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "498692:65" {
+       id 498692
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "501767" {
+   id 501767
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 9104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "502788:65" {
+       id 502788
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "505863" {
+   id 505863
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 9504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "506884:65" {
+       id 506884
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "509959" {
+   id 509959
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 9904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "510980:65" {
+       id 510980
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+ }
+ selectors {
+ }
+ generators {
+ }
+ mixers {
+  MixerClass "13323" {
+   id 13323
+   name "OutputState"
+   version 4
+   tl 992.388 623.552
+   res "{B764D803219C775E}Sounds/FinalMix.afm"
+   ins {
+    ConnectionsClass "con:19463" {
+     id 19463
+     links {
+      ConnectionClass "409609:65" {
+       id 409609
+       port 65
+      }
+      ConnectionClass "413705:65" {
+       id 413705
+       port 65
+      }
+      ConnectionClass "417801:65" {
+       id 417801
+       port 65
+      }
+      ConnectionClass "421897:65" {
+       id 421897
+       port 65
+      }
+      ConnectionClass "425993:65" {
+       id 425993
+       port 65
+      }
+      ConnectionClass "430089:65" {
+       id 430089
+       port 65
+      }
+      ConnectionClass "434185:65" {
+       id 434185
+       port 65
+      }
+      ConnectionClass "438281:65" {
+       id 438281
+       port 65
+      }
+      ConnectionClass "442377:65" {
+       id 442377
+       port 65
+      }
+      ConnectionClass "446473:65" {
+       id 446473
+       port 65
+      }
+      ConnectionClass "450569:65" {
+       id 450569
+       port 65
+      }
+      ConnectionClass "454665:65" {
+       id 454665
+       port 65
+      }
+      ConnectionClass "458761:65" {
+       id 458761
+       port 65
+      }
+      ConnectionClass "462857:65" {
+       id 462857
+       port 65
+      }
+      ConnectionClass "466953:65" {
+       id 466953
+       port 65
+      }
+      ConnectionClass "471049:65" {
+       id 471049
+       port 65
+      }
+      ConnectionClass "475145:65" {
+       id 475145
+       port 65
+      }
+      ConnectionClass "479241:65" {
+       id 479241
+       port 65
+      }
+      ConnectionClass "483337:65" {
+       id 483337
+       port 65
+      }
+      ConnectionClass "487433:65" {
+       id 487433
+       port 65
+      }
+      ConnectionClass "491529:65" {
+       id 491529
+       port 65
+      }
+      ConnectionClass "495625:65" {
+       id 495625
+       port 65
+      }
+      ConnectionClass "499721:65" {
+       id 499721
+       port 65
+      }
+      ConnectionClass "503817:65" {
+       id 503817
+       port 65
+      }
+      ConnectionClass "507913:65" {
+       id 507913
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:197639" {
+     id 197639
+     links {
+      ConnectionClass "296989:65" {
+       id 296989
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:338951" {
+     id 338951
+     links {
+      ConnectionClass "301085:65" {
+       id 301085
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:339975" {
+     id 339975
+     links {
+      ConnectionClass "299037:65" {
+       id 299037
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:340999" {
+     id 340999
+     links {
+      ConnectionClass "300061:65" {
+       id 300061
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    -532676352 0
+   }
+   path "{B764D803219C775E}Sounds/FinalMix.afm"
+   inputs {
+    "WPN_Handling" "WPN_Shots" "WPN_Explosions" "WNP_BulletHits" "CHAR" "ENV_AMB_2D" "VEH_Animations" "Impacts" "Dialog" "ENV_Doors" "VEH_Engine" "VEH_Tires" "VON" "SFX" "SFX_Reverb_OBSOLETE" "VON_Reverb_Small" "Dialog_Reverb" "Impacts_EXT" "ENV_AMB_3D" "WPN_SonicCracks" "CHAR_Gear" "PA" "SFX_Reverb_Exterior" "ENV_AMB_3D_Reverb_Exterior" "SFX_Direct" "SFX_Reverb_Small" "SFX_Reverb_Medium" "SFX_Reverb_Large" "WPN_Shots_Player" "Dialog_Reverb_Small" "Dialog_Reverb_Medium" "Dialog_Reverb_Large" "WPN_TravelingProjectile" "Dialog_Delay_Exterior" "SFX_Reverb_InCabin" "VON_Reverb_Medium" "VON_Reverb_Large"
+   }
+  }
+ }
+ shaders {
+  ShaderClass "410642" {
+   id 410642
+   name "Shader MICHAEL_GREETING"
+   version 5
+   tl 512 304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "411655:65" {
+       id 411655
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "414738" {
+   id 414738
+   name "Shader MICHAEL_GREETING_2"
+   version 5
+   tl 512 704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "415751:65" {
+       id 415751
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "418834" {
+   id 418834
+   name "Shader MICHAEL_GREETING_3"
+   version 5
+   tl 512 1104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "419847:65" {
+       id 419847
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "422930" {
+   id 422930
+   name "Shader MICHAEL_BUSY"
+   version 5
+   tl 512 1504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "423943:65" {
+       id 423943
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "427026" {
+   id 427026
+   name "Shader MICHAEL_BUSY_2"
+   version 5
+   tl 512 1904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "428039:65" {
+       id 428039
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "431122" {
+   id 431122
+   name "Shader MICHAEL_UNAVAILABLE"
+   version 5
+   tl 512 2304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "432135:65" {
+       id 432135
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "435218" {
+   id 435218
+   name "Shader MICHAEL_TRANSFER_FORM"
+   version 5
+   tl 512 2704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "436231:65" {
+       id 436231
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "439314" {
+   id 439314
+   name "Shader MICHAEL_TRANSFER_FORM_2"
+   version 5
+   tl 512 3104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "440327:65" {
+       id 440327
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "443410" {
+   id 443410
+   name "Shader MICHAEL_TRANSFER_PROCESSING"
+   version 5
+   tl 512 3504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "444423:65" {
+       id 444423
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "447506" {
+   id 447506
+   name "Shader MICHAEL_TRANSFER_PROCESSING_2"
+   version 5
+   tl 512 3904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "448519:65" {
+       id 448519
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "451602" {
+   id 451602
+   name "Shader MICHAEL_CHECK_SLIP"
+   version 5
+   tl 512 4304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "452615:65" {
+       id 452615
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "455698" {
+   id 455698
+   name "Shader MICHAEL_NOT_ENOUGH_MONEY"
+   version 5
+   tl 512 4704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "456711:65" {
+       id 456711
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "459794" {
+   id 459794
+   name "Shader MICHAEL_TARGET_NOT_FOUND"
+   version 5
+   tl 512 5104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "460807:65" {
+       id 460807
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "463890" {
+   id 463890
+   name "Shader MICHAEL_ACCOUNT_BUSY"
+   version 5
+   tl 512 5504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "464903:65" {
+       id 464903
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "467986" {
+   id 467986
+   name "Shader MICHAEL_QUOTE_EXPIRED"
+   version 5
+   tl 512 5904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "468999:65" {
+       id 468999
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "472082" {
+   id 472082
+   name "Shader MICHAEL_TRANSFER_DONE"
+   version 5
+   tl 512 6304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "473095:65" {
+       id 473095
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "476178" {
+   id 476178
+   name "Shader MICHAEL_TRANSFER_DONE_2"
+   version 5
+   tl 512 6704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "477191:65" {
+       id 477191
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "480274" {
+   id 480274
+   name "Shader MICHAEL_TRANSFER_DONE_3"
+   version 5
+   tl 512 7104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "481287:65" {
+       id 481287
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "484370" {
+   id 484370
+   name "Shader MICHAEL_ACCOUNT_OPENED"
+   version 5
+   tl 512 7504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "485383:65" {
+       id 485383
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "488466" {
+   id 488466
+   name "Shader MICHAEL_ALREADY_OPENED"
+   version 5
+   tl 512 7904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "489479:65" {
+       id 489479
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "492562" {
+   id 492562
+   name "Shader MICHAEL_FAILED"
+   version 5
+   tl 512 8304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "493575:65" {
+       id 493575
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "496658" {
+   id 496658
+   name "Shader MICHAEL_UNKNOWN_OUTCOME"
+   version 5
+   tl 512 8704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "497671:65" {
+       id 497671
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "500754" {
+   id 500754
+   name "Shader MICHAEL_GOODBYE"
+   version 5
+   tl 512 9104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "501767:65" {
+       id 501767
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "504850" {
+   id 504850
+   name "Shader MICHAEL_GOODBYE_2"
+   version 5
+   tl 512 9504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "505863:65" {
+       id 505863
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "508946" {
+   id 508946
+   name "Shader MICHAEL_GOODBYE_3"
+   version 5
+   tl 512 9904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "509959:65" {
+       id 509959
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+ }
+ amplitudes {
+  AmplitudeClass "181267" : "{2D5607FF1ED3F5D3}Sounds/_SharedData/Configs/Amplitude/_SharedData/Amplitude_-35LUFS_to_-30LUFS.conf" {
+   id 181267
+   version 5
+   tl 512 -166.543
+   ctl 0 -21
+   parent "{2D5607FF1ED3F5D3}Sounds/_SharedData/Configs/Amplitude/_SharedData/Amplitude_-35LUFS_to_-30LUFS.conf"
+  }
+ }
+ frequency {
+  FrequencyClass "182293" : "{85F92D98658CB0F5}Sounds/_SharedData/Configs/Frequency/Character/Frequency_Character_Voice.conf" {
+   id 182293
+   name "Frequency 178"
+   version 5
+   tl 512 -88.329
+   parent "{85F92D98658CB0F5}Sounds/_SharedData/Configs/Frequency/Character/Frequency_Character_Voice.conf"
+   ins {
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "183309:5" {
+       id 183309
+       port 5
+      }
+     }
+    }
+    ConnectionsClass "con:4" {
+     id 4
+     links {
+      ConnectionClass "263181:36" {
+       id 263181
+       port 36
+      }
+     }
+    }
+   }
+   pi {
+    20 0
+   }
+   pu {
+    20 0
+   }
+  }
+ }
+ playlist {
+ }
+ replacer {
+ }
+ banks_local {
+  BankLocalClass "412676" {
+   id 412676
+   name "ELIFE_CLERK_MICHAEL_GREETING"
+   version 7
+   tl -1250 322.508
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Greeting.wav" {
+     Filename "{F58FCF9508A3E6BD}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Greeting.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "416772" {
+   id 416772
+   name "ELIFE_CLERK_MICHAEL_GREETING_2"
+   version 7
+   tl -1250 722.508
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Greeting2.wav" {
+     Filename "{3619E7E387207A9D}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Greeting2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "420868" {
+   id 420868
+   name "ELIFE_CLERK_MICHAEL_GREETING_3"
+   version 7
+   tl -1250 1122.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Greeting3.wav" {
+     Filename "{2E3985A4294C2C4B}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Greeting3.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "424964" {
+   id 424964
+   name "ELIFE_CLERK_MICHAEL_BUSY"
+   version 7
+   tl -1250 1522.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Busy.wav" {
+     Filename "{623EC1647ED2777B}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Busy.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "429060" {
+   id 429060
+   name "ELIFE_CLERK_MICHAEL_BUSY_2"
+   version 7
+   tl -1250 1922.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Busy2.wav" {
+     Filename "{CB2CFE3598F6C585}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Busy2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "433156" {
+   id 433156
+   name "ELIFE_CLERK_MICHAEL_UNAVAILABLE"
+   version 7
+   tl -1250 2322.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Unavailable.wav" {
+     Filename "{B1B2045F79336256}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Unavailable.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "437252" {
+   id 437252
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_FORM"
+   version 7
+   tl -1250 2722.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferForm.wav" {
+     Filename "{828A313544F84323}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferForm.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "441348" {
+   id 441348
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_FORM_2"
+   version 7
+   tl -1250 3122.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferForm2.wav" {
+     Filename "{2CB88695C11787DD}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferForm2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "445444" {
+   id 445444
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_PROCESSING"
+   version 7
+   tl -1250 3522.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferProcessing.wav" {
+     Filename "{8DF6B637476AC937}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferProcessing.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "449540" {
+   id 449540
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_PROCESSING_2"
+   version 7
+   tl -1250 3922.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferProcessing2.wav" {
+     Filename "{E4BA7EF356B5D0DB}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferProcessing2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "453636" {
+   id 453636
+   name "ELIFE_CLERK_MICHAEL_CHECK_SLIP"
+   version 7
+   tl -1250 4322.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_CheckSlip.wav" {
+     Filename "{B2E04523992C67B5}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_CheckSlip.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "457732" {
+   id 457732
+   name "ELIFE_CLERK_MICHAEL_NOT_ENOUGH_MONEY"
+   version 7
+   tl -1250 4722.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_NotEnoughMoney.wav" {
+     Filename "{8A40C42A0D1F17B1}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_NotEnoughMoney.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "461828" {
+   id 461828
+   name "ELIFE_CLERK_MICHAEL_TARGET_NOT_FOUND"
+   version 7
+   tl -1250 5122.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TargetNotFound.wav" {
+     Filename "{436CC3D2D857986A}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TargetNotFound.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "465924" {
+   id 465924
+   name "ELIFE_CLERK_MICHAEL_ACCOUNT_BUSY"
+   version 7
+   tl -1250 5522.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_AccountBusy.wav" {
+     Filename "{9B3AE314D4610C62}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_AccountBusy.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "470020" {
+   id 470020
+   name "ELIFE_CLERK_MICHAEL_QUOTE_EXPIRED"
+   version 7
+   tl -1250 5922.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_QuoteExpired.wav" {
+     Filename "{8C9A430EFF7F270E}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_QuoteExpired.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "474116" {
+   id 474116
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_DONE"
+   version 7
+   tl -1250 6322.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferDone.wav" {
+     Filename "{417A7EBC75B94F59}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferDone.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "478212" {
+   id 478212
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_DONE_2"
+   version 7
+   tl -1250 6722.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferDone2.wav" {
+     Filename "{60FCE28B24529A9C}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferDone2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "482308" {
+   id 482308
+   name "ELIFE_CLERK_MICHAEL_TRANSFER_DONE_3"
+   version 7
+   tl -1250 7122.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_TransferDone3.wav" {
+     Filename "{6F47E0B89C30F909}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_TransferDone3.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "486404" {
+   id 486404
+   name "ELIFE_CLERK_MICHAEL_ACCOUNT_OPENED"
+   version 7
+   tl -1250 7522.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_AccountOpened.wav" {
+     Filename "{E8A3F2603372F668}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_AccountOpened.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "490500" {
+   id 490500
+   name "ELIFE_CLERK_MICHAEL_ALREADY_OPENED"
+   version 7
+   tl -1250 7922.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_AlreadyOpened.wav" {
+     Filename "{239CE35640D0BA6B}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_AlreadyOpened.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "494596" {
+   id 494596
+   name "ELIFE_CLERK_MICHAEL_FAILED"
+   version 7
+   tl -1250 8322.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Failed.wav" {
+     Filename "{60095A4C3EFB8261}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Failed.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "498692" {
+   id 498692
+   name "ELIFE_CLERK_MICHAEL_UNKNOWN_OUTCOME"
+   version 7
+   tl -1250 8722.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_UnknownOutcome.wav" {
+     Filename "{50F2DBAB0694FDEC}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_UnknownOutcome.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "502788" {
+   id 502788
+   name "ELIFE_CLERK_MICHAEL_GOODBYE"
+   version 7
+   tl -1250 9122.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Goodbye.wav" {
+     Filename "{E15CD4FE1A44BDB5}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Goodbye.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "506884" {
+   id 506884
+   name "ELIFE_CLERK_MICHAEL_GOODBYE_2"
+   version 7
+   tl -1250 9522.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Goodbye2.wav" {
+     Filename "{5AE951969DF99A25}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Goodbye2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "510980" {
+   id 510980
+   name "ELIFE_CLERK_MICHAEL_GOODBYE_3"
+   version 7
+   tl -1250 9922.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Michael_Goodbye3.wav" {
+     Filename "{AA0BCFD6DBFF19C1}Sounds/VO/BankClerk/Samples/Michael/ELIFE_Clerk_Michael_Goodbye3.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+ }
+ spatialities {
+  SpatialityClass "310300" {
+   id 310300
+   name "Spatiality Character"
+   version 5
+   tl 512 -256
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "311309:9" {
+       id 311309
+       port 9
+      }
+     }
+    }
+   }
+   pi {
+    1 0
+   }
+   pu {
+    1 0
+   }
+   SpatialFactorSource Signal
+  }
+ }
+ auxOuts {
+  AuxOutClass "296989" {
+   id 296989
+   name "AuxOut Reverb EXT"
+   version 5
+   tl 992.388 525.18
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "409609:5" {
+       id 409609
+       port 5
+      }
+      ConnectionClass "413705:5" {
+       id 413705
+       port 5
+      }
+      ConnectionClass "417801:5" {
+       id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
+      ConnectionClass "425993:5" {
+       id 425993
+       port 5
+      }
+      ConnectionClass "430089:5" {
+       id 430089
+       port 5
+      }
+      ConnectionClass "434185:5" {
+       id 434185
+       port 5
+      }
+      ConnectionClass "438281:5" {
+       id 438281
+       port 5
+      }
+      ConnectionClass "442377:5" {
+       id 442377
+       port 5
+      }
+      ConnectionClass "446473:5" {
+       id 446473
+       port 5
+      }
+      ConnectionClass "450569:5" {
+       id 450569
+       port 5
+      }
+      ConnectionClass "454665:5" {
+       id 454665
+       port 5
+      }
+      ConnectionClass "458761:5" {
+       id 458761
+       port 5
+      }
+      ConnectionClass "462857:5" {
+       id 462857
+       port 5
+      }
+      ConnectionClass "466953:5" {
+       id 466953
+       port 5
+      }
+      ConnectionClass "471049:5" {
+       id 471049
+       port 5
+      }
+      ConnectionClass "475145:5" {
+       id 475145
+       port 5
+      }
+      ConnectionClass "479241:5" {
+       id 479241
+       port 5
+      }
+      ConnectionClass "483337:5" {
+       id 483337
+       port 5
+      }
+      ConnectionClass "487433:5" {
+       id 487433
+       port 5
+      }
+      ConnectionClass "491529:5" {
+       id 491529
+       port 5
+      }
+      ConnectionClass "495625:5" {
+       id 495625
+       port 5
+      }
+      ConnectionClass "499721:5" {
+       id 499721
+       port 5
+      }
+      ConnectionClass "503817:5" {
+       id 503817
+       port 5
+      }
+      ConnectionClass "507913:5" {
+       id 507913
+       port 5
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "297997:105" {
+       id 297997
+       port 105
+      }
+     }
+    }
+   }
+   pi {
+    3 0
+   }
+   pu {
+    2 0
+   }
+   OSPort 197639
+  }
+  AuxOutClass "299037" {
+   id 299037
+   name "AuxOut Rev Medium"
+   version 5
+   tl 992.388 921.464
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "409609:5" {
+       id 409609
+       port 5
+      }
+      ConnectionClass "413705:5" {
+       id 413705
+       port 5
+      }
+      ConnectionClass "417801:5" {
+       id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
+      ConnectionClass "425993:5" {
+       id 425993
+       port 5
+      }
+      ConnectionClass "430089:5" {
+       id 430089
+       port 5
+      }
+      ConnectionClass "434185:5" {
+       id 434185
+       port 5
+      }
+      ConnectionClass "438281:5" {
+       id 438281
+       port 5
+      }
+      ConnectionClass "442377:5" {
+       id 442377
+       port 5
+      }
+      ConnectionClass "446473:5" {
+       id 446473
+       port 5
+      }
+      ConnectionClass "450569:5" {
+       id 450569
+       port 5
+      }
+      ConnectionClass "454665:5" {
+       id 454665
+       port 5
+      }
+      ConnectionClass "458761:5" {
+       id 458761
+       port 5
+      }
+      ConnectionClass "462857:5" {
+       id 462857
+       port 5
+      }
+      ConnectionClass "466953:5" {
+       id 466953
+       port 5
+      }
+      ConnectionClass "471049:5" {
+       id 471049
+       port 5
+      }
+      ConnectionClass "475145:5" {
+       id 475145
+       port 5
+      }
+      ConnectionClass "479241:5" {
+       id 479241
+       port 5
+      }
+      ConnectionClass "483337:5" {
+       id 483337
+       port 5
+      }
+      ConnectionClass "487433:5" {
+       id 487433
+       port 5
+      }
+      ConnectionClass "491529:5" {
+       id 491529
+       port 5
+      }
+      ConnectionClass "495625:5" {
+       id 495625
+       port 5
+      }
+      ConnectionClass "499721:5" {
+       id 499721
+       port 5
+      }
+      ConnectionClass "503817:5" {
+       id 503817
+       port 5
+      }
+      ConnectionClass "507913:5" {
+       id 507913
+       port 5
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "297997:106" {
+       id 297997
+       port 106
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "297997:39" {
+       id 297997
+       port 39
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+   pu {
+    6 0
+   }
+   OSPort 339975
+  }
+  AuxOutClass "300061" {
+   id 300061
+   name "AuxOut Rev Large"
+   version 5
+   tl 992.388 1049.465
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "409609:5" {
+       id 409609
+       port 5
+      }
+      ConnectionClass "413705:5" {
+       id 413705
+       port 5
+      }
+      ConnectionClass "417801:5" {
+       id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
+      ConnectionClass "425993:5" {
+       id 425993
+       port 5
+      }
+      ConnectionClass "430089:5" {
+       id 430089
+       port 5
+      }
+      ConnectionClass "434185:5" {
+       id 434185
+       port 5
+      }
+      ConnectionClass "438281:5" {
+       id 438281
+       port 5
+      }
+      ConnectionClass "442377:5" {
+       id 442377
+       port 5
+      }
+      ConnectionClass "446473:5" {
+       id 446473
+       port 5
+      }
+      ConnectionClass "450569:5" {
+       id 450569
+       port 5
+      }
+      ConnectionClass "454665:5" {
+       id 454665
+       port 5
+      }
+      ConnectionClass "458761:5" {
+       id 458761
+       port 5
+      }
+      ConnectionClass "462857:5" {
+       id 462857
+       port 5
+      }
+      ConnectionClass "466953:5" {
+       id 466953
+       port 5
+      }
+      ConnectionClass "471049:5" {
+       id 471049
+       port 5
+      }
+      ConnectionClass "475145:5" {
+       id 475145
+       port 5
+      }
+      ConnectionClass "479241:5" {
+       id 479241
+       port 5
+      }
+      ConnectionClass "483337:5" {
+       id 483337
+       port 5
+      }
+      ConnectionClass "487433:5" {
+       id 487433
+       port 5
+      }
+      ConnectionClass "491529:5" {
+       id 491529
+       port 5
+      }
+      ConnectionClass "495625:5" {
+       id 495625
+       port 5
+      }
+      ConnectionClass "499721:5" {
+       id 499721
+       port 5
+      }
+      ConnectionClass "503817:5" {
+       id 503817
+       port 5
+      }
+      ConnectionClass "507913:5" {
+       id 507913
+       port 5
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "297997:110" {
+       id 297997
+       port 110
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "297997:39" {
+       id 297997
+       port 39
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+   pu {
+    6 0
+   }
+   OSPort 340999
+  }
+  AuxOutClass "301085" {
+   id 301085
+   name "AuxOut Rev Small"
+   version 5
+   tl 992.388 793.464
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "409609:5" {
+       id 409609
+       port 5
+      }
+      ConnectionClass "413705:5" {
+       id 413705
+       port 5
+      }
+      ConnectionClass "417801:5" {
+       id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
+      ConnectionClass "425993:5" {
+       id 425993
+       port 5
+      }
+      ConnectionClass "430089:5" {
+       id 430089
+       port 5
+      }
+      ConnectionClass "434185:5" {
+       id 434185
+       port 5
+      }
+      ConnectionClass "438281:5" {
+       id 438281
+       port 5
+      }
+      ConnectionClass "442377:5" {
+       id 442377
+       port 5
+      }
+      ConnectionClass "446473:5" {
+       id 446473
+       port 5
+      }
+      ConnectionClass "450569:5" {
+       id 450569
+       port 5
+      }
+      ConnectionClass "454665:5" {
+       id 454665
+       port 5
+      }
+      ConnectionClass "458761:5" {
+       id 458761
+       port 5
+      }
+      ConnectionClass "462857:5" {
+       id 462857
+       port 5
+      }
+      ConnectionClass "466953:5" {
+       id 466953
+       port 5
+      }
+      ConnectionClass "471049:5" {
+       id 471049
+       port 5
+      }
+      ConnectionClass "475145:5" {
+       id 475145
+       port 5
+      }
+      ConnectionClass "479241:5" {
+       id 479241
+       port 5
+      }
+      ConnectionClass "483337:5" {
+       id 483337
+       port 5
+      }
+      ConnectionClass "487433:5" {
+       id 487433
+       port 5
+      }
+      ConnectionClass "491529:5" {
+       id 491529
+       port 5
+      }
+      ConnectionClass "495625:5" {
+       id 495625
+       port 5
+      }
+      ConnectionClass "499721:5" {
+       id 499721
+       port 5
+      }
+      ConnectionClass "503817:5" {
+       id 503817
+       port 5
+      }
+      ConnectionClass "507913:5" {
+       id 507913
+       port 5
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "297997:107" {
+       id 297997
+       port 107
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "297997:39" {
+       id 297997
+       port 39
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+   pu {
+    6 0
+   }
+   OSPort 338951
+  }
+ }
+ groups {
+ }
+ version 1
+ listenerWindowModel "{9F3AF591CD6DFE1A}Assets/Characters/Basebody/Basebody_Male_01.xob"
+}

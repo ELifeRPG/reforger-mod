@@ -65,6 +65,8 @@ class ELIFE_BankClerkTransfers : Managed
 	protected static const int QUOTE_LIFETIME_MS = 60000;
 	protected static const int HTTP_NOT_FOUND = 404;
 	protected static const int MAX_RECENT = 5;
+	//! Longest TRANSFER_PROCESSING line (3.3 s) plus a pause.
+	protected static const int PROCESSING_DELAY_MS = 3500;
 
 	protected ELIFE_BankClerkComponent m_Clerk;
 
@@ -109,6 +111,7 @@ class ELIFE_BankClerkTransfers : Managed
 		m_bRestartLoad = false;
 		m_bQuoteInFlight = false;
 		m_Quote = null;
+		GetGame().GetCallqueue().Remove(SendProcessedQuote);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -423,7 +426,21 @@ class ELIFE_BankClerkTransfers : Managed
 		if (bank)
 			m_Quote.targetBankName = bank.name;
 
+		//! Stays in flight while he "enters" it, so a second slip waits.
 		m_Quote.quoteId = m_iNextQuoteId++;
+		m_bQuoteInFlight = true;
+		m_Clerk.Say(ELIFE_EClerkLine.TRANSFER_PROCESSING);
+		GetGame().GetCallqueue().CallLater(SendProcessedQuote, PROCESSING_DELAY_MS, false, m_Quote.quoteId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Dropped if the visit ended meanwhile.
+	protected void SendProcessedQuote(int quoteId)
+	{
+		if (!m_Quote || m_Quote.quoteId != quoteId)
+			return;
+
+		m_bQuoteInFlight = false;
 		m_iQuoteTick = System.GetTickCount();
 		SendQuote(m_iPlayerId, ELIFE_EClerkReason.NONE, m_Quote);
 	}
@@ -462,7 +479,7 @@ class ELIFE_BankClerkTransfers : Managed
 			return;
 		}
 
-		if (!m_Quote || m_Quote.quoteId != quoteId || playerId != m_iPlayerId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
+		if (m_bQuoteInFlight || !m_Quote || m_Quote.quoteId != quoteId || playerId != m_iPlayerId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
 		{
 			SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED);
 			return;
@@ -571,6 +588,9 @@ class ELIFE_BankClerkTransfers : Managed
 	//! A clerk deleted mid-booking must not leave the account locked for the ATMs.
 	void ~ELIFE_BankClerkTransfers()
 	{
+		if (GetGame() && GetGame().GetCallqueue())
+			GetGame().GetCallqueue().Remove(SendProcessedQuote);
+
 		if (m_Booking)
 			m_Booking.Cancel();
 

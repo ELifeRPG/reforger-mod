@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{F60E9539AAFDEB32}Sounds/VO/BankClerk/ELIFE_BankClerk_VO_Lewis.acp"
+ Configurations {
+  AudioProjectResourceClass PC {
+  }
+  AudioProjectResourceClass XBOX_ONE : PC {
+  }
+  AudioProjectResourceClass XBOX_SERIES : PC {
+  }
+  AudioProjectResourceClass PS4 : PC {
+  }
+  AudioProjectResourceClass PS5 : PC {
+  }
+  AudioProjectResourceClass HEADLESS : PC {
+  }
+ }
+}

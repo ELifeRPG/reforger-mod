@@ -60,24 +60,32 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	//! Server-side senders: on a client-owned character these route to the client, on a host's own they call directly.
 	void SendGrant(RplId clerkId, bool granted, int reason)
 	{
+		//! Granted visits are greeted when the visit starts.
+		if (!granted)
+			SayOutcome(clerkId, reason, ELIFE_EClerkLine.NONE);
+
 		Rpc(RpcDo_Grant, clerkId, granted, reason);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void SendAccountOpened(RplId clerkId, bool opened, int reason, string accountNumber)
 	{
+		SayOutcome(clerkId, reason, ELIFE_EClerkLine.ACCOUNT_OPENED);
 		Rpc(RpcDo_AccountOpened, clerkId, opened, reason, accountNumber);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void SendClerkAccounts(RplId clerkId, int reason, string json)
 	{
+		SayOutcome(clerkId, reason, ELIFE_EClerkLine.TRANSFER_FORM);
 		Rpc(RpcDo_ClerkAccounts, clerkId, reason, json);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void SendTransferQuote(RplId clerkId, int reason, string json)
 	{
+		//! An accepted slip was already announced as TRANSFER_PROCESSING.
+		SayOutcome(clerkId, reason, ELIFE_EClerkLine.NONE);
 		Rpc(RpcDo_TransferQuote, clerkId, reason, json);
 	}
 
@@ -85,6 +93,7 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	//! amount, fee and balance are the Bridge's display text.
 	void SendTransferResult(RplId clerkId, int reason, string amount, string fee, string balance)
 	{
+		SayOutcome(clerkId, reason, ELIFE_EClerkLine.TRANSFER_DONE);
 		Rpc(RpcDo_TransferResult, clerkId, reason, amount, fee, balance);
 	}
 
@@ -201,6 +210,19 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 			message = "#ELIFE-Clerk_OutOfRange";
 
 		SCR_HintManagerComponent.ShowCustomHint(message, "#ELIFE-Clerk_Title");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-side.
+	protected void SayOutcome(RplId clerkId, int reason, ELIFE_EClerkLine successLine)
+	{
+		IEntity entity = FindEntity(clerkId);
+		if (!entity)
+			return;
+
+		ELIFE_BankClerkComponent clerk = ELIFE_BankClerkComponent.Cast(entity.FindComponent(ELIFE_BankClerkComponent));
+		if (clerk)
+			clerk.SayOutcome(reason, successLine);
 	}
 
 	//------------------------------------------------------------------------------------------------
