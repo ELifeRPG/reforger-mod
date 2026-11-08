@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{9FA4749AF6C55D96}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_LIFE.et"
+ Name "{9FA4749AF6C55D96}Prefabs/Characters/Factions/LIFE/Character_LIFE.et"
  Configurations {
   EntityTemplateResourceClass PC {
   }
@@ -10,6 +10,8 @@ MetaFileClass {
   EntityTemplateResourceClass PS4 : PC {
   }
   EntityTemplateResourceClass HEADLESS : PC {
+  }
+  EntityTemplateResourceClass PS5 : PC {
   }
  }
 }

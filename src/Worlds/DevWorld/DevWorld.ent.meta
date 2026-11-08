@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{CDBA6FFBEB26E44B}Worlds/DevWorld/DevWorld.ent"
+ Name "{D1D70F3E609454CE}Worlds/DevWorld/DevWorld.ent"
  Configurations {
   ENTResourceClass PC {
   }
@@ -8,6 +8,8 @@ MetaFileClass {
   ENTResourceClass XBOX_SERIES : PC {
   }
   ENTResourceClass PS4 : PC {
+  }
+  ENTResourceClass PS5 : PC {
   }
   ENTResourceClass HEADLESS : PC {
   }
