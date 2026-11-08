@@ -61,7 +61,15 @@ enum ELIFE_EClerkLine
 	ALREADY_OPENED,
 	FAILED,
 	UNKNOWN_OUTCOME,
-	GOODBYE
+	GOODBYE,
+	//! Asked for by the customer's dialogue (see IsAskableLine).
+	ANYTHING_ELSE,
+	OPEN_ACCOUNT_TERMS,
+	QUESTIONS,
+	INFO_FEES,
+	INFO_TRANSFERS,
+	INFO_BALANCE,
+	INFO_CASH
 }
 
 //------------------------------------------------------------------------------------------------
@@ -109,6 +117,8 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected static const int GESTURE_DELAY_MS = 300;
 	//! Players waiting for him can ask again and again; he asks them to wait at most this often.
 	protected static const int BUSY_LINE_COOLDOWN_MS = 10000;
+	//! Lines the customer asks for are at least this far apart; one asked sooner waits, and a newer one replaces it.
+	protected static const int ASKED_LINE_COOLDOWN_MS = 500;
 
 	//! Client-side: the current line, cut off by the next one.
 	protected AudioHandle m_hVoice = AudioHandle.Invalid;
@@ -119,6 +129,15 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected ref map<int, int> m_mLastVariant = new map<int, int>();
 	//! Client-side: when he last asked someone to wait; 0 is never.
 	protected int m_iLastBusyLineTick;
+	//! Client-side: the line heard last, for a dialogue that opens just after it; tick 0 is none.
+	protected int m_iLastLineVoice;
+	protected int m_iLastLine;
+	protected int m_iLastLineVariant;
+	protected int m_iLastLineTick;
+	//! Server-side: when the customer last had him say something, as a tick count.
+	protected int m_iLastAskedLineTick;
+	//! Server-side: the asked line waiting out the cooldown.
+	protected ELIFE_EClerkLine m_ePendingAskedLine;
 	//! Server-side: since when he has been close to his desk direction while turning home, as a tick count; 0 is not yet.
 	protected int m_iHomeSettleTick;
 	//! Server-side: the idle is playing its exit animation.
@@ -136,6 +155,9 @@ class ELIFE_BankClerkComponent : ScriptComponent
 
 	[Attribute("2.5", UIWidgets.Slider, "How far from the clerk a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
+
+	[Attribute("{570E8AA28E1B73D5}Configs/Banking/ELIFE_ClerkDialogue.conf", UIWidgets.ResourceNamePicker, "The conversation at his desk, an ELIFE_DialogueConfig", "conf")]
+	protected ResourceName m_sDialogueConfig;
 
 	//! Server-side: the way the spot faces, where he turns back to after a visit.
 	protected float m_fHomeYaw;
@@ -504,6 +526,93 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Server-only. A line the customer's dialogue asks for when moving to a step: a question's answer, "anything else?".
+	void RequestSay(int playerId, notnull IEntity character, ELIFE_EClerkLine line)
+	{
+		if (!IsCustomer(playerId, character) || !IsUsableBy(character))
+			return;
+
+		if (!IsAskableLine(line))
+		{
+			Print(string.Format("ELIFE_BankClerkComponent | player %1 asked for line %2, which isn't askable", playerId, line), LogLevel.WARNING);
+			return;
+		}
+
+		int now = System.GetTickCount();
+		m_iLastRequestTick = now;
+		m_ePendingAskedLine = line;
+		GetGame().GetCallqueue().Remove(SayPendingAskedLine);
+
+		int wait = 0;
+		if (m_iLastAskedLineTick != 0)
+			wait = ASKED_LINE_COOLDOWN_MS - (now - m_iLastAskedLineTick);
+
+		if (wait > 0)
+			GetGame().GetCallqueue().CallLater(SayPendingAskedLine, wait);
+		else
+			SayPendingAskedLine();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SayPendingAskedLine()
+	{
+		if (m_iCustomerPlayerId == 0)
+			return;
+
+		m_iLastAskedLineTick = System.GetTickCount();
+		Say(m_ePendingAskedLine);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Outcomes and greetings are the server's to say, so a client can't claim a transfer went through.
+	static bool IsAskableLine(ELIFE_EClerkLine line)
+	{
+		switch (line)
+		{
+			case ELIFE_EClerkLine.ANYTHING_ELSE:
+			case ELIFE_EClerkLine.OPEN_ACCOUNT_TERMS:
+			case ELIFE_EClerkLine.QUESTIONS:
+			case ELIFE_EClerkLine.INFO_FEES:
+			case ELIFE_EClerkLine.INFO_TRANSFERS:
+			case ELIFE_EClerkLine.INFO_BALANCE:
+			case ELIFE_EClerkLine.INFO_CASH:
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	ResourceName GetDialogueConfig()
+	{
+		return m_sDialogueConfig;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The subtitle of a line as heard: ELIFE-ClerkVO_<voice>_<line>[_<variant>], like the sound event.
+	static string GetLineText(int voice, int line, int variant)
+	{
+		string text = "#ELIFE-ClerkVO_" + typename.EnumToString(ELIFE_EClerkVoice, voice) + "_" + typename.EnumToString(ELIFE_EClerkLine, line);
+		if (variant > 1)
+			text += "_" + variant.ToString();
+
+		return text;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client-side. The line heard within the last maxAgeMs.
+	bool GetRecentLine(int maxAgeMs, out int voice, out int line, out int variant)
+	{
+		if (m_iLastLineTick == 0 || System.GetTickCount() - m_iLastLineTick > maxAgeMs)
+			return false;
+
+		voice = m_iLastLineVoice;
+		line = m_iLastLine;
+		variant = m_iLastLineVariant;
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-only. A personal account for the customer at this desk's bank.
 	void RequestOpenAccount(int playerId, notnull IEntity character, notnull ELIFE_BankClerkCharacterComponent link)
 	{
@@ -725,6 +834,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected void Release(string why)
 	{
 		GetGame().GetCallqueue().Remove(Tick);
+		GetGame().GetCallqueue().Remove(SayPendingAskedLine);
 		StopAttention();
 		Print(string.Format("ELIFE_BankClerkComponent | %1 released player %2: %3", m_sBankCode, m_iCustomerPlayerId, why), LogLevel.NORMAL);
 
@@ -983,6 +1093,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			case ELIFE_EClerkLine.BUSY: return 2;
 			case ELIFE_EClerkLine.TRANSFER_FORM: return 2;
 			case ELIFE_EClerkLine.TRANSFER_PROCESSING: return 2;
+			case ELIFE_EClerkLine.ANYTHING_ELSE: return 2;
 		}
 
 		return 1;
@@ -1058,6 +1169,12 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			Print(string.Format("ELIFE_BankClerkComponent | no sound for %1", soundEvent), LogLevel.WARNING);
 
 		PlayLineSfx(line);
+
+		m_iLastLineVoice = voiceId;
+		m_iLastLine = line;
+		m_iLastLineVariant = variant;
+		m_iLastLineTick = System.GetTickCount();
+		ELIFE_DialogueMenu.OnSpeakerSaid(GetOwner(), GetLineText(voiceId, line, variant));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1094,6 +1211,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			GetGame().GetCallqueue().Remove(TurnHome);
 			GetGame().GetCallqueue().Remove(TurnHomeStep);
 			GetGame().GetCallqueue().Remove(PlayLineGesture);
+			GetGame().GetCallqueue().Remove(SayPendingAskedLine);
 		}
 	}
 }

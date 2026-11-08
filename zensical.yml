@@ -12,6 +12,7 @@ nav:
   - Backend API client: backend-api.md
   - Account linking: account-linking.md
   - RTTexture guide: rttexture-guide.md
+  - NPC dialogue: npc-dialogue.md
 
 extra_css:
   - stylesheets/extra.css

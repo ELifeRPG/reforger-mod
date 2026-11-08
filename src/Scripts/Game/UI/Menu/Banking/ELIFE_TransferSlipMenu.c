@@ -50,7 +50,7 @@ enum ELIFE_ESlipRow
 
 //------------------------------------------------------------------------------------------------
 //! The transfer at the counter as a paper slip. Mouse and keyboard click and type; a controller moves over the rows and rolls the printed boxes.
-//! It is one step of the clerk visit: it hands over to the clerk's dialogs and back without ending the visit.
+//! It is one step of the clerk visit: it opens over the clerk dialogue and hands back to it without ending the visit.
 class ELIFE_TransferSlipMenu : ChimeraMenuBase
 {
 	protected static const ResourceName BOX_LAYOUT = "{5A2C97FF6C6F6A3E}UI/layouts/Menus/Banking/TransferSlipBox.layout";
@@ -120,7 +120,8 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 	protected bool m_bLoaded;
 	protected bool m_bWaiting;
-	protected bool m_bHandingOver;
+	//! Handed back to the dialogue when the slip closes: the packed receipt of a booked transfer, else empty.
+	protected string m_sReceipt;
 	protected bool m_bIsClosing;
 	//! The menu opens before the replicated customer id may have arrived, so a mismatch only counts once it matched.
 	protected bool m_bSeenAsCustomer;
@@ -220,7 +221,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		m_Link = link;
 
 		//! Here, not in OnMenuOpen: the clerk isn't known yet there.
-		ELIFE_BankClerkDialogBase.PlayPaperSound(m_Clerk);
+		m_Clerk.PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
 		SetText("BankName", m_Clerk.GetBankName());
 		m_Link.RequestTransferAccounts(m_Clerk.GetOwner());
 		Refresh();
@@ -320,7 +321,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	{
 		if (reason != ELIFE_EClerkReason.NONE)
 		{
-			m_sNotice = ELIFE_BankClerkDialogBase.GetReasonText(reason);
+			m_sNotice = ELIFE_BankClerkDialogueController.GetReasonText(reason);
 			Refresh();
 			return;
 		}
@@ -356,7 +357,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		}
 
 		m_bWaiting = false;
-		m_sNotice = ELIFE_BankClerkDialogBase.GetReasonText(reason);
+		m_sNotice = ELIFE_BankClerkDialogueController.GetReasonText(reason);
 		Refresh();
 	}
 
@@ -374,11 +375,12 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 			receipt.fee = fee;
 			receipt.balance = balance;
 			receipt.Pack();
-			HandOver(ELIFE_EClerkDialog.TRANSFER_DONE, receipt.AsString());
+			m_sReceipt = receipt.AsString();
+			CloseSlip();
 			return;
 		}
 
-		m_sNotice = ELIFE_BankClerkDialogBase.GetReasonText(reason);
+		m_sNotice = ELIFE_BankClerkDialogueController.GetReasonText(reason);
 		Refresh();
 	}
 
@@ -766,7 +768,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (!IsReady())
 			return;
 
-		ELIFE_BankClerkDialogBase.PlayPaperSound(m_Clerk);
+		m_Clerk.PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
 		m_bWaiting = true;
 		m_bEditing = false;
 		m_sNotice = "#ELIFE-Clerk_Working";
@@ -776,17 +778,6 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	protected void Cancel()
 	{
-		HandOver(ELIFE_EClerkDialog.SERVICES, "");
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! The next step opens on top before the slip closes, so the backdrop never drops out and the visit continues.
-	protected void HandOver(ELIFE_EClerkDialog next, string data)
-	{
-		if (m_bIsClosing)
-			return;
-
-		m_bHandingOver = ELIFE_BankClerkDialogBase.Open(next, m_Clerk, m_Link, data);
 		CloseSlip();
 	}
 
@@ -1320,7 +1311,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Leaving without handing over ends the visit and frees the clerk.
+	//! Hands back to the dialogue underneath; without one (it closed first), ending the visit is the slip's job.
 	override void OnMenuClose()
 	{
 		m_bIsClosing = true;
@@ -1331,7 +1322,10 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (inputManager)
 			inputManager.RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnBackAction);
 
-		if (!m_bHandingOver && m_Link && m_Clerk)
+		ELIFE_BankClerkDialogueController dialogue = ELIFE_BankClerkDialogueController.GetActive();
+		if (dialogue)
+			dialogue.OnSlipClosed(m_sReceipt);
+		else if (m_Link && m_Clerk)
 			m_Link.RequestClose(m_Clerk.GetOwner());
 
 		super.OnMenuClose();

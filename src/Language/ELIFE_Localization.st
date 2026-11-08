@@ -2386,38 +2386,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{ADC99C1D8CF78A30}" {
-   Id "ELIFE-Clerk_Greeting"
-   Target_en_us "Good day. How can I help you?"
-   Target_de_de "Guten Tag. Wie kann ich Ihnen helfen?"
-   Modified 1794100000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{72A97C9711AC41C4}" {
-   Id "ELIFE-Clerk_Transfer"
-   Target_en_us "Transfer money"
-   Target_de_de "Geld überweisen"
-   Modified 1794100000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{A2B3C7CB861BB673}" {
-   Id "ELIFE-Clerk_OpenAccount"
-   Target_en_us "Open an account"
-   Target_de_de "Konto eröffnen"
-   Modified 1794100000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{B35EC476EA029CFA}" {
-   Id "ELIFE-Clerk_Goodbye"
-   Target_en_us "Goodbye"
-   Target_de_de "Auf Wiedersehen"
-   Modified 1794100000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{D6DEE8885AAE6011}" {
    Id "ELIFE-Clerk_Busy"
    Target_en_us "The clerk is serving another customer. Please wait a moment."
@@ -2442,30 +2410,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{A7D97163FA81D09E}" {
-   Id "ELIFE-Clerk_OpenAccount_Message"
-   Target_en_us "I can open a personal account at %1 for you right away."
-   Target_de_de "Ich kann Ihnen sofort ein Privatkonto bei der %1 eröffnen."
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{1FB9D2EB0F032BEF}" {
-   Id "ELIFE-Clerk_OpenAccount_Confirm"
-   Target_en_us "Open account"
-   Target_de_de "Konto eröffnen"
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{F1F20CF98178BEFF}" {
-   Id "ELIFE-Clerk_Back"
-   Target_en_us "Back"
-   Target_de_de "Zurück"
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{BAC83DBB7654D75E}" {
    Id "ELIFE-Clerk_Working"
    Target_en_us "One moment, please …"
@@ -2482,42 +2426,10 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{AC7D7151187F2C79}" {
-   Id "ELIFE-Clerk_Opened_Message"
-   Target_en_us "Your new account is ready."
-   Target_de_de "Ihr neues Konto ist eröffnet."
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{85B3B2E5DB972757}" {
    Id "ELIFE-Clerk_Opened_Hint"
    Target_en_us "Your new account %1 is open."
    Target_de_de "Ihr neues Konto %1 ist eröffnet."
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{94645BCCDBAD65C9}" {
-   Id "ELIFE-Clerk_Done"
-   Target_en_us "Done"
-   Target_de_de "Fertig"
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{4E08014692CA4932}" {
-   Id "ELIFE-Clerk_OpenFailed"
-   Target_en_us "The account couldn't be opened. Please try again later."
-   Target_de_de "Das Konto konnte nicht eröffnet werden. Bitte versuchen Sie es später erneut."
-   Modified 1794110000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{43F321731F7F693A}" {
-   Id "ELIFE-Clerk_AlreadyOpened"
-   Target_en_us "You've just opened an account. One per visit, please."
-   Target_de_de "Sie haben gerade ein Konto eröffnet. Bitte nur eines pro Besuch."
    Modified 1794110000
    Author "Robin"
    LastChanged "Robin"
@@ -2598,14 +2510,6 @@ StringTable {
    Id "ELIFE-Clerk_TransferDone_Title"
    Target_en_us "Transfer sent"
    Target_de_de "Überweisung ausgeführt"
-   Modified 1794120000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{9D67ACB0AB2CAE36}" {
-   Id "ELIFE-Clerk_TransferDone_Message"
-   Target_en_us "Done, the transfer is booked."
-   Target_de_de "Erledigt, die Überweisung ist gebucht."
    Modified 1794120000
    Author "Robin"
    LastChanged "Robin"
@@ -2799,6 +2703,894 @@ StringTable {
    Target_en_us "recently paid"
    Target_de_de "zuletzt bezahlt"
    Modified 1794131000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CD32F7777B933B52}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING"
+   Target_en_us "Hello, welcome to the bank! How can I help you today?"
+   Target_de_de "Hallo, willkommen in der Bank! Wie kann ich Ihnen heute helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4C05B757518D5C0C}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_2"
+   Target_en_us "Good day! What can I do for you?"
+   Target_de_de "Guten Tag! Was kann ich für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{87BE01CAE9DE7494}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_3"
+   Target_en_us "Hi there, come on in. How may I help you?"
+   Target_de_de "Hallo, kommen Sie ruhig näher. Wie kann ich Ihnen helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2D6C7BBA2F78496E}" {
+   Id "ELIFE-ClerkVO_PUCK_BUSY"
+   Target_en_us "Just a moment, please. I'll be right with you."
+   Target_de_de "Einen Moment bitte, ich bin gleich für Sie da."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BC76442E6AC1D176}" {
+   Id "ELIFE-ClerkVO_PUCK_BUSY_2"
+   Target_en_us "I'm with another customer right now. I'll be with you shortly."
+   Target_de_de "Ich bediene gerade einen anderen Kunden. Ich bin gleich bei Ihnen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{81365767E042C114}" {
+   Id "ELIFE-ClerkVO_PUCK_UNAVAILABLE"
+   Target_en_us "I'm sorry, our system is down right now. Please come back a little later."
+   Target_de_de "Es tut mir leid, unser System ist gerade ausgefallen. Bitte kommen Sie etwas später wieder."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{09FA3ACAA0BF6D1E}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_FORM"
+   Target_en_us "Of course. Please fill out this transfer slip, and I'll take care of the rest."
+   Target_de_de "Natürlich. Bitte füllen Sie diesen Überweisungsschein aus, um den Rest kümmere ich mich."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6F68488190039F99}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_FORM_2"
+   Target_en_us "Sure thing. Just fill out this slip for me, please."
+   Target_de_de "Gern. Füllen Sie mir bitte einfach diesen Schein aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FF82DDD5BD416797}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_PROCESSING"
+   Target_en_us "Thank you. Let me just enter this into the system."
+   Target_de_de "Danke schön. Ich gebe das nur kurz ins System ein."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D44ED59252AC24AE}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_PROCESSING_2"
+   Target_en_us "Alright, one moment while I put this through."
+   Target_de_de "Gut, einen Moment, ich buche das eben."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BDA8409FCA9D2D76}" {
+   Id "ELIFE-ClerkVO_PUCK_CHECK_SLIP"
+   Target_en_us "Hmm, something on this slip isn't quite right. Could you check it again?"
+   Target_de_de "Hm, auf diesem Schein stimmt etwas nicht ganz. Könnten Sie ihn noch einmal prüfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1D7A666177203BD8}" {
+   Id "ELIFE-ClerkVO_PUCK_NOT_ENOUGH_MONEY"
+   Target_en_us "I'm afraid there aren't enough funds on that account."
+   Target_de_de "Leider ist auf diesem Konto nicht genug Guthaben."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{160530926C46F9CE}" {
+   Id "ELIFE-ClerkVO_PUCK_TARGET_NOT_FOUND"
+   Target_en_us "I'm sorry, I can't find an account with that number."
+   Target_de_de "Es tut mir leid, ich finde kein Konto mit dieser Nummer."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7C047634091C5D84}" {
+   Id "ELIFE-ClerkVO_PUCK_ACCOUNT_BUSY"
+   Target_en_us "That account is in use right now. Please try again in a moment."
+   Target_de_de "Dieses Konto wird gerade benutzt. Bitte versuchen Sie es gleich noch einmal."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0C028EBC56F650C7}" {
+   Id "ELIFE-ClerkVO_PUCK_QUOTE_EXPIRED"
+   Target_en_us "This slip has expired, I'm afraid. Let's go over it once more."
+   Target_de_de "Dieser Schein ist leider abgelaufen. Gehen wir ihn noch einmal durch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C88EEA6E49445FA4}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE"
+   Target_en_us "All done. Your transfer has been sent. Is there anything else I can do for you?"
+   Target_de_de "Alles erledigt. Ihre Überweisung ist raus. Kann ich sonst noch etwas für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FF7C053C6C564130}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE_2"
+   Target_en_us "That's it, the money is on its way. Anything else today?"
+   Target_de_de "Das war's, das Geld ist unterwegs. Sonst noch etwas heute?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F6076C1F3B86919A}" {
+   Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE_3"
+   Target_en_us "Done. The transfer went through. Can I help you with anything else?"
+   Target_de_de "Fertig. Die Überweisung ist durch. Kann ich Ihnen noch bei etwas anderem helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6ED844C24E2618FA}" {
+   Id "ELIFE-ClerkVO_PUCK_ACCOUNT_OPENED"
+   Target_en_us "There you go. Your new account is open and ready to use."
+   Target_de_de "Bitte schön. Ihr neues Konto ist eröffnet und sofort nutzbar."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{41BC4E6781DB48D7}" {
+   Id "ELIFE-ClerkVO_PUCK_ALREADY_OPENED"
+   Target_en_us "I've just opened an account for you. One per visit, I'm afraid."
+   Target_de_de "Ich habe Ihnen gerade schon ein Konto eröffnet. Leider nur eins pro Besuch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E28644C8559A8E7B}" {
+   Id "ELIFE-ClerkVO_PUCK_FAILED"
+   Target_en_us "I'm sorry, that didn't go through."
+   Target_de_de "Es tut mir leid, das hat nicht geklappt."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AEA12C7B30F10200}" {
+   Id "ELIFE-ClerkVO_PUCK_UNKNOWN_OUTCOME"
+   Target_en_us "Hmm, the system isn't answering. Please check your balance before you try again."
+   Target_de_de "Hm, das System antwortet nicht. Bitte prüfen Sie Ihren Kontostand, bevor Sie es noch einmal versuchen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A0B028F547337A01}" {
+   Id "ELIFE-ClerkVO_PUCK_ANYTHING_ELSE"
+   Target_en_us "Is there anything else I can do for you?"
+   Target_de_de "Kann ich sonst noch etwas für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0BA10886B40BC2D7}" {
+   Id "ELIFE-ClerkVO_PUCK_ANYTHING_ELSE_2"
+   Target_en_us "What else can I help you with?"
+   Target_de_de "Wobei kann ich Ihnen noch helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{20B7602D0BBCD655}" {
+   Id "ELIFE-ClerkVO_PUCK_OPEN_ACCOUNT_TERMS"
+   Target_en_us "Happy to. These are our terms. Shall I open the account for you?"
+   Target_de_de "Sehr gern. Das sind unsere Konditionen. Soll ich das Konto für Sie eröffnen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9FA8497949D8BE1A}" {
+   Id "ELIFE-ClerkVO_PUCK_QUESTIONS"
+   Target_en_us "Of course. What would you like to know?"
+   Target_de_de "Natürlich. Was möchten Sie wissen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1F71F67064F7ED67}" {
+   Id "ELIFE-ClerkVO_PUCK_INFO_FEES"
+   Target_en_us "We charge a small fee per booking. Here are our current terms."
+   Target_de_de "Wir berechnen eine kleine Gebühr pro Buchung. Das sind unsere aktuellen Konditionen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{274E338594AE93E9}" {
+   Id "ELIFE-ClerkVO_PUCK_INFO_TRANSFERS"
+   Target_en_us "Yes, you can send money to any bank. Just fill out a transfer slip here at the counter."
+   Target_de_de "Ja, Sie können Geld an jede Bank überweisen. Füllen Sie einfach hier am Schalter einen Überweisungsschein aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4A27B41F57DF63D1}" {
+   Id "ELIFE-ClerkVO_PUCK_INFO_BALANCE"
+   Target_en_us "Your phone's banking app shows your balance anytime, and so does any of our ATMs."
+   Target_de_de "Die Banking-App auf Ihrem Handy zeigt Ihren Kontostand jederzeit, genau wie jeder unserer Geldautomaten."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E8FE4CF6FFF18B04}" {
+   Id "ELIFE-ClerkVO_PUCK_INFO_CASH"
+   Target_en_us "For cash, please use one of our ATMs. They take deposits and pay out withdrawals."
+   Target_de_de "Für Bargeld nutzen Sie bitte einen unserer Geldautomaten. Dort können Sie einzahlen und abheben."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EE2854296CBDFCF0}" {
+   Id "ELIFE-ClerkVO_PUCK_GOODBYE"
+   Target_en_us "Thank you for banking with us. Have a pleasant day."
+   Target_de_de "Danke, dass Sie bei uns sind. Einen schönen Tag noch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FF5AD2F863A633BD}" {
+   Id "ELIFE-ClerkVO_PUCK_GOODBYE_2"
+   Target_en_us "Take care, and come back anytime."
+   Target_de_de "Machen Sie's gut, und kommen Sie jederzeit wieder."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F559B90EA43578D5}" {
+   Id "ELIFE-ClerkVO_PUCK_GOODBYE_3"
+   Target_en_us "Goodbye, and have a nice day."
+   Target_de_de "Auf Wiedersehen, und einen schönen Tag."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{052464E4903F1BC3}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING"
+   Target_en_us "Good afternoon, and welcome. What can I do for you today?"
+   Target_de_de "Guten Tag und herzlich willkommen. Was darf ich heute für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A3DA06E54CEFAE21}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_2"
+   Target_en_us "Hello there. How may I be of assistance?"
+   Target_de_de "Guten Tag. Womit kann ich Ihnen behilflich sein?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FD246A88E483981D}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_3"
+   Target_en_us "Welcome in. What brings you to the bank today?"
+   Target_de_de "Willkommen. Was führt Sie heute zu uns?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{04A048B1BBAA844D}" {
+   Id "ELIFE-ClerkVO_LEWIS_BUSY"
+   Target_en_us "Bear with me a moment, I'm just finishing up with someone."
+   Target_de_de "Einen Augenblick bitte, ich bin gerade mit jemandem fertig."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F5BFE12834A9CEE2}" {
+   Id "ELIFE-ClerkVO_LEWIS_BUSY_2"
+   Target_en_us "Sorry, I'm with another customer. I won't be long."
+   Target_de_de "Verzeihung, ich bediene gerade einen anderen Kunden. Es dauert nicht lange."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1B449A0804417DF1}" {
+   Id "ELIFE-ClerkVO_LEWIS_UNAVAILABLE"
+   Target_en_us "Apologies, our systems are unavailable at the moment. Do try again a bit later."
+   Target_de_de "Ich bitte um Entschuldigung, unsere Systeme sind derzeit nicht erreichbar. Versuchen Sie es bitte etwas später."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CC4A29A500C47394}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_FORM"
+   Target_en_us "Certainly. If you'd fill in this transfer form, I'll handle the rest."
+   Target_de_de "Selbstverständlich. Wenn Sie dieses Überweisungsformular ausfüllen, erledige ich den Rest."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1A7B66290DC58031}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_FORM_2"
+   Target_en_us "Right then, here's a transfer slip. Just fill it in for me."
+   Target_de_de "Nun denn, hier ist ein Überweisungsschein. Füllen Sie ihn einfach für mich aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B08A031B628DE8D1}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_PROCESSING"
+   Target_en_us "Lovely, thank you. I'll just put this through for you."
+   Target_de_de "Wunderbar, vielen Dank. Ich buche das sogleich für Sie."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{35AC5F2027E31F40}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_PROCESSING_2"
+   Target_en_us "Right, let me enter that into the system for you."
+   Target_de_de "Gut, dann gebe ich das für Sie ins System ein."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AF9B0306FB0B9904}" {
+   Id "ELIFE-ClerkVO_LEWIS_CHECK_SLIP"
+   Target_en_us "I'm afraid something on this form doesn't look right. Would you mind checking it?"
+   Target_de_de "Ich fürchte, auf diesem Formular stimmt etwas nicht. Würden Sie es bitte noch einmal prüfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0540219BE45AF622}" {
+   Id "ELIFE-ClerkVO_LEWIS_NOT_ENOUGH_MONEY"
+   Target_en_us "I'm sorry, there simply aren't enough funds on that account."
+   Target_de_de "Es tut mir leid, auf diesem Konto ist schlicht nicht genug Guthaben."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E02C71B1DD2BFF95}" {
+   Id "ELIFE-ClerkVO_LEWIS_TARGET_NOT_FOUND"
+   Target_en_us "I can't seem to find an account under that number, I'm afraid."
+   Target_de_de "Ich fürchte, unter dieser Nummer finde ich kein Konto."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E068678A424FB38A}" {
+   Id "ELIFE-ClerkVO_LEWIS_ACCOUNT_BUSY"
+   Target_en_us "That account is being used elsewhere at the moment. Do try again shortly."
+   Target_de_de "Dieses Konto wird gerade anderweitig benutzt. Versuchen Sie es bitte in Kürze erneut."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{388AE757BB2E7C10}" {
+   Id "ELIFE-ClerkVO_LEWIS_QUOTE_EXPIRED"
+   Target_en_us "This form has expired, unfortunately. Shall we go through it again?"
+   Target_de_de "Dieses Formular ist leider abgelaufen. Sollen wir es noch einmal durchgehen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7C61D96EAD3A83CC}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE"
+   Target_en_us "Splendid, the transfer is on its way. Anything else I can help with?"
+   Target_de_de "Ausgezeichnet, die Überweisung ist unterwegs. Kann ich sonst noch behilflich sein?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B54531BED8616044}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE_2"
+   Target_en_us "That's all sorted, the money has been sent. Is there anything else?"
+   Target_de_de "Das ist erledigt, das Geld wurde überwiesen. Darf es sonst noch etwas sein?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2E320BCB407E731E}" {
+   Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE_3"
+   Target_en_us "Right, that's gone through. What else can I do for you?"
+   Target_de_de "So, das ist durch. Was kann ich noch für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D1554FBDE3748522}" {
+   Id "ELIFE-ClerkVO_LEWIS_ACCOUNT_OPENED"
+   Target_en_us "Excellent. Your new account is all set up and ready to go."
+   Target_de_de "Ausgezeichnet. Ihr neues Konto ist eingerichtet und einsatzbereit."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{333535E35D6C8268}" {
+   Id "ELIFE-ClerkVO_LEWIS_ALREADY_OPENED"
+   Target_en_us "I've already opened an account for you today, I'm afraid. Just the one per visit."
+   Target_de_de "Ich habe Ihnen heute bereits ein Konto eröffnet. Leider nur eines pro Besuch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{70D2A9DEE926B092}" {
+   Id "ELIFE-ClerkVO_LEWIS_FAILED"
+   Target_en_us "I'm terribly sorry, that hasn't gone through."
+   Target_de_de "Es tut mir außerordentlich leid, das ist nicht durchgegangen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B5D05977E94F57F3}" {
+   Id "ELIFE-ClerkVO_LEWIS_UNKNOWN_OUTCOME"
+   Target_en_us "Hmm, the system isn't responding. Do check your balance before trying again."
+   Target_de_de "Hm, das System reagiert nicht. Prüfen Sie bitte Ihren Kontostand, bevor Sie es erneut versuchen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4409C94BF5F63E64}" {
+   Id "ELIFE-ClerkVO_LEWIS_ANYTHING_ELSE"
+   Target_en_us "Is there anything else I can help you with?"
+   Target_de_de "Kann ich Ihnen sonst noch behilflich sein?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0FDF1EB36462BA95}" {
+   Id "ELIFE-ClerkVO_LEWIS_ANYTHING_ELSE_2"
+   Target_en_us "Was there something else?"
+   Target_de_de "Gab es noch etwas?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{95B788360E44EA57}" {
+   Id "ELIFE-ClerkVO_LEWIS_OPEN_ACCOUNT_TERMS"
+   Target_en_us "With pleasure. Here are our terms. Shall I go ahead and open it?"
+   Target_de_de "Mit Vergnügen. Hier sind unsere Konditionen. Soll ich das Konto eröffnen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2C4569B37CFCB76D}" {
+   Id "ELIFE-ClerkVO_LEWIS_QUESTIONS"
+   Target_en_us "Certainly. What would you like to know?"
+   Target_de_de "Selbstverständlich. Was möchten Sie wissen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8279E0379DA82080}" {
+   Id "ELIFE-ClerkVO_LEWIS_INFO_FEES"
+   Target_en_us "We charge a modest fee on each booking. These are our current terms."
+   Target_de_de "Wir berechnen eine bescheidene Gebühr pro Buchung. Das sind unsere aktuellen Konditionen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DBB58B708075A3AC}" {
+   Id "ELIFE-ClerkVO_LEWIS_INFO_TRANSFERS"
+   Target_en_us "Indeed, you can send money to any bank at all. Just fill in a transfer form with me."
+   Target_de_de "Gewiss, Sie können Geld an jede beliebige Bank überweisen. Füllen Sie einfach bei mir ein Überweisungsformular aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{53B9BCF563144551}" {
+   Id "ELIFE-ClerkVO_LEWIS_INFO_BALANCE"
+   Target_en_us "The banking app on your phone shows your balance at any time, as does any of our cash machines."
+   Target_de_de "Die Banking-App auf Ihrem Telefon zeigt Ihren Kontostand jederzeit, ebenso jeder unserer Geldautomaten."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{083FD235788BAC72}" {
+   Id "ELIFE-ClerkVO_LEWIS_INFO_CASH"
+   Target_en_us "For cash, do use one of our cash machines. They handle deposits and withdrawals."
+   Target_de_de "Für Bargeld nutzen Sie bitte einen unserer Geldautomaten. Dort können Sie ein- und auszahlen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{13793593518777BE}" {
+   Id "ELIFE-ClerkVO_LEWIS_GOODBYE"
+   Target_en_us "Thank you very much. Have a lovely day."
+   Target_de_de "Vielen herzlichen Dank. Einen schönen Tag noch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C119A1D14B4C4DE5}" {
+   Id "ELIFE-ClerkVO_LEWIS_GOODBYE_2"
+   Target_en_us "Cheerio, and do come again."
+   Target_de_de "Auf Wiedersehen, und beehren Sie uns bald wieder."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E9B768A4299EA0B7}" {
+   Id "ELIFE-ClerkVO_LEWIS_GOODBYE_3"
+   Target_en_us "Many thanks, and all the best."
+   Target_de_de "Vielen Dank, und alles Gute."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{70FE68120966CC05}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING"
+   Target_en_us "Hey, welcome in! What can I help you with today?"
+   Target_de_de "Hey, willkommen! Wobei kann ich Ihnen heute helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AC5ED83C081C47CF}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_2"
+   Target_en_us "Good to see you. How can I help?"
+   Target_de_de "Schön, Sie zu sehen. Was kann ich tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DC917A92F39130AA}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_3"
+   Target_en_us "Hi, thanks for stopping by. What do you need today?"
+   Target_de_de "Hallo, danke fürs Vorbeischauen. Was brauchen Sie heute?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F3EFF5CB1F2DEBCF}" {
+   Id "ELIFE-ClerkVO_MICHAEL_BUSY"
+   Target_en_us "Hang on just a second, I'm helping someone else right now."
+   Target_de_de "Moment noch, ich helfe gerade jemand anderem."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{550990FA8BD74E7B}" {
+   Id "ELIFE-ClerkVO_MICHAEL_BUSY_2"
+   Target_en_us "Be right with you, I just need to finish up here."
+   Target_de_de "Bin gleich bei Ihnen, ich muss hier nur kurz fertig werden."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E9508865C24C565E}" {
+   Id "ELIFE-ClerkVO_MICHAEL_UNAVAILABLE"
+   Target_en_us "Sorry about this, our system is offline right now. Try again in a little while."
+   Target_de_de "Tut mir leid, unser System ist gerade offline. Versuchen Sie es in einer Weile noch mal."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AE7328556947074B}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_FORM"
+   Target_en_us "Sure, no problem. Just fill out this form and I'll handle it."
+   Target_de_de "Klar, kein Problem. Füllen Sie einfach dieses Formular aus, ich kümmere mich darum."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1010634858AD0ADC}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_FORM_2"
+   Target_en_us "You got it. Here's a transfer slip, go ahead and fill it out."
+   Target_de_de "Geht klar. Hier ist ein Überweisungsschein, füllen Sie ihn ruhig aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6408D47A76BFCEBF}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_PROCESSING"
+   Target_en_us "Got it. Give me a second to punch this in."
+   Target_de_de "Alles klar. Eine Sekunde, ich tippe das ein."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{150E1F35FBF7C8FF}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_PROCESSING_2"
+   Target_en_us "Okay, let me get this into the system real quick."
+   Target_de_de "Okay, ich gebe das schnell ins System ein."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{82043349FF5488B6}" {
+   Id "ELIFE-ClerkVO_MICHAEL_CHECK_SLIP"
+   Target_en_us "Looks like something on this slip is off. Can you double-check it for me?"
+   Target_de_de "Sieht so aus, als ob auf dem Schein was nicht stimmt. Können Sie das noch mal prüfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{941F1D10C1EA5CCD}" {
+   Id "ELIFE-ClerkVO_MICHAEL_NOT_ENOUGH_MONEY"
+   Target_en_us "Sorry, that account doesn't have enough money for this."
+   Target_de_de "Sorry, auf dem Konto ist dafür nicht genug Geld."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0079361E6E938F7F}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TARGET_NOT_FOUND"
+   Target_en_us "Hmm, I'm not finding any account with that number."
+   Target_de_de "Hm, ich finde kein Konto mit dieser Nummer."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BACC060B43670F2E}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ACCOUNT_BUSY"
+   Target_en_us "That account's busy at the moment. Give it a second and try again."
+   Target_de_de "Das Konto ist gerade beschäftigt. Warten Sie kurz und versuchen Sie es noch mal."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F4D1BE983E1E969E}" {
+   Id "ELIFE-ClerkVO_MICHAEL_QUOTE_EXPIRED"
+   Target_en_us "This slip timed out, unfortunately. Let's run through it one more time."
+   Target_de_de "Der Schein ist leider abgelaufen. Gehen wir ihn noch mal durch."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4B71759140A35F81}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE"
+   Target_en_us "Great, your transfer is done. Anything else you need?"
+   Target_de_de "Super, Ihre Überweisung ist erledigt. Brauchen Sie sonst noch was?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5A12152B6876A5C9}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE_2"
+   Target_en_us "Alright, the money's been sent. What else can I do for you?"
+   Target_de_de "Alles klar, das Geld ist raus. Was kann ich sonst noch für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{302ED00E6D54DE9F}" {
+   Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE_3"
+   Target_en_us "All set, it went through. Need help with anything else?"
+   Target_de_de "Erledigt, das ist durchgegangen. Kann ich bei sonst noch was helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1F2C0BA73F3726F2}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ACCOUNT_OPENED"
+   Target_en_us "Great news, your new account is all set up."
+   Target_de_de "Gute Nachrichten, Ihr neues Konto ist eingerichtet."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{944A185DAE003780}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ALREADY_OPENED"
+   Target_en_us "I already set up an account for you this visit. Just one at a time, sorry."
+   Target_de_de "Ich habe Ihnen bei diesem Besuch schon ein Konto eingerichtet. Immer nur eins, sorry."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{87E4F607181AD3A4}" {
+   Id "ELIFE-ClerkVO_MICHAEL_FAILED"
+   Target_en_us "Sorry, that one didn't go through."
+   Target_de_de "Sorry, das hat nicht geklappt."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CEE59C596A525DB3}" {
+   Id "ELIFE-ClerkVO_MICHAEL_UNKNOWN_OUTCOME"
+   Target_en_us "Huh, the system's not responding. Better check your balance before you try again."
+   Target_de_de "Huch, das System reagiert nicht. Prüfen Sie lieber Ihren Kontostand, bevor Sie es noch mal versuchen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{723F746244DDDF28}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ANYTHING_ELSE"
+   Target_en_us "Anything else I can do for you?"
+   Target_de_de "Kann ich sonst noch was für Sie tun?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5B62E421FDB5C7DA}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ANYTHING_ELSE_2"
+   Target_en_us "What else can I help with?"
+   Target_de_de "Wobei kann ich noch helfen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{63AAAE061B0FB6D7}" {
+   Id "ELIFE-ClerkVO_MICHAEL_OPEN_ACCOUNT_TERMS"
+   Target_en_us "Sure thing. Here are the terms. Want me to open it for you?"
+   Target_de_de "Klar doch. Hier sind die Konditionen. Soll ich es für Sie eröffnen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{07BDE59BB3806474}" {
+   Id "ELIFE-ClerkVO_MICHAEL_QUESTIONS"
+   Target_en_us "Sure, what do you want to know?"
+   Target_de_de "Klar, was möchten Sie wissen?"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A9678410AB26CBD3}" {
+   Id "ELIFE-ClerkVO_MICHAEL_INFO_FEES"
+   Target_en_us "We charge a little fee per booking. Here's what it is right now."
+   Target_de_de "Wir nehmen eine kleine Gebühr pro Buchung. Hier sehen Sie, wie viel gerade."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3C86E72298C4D1A5}" {
+   Id "ELIFE-ClerkVO_MICHAEL_INFO_TRANSFERS"
+   Target_en_us "Yep, you can send money to any bank. Just fill out a transfer slip with me."
+   Target_de_de "Jep, Sie können Geld an jede Bank schicken. Füllen Sie einfach bei mir einen Überweisungsschein aus."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{13B6A66F6C33BB0D}" {
+   Id "ELIFE-ClerkVO_MICHAEL_INFO_BALANCE"
+   Target_en_us "Just check the banking app on your phone, or use any of our ATMs."
+   Target_de_de "Schauen Sie einfach in die Banking-App auf Ihrem Handy, oder nutzen Sie einen unserer Geldautomaten."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6C122995FAE4EC1B}" {
+   Id "ELIFE-ClerkVO_MICHAEL_INFO_CASH"
+   Target_en_us "For cash, just use one of our ATMs. They do deposits and withdrawals."
+   Target_de_de "Für Bargeld nehmen Sie einfach einen unserer Geldautomaten. Da können Sie ein- und auszahlen."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4ACACE14B58E6EFE}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GOODBYE"
+   Target_en_us "Thanks for coming in. Have a great day!"
+   Target_de_de "Danke fürs Vorbeikommen. Einen schönen Tag noch!"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F7D405C8371F7AE7}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GOODBYE_2"
+   Target_en_us "See you next time, take care!"
+   Target_de_de "Bis zum nächsten Mal, machen Sie's gut!"
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{393169F332EB2E0B}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GOODBYE_3"
+   Target_en_us "Thanks, and enjoy the rest of your day."
+   Target_de_de "Danke, und genießen Sie den Rest des Tages."
+   Modified 1794169290
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C4808915B7035499}" {
+   Id "ELIFE-ClerkDialogue_Speaker"
+   Target_en_us "Bank clerk · %1"
+   Target_de_de "Bankangestellter · %1"
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F20785F7683DD159}" {
+   Id "ELIFE-ClerkReply_Transfer"
+   Target_en_us "I'd like to make a transfer."
+   Target_de_de "Ich möchte eine Überweisung machen."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E1CE3A4ACE3D3737}" {
+   Id "ELIFE-ClerkReply_OpenAccount"
+   Target_en_us "I'd like to open an account."
+   Target_de_de "Ich möchte ein Konto eröffnen."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B621102DD88059DF}" {
+   Id "ELIFE-ClerkReply_Questions"
+   Target_en_us "I have a few questions."
+   Target_de_de "Ich habe ein paar Fragen."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2BAA3EB4070861CE}" {
+   Id "ELIFE-ClerkReply_Goodbye"
+   Target_en_us "That's all, goodbye."
+   Target_de_de "Das wäre alles, auf Wiedersehen."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2D1BBA8CBB71CE8C}" {
+   Id "ELIFE-ClerkReply_OpenAccountConfirm"
+   Target_en_us "Yes, please open it."
+   Target_de_de "Ja, bitte eröffnen Sie es."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D5DF2A3F6646DF86}" {
+   Id "ELIFE-ClerkReply_NotNow"
+   Target_en_us "Not right now, thanks."
+   Target_de_de "Im Moment nicht, danke."
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4946597E7BF628C5}" {
+   Id "ELIFE-ClerkReply_AskFees"
+   Target_en_us "What fees do you charge?"
+   Target_de_de "Welche Gebühren verlangen Sie?"
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E9E8DAECC8959E53}" {
+   Id "ELIFE-ClerkReply_AskTransfers"
+   Target_en_us "Can I send money to other banks?"
+   Target_de_de "Kann ich Geld an andere Banken überweisen?"
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8FB9312B71D49CDB}" {
+   Id "ELIFE-ClerkReply_AskBalance"
+   Target_en_us "How do I check my balance?"
+   Target_de_de "Wie sehe ich meinen Kontostand?"
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{799C9068C4F70CB9}" {
+   Id "ELIFE-ClerkReply_AskCash"
+   Target_en_us "Can I deposit cash here?"
+   Target_de_de "Kann ich hier Bargeld einzahlen?"
+   Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7FFD054BDEF4991A}" {
+   Id "ELIFE-ClerkReply_QuestionsDone"
+   Target_en_us "That's all I wanted to know."
+   Target_de_de "Das war alles, was ich wissen wollte."
+   Modified 1794169640
    Author "Robin"
    LastChanged "Robin"
   }

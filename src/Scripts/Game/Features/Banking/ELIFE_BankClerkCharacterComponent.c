@@ -25,6 +25,15 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The dialogue moving to a step he has a line for. The server only says lines meant to be asked for.
+	void RequestSay(notnull IEntity clerk, ELIFE_EClerkLine line)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_Say, clerkId, line);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	void RequestOpenAccount(notnull IEntity clerk)
 	{
 		RplId clerkId = GetClerkId(clerk);
@@ -118,6 +127,15 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_Say(RplId clerkId, int line)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "say");
+		if (clerk)
+			clerk.RequestSay(GetPlayerId(), GetOwner(), line);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The clerk checks the customer and range itself and answers with a reason.
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
 	protected void RpcAsk_OpenAccount(RplId clerkId)
@@ -159,28 +177,39 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_ClerkAccounts(RplId clerkId, int reason, string json)
 	{
-		ELIFE_BankClerkDialogBase.OnClerkAccounts(reason, json);
+		ELIFE_TransferSlipMenu slip = ELIFE_TransferSlipMenu.GetOpen();
+		if (slip)
+			slip.OnClerkAccountsAnswer(reason, json);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_TransferQuote(RplId clerkId, int reason, string json)
 	{
-		ELIFE_BankClerkDialogBase.OnTransferQuote(reason, json);
+		ELIFE_TransferSlipMenu slip = ELIFE_TransferSlipMenu.GetOpen();
+		if (slip)
+			slip.OnTransferQuoteAnswer(reason, json);
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! If the slip is gone (the player walked off), the transfer still happened, so a hint says so.
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_TransferResult(RplId clerkId, int reason, string amount, string fee, string balance)
 	{
-		ELIFE_BankClerkDialogBase.OnTransferResult(reason, amount, fee, balance);
+		ELIFE_TransferSlipMenu slip = ELIFE_TransferSlipMenu.GetOpen();
+		if (slip)
+			slip.OnTransferResultAnswer(reason, amount, fee, balance);
+		else if (reason == ELIFE_EClerkReason.NONE)
+			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Clerk_TransferDone_Hint", amount), "#ELIFE-Clerk_TransferDone_Title");
+		else if (reason == ELIFE_EClerkReason.UNKNOWN_OUTCOME)
+			SCR_HintManagerComponent.ShowCustomHint("#ELIFE-Clerk_Reason_UnknownOutcome", "#ELIFE-Clerk_Title");
 	}
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_AccountOpened(RplId clerkId, bool opened, int reason, string accountNumber)
 	{
-		ELIFE_BankClerkDialogBase.OnAccountOpened(opened, reason, accountNumber);
+		ELIFE_BankClerkDialogueController.OnAccountOpened(opened, reason, accountNumber);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -197,7 +226,7 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 		if (granted)
 		{
-			if (!ELIFE_BankClerkDialogBase.Open(ELIFE_EClerkDialog.SERVICES, clerk, this))
+			if (!ELIFE_BankClerkDialogueController.StartVisit(clerk, this))
 				RequestClose(clerkEntity);
 
 			return;
