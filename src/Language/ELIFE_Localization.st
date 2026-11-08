@@ -2972,9 +2972,9 @@ StringTable {
   }
   CustomStringTableItem "{052464E4903F1BC3}" {
    Id "ELIFE-ClerkVO_LEWIS_GREETING"
-   Target_en_us "Good afternoon, and welcome. What can I do for you today?"
-   Target_de_de "Guten Tag und herzlich willkommen. Was darf ich heute für Sie tun?"
-   Modified 1794169290
+   Target_en_us "Hello, and welcome. What can I do for you today?"
+   Target_de_de "Hallo und herzlich willkommen. Was darf ich heute für Sie tun?"
+   Modified 1794170832
    Author "Robin"
    LastChanged "Robin"
   }
@@ -3591,6 +3591,150 @@ StringTable {
    Target_en_us "That's all I wanted to know."
    Target_de_de "Das war alles, was ich wissen wollte."
    Modified 1794169640
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A414BCBBB9467FDC}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_MORNING"
+   Target_en_us "Good morning, and welcome to the bank! How can I help you?"
+   Target_de_de "Guten Morgen und willkommen in der Bank! Wie kann ich Ihnen helfen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BD97AA0921A80E10}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_AFTERNOON"
+   Target_en_us "Good afternoon! What can I do for you today?"
+   Target_de_de "Guten Tag! Was kann ich heute für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{589ADD8BBAC28E38}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_EVENING"
+   Target_en_us "Good evening! How can I help you?"
+   Target_de_de "Guten Abend! Wie kann ich Ihnen helfen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DC70C5CE13A2F444}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_RETURNING"
+   Target_en_us "Welcome back! What can I do for you today?"
+   Target_de_de "Willkommen zurück! Was kann ich heute für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3A076BBC4CABE46F}" {
+   Id "ELIFE-ClerkVO_PUCK_GREETING_RETURNING_2"
+   Target_en_us "Nice to see you again. How can I help?"
+   Target_de_de "Schön, Sie wiederzusehen. Wie kann ich helfen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F45AFBA1C5F8FD37}" {
+   Id "ELIFE-ClerkVO_PUCK_NO_ACCOUNT"
+   Target_en_us "For a transfer you'll need a bank account first. Shall I open one for you?"
+   Target_de_de "Für eine Überweisung brauchen Sie zuerst ein Bankkonto. Soll ich Ihnen eines eröffnen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CEAC0238072FD266}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_MORNING"
+   Target_en_us "Good morning, and welcome. What can I do for you?"
+   Target_de_de "Guten Morgen und herzlich willkommen. Was darf ich für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{542EA65D47E6ABDB}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_AFTERNOON"
+   Target_en_us "Good afternoon. How may I help you today?"
+   Target_de_de "Guten Tag. Womit kann ich Ihnen heute behilflich sein?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E0149F257033B921}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_EVENING"
+   Target_en_us "Good evening, and welcome. What can I do for you?"
+   Target_de_de "Guten Abend und herzlich willkommen. Was darf ich für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B778DF7B95B44399}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_RETURNING"
+   Target_en_us "Ah, welcome back. What can I do for you today?"
+   Target_de_de "Ah, willkommen zurück. Was darf ich heute für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{59C14142C51E206D}" {
+   Id "ELIFE-ClerkVO_LEWIS_GREETING_RETURNING_2"
+   Target_en_us "Good to see you again. How may I help?"
+   Target_de_de "Schön, Sie wiederzusehen. Womit kann ich behilflich sein?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{71294446F80FC410}" {
+   Id "ELIFE-ClerkVO_LEWIS_NO_ACCOUNT"
+   Target_en_us "I'm afraid you'll need a bank account before you can send money. Shall I open one for you?"
+   Target_de_de "Ich fürchte, Sie benötigen ein Bankkonto, bevor Sie Geld überweisen können. Soll ich Ihnen eines eröffnen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3EF8D2049241A0C0}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_MORNING"
+   Target_en_us "Morning! What can I help you with?"
+   Target_de_de "Morgen! Wobei kann ich Ihnen helfen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{43BEDE63DE8549DF}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_AFTERNOON"
+   Target_en_us "Afternoon! What can I do for you?"
+   Target_de_de "Tag! Was kann ich für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D25F8BAD637E1D42}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_EVENING"
+   Target_en_us "Evening! How can I help you?"
+   Target_de_de "Abend! Wie kann ich Ihnen helfen?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A5943E680FB82538}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_RETURNING"
+   Target_en_us "Hey, welcome back! What do you need today?"
+   Target_de_de "Hey, willkommen zurück! Was brauchen Sie heute?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{56A1DA7966A20B12}" {
+   Id "ELIFE-ClerkVO_MICHAEL_GREETING_RETURNING_2"
+   Target_en_us "Good to see you again. What can I do for you?"
+   Target_de_de "Schön, Sie wiederzusehen. Was kann ich für Sie tun?"
+   Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{67378ACB3E6EA96A}" {
+   Id "ELIFE-ClerkVO_MICHAEL_NO_ACCOUNT"
+   Target_en_us "You'll need a bank account to send money. Want me to open one for you?"
+   Target_de_de "Zum Überweisen brauchen Sie ein Bankkonto. Soll ich Ihnen eines eröffnen?"
+   Modified 1794170832
    Author "Robin"
    LastChanged "Robin"
   }

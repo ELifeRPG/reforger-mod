@@ -69,7 +69,25 @@ enum ELIFE_EClerkLine
 	INFO_FEES,
 	INFO_TRANSFERS,
 	INFO_BALANCE,
-	INFO_CASH
+	INFO_CASH,
+	//! Greetings by context, chosen by the server (see PickGreeting).
+	GREETING_MORNING,
+	GREETING_AFTERNOON,
+	GREETING_EVENING,
+	GREETING_RETURNING,
+	NO_ACCOUNT
+}
+
+//------------------------------------------------------------------------------------------------
+//! What the clerk knows about the customer's accounts, looked up when the visit starts.
+enum ELIFE_EClerkAccountStatus
+{
+	//! Not answered (yet), or the lookup failed.
+	UNKNOWN,
+	NO_ACCOUNT,
+	OTHER_BANK,
+	//! At this desk's bank, so he greets them as a returning customer.
+	THIS_BANK
 }
 
 //------------------------------------------------------------------------------------------------
@@ -115,6 +133,13 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected static const int GESTURE_DURATION_MS = 2000;
 	//! After the line starts: a gesture started in the same frame as stopping his idle (the greeting) was swallowed.
 	protected static const int GESTURE_DELAY_MS = 300;
+	//! The greeting waits this long at most for the customer's accounts, then he greets without knowing them.
+	protected static const int GREETING_LOOKUP_TIMEOUT_MS = 1500;
+	//! Hours (in-game) of the time-of-day greetings; outside them he just says hello.
+	protected static const int MORNING_FROM_HOUR = 5;
+	protected static const int AFTERNOON_FROM_HOUR = 12;
+	protected static const int EVENING_FROM_HOUR = 18;
+	protected static const int NIGHT_FROM_HOUR = 23;
 	//! Players waiting for him can ask again and again; he asks them to wait at most this often.
 	protected static const int BUSY_LINE_COOLDOWN_MS = 10000;
 	//! Lines the customer asks for are at least this far apart; one asked sooner waits, and a newer one replaces it.
@@ -184,6 +209,13 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected ref ELIFE_BankAccountSummaryCallback m_OpenCallback;
 	protected int m_iOpeningPlayerId;
 	protected bool m_bOpenedThisVisit;
+
+	//! Server-side: the customer's accounts for this visit, looked up before the greeting.
+	protected ref ELIFE_BankClerkCustomerLookup m_CustomerLookup;
+	//! Server-side: counts visits, so the customer's client can tell this visit's context from a late one of the last.
+	protected int m_iVisitId;
+	protected ELIFE_EClerkAccountStatus m_eCustomerAccounts;
+	protected bool m_bGreeted;
 
 	protected ref ELIFE_BankClerkTransfers m_Transfers;
 
@@ -484,10 +516,11 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		{
 			m_iCustomerPlayerId = playerId;
 			m_Customer = character;
+			m_iVisitId++;
 			Replication.BumpMe();
 			StopIdle();
 			StartAttention();
-			Say(ELIFE_EClerkLine.GREETING);
+			StartGreeting(playerId);
 			GetGame().GetCallqueue().CallLater(Tick, TICK_INTERVAL_MS, true);
 			Print(string.Format("ELIFE_BankClerkComponent | %1 serving player %2", m_sBankCode, playerId), LogLevel.NORMAL);
 		}
@@ -496,7 +529,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 
 		if (m_sBankId != "")
 		{
-			link.SendGrant(GetRplId(), true, ELIFE_EClerkReason.NONE);
+			link.SendGrant(GetRplId(), true, ELIFE_EClerkReason.NONE, m_iVisitId);
 			return;
 		}
 
@@ -523,6 +556,123 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	{
 		if (IsCustomer(playerId, character))
 			m_iLastRequestTick = System.GetTickCount();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The greeting depends on the customer's accounts, so they are looked up first; a slow or
+	//! failed lookup gets the plain greeting after GREETING_LOOKUP_TIMEOUT_MS.
+	protected void StartGreeting(int playerId)
+	{
+		m_bGreeted = false;
+		m_eCustomerAccounts = ELIFE_EClerkAccountStatus.UNKNOWN;
+
+		ELIFE_Api api = ELIFE_Api.GetInstance();
+		string characterId = ELIFE_CharacterIdentity.GetCharacterId(playerId);
+		if (!api || characterId == "")
+		{
+			Greet();
+			return;
+		}
+
+		m_CustomerLookup = new ELIFE_BankClerkCustomerLookup(this);
+		m_CustomerLookup.m_Callback = api.ListCharacterBankAccounts(characterId, m_CustomerLookup, "OnAnswer");
+		GetGame().GetCallqueue().CallLater(Greet, GREETING_LOOKUP_TIMEOUT_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Also after the greeting timed out: the replies still adapt to it.
+	void OnCustomerAccounts(notnull ELIFE_BankClerkCustomerLookup lookup, ELIFE_EApiStatusCode status, string characterId)
+	{
+		if (lookup != m_CustomerLookup || m_iCustomerPlayerId == 0 || ELIFE_CharacterIdentity.GetCharacterId(m_iCustomerPlayerId) != characterId)
+			return;
+
+		//! Held here: dropping the lookup below would otherwise free the callback and the lookup mid-call.
+		ELIFE_BankClerkCustomerLookup self = lookup;
+		ELIFE_BaseRestCallback callback = lookup.m_Callback;
+		m_CustomerLookup = null;
+		if (status == ELIFE_EApiStatusCode.SUCCESS && callback)
+		{
+			ELIFE_BankAccountListDto list = new ELIFE_BankAccountListDto();
+			list.ExpandFromArray(callback.GetData());
+
+			//! The read has no ownership check of its own.
+			m_eCustomerAccounts = ELIFE_EClerkAccountStatus.NO_ACCOUNT;
+			foreach (ELIFE_BankAccountSummary account : list.items)
+			{
+				if (!account || account.characterId != characterId || account.number == "" || account.IsCompany())
+					continue;
+
+				if (ELIFE_BankAccountNumber.GetBankCode(account.number) == m_sBankCode)
+				{
+					m_eCustomerAccounts = ELIFE_EClerkAccountStatus.THIS_BANK;
+					break;
+				}
+
+				m_eCustomerAccounts = ELIFE_EClerkAccountStatus.OTHER_BANK;
+			}
+		}
+		else
+		{
+			Print(string.Format("ELIFE_BankClerkComponent | %1 couldn't look up the accounts of player %2", m_sBankCode, m_iCustomerPlayerId), LogLevel.WARNING);
+		}
+
+		//! A late opening this visit already knows better.
+		if (m_bOpenedThisVisit)
+			m_eCustomerAccounts = ELIFE_EClerkAccountStatus.THIS_BANK;
+
+		SendCustomerContext();
+		Greet();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Once per visit, from the lookup's answer or its timeout, whichever comes first.
+	protected void Greet()
+	{
+		GetGame().GetCallqueue().Remove(Greet);
+		if (m_bGreeted || m_iCustomerPlayerId == 0)
+			return;
+
+		m_bGreeted = true;
+		Say(PickGreeting());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Customers of this bank are welcomed back; anyone else gets the time of day or, half the time, a plain hello.
+	protected ELIFE_EClerkLine PickGreeting()
+	{
+		if (m_eCustomerAccounts == ELIFE_EClerkAccountStatus.THIS_BANK)
+			return ELIFE_EClerkLine.GREETING_RETURNING;
+
+		if (Math.RandomInt(0, 2) == 0)
+			return ELIFE_EClerkLine.GREETING;
+
+		ChimeraWorld world = ChimeraWorld.CastFrom(GetGame().GetWorld());
+		TimeAndWeatherManagerEntity time;
+		if (world)
+			time = world.GetTimeAndWeatherManager();
+
+		if (!time)
+			return ELIFE_EClerkLine.GREETING;
+
+		int hour, minute, second;
+		time.GetHoursMinutesSeconds(hour, minute, second);
+		if (hour >= MORNING_FROM_HOUR && hour < AFTERNOON_FROM_HOUR)
+			return ELIFE_EClerkLine.GREETING_MORNING;
+		if (hour >= AFTERNOON_FROM_HOUR && hour < EVENING_FROM_HOUR)
+			return ELIFE_EClerkLine.GREETING_AFTERNOON;
+		if (hour >= EVENING_FROM_HOUR && hour < NIGHT_FROM_HOUR)
+			return ELIFE_EClerkLine.GREETING_EVENING;
+
+		return ELIFE_EClerkLine.GREETING;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. What the customer's dialogue needs for its reply conditions.
+	protected void SendCustomerContext()
+	{
+		ELIFE_BankClerkCharacterComponent link = GetLink(m_iCustomerPlayerId);
+		if (link)
+			link.SendCustomerContext(GetRplId(), m_iVisitId, m_eCustomerAccounts, m_bOpenedThisVisit);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -576,6 +726,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			case ELIFE_EClerkLine.INFO_TRANSFERS:
 			case ELIFE_EClerkLine.INFO_BALANCE:
 			case ELIFE_EClerkLine.INFO_CASH:
+			case ELIFE_EClerkLine.NO_ACCOUNT:
 				return true;
 		}
 
@@ -669,7 +820,11 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		ELIFE_BankAccountSummary account = ELIFE_BankAccountSummary.Cast(data);
 		bool opened = status == ELIFE_EApiStatusCode.SUCCESS && account && account.number != "" && account.characterId == characterId;
 		if (opened && playerId == m_iCustomerPlayerId)
+		{
 			m_bOpenedThisVisit = true;
+			m_eCustomerAccounts = ELIFE_EClerkAccountStatus.THIS_BANK;
+			SendCustomerContext();
+		}
 
 		if (opened)
 			Print(string.Format("ELIFE_BankClerkComponent | %1 opened account %2 for player %3", m_sBankCode, account.number, playerId), LogLevel.NORMAL);
@@ -801,7 +956,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			if (playerId != m_iCustomerPlayerId)
 				link.SendGrant(GetRplId(), false, ELIFE_EClerkReason.BUSY);
 			else if (available)
-				link.SendGrant(GetRplId(), true, ELIFE_EClerkReason.NONE);
+				link.SendGrant(GetRplId(), true, ELIFE_EClerkReason.NONE, m_iVisitId);
 			else
 				link.SendGrant(GetRplId(), false, ELIFE_EClerkReason.UNAVAILABLE);
 		}
@@ -841,6 +996,9 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		m_iCustomerPlayerId = 0;
 		m_Customer = null;
 		m_bOpenedThisVisit = false;
+		m_CustomerLookup = null;
+		m_eCustomerAccounts = ELIFE_EClerkAccountStatus.UNKNOWN;
+		GetGame().GetCallqueue().Remove(Greet);
 		m_Transfers.Reset();
 		Replication.BumpMe();
 	}
@@ -1094,6 +1252,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			case ELIFE_EClerkLine.TRANSFER_FORM: return 2;
 			case ELIFE_EClerkLine.TRANSFER_PROCESSING: return 2;
 			case ELIFE_EClerkLine.ANYTHING_ELSE: return 2;
+			case ELIFE_EClerkLine.GREETING_RETURNING: return 2;
 		}
 
 		return 1;
@@ -1212,6 +1371,28 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			GetGame().GetCallqueue().Remove(TurnHomeStep);
 			GetGame().GetCallqueue().Remove(PlayLineGesture);
 			GetGame().GetCallqueue().Remove(SayPendingAskedLine);
+			GetGame().GetCallqueue().Remove(Greet);
 		}
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+//! Takes one visit's account lookup answer. Only the clerk holds it, so once that visit ends the answer goes nowhere.
+class ELIFE_BankClerkCustomerLookup
+{
+	protected ELIFE_BankClerkComponent m_Clerk;
+	ref ELIFE_BaseRestCallback m_Callback;
+
+	//------------------------------------------------------------------------------------------------
+	void ELIFE_BankClerkCustomerLookup(ELIFE_BankClerkComponent clerk)
+	{
+		m_Clerk = clerk;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void OnAnswer(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
+	{
+		if (m_Clerk)
+			m_Clerk.OnCustomerAccounts(this, status, characterId);
 	}
 }

@@ -123,6 +123,33 @@ class ELIFE_ClerkDialogueDetails_TransferReceipt : ELIFE_DialogueDetails
 }
 
 //------------------------------------------------------------------------------------------------
+//! The customer has a personal account at any bank, so a transfer can start from it. Unknown counts as yes:
+//! the slip then says so itself.
+[BaseContainerProps()]
+class ELIFE_ClerkDialogueCondition_HasAccount : ELIFE_DialogueCondition
+{
+	//------------------------------------------------------------------------------------------------
+	override protected bool IsMet(notnull ELIFE_DialogueMenu menu)
+	{
+		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
+		return !clerk || clerk.GetAccountStatus() != ELIFE_EClerkAccountStatus.NO_ACCOUNT;
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+//! An account was opened at this visit; the server allows one per visit.
+[BaseContainerProps()]
+class ELIFE_ClerkDialogueCondition_OpenedThisVisit : ELIFE_DialogueCondition
+{
+	//------------------------------------------------------------------------------------------------
+	override protected bool IsMet(notnull ELIFE_DialogueMenu menu)
+	{
+		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
+		return clerk && clerk.HasOpenedThisVisit();
+	}
+}
+
+//------------------------------------------------------------------------------------------------
 //! What the receipt shows after a transfer.
 class ELIFE_ClerkTransferReceipt : JsonApiStruct
 {
@@ -158,6 +185,9 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	protected bool m_bOpeningAccount;
 	protected string m_sOpenedNode;
 	protected bool m_bSlipOpen;
+	//! From the server's lookup at the start of the visit; see ELIFE_BankClerkComponent.OnCustomerAccounts.
+	protected ELIFE_EClerkAccountStatus m_eAccounts = ELIFE_EClerkAccountStatus.UNKNOWN;
+	protected bool m_bOpenedThisVisit;
 	protected string m_sSlipDoneNode;
 	protected string m_sSlipCancelNode;
 
@@ -196,6 +226,15 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 
 		if (opened)
 			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Clerk_Opened_Hint", ELIFE_PhoneBankingService.GroupIban(accountNumber)), "#ELIFE-Clerk_Opened_Title");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The server's lookup about the customer arrived; the replies adapt.
+	static void OnCustomerContext(IEntity clerkEntity)
+	{
+		ELIFE_BankClerkDialogueController active = GetActive();
+		if (active && clerkEntity && active.GetSpeaker() == clerkEntity)
+			active.ReadContext();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -252,6 +291,32 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	ELIFE_EClerkAccountStatus GetAccountStatus()
+	{
+		return m_eAccounts;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool HasOpenedThisVisit()
+	{
+		return m_bOpenedThisVisit;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ReadContext()
+	{
+		ELIFE_EClerkAccountStatus accounts;
+		bool opened;
+		if (!m_Link.GetCustomerContext(m_Clerk.GetOwner(), accounts, opened))
+			return;
+
+		m_eAccounts = accounts;
+		m_bOpenedThisVisit = opened;
+		if (m_Menu)
+			m_Menu.UpdateReplies();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override ResourceName GetConfig()
 	{
 		return m_Clerk.GetDialogueConfig();
@@ -299,6 +364,15 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 		int voice, line, variant;
 		if (m_Clerk.GetRecentLine(RECENT_LINE_MS, voice, line, variant))
 			menu.SetSubtitle(ELIFE_BankClerkComponent.GetLineText(voice, line, variant));
+
+		//! Before the start node's replies are built, so it opens with the right ones.
+		ELIFE_EClerkAccountStatus accounts;
+		bool opened;
+		if (m_Link.GetCustomerContext(m_Clerk.GetOwner(), accounts, opened))
+		{
+			m_eAccounts = accounts;
+			m_bOpenedThisVisit = opened;
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------

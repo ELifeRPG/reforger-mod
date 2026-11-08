@@ -26,6 +26,11 @@ A tree is a list of nodes. Each node has:
 
 Generic actions: `ELIFE_DialogueAction_GoTo` (move to a node) and `ELIFE_DialogueAction_End`.
 
+A reply can have `m_aConditions` (`ELIFE_DialogueCondition` subclasses). It is offered only when all of them
+hold, and `m_bNegate` flips one. To branch on context, give two replies the same text and opposite conditions.
+When what a condition reads changes (for example a server answer arrives), the controller calls
+`menu.UpdateReplies()`.
+
 ## Adding an NPC
 
 1. Subclass `ELIFE_DialogueController`. Override:
@@ -54,5 +59,9 @@ opening and `menu.Resume()` plus `menu.ShowNode(...)` when it closes. While wait
   and receipt details.
 - Tree: `Configs/Banking/ELIFE_ClerkDialogue.conf`, set on `ELIFE_BankClerkComponent` (`m_sDialogueConfig`), so
   one clerk can get a different tree.
+- Context: when a visit starts, the server looks up the customer's accounts (`ELIFE_EClerkAccountStatus`). He
+  greets customers of his bank with "welcome back", and anyone else with the in-game time of day or a plain
+  hello. The result also reaches the client for `ELIFE_ClerkDialogueCondition_HasAccount` and
+  `ELIFE_ClerkDialogueCondition_OpenedThisVisit`.
 - Subtitles are the exact wording he speaks: `ELIFE-ClerkVO_<VOICE>_<LINE>[_<variant>]`, generated with the
   voice tooling outside the repo.

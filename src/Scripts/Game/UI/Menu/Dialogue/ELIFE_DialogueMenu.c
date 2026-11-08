@@ -58,7 +58,8 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	protected ref array<ref ELIFE_DialogueReplyHandler> m_aHandlers = {};
 
 	protected ELIFE_DialogueNode m_Node;
-	protected array<ref ELIFE_DialogueReply> m_aReplies;
+	//! The node's replies whose conditions hold, in config order; the row index is the index here.
+	protected ref array<ELIFE_DialogueReply> m_aReplies = {};
 	//! What the node was opened with, for its details: an account number, a packed receipt.
 	protected string m_sData;
 	protected string m_sSubtitle;
@@ -239,6 +240,17 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! For the controller when what the conditions read has changed, e.g. a server answer arrived.
+	void UpdateReplies()
+	{
+		if (m_Node && !m_bIsClosing)
+		{
+			BuildReplies();
+			Refresh();
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
 	void End()
 	{
 		if (m_bIsClosing)
@@ -251,7 +263,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	protected void BuildReplies()
 	{
-		m_aReplies = m_Config.GetReplies(m_Node);
+		m_aReplies.Clear();
 		m_iSelected = -1;
 		m_aReplyFills.Clear();
 		m_aReplyNumbers.Clear();
@@ -264,15 +276,22 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 		while (m_wReplies.GetChildren())
 			m_wReplies.GetChildren().RemoveFromHierarchy();
 
-		if (!m_aReplies)
+		array<ref ELIFE_DialogueReply> replies = m_Config.GetReplies(m_Node);
+		if (!replies)
 			return;
+
+		foreach (ELIFE_DialogueReply candidate : replies)
+		{
+			if (m_aReplies.Count() >= MAX_REPLIES)
+				break;
+
+			if (candidate && candidate.IsOffered(this))
+				m_aReplies.Insert(candidate);
+		}
 
 		WorkspaceWidget workspace = GetGame().GetWorkspace();
 		foreach (int i, ELIFE_DialogueReply reply : m_aReplies)
 		{
-			if (i >= MAX_REPLIES)
-				break;
-
 			Widget row = workspace.CreateWidgets(REPLY_LAYOUT, m_wReplies);
 			if (!row)
 				break;
@@ -357,7 +376,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	void ChooseReply(int index)
 	{
-		if (m_bWaiting || m_bSuspended || m_bIsClosing || !m_aReplies || index < 0 || index >= m_aReplyFills.Count())
+		if (m_bWaiting || m_bSuspended || m_bIsClosing || index < 0 || index >= m_aReplyFills.Count())
 			return;
 
 		ELIFE_DialogueReply reply = m_aReplies[index];

@@ -692,7 +692,7 @@ AudioClass {
   }
   SoundClass "532489" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 532489
-   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE"
+   name "SOUND_ELIFE_CLERK_LEWIS_GREETING_MORNING"
    version 5
    tl 792.27 12329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -712,7 +712,7 @@ AudioClass {
   }
   SoundClass "536585" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 536585
-   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE_2"
+   name "SOUND_ELIFE_CLERK_LEWIS_GREETING_AFTERNOON"
    version 5
    tl 792.27 12729.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -732,7 +732,7 @@ AudioClass {
   }
   SoundClass "540681" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 540681
-   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE_3"
+   name "SOUND_ELIFE_CLERK_LEWIS_GREETING_EVENING"
    version 5
    tl 792.27 13129.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -742,6 +742,126 @@ AudioClass {
      links {
       ConnectionClass "541714:65" {
        id 541714
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "544777" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 544777
+   name "SOUND_ELIFE_CLERK_LEWIS_GREETING_RETURNING"
+   version 5
+   tl 792.27 13529.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "545810:65" {
+       id 545810
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "548873" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 548873
+   name "SOUND_ELIFE_CLERK_LEWIS_GREETING_RETURNING_2"
+   version 5
+   tl 792.27 13929.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "549906:65" {
+       id 549906
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "552969" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 552969
+   name "SOUND_ELIFE_CLERK_LEWIS_NO_ACCOUNT"
+   version 5
+   tl 792.27 14329.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "554002:65" {
+       id 554002
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "557065" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 557065
+   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE"
+   version 5
+   tl 792.27 14729.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "558098:65" {
+       id 558098
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "561161" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 561161
+   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE_2"
+   version 5
+   tl 792.27 15129.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "562194:65" {
+       id 562194
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "565257" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 565257
+   name "SOUND_ELIFE_CLERK_LEWIS_GOODBYE_3"
+   version 5
+   tl 792.27 15529.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "566290:65" {
+       id 566290
        port 65
       }
      }
@@ -1379,6 +1499,120 @@ AudioClass {
    varLocName "VoiceAmplitude"
    varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
   }
+  BusClass "546823" {
+   id 546823
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 13504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "547844:65" {
+       id 547844
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "550919" {
+   id 550919
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 13904
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "551940:65" {
+       id 551940
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "555015" {
+   id 555015
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 14304
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "556036:65" {
+       id 556036
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "559111" {
+   id 559111
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 14704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "560132:65" {
+       id 560132
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "563207" {
+   id 563207
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 15104
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "564228:65" {
+       id 564228
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
+  BusClass "567303" {
+   id 567303
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 15504
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "568324:65" {
+       id 568324
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
  }
  selectors {
  }
@@ -1525,6 +1759,30 @@ AudioClass {
       }
       ConnectionClass "540681:65" {
        id 540681
+       port 65
+      }
+      ConnectionClass "544777:65" {
+       id 544777
+       port 65
+      }
+      ConnectionClass "548873:65" {
+       id 548873
+       port 65
+      }
+      ConnectionClass "552969:65" {
+       id 552969
+       port 65
+      }
+      ConnectionClass "557065:65" {
+       id 557065
+       port 65
+      }
+      ConnectionClass "561161:65" {
+       id 561161
+       port 65
+      }
+      ConnectionClass "565257:65" {
+       id 565257
        port 65
       }
      }
@@ -2988,7 +3246,7 @@ AudioClass {
   }
   ShaderClass "533522" {
    id 533522
-   name "Shader LEWIS_GOODBYE"
+   name "Shader LEWIS_GREETING_MORNING"
    version 5
    tl 512 12304
    ins {
@@ -3035,7 +3293,7 @@ AudioClass {
   }
   ShaderClass "537618" {
    id 537618
-   name "Shader LEWIS_GOODBYE_2"
+   name "Shader LEWIS_GREETING_AFTERNOON"
    version 5
    tl 512 12704
    ins {
@@ -3082,7 +3340,7 @@ AudioClass {
   }
   ShaderClass "541714" {
    id 541714
-   name "Shader LEWIS_GOODBYE_3"
+   name "Shader LEWIS_GREETING_EVENING"
    version 5
    tl 512 13104
    ins {
@@ -3118,6 +3376,288 @@ AudioClass {
      links {
       ConnectionClass "542727:65" {
        id 542727
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "545810" {
+   id 545810
+   name "Shader LEWIS_GREETING_RETURNING"
+   version 5
+   tl 512 13504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "546823:65" {
+       id 546823
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "549906" {
+   id 549906
+   name "Shader LEWIS_GREETING_RETURNING_2"
+   version 5
+   tl 512 13904
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "550919:65" {
+       id 550919
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "554002" {
+   id 554002
+   name "Shader LEWIS_NO_ACCOUNT"
+   version 5
+   tl 512 14304
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "555015:65" {
+       id 555015
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "558098" {
+   id 558098
+   name "Shader LEWIS_GOODBYE"
+   version 5
+   tl 512 14704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "559111:65" {
+       id 559111
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "562194" {
+   id 562194
+   name "Shader LEWIS_GOODBYE_2"
+   version 5
+   tl 512 15104
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "563207:65" {
+       id 563207
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "566290" {
+   id 566290
+   name "Shader LEWIS_GOODBYE_3"
+   version 5
+   tl 512 15504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "567303:65" {
+       id 567303
        port 65
       }
      }
@@ -3659,9 +4199,105 @@ AudioClass {
   }
   BankLocalClass "535556" {
    id 535556
-   name "ELIFE_CLERK_LEWIS_GOODBYE"
+   name "ELIFE_CLERK_LEWIS_GREETING_MORNING"
    version 7
    tl -1250 12322.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_GreetingMorning.wav" {
+     Filename "{20F12EDDF77E2D8A}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_GreetingMorning.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "539652" {
+   id 539652
+   name "ELIFE_CLERK_LEWIS_GREETING_AFTERNOON"
+   version 7
+   tl -1250 12722.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_GreetingAfternoon.wav" {
+     Filename "{AB560FD5803215E1}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_GreetingAfternoon.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "543748" {
+   id 543748
+   name "ELIFE_CLERK_LEWIS_GREETING_EVENING"
+   version 7
+   tl -1250 13122.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_GreetingEvening.wav" {
+     Filename "{47D8EAE4507C6CFF}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_GreetingEvening.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "547844" {
+   id 547844
+   name "ELIFE_CLERK_LEWIS_GREETING_RETURNING"
+   version 7
+   tl -1250 13522.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_GreetingReturning.wav" {
+     Filename "{C11B389BE66C36FF}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_GreetingReturning.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "551940" {
+   id 551940
+   name "ELIFE_CLERK_LEWIS_GREETING_RETURNING_2"
+   version 7
+   tl -1250 13922.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_GreetingReturning2.wav" {
+     Filename "{F74DCC641622D040}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_GreetingReturning2.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "556036" {
+   id 556036
+   name "ELIFE_CLERK_LEWIS_NO_ACCOUNT"
+   version 7
+   tl -1250 14322.5
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Lewis_NoAccount.wav" {
+     Filename "{A893E02DA3757E72}Sounds/VO/BankClerk/Samples/Lewis/ELIFE_Clerk_Lewis_NoAccount.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "560132" {
+   id 560132
+   name "ELIFE_CLERK_LEWIS_GOODBYE"
+   version 7
+   tl -1250 14722.5
    pi {
     10 0
    }
@@ -3673,11 +4309,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "539652" {
-   id 539652
+  BankLocalClass "564228" {
+   id 564228
    name "ELIFE_CLERK_LEWIS_GOODBYE_2"
    version 7
-   tl -1250 12722.5
+   tl -1250 15122.5
    pi {
     10 0
    }
@@ -3689,11 +4325,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "543748" {
-   id 543748
+  BankLocalClass "568324" {
+   id 568324
    name "ELIFE_CLERK_LEWIS_GOODBYE_3"
    version 7
-   tl -1250 13122.5
+   tl -1250 15522.5
    pi {
     10 0
    }
@@ -3874,6 +4510,30 @@ AudioClass {
        id 540681
        port 5
       }
+      ConnectionClass "544777:5" {
+       id 544777
+       port 5
+      }
+      ConnectionClass "548873:5" {
+       id 548873
+       port 5
+      }
+      ConnectionClass "552969:5" {
+       id 552969
+       port 5
+      }
+      ConnectionClass "557065:5" {
+       id 557065
+       port 5
+      }
+      ConnectionClass "561161:5" {
+       id 561161
+       port 5
+      }
+      ConnectionClass "565257:5" {
+       id 565257
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -4033,6 +4693,30 @@ AudioClass {
       }
       ConnectionClass "540681:5" {
        id 540681
+       port 5
+      }
+      ConnectionClass "544777:5" {
+       id 544777
+       port 5
+      }
+      ConnectionClass "548873:5" {
+       id 548873
+       port 5
+      }
+      ConnectionClass "552969:5" {
+       id 552969
+       port 5
+      }
+      ConnectionClass "557065:5" {
+       id 557065
+       port 5
+      }
+      ConnectionClass "561161:5" {
+       id 561161
+       port 5
+      }
+      ConnectionClass "565257:5" {
+       id 565257
        port 5
       }
      }
@@ -4205,6 +4889,30 @@ AudioClass {
        id 540681
        port 5
       }
+      ConnectionClass "544777:5" {
+       id 544777
+       port 5
+      }
+      ConnectionClass "548873:5" {
+       id 548873
+       port 5
+      }
+      ConnectionClass "552969:5" {
+       id 552969
+       port 5
+      }
+      ConnectionClass "557065:5" {
+       id 557065
+       port 5
+      }
+      ConnectionClass "561161:5" {
+       id 561161
+       port 5
+      }
+      ConnectionClass "565257:5" {
+       id 565257
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -4373,6 +5081,30 @@ AudioClass {
       }
       ConnectionClass "540681:5" {
        id 540681
+       port 5
+      }
+      ConnectionClass "544777:5" {
+       id 544777
+       port 5
+      }
+      ConnectionClass "548873:5" {
+       id 548873
+       port 5
+      }
+      ConnectionClass "552969:5" {
+       id 552969
+       port 5
+      }
+      ConnectionClass "557065:5" {
+       id 557065
+       port 5
+      }
+      ConnectionClass "561161:5" {
+       id 561161
+       port 5
+      }
+      ConnectionClass "565257:5" {
+       id 565257
        port 5
       }
      }

@@ -8,6 +8,26 @@ class ELIFE_BankClerkCharacterComponentClass : ScriptComponentClass
 //! The clerk is server-owned, so the customer's traffic rides on the character the client owns. No money logic here.
 class ELIFE_BankClerkCharacterComponent : ScriptComponent
 {
+	//! Client-side: the latest customer context, which may arrive before the grant. It counts only for the granted visit.
+	protected RplId m_ContextClerkId = RplId.Invalid();
+	protected int m_iContextVisitId;
+	protected int m_iGrantedVisitId;
+	protected ELIFE_EClerkAccountStatus m_eContextAccounts;
+	protected bool m_bContextOpenedThisVisit;
+
+	//------------------------------------------------------------------------------------------------
+	//! Client-side. False if none arrived for this clerk during the visit.
+	bool GetCustomerContext(notnull IEntity clerk, out ELIFE_EClerkAccountStatus accounts, out bool openedThisVisit)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (!clerkId.IsValid() || clerkId != m_ContextClerkId || m_iContextVisitId != m_iGrantedVisitId)
+			return false;
+
+		accounts = m_eContextAccounts;
+		openedThisVisit = m_bContextOpenedThisVisit;
+		return true;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	void RequestOpen(notnull IEntity clerk)
 	{
@@ -67,13 +87,20 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Server-side senders: on a client-owned character these route to the client, on a host's own they call directly.
-	void SendGrant(RplId clerkId, bool granted, int reason)
+	//! visitId only for a grant.
+	void SendGrant(RplId clerkId, bool granted, int reason, int visitId = 0)
 	{
 		//! Granted visits are greeted when the visit starts.
 		if (!granted)
 			SayOutcome(clerkId, reason, ELIFE_EClerkLine.NONE);
 
-		Rpc(RpcDo_Grant, clerkId, granted, reason);
+		Rpc(RpcDo_Grant, clerkId, granted, reason, visitId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendCustomerContext(RplId clerkId, int visitId, ELIFE_EClerkAccountStatus accounts, bool openedThisVisit)
+	{
+		Rpc(RpcDo_CustomerContext, clerkId, visitId, accounts, openedThisVisit);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -207,6 +234,17 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_CustomerContext(RplId clerkId, int visitId, int accounts, bool openedThisVisit)
+	{
+		m_ContextClerkId = clerkId;
+		m_iContextVisitId = visitId;
+		m_eContextAccounts = accounts;
+		m_bContextOpenedThisVisit = openedThisVisit;
+		ELIFE_BankClerkDialogueController.OnCustomerContext(FindEntity(clerkId));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_AccountOpened(RplId clerkId, bool opened, int reason, string accountNumber)
 	{
 		ELIFE_BankClerkDialogueController.OnAccountOpened(opened, reason, accountNumber);
@@ -214,7 +252,7 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
-	protected void RpcDo_Grant(RplId clerkId, bool granted, int reason)
+	protected void RpcDo_Grant(RplId clerkId, bool granted, int reason, int visitId)
 	{
 		IEntity clerkEntity = FindEntity(clerkId);
 		if (!clerkEntity)
@@ -226,6 +264,7 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 		if (granted)
 		{
+			m_iGrantedVisitId = visitId;
 			if (!ELIFE_BankClerkDialogueController.StartVisit(clerk, this))
 				RequestClose(clerkEntity);
 

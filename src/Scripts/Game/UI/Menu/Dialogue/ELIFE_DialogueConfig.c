@@ -78,6 +78,27 @@ class ELIFE_DialogueDetails
 }
 
 //------------------------------------------------------------------------------------------------
+//! Whether a reply is offered, from what the NPC knows about the player. Subclasses read it through the controller.
+[BaseContainerProps()]
+class ELIFE_DialogueCondition
+{
+	[Attribute("0", desc: "Offer the reply when the condition does NOT hold")]
+	bool m_bNegate;
+
+	//------------------------------------------------------------------------------------------------
+	bool Check(notnull ELIFE_DialogueMenu menu)
+	{
+		return IsMet(menu) != m_bNegate;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsMet(notnull ELIFE_DialogueMenu menu)
+	{
+		return true;
+	}
+}
+
+//------------------------------------------------------------------------------------------------
 [BaseContainerProps(), SCR_BaseContainerCustomTitleField("m_sText")]
 class ELIFE_DialogueReply
 {
@@ -86,6 +107,24 @@ class ELIFE_DialogueReply
 
 	[Attribute()]
 	ref ELIFE_DialogueAction m_Action;
+
+	[Attribute(desc: "Offered only when all of them hold. Two replies with the same text and opposite conditions branch on context")]
+	ref array<ref ELIFE_DialogueCondition> m_aConditions;
+
+	//------------------------------------------------------------------------------------------------
+	bool IsOffered(notnull ELIFE_DialogueMenu menu)
+	{
+		if (!m_aConditions)
+			return true;
+
+		foreach (ELIFE_DialogueCondition condition : m_aConditions)
+		{
+			if (condition && !condition.Check(menu))
+				return false;
+		}
+
+		return true;
+	}
 }
 
 //------------------------------------------------------------------------------------------------

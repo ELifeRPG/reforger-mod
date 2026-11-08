@@ -21,6 +21,16 @@ class ELIFE_BankAccountNumber
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The four letters naming the bank, "" if the number is too short.
+	static string GetBankCode(string number)
+	{
+		if (number.Length() < ACCOUNT_START)
+			return "";
+
+		return number.Substring(BANK_CODE_START, ACCOUNT_START - BANK_CODE_START);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The shape and the check digits; whether the account exists is the backend's to say.
 	static bool IsValid(string number)
 	{
