@@ -219,6 +219,8 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		m_Clerk = clerk;
 		m_Link = link;
 
+		//! Here, not in OnMenuOpen: the clerk isn't known yet there.
+		ELIFE_BankClerkDialogBase.PlayPaperSound(m_Clerk);
 		SetText("BankName", m_Clerk.GetBankName());
 		m_Link.RequestTransferAccounts(m_Clerk.GetOwner());
 		Refresh();
@@ -764,6 +766,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (!IsReady())
 			return;
 
+		ELIFE_BankClerkDialogBase.PlayPaperSound(m_Clerk);
 		m_bWaiting = true;
 		m_bEditing = false;
 		m_sNotice = "#ELIFE-Clerk_Working";

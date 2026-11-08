@@ -131,8 +131,12 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected const int HEARTBEAT_INTERVAL_MS = 5000;
 	//! How long an outcome stays up once there's no session left to dismiss it with.
 	protected const int RESULT_LINGER_MS = 15000;
-	//! Vanilla has no cash sound; this one is paper being folded.
-	protected const string PAID_SOUND = SCR_SoundEvent.SOUND_HUD_MAP_CLOSE;
+	//! In Sounds/ATM/ELIFE_ATM_Sfx.acp, played from the machine: a key press, and the bill counter while it counts cash,
+	//! paid out for a withdrawal, taken in for a deposit.
+	protected const string KEY_SOUND = "SOUND_ELIFE_ATM_BEEP";
+	protected const string COUNTER_SOUND = "SOUND_ELIFE_ATM_COUNTER";
+	//! A deposit's count runs as long as the bill counter (ELIFE_ATM_Counter.wav, 3.1 s with its fade-out).
+	protected const int COUNT_MIN_MS = 3000;
 	protected const float PAID_HINT_SECONDS = 5;
 
 	protected ELIFE_ATMComponent m_ATM;
@@ -322,8 +326,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_iQuoteAmount = amount;
 		m_sQuoteFeeTerms = feeTerms;
 
-		//! The count stays up a moment, however fast the answer comes, so it reads as the machine counting.
-		int holdMs = ELIFE_ATMComponent.PROCESSING_MIN_MS - (System.GetTickCount() - m_iCountStartTick);
+		//! The count stays up while the bill counter runs, however fast the answer comes, so it reads as the machine counting.
+		int holdMs = COUNT_MIN_MS - (System.GetTickCount() - m_iCountStartTick);
 		if (m_eView == ELIFE_EATMScreen.COUNTING && holdMs > 0)
 		{
 			GetGame().GetCallqueue().CallLater(OpenConfirm, holdMs);
@@ -684,17 +688,16 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The hint stays silent, so the paper sound is the only one.
+	//! The hint stays silent. A withdrawal's cash is counted out now; a deposit's was counted when it went in.
 	protected void AnnouncePaid()
 	{
-		SCR_UISoundEntity.SoundEvent(PAID_SOUND);
-
 		if (IsDeposit())
 		{
 			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-ATM_Hint_Deposit", Whole(m_iResultAmount)), "#ELIFE-ATM_Hint_Deposit_Title", PAID_HINT_SECONDS, true);
 			return;
 		}
 
+		PlaySfx(COUNTER_SOUND);
 		SCR_HintManagerComponent.ShowCustomHint(GetPaidHintText(), "#ELIFE-ATM_Hint_Cash_Title", PAID_HINT_SECONDS, true);
 	}
 
@@ -708,6 +711,18 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			return WidgetManager.Translate("#ELIFE-ATM_Hint_Cash_Ground", Whole(m_iResultDropped));
 
 		return WidgetManager.Translate("#ELIFE-ATM_Hint_Cash_Split", Whole(m_iResultAmount - m_iResultDropped), Whole(m_iResultDropped));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Only on this machine, from the ATM itself.
+	protected void PlaySfx(string soundEvent)
+	{
+		SoundComponent sound = SoundComponent.Cast(GetOwner().FindComponent(SoundComponent));
+		if (!sound)
+			return;
+
+		if (sound.SoundEvent(soundEvent) == AudioHandle.Invalid)
+			Print(string.Format("ELIFE_ATMScreenComponent | no sound for %1", soundEvent), LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -898,6 +913,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 		SendKeepAlive(link);
 		FlashPressed(id);
+		PlaySfx(KEY_SOUND);
 
 		switch (ResolveScreen())
 		{
@@ -1027,6 +1043,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			SetView(ELIFE_EATMScreen.COUNTING);
 			m_iCountStartTick = System.GetTickCount();
 			m_bCountRefused = false;
+			PlaySfx(COUNTER_SOUND);
 			AskQuote(Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT), link, true);
 		}
 		else if (id == BUTTON_R3 && HasSeveralAccounts())
@@ -1069,7 +1086,10 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 		if (id == BUTTON_R4 && IsDeposit() && !m_bCountRefused && GetCarriedCash() > 0)
 		{
-			//! Back to the counted sum, recounted in case the inventory changed meanwhile.
+			//! Back to the counted sum, recounted in case the inventory changed meanwhile: shown and heard like the first count.
+			SetView(ELIFE_EATMScreen.COUNTING);
+			m_iCountStartTick = System.GetTickCount();
+			PlaySfx(COUNTER_SOUND);
 			AskQuote(Math.Min(GetCarriedCash(), ELIFE_ATMComponent.MAX_BOOKING_AMOUNT), link, true);
 			return;
 		}
@@ -1699,7 +1719,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		FrameSlot.SetPos(m_wStackArea, m_fStackLeft, m_fStackTop + (1 - enter) * ENTER_RISE);
 
 		bool counting = m_eEnteredScreen == ELIFE_EATMScreen.COUNTING && m_wFigure && m_wFigure.IsVisible();
-		float count = EaseOut(elapsed / ELIFE_ATMComponent.PROCESSING_MIN_MS);
+		float count = EaseOut(elapsed / COUNT_MIN_MS);
 		if (counting)
 			m_wFigure.SetText(Whole(GetCountShown(count)));
 
@@ -1876,7 +1896,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 					if (m_eEnteredScreen == ELIFE_EATMScreen.COUNTING)
 					{
 						float countElapsed = System.GetTickCount() - m_iEnterStartTick;
-						progress = EaseOut(countElapsed / ELIFE_ATMComponent.PROCESSING_MIN_MS);
+						progress = EaseOut(countElapsed / COUNT_MIN_MS);
 					}
 
 					ShowFigure(Whole(GetCountShown(progress)), Accent());
@@ -2263,7 +2283,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (link)
 			SendKeepAlive(link);
 
-		SCR_UISoundEntity.SoundEvent(SCR_SoundEvent.FOCUS);
+		PlaySfx(KEY_SOUND);
 		Render();
 		return true;
 	}

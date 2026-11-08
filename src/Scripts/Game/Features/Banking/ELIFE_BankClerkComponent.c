@@ -85,17 +85,51 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected static const int AFK_TIMEOUT_MS = 300000;
 	//! Before the idle starts: after spawning (the controller isn't ready to animate yet) and after a customer leaves.
 	protected static const int IDLE_START_DELAY_MS = 1000;
+	//! The idle's normal exit can wait forever for an animation tag the server may not read; it's closed after this.
+	protected static const int IDLE_EXIT_TIMEOUT_MS = 2000;
+	//! Clients: how often an idle that is still starting is checked again.
+	protected static const int PROXY_IDLE_RETRY_MS = 100;
 	protected static const string LINE_SOUND_EVENT_PREFIX = "SOUND_ELIFE_CLERK_";
+	//! Paper changing hands at his desk: the slip, a receipt, account papers.
+	static const string SFX_PAPER = "SOUND_ELIFE_CLERK_SFX_PAPER";
+	//! Server-side: how often he updates his heading while turning.
+	protected static const int ATTENTION_TICK_MS = 50;
+	//! Once he faces his target this closely he stops turning.
+	protected static const float ATTENTION_MIN_TURN_DEG = 2;
+	//! A heading ~180 degrees away makes the turn animation overshoot the long way round.
+	protected static const float HEADING_LEAD_DEG = 90;
+	//! The turn animation has a dead zone, so back at his desk he settles within this.
+	protected static const float HOME_SETTLE_DEG = 20;
+	protected static const int HOME_SETTLE_MS = 500;
+	//! Vanilla gesture ids (Configs/Commanding/Gestures), the few that suit a clerk.
+	protected static const int GESTURE_RAISED_HAND = 2;
+	protected static const int GESTURE_POINT = 1;
+	protected static const int GESTURE_DURATION_MS = 2000;
+	//! After the line starts: a gesture started in the same frame as stopping his idle (the greeting) was swallowed.
+	protected static const int GESTURE_DELAY_MS = 300;
 	//! Players waiting for him can ask again and again; he asks them to wait at most this often.
 	protected static const int BUSY_LINE_COOLDOWN_MS = 10000;
 
 	//! Client-side: the current line, cut off by the next one.
 	protected AudioHandle m_hVoice = AudioHandle.Invalid;
+	//! Client-side: the effect going with the current line, on his character sound component so it can't move his lips.
+	protected AudioHandle m_hLineSfx = AudioHandle.Invalid;
 	protected ELIFE_EClerkVoice m_eVoice = ELIFE_EClerkVoice.PUCK;
 	//! Server-side: last wording per line, so he doesn't repeat himself.
 	protected ref map<int, int> m_mLastVariant = new map<int, int>();
 	//! Client-side: when he last asked someone to wait; 0 is never.
 	protected int m_iLastBusyLineTick;
+	//! Server-side: since when he has been close to his desk direction while turning home, as a tick count; 0 is not yet.
+	protected int m_iHomeSettleTick;
+	//! Server-side: the idle is playing its exit animation.
+	protected bool m_bIdleExiting;
+	protected bool m_bIdleExitRetried;
+	//! Server-side: who he faces. Outlives the visit so he watches a customer leave while waving goodbye.
+	protected IEntity m_LookAt;
+	//! Server-side: when his current gesture ends, as a tick count.
+	protected int m_iGestureEndTick;
+	//! Server-side: until when he keeps facing the customer for a gesture that is playing or about to start.
+	protected int m_iFaceCustomerUntilTick;
 
 	//! Set by the ELIFE_BankClerkSpot that spawned him. Server-only.
 	protected string m_sBankCode = "FEBK";
@@ -103,7 +137,10 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	[Attribute("2.5", UIWidgets.Slider, "How far from the clerk a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
 
-	[RplProp()]
+	//! Server-side: the way the spot faces, where he turns back to after a visit.
+	protected float m_fHomeYaw;
+
+	[RplProp(onRplName: "OnCustomerChanged")]
 	protected int m_iCustomerPlayerId;
 
 	//! Public, so it's replicated for every client's dialog title.
@@ -139,13 +176,24 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		GetGame().GetCallqueue().CallLater(DisableDamage, 0);
 
 		if (Replication.IsServer() && GetGame().InPlayMode())
+		{
+			//! Before anything can turn him: the spot spawns him facing his desk.
+			m_fHomeYaw = owner.GetYawPitchRoll()[0];
 			GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Vanilla's standing loiter (the "Wait" emote), started by the server so every client sees it. Only while nobody is served.
 	protected void StartIdle()
 	{
+		//! After a short visit the last idle may still be on its way out.
+		if (m_bIdleExiting)
+		{
+			GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+			return;
+		}
+
 		SCR_CharacterControllerComponent controller = GetController();
 		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering())
 			return;
@@ -156,19 +204,146 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			return;
 		}
 
+		//! No root motion: the animation would turn and shift him away from his desk.
 		vector noTarget[4];
-		controller.StartLoitering(null, ELoiteringType.LOITERING, false, true, false, noTarget);
+		controller.StartLoitering(null, ELoiteringType.LOITERING, false, false, false, noTarget);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! While serving he stands upright, attentive. The fast stop finishes at once: the normal exit waits for an animation tag the server can't read.
+	//! The fast stop can leave the idle pose stuck, which blocks turning, so a running idle gets the normal exit.
 	protected void StopIdle()
 	{
 		GetGame().GetCallqueue().Remove(StartIdle);
 
 		SCR_CharacterControllerComponent controller = GetController();
-		if (controller && controller.IsLoitering())
+		if (!controller || m_bIdleExiting)
+			return;
+
+		if (controller.IsLoitering())
+		{
+			//! An exit during the start animation is ignored; the attention tick calls this again.
+			if (IsIdleStarting(controller))
+				return;
+
+			m_bIdleExiting = true;
+			controller.StopLoitering(false);
+			Rpc(RpcDo_StopIdle);
+			GetGame().GetCallqueue().CallLater(FinishIdleExit, IDLE_EXIT_TIMEOUT_MS);
+			return;
+		}
+
+		//! A start that is still pending has no animation yet, so cancelling it can't leave a pose behind.
+		SCR_ScriptedCharacterInputContext input = controller.GetScrInputContext();
+		if (input && input.m_iLoiteringType >= 0)
 			controller.StopLoitering(true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. If the exit hasn't played yet it is sent once more, then the idle is closed.
+	protected void FinishIdleExit()
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		SCR_CharacterCommandLoiter loiter;
+		if (controller)
+			loiter = SCR_CharacterCommandLoiter.Cast(controller.GetAnimationComponent().GetCommandScripted());
+
+		if (!loiter)
+		{
+			m_bIdleExiting = false;
+			m_bIdleExitRetried = false;
+			return;
+		}
+
+		if (!m_bIdleExitRetried)
+		{
+			m_bIdleExitRetried = true;
+			//! StopLoitering again would do nothing: the command already counts as exiting.
+			ResendIdleExit(controller);
+			Rpc(RpcDo_StopIdle);
+			GetGame().GetCallqueue().CallLater(FinishIdleExit, IDLE_EXIT_TIMEOUT_MS);
+			return;
+		}
+
+		m_bIdleExiting = false;
+		m_bIdleExitRetried = false;
+		loiter.FinishLoiter();
+
+		//! FinishLoiter is local; without this the clients keep showing the idle.
+		SCR_CharacterCommandHandlerComponent handler = SCR_CharacterCommandHandlerComponent.Cast(controller.GetAnimationComponent().GetCommandHandler());
+		if (handler)
+			handler.BroadCastLoiterFinish();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Clients. Vanilla's StopLoitering on the server only reaches the server, so the clients start the exit here.
+	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
+	protected void RpcDo_StopIdle()
+	{
+		StopProxyIdle();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Clients. A client that got the clerk after the stop was sent (joining, streaming in) still shows the idle.
+	protected void OnCustomerChanged()
+	{
+		if (m_iCustomerPlayerId != 0)
+			StopProxyIdle();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Clients only; the server's own idle is stopped by StopIdle.
+	protected void StopProxyIdle()
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(GetOwner());
+		if (!character)
+			return;
+
+		RplComponent rpl = character.GetRplComponent();
+		if (!rpl || !rpl.IsProxy())
+			return;
+
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller)
+			return;
+
+		SCR_CharacterCommandLoiter loiter = SCR_CharacterCommandLoiter.Cast(controller.GetAnimationComponent().GetCommandScripted());
+		if (!loiter)
+			return;
+
+		GetGame().GetCallqueue().Remove(StopProxyIdle);
+		if (IsIdleStarting(controller))
+		{
+			if (m_iCustomerPlayerId != 0)
+				GetGame().GetCallqueue().CallLater(StopProxyIdle, PROXY_IDLE_RETRY_MS);
+
+			return;
+		}
+
+		//! A no-op unless the idle is still playing.
+		loiter.StopLoitering(false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True while the idle's start animation plays, which ignores an exit.
+	protected static bool IsIdleStarting(notnull SCR_CharacterControllerComponent controller)
+	{
+		CharacterAnimationComponent anim = controller.GetAnimationComponent();
+		SCR_CharacterCommandHandlerComponent handler = SCR_CharacterCommandHandlerComponent.Cast(anim.GetCommandHandler());
+		if (!handler || !handler.GetScriptedStaticTable())
+			return false;
+
+		TAnimGraphTag tag = handler.GetScriptedStaticTable().m_IsLoiteringStartingTag;
+		return anim.IsPrimaryTag(tag) || anim.IsSecondaryTag(tag);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Sends the idle's normal exit (-1) to the animation graph again.
+	protected static void ResendIdleExit(notnull SCR_CharacterControllerComponent controller)
+	{
+		CharacterAnimationComponent anim = controller.GetAnimationComponent();
+		SCR_CharacterCommandHandlerComponent handler = SCR_CharacterCommandHandlerComponent.Cast(anim.GetCommandHandler());
+		if (handler && handler.GetScriptedStaticTable())
+			anim.CallCommand(handler.GetScriptedStaticTable().m_CommandGesture, -1, 0.0);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -253,6 +428,13 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Yaw in degrees of a direction; 0 faces +Z, 90 faces +X.
+	protected static float YawTo(vector direction)
+	{
+		return Math.Atan2(direction[0], direction[2]) * Math.RAD2DEG;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-only.
 	void RequestOpen(int playerId, notnull IEntity character, notnull ELIFE_BankClerkCharacterComponent link)
 	{
@@ -282,6 +464,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			m_Customer = character;
 			Replication.BumpMe();
 			StopIdle();
+			StartAttention();
 			Say(ELIFE_EClerkLine.GREETING);
 			GetGame().GetCallqueue().CallLater(Tick, TICK_INTERVAL_MS, true);
 			Print(string.Format("ELIFE_BankClerkComponent | %1 serving player %2", m_sBankCode, playerId), LogLevel.NORMAL);
@@ -542,6 +725,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected void Release(string why)
 	{
 		GetGame().GetCallqueue().Remove(Tick);
+		StopAttention();
 		Print(string.Format("ELIFE_BankClerkComponent | %1 released player %2: %3", m_sBankCode, m_iCustomerPlayerId, why), LogLevel.NORMAL);
 
 		m_iCustomerPlayerId = 0;
@@ -549,7 +733,210 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		m_bOpenedThisVisit = false;
 		m_Transfers.Reset();
 		Replication.BumpMe();
-		GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. While serving, he turns towards the customer and looks at them.
+	protected void StartAttention()
+	{
+		GetGame().GetCallqueue().Remove(TurnHome);
+		GetGame().GetCallqueue().Remove(TurnHomeStep);
+		GetGame().GetCallqueue().Remove(UpdateAttention);
+		m_LookAt = m_Customer;
+		GetGame().GetCallqueue().CallLater(UpdateAttention, ATTENTION_TICK_MS, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StopAttention()
+	{
+		GetGame().GetCallqueue().Remove(TurnHome);
+		TurnHome();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Waits out a parting gesture, then turns back to his desk and idles.
+	protected void TurnHome()
+	{
+		int remaining = m_iFaceCustomerUntilTick - System.GetTickCount();
+		if (remaining > 0)
+		{
+			GetGame().GetCallqueue().CallLater(TurnHome, remaining);
+			return;
+		}
+
+		GetGame().GetCallqueue().Remove(UpdateAttention);
+		m_LookAt = null;
+		m_iHomeSettleTick = 0;
+		GetGame().GetCallqueue().Remove(TurnHomeStep);
+		GetGame().GetCallqueue().CallLater(TurnHomeStep, ATTENTION_TICK_MS, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only.
+	protected void TurnHomeStep()
+	{
+		bool done = TurnTowards(m_fHomeYaw);
+		if (!done && GetTurnLeft(m_fHomeYaw) < HOME_SETTLE_DEG)
+		{
+			int now = System.GetTickCount();
+			if (m_iHomeSettleTick == 0)
+				m_iHomeSettleTick = now;
+			else if (now - m_iHomeSettleTick >= HOME_SETTLE_MS)
+				done = true;
+		}
+
+		if (done)
+		{
+			GetGame().GetCallqueue().Remove(TurnHomeStep);
+			GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Signed degrees from his body's yaw to yaw, the short way round.
+	protected float GetTurn(float yaw)
+	{
+		float turn = yaw - GetOwner().GetYawPitchRoll()[0];
+		return turn - 360 * Math.Round(turn / 360);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected float GetTurnLeft(float yaw)
+	{
+		return Math.AbsFloat(GetTurn(yaw));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. True once he faces yaw (degrees). An unchanged heading isn't set again, to save traffic.
+	protected bool TurnTowards(float yaw)
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller)
+			return true;
+
+		float turn = GetTurn(yaw);
+		if (Math.AbsFloat(turn) < ATTENTION_MIN_TURN_DEG)
+			return true;
+
+		float lead = Math.Clamp(turn, -HEADING_LEAD_DEG, HEADING_LEAD_DEG);
+		float heading = ToHeading(GetOwner().GetYawPitchRoll()[0] + lead);
+		float headingChange = heading - controller.GetInputContext().GetHeadingAngle();
+		headingChange -= Math.PI2 * Math.Round(headingChange / Math.PI2);
+		if (Math.AbsFloat(headingChange) * Math.RAD2DEG >= ATTENTION_MIN_TURN_DEG)
+			controller.SetHeadingAngle(heading, true);
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The heading takes radians from 0 to 2 pi; a negative one isn't reached.
+	protected static float ToHeading(float yaw)
+	{
+		float heading = yaw * Math.DEG2RAD;
+		return heading - Math.PI2 * Math.Floor(heading / Math.PI2);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The gesture that goes with a line; 0 is none. No wave on the greeting: the customer already started the conversation.
+	static int GetLineGesture(ELIFE_EClerkLine line)
+	{
+		switch (line)
+		{
+			case ELIFE_EClerkLine.TRANSFER_FORM: return GESTURE_POINT;
+			case ELIFE_EClerkLine.GOODBYE: return GESTURE_RAISED_HAND;
+		}
+
+		return 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The sound of what he does while saying a line, in Sounds/VO/BankClerk/ELIFE_BankClerk_Sfx.acp; empty is none.
+	static string GetLineSfx(ELIFE_EClerkLine line)
+	{
+		switch (line)
+		{
+			case ELIFE_EClerkLine.TRANSFER_PROCESSING: return "SOUND_ELIFE_CLERK_SFX_TYPING";
+			case ELIFE_EClerkLine.TRANSFER_DONE: return "SOUND_ELIFE_CLERK_SFX_STAMP";
+		}
+
+		return string.Empty;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client-side. Cuts off the previous line's effect, but not a one-off from PlaySfx.
+	protected void PlayLineSfx(ELIFE_EClerkLine line)
+	{
+		string soundEvent = GetLineSfx(line);
+		if (soundEvent.IsEmpty())
+			return;
+
+		CharacterSoundComponent sound = GetSoundComponent();
+		if (!sound)
+			return;
+
+		if (m_hLineSfx != AudioHandle.Invalid)
+			sound.Terminate(m_hLineSfx);
+
+		m_hLineSfx = PlayOn(sound, soundEvent);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client-side, only on this machine: an effect from ELIFE_BankClerk_Sfx.acp at his position.
+	void PlaySfx(string soundEvent)
+	{
+		CharacterSoundComponent sound = GetSoundComponent();
+		if (sound)
+			PlayOn(sound, soundEvent);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected CharacterSoundComponent GetSoundComponent()
+	{
+		return CharacterSoundComponent.Cast(GetOwner().FindComponent(CharacterSoundComponent));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static AudioHandle PlayOn(CharacterSoundComponent sound, string soundEvent)
+	{
+		AudioHandle handle = sound.SoundEvent(soundEvent);
+		if (handle == AudioHandle.Invalid)
+			Print(string.Format("ELIFE_BankClerkComponent | no sound for %1", soundEvent), LogLevel.WARNING);
+
+		return handle;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. A gesture already playing finishes first.
+	protected void PlayLineGesture(ELIFE_EClerkLine line)
+	{
+		int gesture = GetLineGesture(line);
+		if (gesture == 0)
+			return;
+
+		if (System.GetTickCount() < m_iGestureEndTick)
+			return;
+
+		SCR_CharacterControllerComponent controller = GetController();
+		bool started = controller && controller.TryStartCharacterGesture(gesture, GESTURE_DURATION_MS);
+		if (!started)
+			return;
+
+		m_iGestureEndTick = System.GetTickCount() + GESTURE_DURATION_MS;
+		m_iFaceCustomerUntilTick = m_iGestureEndTick;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Turns his heading, which his aim and head follow.
+	protected void UpdateAttention()
+	{
+		if (!m_LookAt)
+			return;
+
+		//! An idle that was still starting when he was served isn't loitering yet, so StopIdle missed it.
+		if (m_iCustomerPlayerId != 0)
+			StopIdle();
+
+		TurnTowards(YawTo(m_LookAt.GetOrigin() - GetOwner().GetOrigin()));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -625,12 +1012,25 @@ class ELIFE_BankClerkComponent : ScriptComponent
 
 		if (RplSession.Mode() != RplMode.Dedicated)
 			RpcDo_Say(m_eVoice, line, variant);
+
+		if (GetLineGesture(line) != 0)
+		{
+			//! Until the gesture starts; PlayLineGesture extends it to the gesture's end.
+			int gestureStartTick = System.GetTickCount() + GESTURE_DELAY_MS;
+			if (gestureStartTick > m_iFaceCustomerUntilTick)
+				m_iFaceCustomerUntilTick = gestureStartTick;
+			GetGame().GetCallqueue().CallLater(PlayLineGesture, GESTURE_DELAY_MS, false, line);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
 	protected void RpcDo_Say(int voiceId, int line, int variant)
 	{
+		//! Every line while serving is another chance to end an idle this client still shows.
+		if (m_iCustomerPlayerId != 0)
+			StopProxyIdle();
+
 		SCR_CommunicationSoundComponent voice = SCR_CommunicationSoundComponent.Cast(GetOwner().FindComponent(SCR_CommunicationSoundComponent));
 		if (!voice)
 			return;
@@ -656,6 +1056,8 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		m_hVoice = voice.SoundEvent(soundEvent);
 		if (m_hVoice == AudioHandle.Invalid)
 			Print(string.Format("ELIFE_BankClerkComponent | no sound for %1", soundEvent), LogLevel.WARNING);
+
+		PlayLineSfx(line);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -686,6 +1088,12 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			GetGame().GetCallqueue().Remove(Tick);
 			GetGame().GetCallqueue().Remove(DisableDamage);
 			GetGame().GetCallqueue().Remove(StartIdle);
+			GetGame().GetCallqueue().Remove(FinishIdleExit);
+			GetGame().GetCallqueue().Remove(StopProxyIdle);
+			GetGame().GetCallqueue().Remove(UpdateAttention);
+			GetGame().GetCallqueue().Remove(TurnHome);
+			GetGame().GetCallqueue().Remove(TurnHomeStep);
+			GetGame().GetCallqueue().Remove(PlayLineGesture);
 		}
 	}
 }

@@ -10,5 +10,10 @@ GenericEntity : "{10C26F96EF7A8CF5}Prefabs/Props/Core/Props_Base.et" {
   }
   RplComponent "{4E9E2F9B53D9423D}" {
   }
+  SoundComponent "{584D9B3F57BE27A0}" {
+   Filenames {
+    "{01EBDC8607D3CBCE}Sounds/ATM/ELIFE_ATM_Sfx.acp"
+   }
+  }
  }
 }

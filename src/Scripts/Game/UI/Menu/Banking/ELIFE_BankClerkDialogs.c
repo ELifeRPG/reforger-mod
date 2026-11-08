@@ -49,6 +49,14 @@ class ELIFE_BankClerkDialogBase : SCR_ConfigurableDialogUi
 	protected ELIFE_EClerkDialog m_eNext = ELIFE_EClerkDialog.NONE;
 
 	//------------------------------------------------------------------------------------------------
+	//! Paper changing hands: a slip, a receipt, account papers. From the clerk's desk, heard only by the customer.
+	static void PlayPaperSound(ELIFE_BankClerkComponent clerk)
+	{
+		if (clerk)
+			clerk.PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! False if nothing opened.
 	static bool Open(ELIFE_EClerkDialog dialog, ELIFE_BankClerkComponent clerk, ELIFE_BankClerkCharacterComponent link, string data = "")
 	{
@@ -374,6 +382,7 @@ class ELIFE_BankClerkAccountOpenedDialog : ELIFE_BankClerkDialogBase
 	{
 		super.OnMenuOpen(preset);
 
+		PlayPaperSound(m_Clerk);
 		SetStatement(preset.m_sMessage, Line("#ELIFE-Clerk_Transfer_Number", ELIFE_PhoneBankingService.GroupIban(m_sData)), "#ELIFE-Clerk_Opened_Closing");
 	}
 
@@ -393,6 +402,7 @@ class ELIFE_BankClerkTransferDoneDialog : ELIFE_BankClerkDialogBase
 	{
 		super.OnMenuOpen(preset);
 
+		PlayPaperSound(m_Clerk);
 		ELIFE_ClerkTransferReceipt receipt = new ELIFE_ClerkTransferReceipt();
 		receipt.ExpandFromRAW(m_sData);
 		string target = ELIFE_PhoneBankingService.GroupIban(receipt.targetNumber);
