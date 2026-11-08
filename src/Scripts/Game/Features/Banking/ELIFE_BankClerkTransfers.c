@@ -36,6 +36,19 @@ class ELIFE_ClerkAccountList : JsonApiStruct
 }
 
 //------------------------------------------------------------------------------------------------
+//! What a large transfer is for, asked by the clerk (see ELIFE_BankClerkComponent.GetPurposeThreshold).
+//! Kept in the server log for now: the backend's transfer has no field for it yet.
+enum ELIFE_ETransferPurpose
+{
+	//! Not answered; sent by the customer to put the transfer away.
+	NONE,
+	GOODS,
+	RENT,
+	GIFT,
+	BUSINESS
+}
+
+//------------------------------------------------------------------------------------------------
 //! What the confirm page shows. The server keeps its own copy; the client only sends the id back.
 class ELIFE_ClerkTransferQuote : JsonApiStruct
 {
@@ -45,10 +58,13 @@ class ELIFE_ClerkTransferQuote : JsonApiStruct
 	string targetBankName;
 	int amount;
 	string feeTerms;
+	//! The clerk asks what it is for before booking; the customer answers instead of confirming.
+	bool needsPurpose;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkTransferQuote()
 	{
+		RegV("needsPurpose");
 		RegV("quoteId");
 		RegV("fromNumber");
 		RegV("targetNumber");
@@ -67,6 +83,8 @@ class ELIFE_BankClerkTransfers : Managed
 	protected static const int MAX_RECENT = 5;
 	//! Longest TRANSFER_PROCESSING line (3.3 s) plus a pause.
 	protected static const int PROCESSING_DELAY_MS = 3500;
+	//! Longest reaction to a purpose (PURPOSE_GOODS, 4.8 s) plus a pause, so the booked line doesn't cut it off.
+	protected static const int PURPOSE_DELAY_MS = 5000;
 
 	protected ELIFE_BankClerkComponent m_Clerk;
 
@@ -88,10 +106,14 @@ class ELIFE_BankClerkTransfers : Managed
 	protected int m_iNextQuoteId = 1;
 	protected ref ELIFE_ClerkTransferQuote m_Quote;
 	protected int m_iQuoteTick;
+	protected ELIFE_ETransferPurpose m_ePurpose;
 
 	protected ref ELIFE_BankBooking m_Booking;
 	protected int m_iBookingPlayerId;
 	protected string m_sBookingFrom;
+	//! The quote being booked and its purpose, for the receipt.
+	protected ref ELIFE_ClerkTransferQuote m_BookingQuote;
+	protected ELIFE_ETransferPurpose m_eBookingPurpose;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_BankClerkTransfers(ELIFE_BankClerkComponent clerk)
@@ -111,7 +133,9 @@ class ELIFE_BankClerkTransfers : Managed
 		m_bRestartLoad = false;
 		m_bQuoteInFlight = false;
 		m_Quote = null;
+		m_ePurpose = ELIFE_ETransferPurpose.NONE;
 		GetGame().GetCallqueue().Remove(SendProcessedQuote);
+		GetGame().GetCallqueue().Remove(BookAnsweredQuote);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -426,8 +450,19 @@ class ELIFE_BankClerkTransfers : Managed
 		if (bank)
 			m_Quote.targetBankName = bank.name;
 
-		//! Stays in flight while he "enters" it, so a second slip waits.
 		m_Quote.quoteId = m_iNextQuoteId++;
+
+		//! A large amount waits for its purpose; the answer books it (RequestPurpose).
+		if (m_Quote.amount >= m_Clerk.GetPurposeThreshold())
+		{
+			m_Quote.needsPurpose = true;
+			m_iQuoteTick = System.GetTickCount();
+			m_Clerk.Say(ELIFE_EClerkLine.ASK_PURPOSE);
+			SendQuote(m_iPlayerId, ELIFE_EClerkReason.NONE, m_Quote);
+			return;
+		}
+
+		//! Stays in flight while he "enters" it, so a second slip waits.
 		m_bQuoteInFlight = true;
 		m_Clerk.Say(ELIFE_EClerkLine.TRANSFER_PROCESSING);
 		GetGame().GetCallqueue().CallLater(SendProcessedQuote, PROCESSING_DELAY_MS, false, m_Quote.quoteId);
@@ -462,6 +497,7 @@ class ELIFE_BankClerkTransfers : Managed
 			copy.targetBankName = quote.targetBankName;
 			copy.amount = quote.amount;
 			copy.feeTerms = quote.feeTerms;
+			copy.needsPurpose = quote.needsPurpose;
 			copy.Pack();
 			json = copy.AsString();
 		}
@@ -479,7 +515,8 @@ class ELIFE_BankClerkTransfers : Managed
 			return;
 		}
 
-		if (m_bQuoteInFlight || !m_Quote || m_Quote.quoteId != quoteId || playerId != m_iPlayerId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
+		//! A quote waiting for its purpose can't be confirmed past the question.
+		if (m_bQuoteInFlight || !m_Quote || m_Quote.needsPurpose || m_Quote.quoteId != quoteId || playerId != m_iPlayerId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
 		{
 			SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED);
 			return;
@@ -487,7 +524,95 @@ class ELIFE_BankClerkTransfers : Managed
 
 		ELIFE_ClerkTransferQuote quote = m_Quote;
 		m_Quote = null;
+		StartBooking(playerId, quote);
+	}
 
+	//------------------------------------------------------------------------------------------------
+	//! The answer to the clerk's question about a large transfer. NONE puts the transfer away.
+	void RequestPurpose(int playerId, int quoteId, ELIFE_ETransferPurpose purpose)
+	{
+		if (m_bQuoteInFlight || !m_Quote || !m_Quote.needsPurpose || m_Quote.quoteId != quoteId || playerId != m_iPlayerId)
+		{
+			if (purpose != ELIFE_ETransferPurpose.NONE)
+				SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED);
+
+			return;
+		}
+
+		if (purpose == ELIFE_ETransferPurpose.NONE)
+		{
+			m_Quote = null;
+			return;
+		}
+
+		ELIFE_EClerkLine line = GetPurposeLine(purpose);
+		if (line == ELIFE_EClerkLine.NONE || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
+		{
+			m_Quote = null;
+			SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED);
+			return;
+		}
+
+		//! In flight while he "enters" it, like an ordinary slip.
+		m_ePurpose = purpose;
+		m_bQuoteInFlight = true;
+		m_Clerk.Say(line);
+		GetGame().GetCallqueue().CallLater(BookAnsweredQuote, PURPOSE_DELAY_MS, false, quoteId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! His reaction to the answer; each ends with putting the transfer through.
+	static ELIFE_EClerkLine GetPurposeLine(ELIFE_ETransferPurpose purpose)
+	{
+		switch (purpose)
+		{
+			case ELIFE_ETransferPurpose.GOODS: return ELIFE_EClerkLine.PURPOSE_GOODS;
+			case ELIFE_ETransferPurpose.RENT: return ELIFE_EClerkLine.PURPOSE_RENT;
+			case ELIFE_ETransferPurpose.GIFT: return ELIFE_EClerkLine.PURPOSE_GIFT;
+			case ELIFE_ETransferPurpose.BUSINESS: return ELIFE_EClerkLine.PURPOSE_BUSINESS;
+		}
+
+		return ELIFE_EClerkLine.NONE;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The paper's name for a purpose.
+	static string GetPurposeText(ELIFE_ETransferPurpose purpose)
+	{
+		switch (purpose)
+		{
+			case ELIFE_ETransferPurpose.GOODS: return "#ELIFE-Clerk_Purpose_Goods";
+			case ELIFE_ETransferPurpose.RENT: return "#ELIFE-Clerk_Purpose_Rent";
+			case ELIFE_ETransferPurpose.GIFT: return "#ELIFE-Clerk_Purpose_Gift";
+			case ELIFE_ETransferPurpose.BUSINESS: return "#ELIFE-Clerk_Purpose_Business";
+		}
+
+		return "";
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Dropped if the visit ended meanwhile.
+	protected void BookAnsweredQuote(int quoteId)
+	{
+		if (!m_Quote || m_Quote.quoteId != quoteId)
+			return;
+
+		m_bQuoteInFlight = false;
+		ELIFE_ClerkTransferQuote quote = m_Quote;
+		m_Quote = null;
+		if (IsBooking())
+		{
+			SendResult(m_iPlayerId, ELIFE_EClerkReason.ACCOUNT_BUSY);
+			return;
+		}
+
+		StartBooking(m_iPlayerId, quote);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The account is locked against ATMs and other clerks until the backend answers.
+	protected void StartBooking(int playerId, notnull ELIFE_ClerkTransferQuote quote)
+	{
 		if (!ELIFE_Api.GetInstance())
 		{
 			SendResult(playerId, ELIFE_EClerkReason.UNAVAILABLE);
@@ -502,8 +627,17 @@ class ELIFE_BankClerkTransfers : Managed
 
 		m_iBookingPlayerId = playerId;
 		m_sBookingFrom = quote.fromNumber;
+		m_BookingQuote = quote;
+		m_eBookingPurpose = ELIFE_ETransferPurpose.NONE;
+		if (quote.needsPurpose)
+			m_eBookingPurpose = m_ePurpose;
+
 		m_Booking = new ELIFE_BankBooking(ELIFE_EBankBookingKind.TRANSFER, quote.fromNumber, quote.amount * 100, m_sCharacterId, m_Clerk.GetSourceId(), quote.targetNumber);
-		Print(string.Format("ELIFE_BankClerkTransfers | transfer %1 from %2 to %3 for player %4", quote.amount, quote.fromNumber, quote.targetNumber, playerId), LogLevel.NORMAL);
+		string purpose;
+		if (quote.needsPurpose)
+			purpose = ", purpose " + typename.EnumToString(ELIFE_ETransferPurpose, m_eBookingPurpose);
+
+		Print(string.Format("ELIFE_BankClerkTransfers | transfer %1 from %2 to %3 for player %4%5", quote.amount, quote.fromNumber, quote.targetNumber, playerId, purpose), LogLevel.NORMAL);
 		m_Booking.Start(this, "OnBankBookingDone");
 	}
 
@@ -514,6 +648,8 @@ class ELIFE_BankClerkTransfers : Managed
 			return;
 
 		string fromNumber = m_sBookingFrom;
+		ELIFE_ClerkTransferQuote quote = m_BookingQuote;
+		m_BookingQuote = null;
 		ELIFE_ATMComponent.UnlockAccount(fromNumber);
 		int playerId = m_iBookingPlayerId;
 		m_sBookingFrom = "";
@@ -528,6 +664,8 @@ class ELIFE_BankClerkTransfers : Managed
 				Print(string.Format("ELIFE_BankClerkTransfers | transferred %1, fee %2, from %3", result.amountStr, result.feeStr, fromNumber), LogLevel.NORMAL);
 				if (from)
 					from.balanceStr = result.newBalanceStr;
+
+				KeepReceipt(playerId, quote, from, result);
 
 				SendResult(playerId, ELIFE_EClerkReason.NONE, result.amountStr, result.feeStr, result.newBalanceStr);
 				return;
@@ -547,6 +685,35 @@ class ELIFE_BankClerkTransfers : Managed
 		}
 
 		SendResult(playerId, ELIFE_EClerkReason.UNKNOWN_OUTCOME);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The receipt he offers once it's booked, built here from the booking itself.
+	protected void KeepReceipt(int playerId, ELIFE_ClerkTransferQuote quote, ELIFE_BankAccountSummary from, notnull ELIFE_TransactionResult result)
+	{
+		if (!quote)
+			return;
+
+		ELIFE_BankPaper paper = new ELIFE_BankPaper();
+		paper.kind = ELIFE_EBankPaperKind.TRANSFER_RECEIPT;
+		paper.bankName = m_Clerk.GetBankName();
+		if (from)
+		{
+			ELIFE_BankSummary bank = FindBank(from.bankId);
+			if (bank)
+				paper.bankName = bank.name;
+		}
+
+		paper.accountNumber = quote.fromNumber;
+		paper.targetNumber = quote.targetNumber;
+		paper.targetBankName = quote.targetBankName;
+		paper.amount = result.amountStr;
+		paper.fee = result.feeStr;
+		//! No balance: the receipt is shown to others as proof of payment.
+		paper.purpose = GetPurposeText(m_eBookingPurpose);
+		paper.bookingRef = result.transactionId;
+		paper.StampNow();
+		m_Clerk.KeepPaper(playerId, paper);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -589,7 +756,10 @@ class ELIFE_BankClerkTransfers : Managed
 	void ~ELIFE_BankClerkTransfers()
 	{
 		if (GetGame() && GetGame().GetCallqueue())
+		{
 			GetGame().GetCallqueue().Remove(SendProcessedQuote);
+			GetGame().GetCallqueue().Remove(BookAnsweredQuote);
+		}
 
 		if (m_Booking)
 			m_Booking.Cancel();

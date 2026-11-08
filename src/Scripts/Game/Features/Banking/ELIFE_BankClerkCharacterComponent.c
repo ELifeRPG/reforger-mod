@@ -86,6 +86,24 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The answer to the clerk's question about a large transfer; NONE puts it away.
+	void RequestTransferPurpose(notnull IEntity clerk, int quoteId, ELIFE_ETransferPurpose purpose)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_TransferPurpose, clerkId, quoteId, purpose);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Taking the receipt or account papers he offered.
+	void RequestPaper(notnull IEntity clerk, ELIFE_EBankPaperKind kind)
+	{
+		RplId clerkId = GetClerkId(clerk);
+		if (clerkId.IsValid())
+			Rpc(RpcAsk_Paper, clerkId, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-side senders: on a client-owned character these route to the client, on a host's own they call directly.
 	//! visitId only for a grant.
 	void SendGrant(RplId clerkId, bool granted, int reason, int visitId = 0)
@@ -101,6 +119,12 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	void SendCustomerContext(RplId clerkId, int visitId, ELIFE_EClerkAccountStatus accounts, bool openedThisVisit)
 	{
 		Rpc(RpcDo_CustomerContext, clerkId, visitId, accounts, openedThisVisit);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void SendPaperResult(RplId clerkId, ELIFE_EBankPaperKind kind, int reason, bool onGround)
+	{
+		Rpc(RpcDo_PaperResult, clerkId, kind, reason, onGround);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -201,6 +225,40 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_Paper(RplId clerkId, int kind)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "paper");
+		if (clerk)
+			clerk.RequestPaper(GetPlayerId(), GetOwner(), this, kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Where the paper went: into the inventory, or onto the counter when there was no room.
+	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
+	protected void RpcDo_PaperResult(RplId clerkId, int kind, int reason, bool onGround)
+	{
+		ELIFE_BankClerkDialogueController.OnPaperResult(reason);
+		if (reason != ELIFE_EClerkReason.NONE)
+			return;
+
+		string title = WidgetManager.Translate(ELIFE_BankPaper.GetTitle(kind));
+		if (onGround)
+			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Paper_Hint_Ground", title), title);
+		else
+			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Paper_Hint_Inventory", title), title);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_TransferPurpose(RplId clerkId, int quoteId, int purpose)
+	{
+		ELIFE_BankClerkComponent clerk = FindClerk(clerkId, "transfer purpose");
+		if (clerk)
+			clerk.RequestTransferPurpose(GetPlayerId(), GetOwner(), this, quoteId, purpose);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
 	protected void RpcDo_ClerkAccounts(RplId clerkId, int reason, string json)
 	{
@@ -226,6 +284,8 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 		ELIFE_TransferSlipMenu slip = ELIFE_TransferSlipMenu.GetOpen();
 		if (slip)
 			slip.OnTransferResultAnswer(reason, amount, fee, balance);
+		else if (ELIFE_BankClerkDialogueController.OnTransferResult(reason, amount, fee, balance))
+			return;
 		else if (reason == ELIFE_EClerkReason.NONE)
 			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Clerk_TransferDone_Hint", amount), "#ELIFE-Clerk_TransferDone_Title");
 		else if (reason == ELIFE_EClerkReason.UNKNOWN_OUTCOME)

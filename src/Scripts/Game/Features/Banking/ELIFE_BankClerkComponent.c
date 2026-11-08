@@ -75,7 +75,16 @@ enum ELIFE_EClerkLine
 	GREETING_AFTERNOON,
 	GREETING_EVENING,
 	GREETING_RETURNING,
-	NO_ACCOUNT
+	NO_ACCOUNT,
+	//! A large transfer: what is it for, then his reaction to the answer (ELIFE_BankClerkTransfers.GetPurposeLine).
+	ASK_PURPOSE,
+	PURPOSE_GOODS,
+	PURPOSE_RENT,
+	PURPOSE_GIFT,
+	PURPOSE_BUSINESS,
+	//! Handing over a paper he offered (ELIFE_BankPaper).
+	RECEIPT_HERE,
+	PAPERS_HERE
 }
 
 //------------------------------------------------------------------------------------------------
@@ -181,6 +190,10 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	[Attribute("2.5", UIWidgets.Slider, "How far from the clerk a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
 
+	//! TODO: from the backend, so each bank sets its own and it can change without a mod update.
+	[Attribute("10000", UIWidgets.EditBox, "Transfers from this amount on (whole Ŧ) are asked what they are for before booking", "1 100000 1")]
+	protected int m_iPurposeThreshold;
+
 	[Attribute("{570E8AA28E1B73D5}Configs/Banking/ELIFE_ClerkDialogue.conf", UIWidgets.ResourceNamePicker, "The conversation at his desk, an ELIFE_DialogueConfig", "conf")]
 	protected ResourceName m_sDialogueConfig;
 
@@ -216,6 +229,10 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	protected int m_iVisitId;
 	protected ELIFE_EClerkAccountStatus m_eCustomerAccounts;
 	protected bool m_bGreeted;
+
+	//! Server-side: the papers he offered this visit, each handed over at most once.
+	protected ref ELIFE_BankPaper m_PendingReceipt;
+	protected ref ELIFE_BankPaper m_PendingAccountPapers;
 
 	protected ref ELIFE_BankClerkTransfers m_Transfers;
 
@@ -734,6 +751,12 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	int GetPurposeThreshold()
+	{
+		return m_iPurposeThreshold;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	ResourceName GetDialogueConfig()
 	{
 		return m_sDialogueConfig;
@@ -821,6 +844,17 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		bool opened = status == ELIFE_EApiStatusCode.SUCCESS && account && account.number != "" && account.characterId == characterId;
 		if (opened && playerId == m_iCustomerPlayerId)
 		{
+			ELIFE_BankPaper papers = new ELIFE_BankPaper();
+			papers.kind = ELIFE_EBankPaperKind.ACCOUNT_PAPERS;
+			papers.bankName = m_sBankName;
+			papers.accountNumber = account.number;
+			papers.feeTerms = account.feeTermsStr;
+			if (papers.feeTerms == "")
+				papers.feeTerms = m_sFeeTerms;
+
+			papers.StampNow();
+			KeepPaper(playerId, papers);
+
 			m_bOpenedThisVisit = true;
 			m_eCustomerAccounts = ELIFE_EClerkAccountStatus.THIS_BANK;
 			SendCustomerContext();
@@ -881,6 +915,79 @@ class ELIFE_BankClerkComponent : ScriptComponent
 
 		m_iLastRequestTick = System.GetTickCount();
 		m_Transfers.RequestConfirm(playerId, quoteId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The answer to his question about a large transfer; the result comes back like a confirmation's.
+	void RequestTransferPurpose(int playerId, notnull IEntity character, notnull ELIFE_BankClerkCharacterComponent link, int quoteId, ELIFE_ETransferPurpose purpose)
+	{
+		if (!IsCustomer(playerId, character) || !IsUsableBy(character))
+		{
+			if (purpose != ELIFE_ETransferPurpose.NONE)
+				link.SendTransferResult(GetRplId(), ELIFE_EClerkReason.OUT_OF_RANGE, "", "", "");
+
+			return;
+		}
+
+		m_iLastRequestTick = System.GetTickCount();
+		m_Transfers.RequestPurpose(playerId, quoteId, purpose);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. What he can hand the customer when asked; a newer one replaces the last.
+	void KeepPaper(int playerId, notnull ELIFE_BankPaper paper)
+	{
+		if (playerId == 0 || playerId != m_iCustomerPlayerId)
+			return;
+
+		if (paper.kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS)
+			m_PendingAccountPapers = paper;
+		else
+			m_PendingReceipt = paper;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The customer took him up on the paper he offered. Always answered, so the dialogue can move on.
+	void RequestPaper(int playerId, notnull IEntity character, notnull ELIFE_BankClerkCharacterComponent link, ELIFE_EBankPaperKind kind)
+	{
+		if (!IsCustomer(playerId, character) || !IsUsableBy(character))
+		{
+			link.SendPaperResult(GetRplId(), kind, ELIFE_EClerkReason.OUT_OF_RANGE, false);
+			return;
+		}
+
+		m_iLastRequestTick = System.GetTickCount();
+
+		ELIFE_BankPaper paper = m_PendingReceipt;
+		ELIFE_EClerkLine line = ELIFE_EClerkLine.RECEIPT_HERE;
+		if (kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS)
+		{
+			paper = m_PendingAccountPapers;
+			line = ELIFE_EClerkLine.PAPERS_HERE;
+		}
+
+		//! Already handed over, or nothing was booked.
+		if (!paper || paper.kind != kind)
+		{
+			link.SendPaperResult(GetRplId(), kind, ELIFE_EClerkReason.FAILED, false);
+			return;
+		}
+
+		bool onGround;
+		if (!ELIFE_BankPaperComponent.Issue(character, paper, onGround))
+		{
+			Print(string.Format("ELIFE_BankClerkComponent | %1 couldn't hand player %2 their paper", m_sBankCode, playerId), LogLevel.ERROR);
+			link.SendPaperResult(GetRplId(), kind, ELIFE_EClerkReason.FAILED, false);
+			return;
+		}
+
+		if (kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS)
+			m_PendingAccountPapers = null;
+		else
+			m_PendingReceipt = null;
+
+		Say(line);
+		link.SendPaperResult(GetRplId(), kind, ELIFE_EClerkReason.NONE, onGround);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -996,6 +1103,8 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		m_iCustomerPlayerId = 0;
 		m_Customer = null;
 		m_bOpenedThisVisit = false;
+		m_PendingReceipt = null;
+		m_PendingAccountPapers = null;
 		m_CustomerLookup = null;
 		m_eCustomerAccounts = ELIFE_EClerkAccountStatus.UNKNOWN;
 		GetGame().GetCallqueue().Remove(Greet);
@@ -1124,6 +1233,12 @@ class ELIFE_BankClerkComponent : ScriptComponent
 		switch (line)
 		{
 			case ELIFE_EClerkLine.TRANSFER_PROCESSING: return "SOUND_ELIFE_CLERK_SFX_TYPING";
+			//! His reactions to a purpose also put the transfer through, over the longer wait (PURPOSE_DELAY_MS).
+			case ELIFE_EClerkLine.PURPOSE_GOODS:
+			case ELIFE_EClerkLine.PURPOSE_RENT:
+			case ELIFE_EClerkLine.PURPOSE_GIFT:
+			case ELIFE_EClerkLine.PURPOSE_BUSINESS:
+				return "SOUND_ELIFE_CLERK_SFX_TYPING_LONG";
 			case ELIFE_EClerkLine.TRANSFER_DONE: return "SOUND_ELIFE_CLERK_SFX_STAMP";
 		}
 

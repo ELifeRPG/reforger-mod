@@ -122,6 +122,8 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	protected bool m_bWaiting;
 	//! Handed back to the dialogue when the slip closes: the packed receipt of a booked transfer, else empty.
 	protected string m_sReceipt;
+	//! A large transfer the clerk asks about in the conversation: the packed quote, handed back instead of confirmed here.
+	protected string m_sPurposeQuote;
 	protected bool m_bIsClosing;
 	//! The menu opens before the replicated customer id may have arrived, so a mismatch only counts once it matched.
 	protected bool m_bSeenAsCustomer;
@@ -346,12 +348,20 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 	//------------------------------------------------------------------------------------------------
 	//! The server checked everything and found the target; the signed slip is the approval, so it books at once.
+	//! A large amount goes back to the conversation first, where the clerk asks what it is for.
 	void OnTransferQuoteAnswer(int reason, string json)
 	{
 		if (reason == ELIFE_EClerkReason.NONE)
 		{
 			m_Quote = new ELIFE_ClerkTransferQuote();
 			m_Quote.ExpandFromRAW(json);
+			if (m_Quote.needsPurpose)
+			{
+				m_sPurposeQuote = json;
+				CloseSlip();
+				return;
+			}
+
 			m_Link.RequestTransferConfirm(m_Clerk.GetOwner(), m_Quote.quoteId);
 			return;
 		}
@@ -1324,7 +1334,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 		ELIFE_BankClerkDialogueController dialogue = ELIFE_BankClerkDialogueController.GetActive();
 		if (dialogue)
-			dialogue.OnSlipClosed(m_sReceipt);
+			dialogue.OnSlipClosed(m_sReceipt, m_sPurposeQuote);
 		else if (m_Link && m_Clerk)
 			m_Link.RequestClose(m_Clerk.GetOwner());
 

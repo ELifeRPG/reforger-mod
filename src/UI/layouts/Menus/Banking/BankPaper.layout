@@ -1,0 +1,187 @@
+FrameWidgetClass {
+ Name "BankPaperRoot"
+ {
+  ImageWidgetClass "{26429134624C03D5}" {
+   Name "Dim"
+   Slot FrameWidgetSlot "{7ED60FBC169A3EA6}" {
+    Anchor 0 0 1 1
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 0
+    OffsetRight 0
+    SizeY 0
+    OffsetBottom 0
+   }
+   Color 0 0 0 0.55
+  }
+  SizeLayoutWidgetClass "{8D27F04610A4F2A9}" {
+   Name "PaperSize"
+   Slot FrameWidgetSlot "{664F5744F327A4DA}" {
+    Anchor 0.5 0.5 0.5 0.5
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    Alignment 0.5 0.5
+    SizeToContent 1
+   }
+   AllowWidthOverride 1
+   WidthOverride 620
+   {
+    OverlayWidgetClass "{805C042BF66B25AA}" {
+     Name "Paper"
+     Slot AlignableSlot "{E4111DAD31678E9F}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      ImageWidgetClass "{87F5FB70DF93397A}" {
+       Name "PaperShadow"
+       Slot OverlayWidgetSlot "{C68B04A22190A70F}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+        Padding 10 10 -10 -10
+       }
+       Color 0 0 0 0.35
+      }
+      ImageWidgetClass "{CA24B4FD76A26B5A}" {
+       Name "PaperFill"
+       Slot OverlayWidgetSlot "{F42CD7B7CA87EC0F}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 0.929 0.902 0.827 1
+      }
+      VerticalLayoutWidgetClass "{2E48D3EBFB40EEF1}" {
+       Name "Sheet"
+       Slot OverlayWidgetSlot "{E7757A72056B9354}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+        Padding 44 36 44 30
+       }
+       "Fill Origin" Top
+       {
+        HorizontalLayoutWidgetClass "{977CD53E7BF052E3}" {
+         Name "Header"
+         Slot LayoutSlot "{7F0C39AA8A6480BF}" {
+          HorizontalAlign 3
+         }
+         {
+          TextWidgetClass "{0707EBA368EDD0EE}" {
+           Name "Title"
+           Slot LayoutSlot "{A0666B0B8FDFADD6}" {
+            VerticalAlign 2
+            SizeMode Fill
+            Padding 0 0 0 0
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 36
+           "Min Font Size" 36
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{2B69C7B0AEF42479}" {
+            Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+           }
+          }
+          TextWidgetClass "{B80A25808A3554BC}" {
+           Name "BankName"
+           Slot LayoutSlot "{67E5484F360BAC39}" {
+            VerticalAlign 2
+            Padding 16 0 0 4
+           }
+           Color 0.012 0.016 0.03 1
+           Text ""
+           "Font Size" 22
+           "Min Font Size" 22
+           "Horizontal Alignment" Right
+           FontProperties FontProperties "{0541E0BBE4039480}" {
+            Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+           }
+          }
+         }
+        }
+        ImageWidgetClass "{E38AEE50C9A653A0}" {
+         Name "RuleTop"
+         Slot LayoutSlot "{9E1FFE93BAD952BA}" {
+          HorizontalAlign 3
+          Padding 0 10 0 8
+         }
+         Color 0.012 0.016 0.03 1
+         Size 4 2
+        }
+        RichTextWidgetClass "{068D48B0DD944283}" {
+         Name "Body"
+         Slot LayoutSlot "{5CF5FB7C4B69788B}" {
+          HorizontalAlign 3
+          Padding 0 6 0 6
+         }
+         Color 0.012 0.016 0.03 1
+         Clipping False
+         Text ""
+         "Font Size" 24
+         "Min Font Size" 24
+         "Line Spacing" 32
+         FontProperties FontProperties "{EBCBD039B0AE9982}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        ImageWidgetClass "{B10BB436A8F85AC3}" {
+         Name "RuleBottom"
+         Slot LayoutSlot "{DD74B6D461E185DB}" {
+          HorizontalAlign 3
+          Padding 0 8 0 6
+         }
+         Color 0.012 0.016 0.03 1
+         Size 4 2
+        }
+        TextWidgetClass "{6E5497AC68AAA11D}" {
+         Name "Footer"
+         Slot LayoutSlot "{A86BC759596F8602}" {
+          HorizontalAlign 3
+          Padding 0 0 0 0
+         }
+         Color 0.012 0.016 0.03 1
+         Text ""
+         "Font Size" 18
+         "Min Font Size" 18
+         "Horizontal Alignment" Left
+         FontProperties FontProperties "{77EA60436B859F0B}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        TextWidgetClass "{9FDE685CBF2B91AB}" {
+         Name "Hint"
+         Slot LayoutSlot "{6DBCB76F782238A9}" {
+          HorizontalAlign 3
+          Padding 0 14 0 0
+         }
+         Color 0.012 0.016 0.03 1
+         Text ""
+         "Font Size" 18
+         "Min Font Size" 18
+         "Horizontal Alignment" Left
+         FontProperties FontProperties "{539982DADFB4C554}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+       }
+      }
+      ImageWidgetClass "{F246231003BDB362}" {
+       Name "Stamp"
+       Slot OverlayWidgetSlot "{63615FCE488355DE}" {
+        HorizontalAlign 2
+        VerticalAlign 2
+        Padding 0 0 30 22
+       }
+       "Ignore Cursor" 1
+       Color 1 1 1 0.9
+       Size 150 150
+      }
+     }
+    }
+   }
+  }
+ }
+}

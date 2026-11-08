@@ -112,7 +112,7 @@ AudioClass {
   }
   SoundClass "413705" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 413705
-   name "SOUND_ELIFE_CLERK_SFX_STAMP"
+   name "SOUND_ELIFE_CLERK_SFX_TYPING_LONG"
    version 5
    tl 792.27 729.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -132,7 +132,7 @@ AudioClass {
   }
   SoundClass "417801" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 417801
-   name "SOUND_ELIFE_CLERK_SFX_PAPER"
+   name "SOUND_ELIFE_CLERK_SFX_STAMP"
    version 5
    tl 792.27 1129.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -142,6 +142,26 @@ AudioClass {
      links {
       ConnectionClass "418834:65" {
        id 418834
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "421897" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 421897
+   name "SOUND_ELIFE_CLERK_SFX_PAPER"
+   version 5
+   tl 792.27 1529.25
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "422930:65" {
+       id 422930
        port 65
       }
      }
@@ -178,6 +198,10 @@ AudioClass {
       }
       ConnectionClass "417801:65" {
        id 417801
+       port 65
+      }
+      ConnectionClass "421897:65" {
+       id 421897
        port 65
       }
      }
@@ -278,7 +302,7 @@ AudioClass {
   }
   ShaderClass "414738" {
    id 414738
-   name "Shader SFX_STAMP"
+   name "Shader SFX_TYPING_LONG"
    version 5
    tl 512 704
    ins {
@@ -325,7 +349,7 @@ AudioClass {
   }
   ShaderClass "418834" {
    id 418834
-   name "Shader SFX_PAPER"
+   name "Shader SFX_STAMP"
    version 5
    tl 512 1104
    ins {
@@ -361,6 +385,53 @@ AudioClass {
      links {
       ConnectionClass "420868:65" {
        id 420868
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "422930" {
+   id 422930
+   name "Shader SFX_PAPER"
+   version 5
+   tl 512 1504
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "424964:65" {
+       id 424964
        port 65
       }
      }
@@ -438,9 +509,25 @@ AudioClass {
   }
   BankLocalClass "416772" {
    id 416772
-   name "ELIFE_CLERK_SFX_STAMP"
+   name "ELIFE_CLERK_SFX_TYPING_LONG"
    version 7
    tl -1250 722.508
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_TypingLong.wav" {
+     Filename "{184E064CFAA6B592}Sounds/VO/BankClerk/Samples/Sfx/ELIFE_Clerk_TypingLong.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "420868" {
+   id 420868
+   name "ELIFE_CLERK_SFX_STAMP"
+   version 7
+   tl -1250 1122.51
    pi {
     10 0
    }
@@ -452,11 +539,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "420868" {
-   id 420868
+  BankLocalClass "424964" {
+   id 424964
    name "ELIFE_CLERK_SFX_PAPER"
    version 7
-   tl -1250 1122.51
+   tl -1250 1522.51
    pi {
     10 0
    }
@@ -517,6 +604,10 @@ AudioClass {
        id 417801
        port 5
       }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -556,6 +647,10 @@ AudioClass {
       }
       ConnectionClass "417801:5" {
        id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
        port 5
       }
      }
@@ -608,6 +703,10 @@ AudioClass {
        id 417801
        port 5
       }
+      ConnectionClass "421897:5" {
+       id 421897
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -656,6 +755,10 @@ AudioClass {
       }
       ConnectionClass "417801:5" {
        id 417801
+       port 5
+      }
+      ConnectionClass "421897:5" {
+       id 421897
        port 5
       }
      }

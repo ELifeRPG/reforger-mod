@@ -2828,33 +2828,33 @@ StringTable {
   }
   CustomStringTableItem "{C88EEA6E49445FA4}" {
    Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE"
-   Target_en_us "All done. Your transfer has been sent. Is there anything else I can do for you?"
-   Target_de_de "Alles erledigt. Ihre Überweisung ist raus. Kann ich sonst noch etwas für Sie tun?"
-   Modified 1794169290
+   Target_en_us "All done, your transfer has been sent. Would you like a receipt?"
+   Target_de_de "Alles erledigt, Ihre Überweisung ist raus. Möchten Sie einen Beleg?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{FF7C053C6C564130}" {
    Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE_2"
-   Target_en_us "That's it, the money is on its way. Anything else today?"
-   Target_de_de "Das war's, das Geld ist unterwegs. Sonst noch etwas heute?"
-   Modified 1794169290
+   Target_en_us "That's it, the money is on its way. Shall I print you a receipt?"
+   Target_de_de "Das war's, das Geld ist unterwegs. Soll ich Ihnen einen Beleg ausdrucken?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{F6076C1F3B86919A}" {
    Id "ELIFE-ClerkVO_PUCK_TRANSFER_DONE_3"
-   Target_en_us "Done. The transfer went through. Can I help you with anything else?"
-   Target_de_de "Fertig. Die Überweisung ist durch. Kann ich Ihnen noch bei etwas anderem helfen?"
-   Modified 1794169290
+   Target_en_us "Done, the transfer went through. Do you need a receipt?"
+   Target_de_de "Fertig, die Überweisung ist durch. Brauchen Sie einen Beleg?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{6ED844C24E2618FA}" {
    Id "ELIFE-ClerkVO_PUCK_ACCOUNT_OPENED"
-   Target_en_us "There you go. Your new account is open and ready to use."
-   Target_de_de "Bitte schön. Ihr neues Konto ist eröffnet und sofort nutzbar."
-   Modified 1794169290
+   Target_en_us "There you go, your new account is open and ready to use. Would you like the account papers?"
+   Target_de_de "Bitte schön, Ihr neues Konto ist eröffnet und sofort nutzbar. Möchten Sie die Kontounterlagen?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
@@ -3092,33 +3092,33 @@ StringTable {
   }
   CustomStringTableItem "{7C61D96EAD3A83CC}" {
    Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE"
-   Target_en_us "Splendid, the transfer is on its way. Anything else I can help with?"
-   Target_de_de "Ausgezeichnet, die Überweisung ist unterwegs. Kann ich sonst noch behilflich sein?"
-   Modified 1794169290
+   Target_en_us "Splendid, the transfer is on its way. Would you care for a receipt?"
+   Target_de_de "Ausgezeichnet, die Überweisung ist unterwegs. Darf ich Ihnen einen Beleg geben?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{B54531BED8616044}" {
    Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE_2"
-   Target_en_us "That's all sorted, the money has been sent. Is there anything else?"
-   Target_de_de "Das ist erledigt, das Geld wurde überwiesen. Darf es sonst noch etwas sein?"
-   Modified 1794169290
+   Target_en_us "That's all sorted, the money has been sent. Shall I give you a receipt?"
+   Target_de_de "Das ist erledigt, das Geld wurde überwiesen. Soll ich Ihnen einen Beleg mitgeben?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{2E320BCB407E731E}" {
    Id "ELIFE-ClerkVO_LEWIS_TRANSFER_DONE_3"
-   Target_en_us "Right, that's gone through. What else can I do for you?"
-   Target_de_de "So, das ist durch. Was kann ich noch für Sie tun?"
-   Modified 1794169290
+   Target_en_us "Right, that's gone through. Would you like a receipt for it?"
+   Target_de_de "So, das ist durch. Möchten Sie einen Beleg dafür?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{D1554FBDE3748522}" {
    Id "ELIFE-ClerkVO_LEWIS_ACCOUNT_OPENED"
-   Target_en_us "Excellent. Your new account is all set up and ready to go."
-   Target_de_de "Ausgezeichnet. Ihr neues Konto ist eingerichtet und einsatzbereit."
-   Modified 1794169290
+   Target_en_us "Excellent. Your new account is all set up. Would you like the papers for it?"
+   Target_de_de "Ausgezeichnet. Ihr neues Konto ist eingerichtet. Möchten Sie die Unterlagen dazu?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
@@ -3356,33 +3356,33 @@ StringTable {
   }
   CustomStringTableItem "{4B71759140A35F81}" {
    Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE"
-   Target_en_us "Great, your transfer is done. Anything else you need?"
-   Target_de_de "Super, Ihre Überweisung ist erledigt. Brauchen Sie sonst noch was?"
-   Modified 1794169290
+   Target_en_us "Great, your transfer is done. Want a receipt?"
+   Target_de_de "Super, Ihre Überweisung ist erledigt. Wollen Sie einen Beleg?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{5A12152B6876A5C9}" {
    Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE_2"
-   Target_en_us "Alright, the money's been sent. What else can I do for you?"
-   Target_de_de "Alles klar, das Geld ist raus. Was kann ich sonst noch für Sie tun?"
-   Modified 1794169290
+   Target_en_us "Alright, the money's been sent. Need a receipt for that?"
+   Target_de_de "Alles klar, das Geld ist raus. Brauchen Sie einen Beleg dafür?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{302ED00E6D54DE9F}" {
    Id "ELIFE-ClerkVO_MICHAEL_TRANSFER_DONE_3"
-   Target_en_us "All set, it went through. Need help with anything else?"
-   Target_de_de "Erledigt, das ist durchgegangen. Kann ich bei sonst noch was helfen?"
-   Modified 1794169290
+   Target_en_us "All set, it went through. Should I print you a receipt?"
+   Target_de_de "Erledigt, das ist durchgegangen. Soll ich Ihnen einen Beleg ausdrucken?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{1F2C0BA73F3726F2}" {
    Id "ELIFE-ClerkVO_MICHAEL_ACCOUNT_OPENED"
-   Target_en_us "Great news, your new account is all set up."
-   Target_de_de "Gute Nachrichten, Ihr neues Konto ist eingerichtet."
-   Modified 1794169290
+   Target_en_us "Great news, your new account is all set up. Want the papers for it?"
+   Target_de_de "Gute Nachrichten, Ihr neues Konto ist eingerichtet. Wollen Sie die Unterlagen dazu?"
+   Modified 1794175315
    Author "Robin"
    LastChanged "Robin"
   }
@@ -3735,6 +3735,406 @@ StringTable {
    Target_en_us "You'll need a bank account to send money. Want me to open one for you?"
    Target_de_de "Zum Überweisen brauchen Sie ein Bankkonto. Soll ich Ihnen eines eröffnen?"
    Modified 1794170832
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{80C7F97F55E59932}" {
+   Id "ELIFE-ClerkVO_PUCK_ASK_PURPOSE"
+   Target_en_us "That's a larger amount. Just for our records, what is this transfer for?"
+   Target_de_de "Das ist ein größerer Betrag. Nur für unsere Unterlagen: Wofür ist diese Überweisung?"
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{89D7BE89498B77C2}" {
+   Id "ELIFE-ClerkVO_PUCK_PURPOSE_GOODS"
+   Target_en_us "A purchase, got it. Let me put this through."
+   Target_de_de "Ein Einkauf, verstanden. Ich buche das eben."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7861359DC8AD3F5A}" {
+   Id "ELIFE-ClerkVO_PUCK_PURPOSE_RENT"
+   Target_en_us "Rent, of course. Let me enter that for you."
+   Target_de_de "Die Miete, natürlich. Ich gebe das für Sie ein."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EACB117D1D78E14D}" {
+   Id "ELIFE-ClerkVO_PUCK_PURPOSE_GIFT"
+   Target_en_us "How generous. I'll put that through right away."
+   Target_de_de "Wie großzügig. Ich buche das sofort."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A69E6854D4DF12EF}" {
+   Id "ELIFE-ClerkVO_PUCK_PURPOSE_BUSINESS"
+   Target_en_us "A business payment, noted. One moment, please."
+   Target_de_de "Eine geschäftliche Zahlung, notiert. Einen Moment bitte."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{698EC479583CF993}" {
+   Id "ELIFE-ClerkVO_LEWIS_ASK_PURPOSE"
+   Target_en_us "That's rather a large sum. For our records, may I ask what it's for?"
+   Target_de_de "Das ist eine recht große Summe. Darf ich für unsere Unterlagen fragen, wofür sie ist?"
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D76AB71273B897EC}" {
+   Id "ELIFE-ClerkVO_LEWIS_PURPOSE_GOODS"
+   Target_en_us "A purchase, very good. I'll put it through."
+   Target_de_de "Ein Einkauf, sehr gut. Ich buche das."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BA8E84B0CF1969D0}" {
+   Id "ELIFE-ClerkVO_LEWIS_PURPOSE_RENT"
+   Target_en_us "Rent, naturally. I'll enter that for you now."
+   Target_de_de "Die Miete, selbstverständlich. Ich gebe das sogleich ein."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BD4A8557446C9F5F}" {
+   Id "ELIFE-ClerkVO_LEWIS_PURPOSE_GIFT"
+   Target_en_us "How very kind of you. I'll see to it at once."
+   Target_de_de "Wie überaus freundlich von Ihnen. Ich kümmere mich sofort darum."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E169F413A5F5EFCD}" {
+   Id "ELIFE-ClerkVO_LEWIS_PURPOSE_BUSINESS"
+   Target_en_us "A business payment, duly noted. One moment."
+   Target_de_de "Eine geschäftliche Zahlung, ordnungsgemäß notiert. Einen Augenblick."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{97BE57D4F876033F}" {
+   Id "ELIFE-ClerkVO_MICHAEL_ASK_PURPOSE"
+   Target_en_us "Whoa, that's a big one. Just for the records, what's it for?"
+   Target_de_de "Wow, das ist eine Menge. Nur fürs Protokoll: Wofür ist das?"
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{665D26609D5D160E}" {
+   Id "ELIFE-ClerkVO_MICHAEL_PURPOSE_GOODS"
+   Target_en_us "Buying something, got it. Let me punch this in."
+   Target_de_de "Ein Einkauf, alles klar. Ich tippe das ein."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AAC5C1B1242922B9}" {
+   Id "ELIFE-ClerkVO_MICHAEL_PURPOSE_RENT"
+   Target_en_us "Rent, sure. I'll get that through for you."
+   Target_de_de "Miete, klar. Ich bringe das für Sie durch."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8D21BBADF7C7F88D}" {
+   Id "ELIFE-ClerkVO_MICHAEL_PURPOSE_GIFT"
+   Target_en_us "Nice of you! I'll send it right off."
+   Target_de_de "Nett von Ihnen! Ich schicke das gleich los."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{46D56CEBC08889FD}" {
+   Id "ELIFE-ClerkVO_MICHAEL_PURPOSE_BUSINESS"
+   Target_en_us "Business stuff, got it. Give me a second."
+   Target_de_de "Geschäftliches, verstanden. Eine Sekunde."
+   Modified 1794174292
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7C319319F6FE62D8}" {
+   Id "ELIFE-ClerkReply_PurposeGoods"
+   Target_en_us "It's for goods or services."
+   Target_de_de "Für Waren oder Dienstleistungen."
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BC81752A8C4BDCAE}" {
+   Id "ELIFE-ClerkReply_PurposeRent"
+   Target_en_us "It's for rent."
+   Target_de_de "Für die Miete."
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{850D7AE37C1F47D2}" {
+   Id "ELIFE-ClerkReply_PurposeGift"
+   Target_en_us "It's a gift for family or friends."
+   Target_de_de "Ein Geschenk für Familie oder Freunde."
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EE3316903B385385}" {
+   Id "ELIFE-ClerkReply_PurposeBusiness"
+   Target_en_us "It's a business payment."
+   Target_de_de "Eine geschäftliche Zahlung."
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0EC288932ACE0372}" {
+   Id "ELIFE-ClerkReply_PurposeCancel"
+   Target_en_us "Actually, never mind."
+   Target_de_de "Ach, lassen wir das lieber."
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{91CD4C9A176860A8}" {
+   Id "ELIFE-Clerk_Label_Purpose"
+   Target_en_us "Purpose"
+   Target_de_de "Verwendungszweck"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FE844B0550174281}" {
+   Id "ELIFE-Clerk_Purpose_Goods"
+   Target_en_us "Goods or services"
+   Target_de_de "Waren oder Dienstleistungen"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7E7D427602083CB0}" {
+   Id "ELIFE-Clerk_Purpose_Rent"
+   Target_en_us "Rent"
+   Target_de_de "Miete"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8EB6344B63AD2D97}" {
+   Id "ELIFE-Clerk_Purpose_Gift"
+   Target_en_us "Gift"
+   Target_de_de "Geschenk"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1B5682BAA833F65C}" {
+   Id "ELIFE-Clerk_Purpose_Business"
+   Target_en_us "Business payment"
+   Target_de_de "Geschäftliche Zahlung"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{987E9CEF63B7505F}" {
+   Id "ELIFE-ClerkVO_PUCK_RECEIPT_HERE"
+   Target_en_us "Here's your receipt. Anything else I can do for you?"
+   Target_de_de "Hier ist Ihr Beleg. Kann ich sonst noch etwas für Sie tun?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C4CCBD1669A456BD}" {
+   Id "ELIFE-ClerkVO_PUCK_PAPERS_HERE"
+   Target_en_us "Here are your account papers. Anything else I can do for you?"
+   Target_de_de "Hier sind Ihre Kontounterlagen. Kann ich sonst noch etwas für Sie tun?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DCFD72176501E014}" {
+   Id "ELIFE-ClerkVO_LEWIS_RECEIPT_HERE"
+   Target_en_us "Here's your receipt. Is there anything else I can help with?"
+   Target_de_de "Hier ist Ihr Beleg. Kann ich sonst noch behilflich sein?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A092DF6D4C99053E}" {
+   Id "ELIFE-ClerkVO_LEWIS_PAPERS_HERE"
+   Target_en_us "Here are the papers for your account. Anything else I can do for you?"
+   Target_de_de "Hier sind die Unterlagen zu Ihrem Konto. Was darf ich sonst noch für Sie tun?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9A93F525D646791B}" {
+   Id "ELIFE-ClerkVO_MICHAEL_RECEIPT_HERE"
+   Target_en_us "Here's your receipt. Anything else you need?"
+   Target_de_de "Hier ist Ihr Beleg. Brauchen Sie sonst noch was?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0B671061A901467F}" {
+   Id "ELIFE-ClerkVO_MICHAEL_PAPERS_HERE"
+   Target_en_us "Here are your account papers. What else can I do for you?"
+   Target_de_de "Hier sind Ihre Kontounterlagen. Was kann ich sonst noch für Sie tun?"
+   Modified 1794175315
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2959C3E048EEE41F}" {
+   Id "ELIFE-Paper_TransferReceipt"
+   Target_en_us "Transfer receipt"
+   Target_de_de "Überweisungsbeleg"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{41CFB68E5BEB1B37}" {
+   Id "ELIFE-Paper_AccountPapers"
+   Target_en_us "Account papers"
+   Target_de_de "Kontounterlagen"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CBF82A7EB3EEE70F}" {
+   Id "ELIFE-Paper_AtmWithdrawal"
+   Target_en_us "ATM receipt: withdrawal"
+   Target_de_de "Automatenbeleg: Auszahlung"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{582F0159F824B95B}" {
+   Id "ELIFE-Paper_AtmDeposit"
+   Target_en_us "ATM receipt: deposit"
+   Target_de_de "Automatenbeleg: Einzahlung"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5BDACAC808402BC6}" {
+   Id "ELIFE-Paper_Reference"
+   Target_en_us "Reference"
+   Target_de_de "Referenz"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9B2B8308B2874F58}" {
+   Id "ELIFE-Paper_From"
+   Target_en_us "From"
+   Target_de_de "Von"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{12BEA7076AEF0C53}" {
+   Id "ELIFE-Paper_Account"
+   Target_en_us "Account"
+   Target_de_de "Konto"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{10195A0572E4AC13}" {
+   Id "ELIFE-Paper_Hint"
+   Target_en_us "Inspect again to put it away."
+   Target_de_de "Erneut untersuchen, um es wegzulegen."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6C6B492D18BB5580}" {
+   Id "ELIFE-Paper_Hint_Inventory"
+   Target_en_us "%1 is in your inventory."
+   Target_de_de "%1 ist in Ihrem Inventar."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CB3C963AA5FFB465}" {
+   Id "ELIFE-Paper_Hint_Ground"
+   Target_en_us "Your inventory is full: %1 is lying in front of you."
+   Target_de_de "Ihr Inventar ist voll: %1 liegt vor Ihnen."
+   Modified 1794175611
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{919DF362F2329122}" {
+   Id "ELIFE-Item_BankPaper_Name"
+   Target_en_us "Bank paper"
+   Target_de_de "Bankbeleg"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{14EAC7F1D2AC4A32}" {
+   Id "ELIFE-Item_BankPaper_Description"
+   Target_en_us "A paper from the bank."
+   Target_de_de "Ein Schriftstück der Bank."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DE39190F9BEEC751}" {
+   Id "ELIFE-Item_BankPaper_InspectHint"
+   Target_en_us "Inspect it to read it."
+   Target_de_de "Untersuchen, um es zu lesen."
+   Modified 1794177267
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0CA91FD07B1A2588}" {
+   Id "ELIFE-ClerkReply_PaperYes"
+   Target_en_us "Yes, please."
+   Target_de_de "Ja, gern."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F28F4E46BBA756D3}" {
+   Id "ELIFE-ClerkReply_PaperNo"
+   Target_en_us "No, thanks."
+   Target_de_de "Nein, danke."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{60C7E672E89CB611}" {
+   Id "ELIFE-ATM_Action_ReceiptYes"
+   Target_en_us "Receipt: yes"
+   Target_de_de "Beleg: ja"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C10F6D4498BA3758}" {
+   Id "ELIFE-ATM_Action_ReceiptNo"
+   Target_en_us "Receipt: no"
+   Target_de_de "Beleg: nein"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DF7AF8600F696BE5}" {
+   Id "ELIFE-Paper_TearUp"
+   Target_en_us "Tear up"
+   Target_de_de "Zerreißen"
+   Modified 1794176695
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A1526D9CE989A343}" {
+   Id "ELIFE-Paper_NotGiven"
+   Target_en_us "The clerk has nothing to hand you."
+   Target_de_de "Der Bankangestellte hat nichts für Sie."
+   Modified 1794176700
    Author "Robin"
    LastChanged "Robin"
   }

@@ -85,11 +85,12 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void RequestConfirm(notnull IEntity atm, int quoteId)
+	//! receipt: print one once it's booked.
+	void RequestConfirm(notnull IEntity atm, int quoteId, bool receipt)
 	{
 		RplId atmId = GetAtmId(atm);
 		if (atmId.IsValid())
-			Rpc(RpcAsk_Confirm, atmId, quoteId);
+			Rpc(RpcAsk_Confirm, atmId, quoteId, receipt);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -231,11 +232,11 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	//! The ATM checks the range itself and answers with a reason.
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void RpcAsk_Confirm(RplId atmId, int quoteId)
+	protected void RpcAsk_Confirm(RplId atmId, int quoteId, bool receipt)
 	{
 		ELIFE_ATMComponent atm = FindATM(atmId, "confirm");
 		if (atm)
-			atm.RequestConfirm(GetPlayerId(), GetOwner(), this, quoteId);
+			atm.RequestConfirm(GetPlayerId(), GetOwner(), this, quoteId, receipt);
 	}
 
 	//------------------------------------------------------------------------------------------------

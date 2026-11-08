@@ -30,12 +30,55 @@ class ELIFE_ClerkDialogueAction_TransferSlip : ELIFE_DialogueAction
 	[Attribute("services_again", UIWidgets.EditBox, "Node after the slip is put away")]
 	string m_sCancelNode;
 
+	[Attribute("transfer_purpose", UIWidgets.EditBox, "Node where he asks what a large transfer is for; its details get the quote")]
+	string m_sPurposeNode;
+
+	[Attribute("transfer_failed", UIWidgets.EditBox, "Node after an answered transfer failed; he says why, the reason is written under it")]
+	string m_sFailedNode;
+
 	//------------------------------------------------------------------------------------------------
 	override void Run(notnull ELIFE_DialogueMenu menu)
 	{
 		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
 		if (clerk)
-			clerk.OpenTransferSlip(m_sDoneNode, m_sCancelNode);
+			clerk.OpenTransferSlip(this);
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+//! Takes the receipt or account papers he just offered. The server hands over only what was booked this visit.
+[BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(ELIFE_EBankPaperKind, "m_eKind")]
+class ELIFE_ClerkDialogueAction_TakePaper : ELIFE_DialogueAction
+{
+	[Attribute("0", UIWidgets.ComboBox, "Which paper", "", ParamEnumArray.FromEnum(ELIFE_EBankPaperKind))]
+	ELIFE_EBankPaperKind m_eKind;
+
+	[Attribute("paper_given", UIWidgets.EditBox, "Node once he hands it over; he says so himself")]
+	string m_sNextNode;
+
+	//------------------------------------------------------------------------------------------------
+	override void Run(notnull ELIFE_DialogueMenu menu)
+	{
+		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
+		if (clerk)
+			clerk.TakePaper(m_eKind, m_sNextNode);
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+//! The answer to what a large transfer is for, which books it; NONE puts it away.
+[BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(ELIFE_ETransferPurpose, "m_ePurpose")]
+class ELIFE_ClerkDialogueAction_TransferPurpose : ELIFE_DialogueAction
+{
+	[Attribute("0", UIWidgets.ComboBox, "What the transfer is for", "", ParamEnumArray.FromEnum(ELIFE_ETransferPurpose))]
+	ELIFE_ETransferPurpose m_ePurpose;
+
+	//------------------------------------------------------------------------------------------------
+	override void Run(notnull ELIFE_DialogueMenu menu)
+	{
+		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
+		if (clerk)
+			clerk.AnswerPurpose(m_ePurpose);
 	}
 }
 
@@ -86,11 +129,25 @@ class ELIFE_ClerkDialogueDetails_NewAccount : ELIFE_DialogueDetails
 	{
 		return FormatLine("#ELIFE-Clerk_Transfer_Number", ELIFE_PhoneBankingService.GroupIban(menu.GetNodeData())) + "\n" + WidgetManager.Translate("#ELIFE-Clerk_Opened_Closing");
 	}
+}
 
+//------------------------------------------------------------------------------------------------
+//! The transfer he asks about; the node's data is a packed ELIFE_ClerkTransferQuote.
+[BaseContainerProps()]
+class ELIFE_ClerkDialogueDetails_TransferQuote : ELIFE_DialogueDetails
+{
 	//------------------------------------------------------------------------------------------------
-	override void OnShown(notnull ELIFE_DialogueMenu menu)
+	override string GetText(notnull ELIFE_DialogueMenu menu)
 	{
-		ELIFE_BankClerkDialogueController.PlayPaper(menu);
+		ELIFE_ClerkTransferQuote quote = new ELIFE_ClerkTransferQuote();
+		quote.ExpandFromRAW(menu.GetNodeData());
+		string target = ELIFE_PhoneBankingService.GroupIban(quote.targetNumber);
+		if (quote.targetBankName != "")
+			target += " (" + quote.targetBankName + ")";
+
+		string text = FormatLine("#ELIFE-Clerk_Transfer_To", target);
+		text += "\n" + FormatLine("#ELIFE-Clerk_Transfer_Amount", ELIFE_PhoneBankingService.FormatWholeMoney(quote.amount));
+		return text;
 	}
 }
 
@@ -112,13 +169,10 @@ class ELIFE_ClerkDialogueDetails_TransferReceipt : ELIFE_DialogueDetails
 		text += "\n" + FormatLine("#ELIFE-Clerk_Transfer_Amount", receipt.amount);
 		text += "\n" + FormatLine("#ELIFE-Clerk_Label_Fee", receipt.fee);
 		text += "\n" + FormatLine("#ELIFE-Clerk_Label_NewBalance", receipt.balance);
-		return text;
-	}
+		if (receipt.purpose != "")
+			text += "\n" + FormatLine("#ELIFE-Clerk_Label_Purpose", WidgetManager.Translate(receipt.purpose));
 
-	//------------------------------------------------------------------------------------------------
-	override void OnShown(notnull ELIFE_DialogueMenu menu)
-	{
-		ELIFE_BankClerkDialogueController.PlayPaper(menu);
+		return text;
 	}
 }
 
@@ -159,10 +213,13 @@ class ELIFE_ClerkTransferReceipt : JsonApiStruct
 	string amount;
 	string fee;
 	string balance;
+	//! The purpose's string key, "" when he didn't ask.
+	string purpose;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkTransferReceipt()
 	{
+		RegV("purpose");
 		RegV("targetNumber");
 		RegV("targetBankName");
 		RegV("amount");
@@ -188,8 +245,13 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	//! From the server's lookup at the start of the visit; see ELIFE_BankClerkComponent.OnCustomerAccounts.
 	protected ELIFE_EClerkAccountStatus m_eAccounts = ELIFE_EClerkAccountStatus.UNKNOWN;
 	protected bool m_bOpenedThisVisit;
-	protected string m_sSlipDoneNode;
-	protected string m_sSlipCancelNode;
+	protected ref ELIFE_ClerkDialogueAction_TransferSlip m_SlipAction;
+	//! A large transfer he is asking about, packed; then the answer while it books.
+	protected string m_sPurposeQuote;
+	protected ELIFE_ETransferPurpose m_ePurpose;
+	protected bool m_bPurposeBooking;
+	//! Where to go once he hands over the paper asked for; "" when none is asked for.
+	protected string m_sPaperNextNode;
 
 	//------------------------------------------------------------------------------------------------
 	//! After the server's grant. False if nothing opened.
@@ -229,21 +291,24 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! A transfer booked after its purpose was answered, so there is no slip to take it. False if not one of those.
+	static bool OnTransferResult(int reason, string amount, string fee, string balance)
+	{
+		ELIFE_BankClerkDialogueController active = GetActive();
+		if (!active || !active.m_bPurposeBooking)
+			return false;
+
+		active.OnPurposeBookingResult(reason, amount, fee, balance);
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The server's lookup about the customer arrived; the replies adapt.
 	static void OnCustomerContext(IEntity clerkEntity)
 	{
 		ELIFE_BankClerkDialogueController active = GetActive();
 		if (active && clerkEntity && active.GetSpeaker() == clerkEntity)
 			active.ReadContext();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Paper changing hands at his desk, heard only by the customer.
-	static void PlayPaper(notnull ELIFE_DialogueMenu menu)
-	{
-		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(menu.GetController());
-		if (clerk && clerk.GetClerk())
-			clerk.GetClerk().PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -423,32 +488,131 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OpenTransferSlip(string doneNode, string cancelNode)
+	void OpenTransferSlip(notnull ELIFE_ClerkDialogueAction_TransferSlip action)
 	{
-		if (!m_Menu || m_bSlipOpen)
+		if (!m_Menu || m_bSlipOpen || m_bPurposeBooking)
 			return;
 
 		m_bSlipOpen = ELIFE_TransferSlipMenu.Open(m_Clerk, m_Link);
 		if (!m_bSlipOpen)
 			return;
 
-		m_sSlipDoneNode = doneNode;
-		m_sSlipCancelNode = cancelNode;
+		m_SlipAction = action;
 		m_Menu.Suspend();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The slip hands back: with a packed receipt after a booked transfer, empty when put away.
-	void OnSlipClosed(string receipt)
+	//! The slip hands back: a packed receipt after a booked transfer, a packed quote when he asks what a
+	//! large one is for, or neither when it was put away.
+	void OnSlipClosed(string receipt, string purposeQuote)
 	{
 		m_bSlipOpen = false;
-		if (!m_Menu)
+		if (!m_Menu || !m_SlipAction)
 			return;
 
 		m_Menu.Resume();
 		if (receipt != "")
-			m_Menu.ShowNode(m_sSlipDoneNode, receipt);
-		else
-			m_Menu.ShowNode(m_sSlipCancelNode);
+		{
+			m_Menu.ShowNode(m_SlipAction.m_sDoneNode, receipt);
+			return;
+		}
+
+		if (purposeQuote != "")
+		{
+			m_sPurposeQuote = purposeQuote;
+			m_Menu.ShowNode(m_SlipAction.m_sPurposeNode, purposeQuote);
+			return;
+		}
+
+		m_Menu.ShowNode(m_SlipAction.m_sCancelNode);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void TakePaper(ELIFE_EBankPaperKind kind, string nextNode)
+	{
+		if (!m_Menu || m_sPaperNextNode != "")
+			return;
+
+		m_sPaperNextNode = nextNode;
+		m_Menu.SetWaiting(true, "#ELIFE-Clerk_Working");
+		m_Link.RequestPaper(m_Clerk.GetOwner(), kind);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The server's answer to TakePaper: on to the next node once it's handed over, else why not.
+	static void OnPaperResult(int reason)
+	{
+		ELIFE_BankClerkDialogueController active = GetActive();
+		if (!active || active.m_sPaperNextNode == "")
+			return;
+
+		string nextNode = active.m_sPaperNextNode;
+		active.m_sPaperNextNode = "";
+		if (!active.m_Menu)
+			return;
+
+		if (reason == ELIFE_EClerkReason.NONE)
+		{
+			active.m_Clerk.PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
+			active.m_Menu.ShowNode(nextNode);
+			return;
+		}
+
+		string notice = "#ELIFE-Paper_NotGiven";
+		if (reason == ELIFE_EClerkReason.OUT_OF_RANGE)
+			notice = GetReasonText(reason);
+
+		active.m_Menu.SetWaiting(false, notice);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void AnswerPurpose(ELIFE_ETransferPurpose purpose)
+	{
+		if (!m_Menu || !m_SlipAction || m_sPurposeQuote == "" || m_bPurposeBooking)
+			return;
+
+		ELIFE_ClerkTransferQuote quote = new ELIFE_ClerkTransferQuote();
+		quote.ExpandFromRAW(m_sPurposeQuote);
+		m_Link.RequestTransferPurpose(m_Clerk.GetOwner(), quote.quoteId, purpose);
+
+		if (purpose == ELIFE_ETransferPurpose.NONE)
+		{
+			m_sPurposeQuote = "";
+			m_Menu.ShowNode(m_SlipAction.m_sCancelNode);
+			return;
+		}
+
+		m_ePurpose = purpose;
+		m_bPurposeBooking = true;
+		m_Menu.SetWaiting(true, "#ELIFE-Clerk_Working");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void OnPurposeBookingResult(int reason, string amount, string fee, string balance)
+	{
+		m_bPurposeBooking = false;
+		ELIFE_ClerkTransferQuote quote = new ELIFE_ClerkTransferQuote();
+		quote.ExpandFromRAW(m_sPurposeQuote);
+		m_sPurposeQuote = "";
+		if (!m_Menu || !m_SlipAction)
+			return;
+
+		if (reason != ELIFE_EClerkReason.NONE)
+		{
+			//! His outcome line is already the subtitle; the failed node keeps it and lists the services again.
+			m_Menu.ShowNode(m_SlipAction.m_sFailedNode);
+			m_Menu.SetWaiting(false, GetReasonText(reason));
+			return;
+		}
+
+		ELIFE_ClerkTransferReceipt receipt = new ELIFE_ClerkTransferReceipt();
+		receipt.targetNumber = quote.targetNumber;
+		receipt.targetBankName = quote.targetBankName;
+		receipt.amount = amount;
+		receipt.fee = fee;
+		receipt.balance = balance;
+		receipt.purpose = ELIFE_BankClerkTransfers.GetPurposeText(m_ePurpose);
+		receipt.Pack();
+		m_Menu.ShowNode(m_SlipAction.m_sDoneNode, receipt.AsString());
 	}
 }

@@ -138,6 +138,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//! A deposit's count runs as long as the bill counter (ELIFE_ATM_Counter.wav, 3.1 s with its fade-out).
 	protected const int COUNT_MIN_MS = 3000;
 	protected const float PAID_HINT_SECONDS = 5;
+	//! Occupant only: the confirm page's receipt choice, off again after each booking or cancel.
+	protected bool m_bWantReceipt;
 
 	protected ELIFE_ATMComponent m_ATM;
 	protected ELIFE_WorldScreenInteractComponent m_Interact;
@@ -1145,6 +1147,12 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//------------------------------------------------------------------------------------------------
 	protected void PressConfirm(string id, notnull ELIFE_ATMCharacterComponent link)
 	{
+		if (id == BUTTON_R2)
+		{
+			m_bWantReceipt = !m_bWantReceipt;
+			return;
+		}
+
 		if (id == BUTTON_R3)
 		{
 			m_iQuoteId = 0;
@@ -1155,6 +1163,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (id == BUTTON_L4 || id == KEY_CANCEL)
 		{
 			m_iQuoteId = 0;
+			m_bWantReceipt = false;
 			SetView(ELIFE_EATMScreen.HOME);
 			return;
 		}
@@ -1167,8 +1176,10 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_iBookingAmount = m_iQuoteAmount;
 		m_iProcessingStartTick = System.GetTickCount();
 		m_iQuoteId = 0;
+		bool receipt = m_bWantReceipt;
+		m_bWantReceipt = false;
 		SetView(ELIFE_EATMScreen.PROCESSING);
-		link.RequestConfirm(GetOwner(), quoteId);
+		link.RequestConfirm(GetOwner(), quoteId, receipt);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2072,6 +2083,11 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				SetLabel(BUTTON_R4, "#ELIFE-ATM_Action_Back");
 				return;
 			case ELIFE_EATMScreen.CONFIRM:
+				if (m_bWantReceipt)
+					SetLabel(BUTTON_R2, "#ELIFE-ATM_Action_ReceiptYes");
+				else
+					SetLabel(BUTTON_R2, "#ELIFE-ATM_Action_ReceiptNo");
+
 				SetLabel(BUTTON_L4, "#ELIFE-ATM_Action_Cancel");
 				SetLabel(BUTTON_R3, "#ELIFE-ATM_Action_ChangeAmount");
 				SetLabel(BUTTON_R4, "#ELIFE-ATM_Action_Confirm");

@@ -113,6 +113,10 @@ class ELIFE_ATMBooking
 	string m_sNewBalance;
 	//! Cash taken from the player for a deposit, held until the booking is settled.
 	int m_iTaken;
+	//! Print a receipt once booked, and what goes on it from the booking's answer.
+	bool m_bReceipt;
+	string m_sAmountText;
+	string m_sReference;
 	ref ELIFE_BankBooking m_Request;
 
 	//------------------------------------------------------------------------------------------------
@@ -564,7 +568,7 @@ class ELIFE_ATMComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Server-only. Consumes the quote before anything else can happen, so a repeat finds nothing to confirm.
-	void RequestConfirm(int playerId, notnull IEntity character, notnull ELIFE_ATMCharacterComponent link, int quoteId)
+	void RequestConfirm(int playerId, notnull IEntity character, notnull ELIFE_ATMCharacterComponent link, int quoteId, bool receipt)
 	{
 		if (quoteId != 0 && quoteId == m_iLastConsumedQuoteId)
 		{
@@ -592,6 +596,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		m_Booking.m_sCharacterId = m_sOccupantCharacterId;
 		m_Booking.m_sAccountNumber = m_sAccountNumber;
 		m_Booking.m_iAmount = m_iQuoteAmount;
+		m_Booking.m_bReceipt = receipt;
 		s_aBusyAccounts.Insert(m_sAccountNumber);
 		SetState(ELIFE_EATMState.PROCESSING);
 
@@ -1161,6 +1166,8 @@ class ELIFE_ATMComponent : ScriptComponent
 			case ELIFE_EBankBookingOutcome.BOOKED:
 				m_Booking.m_sFee = result.feeStr;
 				m_Booking.m_sNewBalance = result.newBalanceStr;
+				m_Booking.m_sAmountText = result.amountStr;
+				m_Booking.m_sReference = result.transactionId;
 				Settle();
 				return;
 
@@ -1201,6 +1208,7 @@ class ELIFE_ATMComponent : ScriptComponent
 		}
 
 		Print(string.Format("ELIFE_ATMComponent | deposited, fee %1: %2", m_Booking.m_sFee, m_Booking.Describe()), LogLevel.NORMAL);
+		PrintReceipt();
 		SendBookingResult(ELIFE_EATMReason.PAID);
 		FinishBooking();
 	}
@@ -1224,8 +1232,36 @@ class ELIFE_ATMComponent : ScriptComponent
 		}
 
 		Print(string.Format("ELIFE_ATMComponent | paid out, fee %1: %2", m_Booking.m_sFee, m_Booking.Describe()), LogLevel.NORMAL);
+		PrintReceipt();
 		SendBookingResult(ELIFE_EATMReason.PAID);
 		FinishBooking();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! If asked for on the confirm page: from the booking's answer, into the inventory or onto the ground.
+	protected void PrintReceipt()
+	{
+		if (!m_Booking.m_bReceipt || !m_Booking.m_Character)
+			return;
+
+		ELIFE_BankPaper paper = new ELIFE_BankPaper();
+		paper.kind = ELIFE_EBankPaperKind.ATM_WITHDRAWAL;
+		if (m_Booking.IsDeposit())
+			paper.kind = ELIFE_EBankPaperKind.ATM_DEPOSIT;
+
+		paper.bankName = m_sBankName;
+		paper.accountNumber = m_Booking.m_sAccountNumber;
+		paper.amount = m_Booking.m_sAmountText;
+		if (paper.amount == "")
+			paper.amount = ELIFE_PhoneBankingService.FormatWholeMoney(m_Booking.m_iAmount);
+
+		paper.fee = m_Booking.m_sFee;
+		paper.bookingRef = m_Booking.m_sReference;
+		paper.StampNow();
+
+		bool onGround;
+		if (!ELIFE_BankPaperComponent.Issue(m_Booking.m_Character, paper, onGround))
+			Print(string.Format("ELIFE_ATMComponent | receipt couldn't be printed: %1", m_Booking.Describe()), LogLevel.ERROR);
 	}
 
 	//------------------------------------------------------------------------------------------------

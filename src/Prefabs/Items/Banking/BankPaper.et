@@ -1,0 +1,92 @@
+GenericEntity : "{C95E11C60810F432}Prefabs/Items/Core/Item_Base.et" {
+ ID "508AB2013EEE1E00"
+ components {
+  SCR_SoundDataComponent "{5B18D20ED0099A17}" {
+   m_aAudioSourceConfiguration {
+    SCR_AudioSourceConfiguration "{5B18D209080A5D15}" {
+     m_sSoundProject "{13F8D0DE67678118}Sounds/Items/_SharedData/PickUp/Items_PickUp_Map.acp"
+     m_sSoundEventName "SOUND_PICK_UP"
+    }
+    SCR_AudioSourceConfiguration "{5B18D20930D9E274}" {
+     m_sSoundProject "{1ECD530C80D91FA2}Sounds/Items/_SharedData/Drop/Items_Drop_Map.acp"
+     m_sSoundEventName "SOUND_DROP"
+    }
+   }
+  }
+  ActionsManagerComponent "{508AB5952B584B2E}" {
+   ActionContexts {
+    UserActionContext "{508AC2ABEC97066C}" {
+     ContextName "default"
+     Position PointInfo "{508AC2ABEAC4A0F5}" {
+     }
+     Radius 0.2
+    }
+   }
+   additionalActions {
+    SCR_PickUpItemAction "{51EC842E3A187379}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo SCR_ActionUIInfo "{51EC842E413D3E1D}" {
+      Name "#AR-Inventory_PickUp"
+      m_sIconName "pick-up"
+     }
+    }
+    ELIFE_BankPaperTearUpAction "{B9B35901DB8F84CE}" {
+     ParentContextList {
+      "default"
+     }
+     UIInfo UIInfo "{3163DE73EA79E158}" {
+      Name "#ELIFE-Paper_TearUp"
+     }
+     "Sort Priority" 1
+    }
+   }
+  }
+  ELIFE_BankPaperComponent "{88535CEE6DC0E1A4}" {
+  }
+  ELIFE_BankPaperInventoryItemComponent "{5222EB4D0C73006B}" {
+   Attributes SCR_ItemAttributeCollection "{73E273637BC34CF3}" {
+    ItemDisplayName ELIFE_BankPaperInventoryUIInfo "{A9350AAA3B057927}" {
+     Name "#ELIFE-Item_BankPaper_Name"
+     Description "#ELIFE-Item_BankPaper_Description"
+    }
+    ItemPhysAttributes ItemPhysicalAttributes PhysicalAttributes {
+     Weight 0.01
+     SizeSetupStrategy Manual
+     ItemDimensions 5 5 5
+     ItemVolume 50
+    }
+    ItemAnimationAttributes ItemAnimationAttributes "{BCB5BA1C49A1A0B4}" {
+    }
+    CustomAttributes {
+     PreviewRenderAttributes "{B462A4C077B2A240}" {
+      CameraOrbitAngles 0 180 0
+      CameraDistanceToItem 0.2
+      CameraOffset 0 0 0
+      ItemRenderRotation 90 0 0
+      IsDynamicObject 0
+      LodModel 0
+      TakeVisibilityIntoAccount 0
+     }
+    }
+    CommonItemType "NONE"
+    m_Size SLOT_1x1
+    m_SlotType SLOT_LOADOUT_STORAGE
+    m_bStackable 0
+   }
+  }
+  MeshObject "{ABE9CB763FC480BE}" {
+   Object "{1BF8C5BE3DEEC82C}Assets/Items/Identity/Belongings_Personal/Papers_Personal.xob"
+  }
+  RigidBody "{5C58DF2341F32681}" {
+   LinearDamping 0.5
+   AngularDamping 0.5
+   AngularSleepingThreashold 1
+   ModelGeometry 1
+   CCDRadius 0.015
+  }
+ }
+ coords 0 0 0
+ scale 0.6
+}
