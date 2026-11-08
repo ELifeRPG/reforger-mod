@@ -50,30 +50,45 @@ modded class ELIFE_Api
 		return cbx;
 	}
 
-	ELIFE_TransactionResultCallback DepositToBankAccount(ELIFE_DepositRequest body, string number, Managed instance = null, string functionName = "")
+	ELIFE_TransactionResultCallback DepositToBankAccount(ELIFE_DepositRequest body, string number, string idempotencyKey, Managed instance = null, string functionName = "")
 	{
 		ELIFE_TransactionResultCallback cbx = new ELIFE_TransactionResultCallback;
 		cbx.SetCallback(instance, functionName, number);
 		body.Pack();
-		GetElifeApi().PUT(cbx, string.Format("bank-accounts/%1/deposit", number), body.AsString());
+		RestContext ctx = GetElifeApi();
+		string requestHeaders = "Content-Type,application/json";
+		if (idempotencyKey != "")
+			requestHeaders += string.Format(",Idempotency-Key,%1", idempotencyKey);
+		ctx.SetHeaders(requestHeaders);
+		ctx.PUT(cbx, string.Format("bank-accounts/%1/deposit", number), body.AsString());
 		return cbx;
 	}
 
-	ELIFE_TransactionResultCallback WithdrawFromBankAccount(ELIFE_WithdrawRequest body, string number, Managed instance = null, string functionName = "")
+	ELIFE_TransactionResultCallback WithdrawFromBankAccount(ELIFE_WithdrawRequest body, string number, string idempotencyKey, Managed instance = null, string functionName = "")
 	{
 		ELIFE_TransactionResultCallback cbx = new ELIFE_TransactionResultCallback;
 		cbx.SetCallback(instance, functionName, number);
 		body.Pack();
-		GetElifeApi().PUT(cbx, string.Format("bank-accounts/%1/withdraw", number), body.AsString());
+		RestContext ctx = GetElifeApi();
+		string requestHeaders = "Content-Type,application/json";
+		if (idempotencyKey != "")
+			requestHeaders += string.Format(",Idempotency-Key,%1", idempotencyKey);
+		ctx.SetHeaders(requestHeaders);
+		ctx.PUT(cbx, string.Format("bank-accounts/%1/withdraw", number), body.AsString());
 		return cbx;
 	}
 
-	ELIFE_TransactionResultCallback TransferBankAccountFunds(ELIFE_TransferRequest body, string number, Managed instance = null, string functionName = "")
+	ELIFE_TransactionResultCallback TransferBankAccountFunds(ELIFE_TransferRequest body, string number, string idempotencyKey, Managed instance = null, string functionName = "")
 	{
 		ELIFE_TransactionResultCallback cbx = new ELIFE_TransactionResultCallback;
 		cbx.SetCallback(instance, functionName, number);
 		body.Pack();
-		GetElifeApi().PUT(cbx, string.Format("bank-accounts/%1/transaction", number), body.AsString());
+		RestContext ctx = GetElifeApi();
+		string requestHeaders = "Content-Type,application/json";
+		if (idempotencyKey != "")
+			requestHeaders += string.Format(",Idempotency-Key,%1", idempotencyKey);
+		ctx.SetHeaders(requestHeaders);
+		ctx.PUT(cbx, string.Format("bank-accounts/%1/transaction", number), body.AsString());
 		return cbx;
 	}
 }

@@ -322,19 +322,41 @@ FrameWidgetClass {
                 }
                }
               }
-              TextWidgetClass "{58A0E70CDB02C659}" {
-               Name "ToValue"
-               Slot LayoutSlot "{1FABBB41B01E3201}" {
+              VerticalLayoutWidgetClass "{3E5812BC6ACEFF47}" {
+               Name "ToValueStack"
+               Slot LayoutSlot "{EEB5B56ED3792234}" {
                 VerticalAlign 1
                 SizeMode Fill
                }
-               Color 0.012 0.016 0.03 1
-               Text ""
-               "Font Size" 30
-               "Min Font Size" 30
-               "Horizontal Alignment" Center
-               FontProperties FontProperties "{6398EEBC362B7143}" {
-                Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+               {
+                TextWidgetClass "{58A0E70CDB02C659}" {
+                 Name "ToValue"
+                 Slot LayoutSlot "{1FABBB41B01E3201}" {
+                  HorizontalAlign 3
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 30
+                 "Min Font Size" 30
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{6398EEBC362B7143}" {
+                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 }
+                }
+                TextWidgetClass "{EBAE3E609D655744}" {
+                 Name "ToTag"
+                 Slot LayoutSlot "{7434534B6A415857}" {
+                  HorizontalAlign 3
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 18
+                 "Min Font Size" 18
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{48270E5985837AC5}" {
+                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 }
+                }
                }
               }
               ButtonWidgetClass "{E94B3B53BD29A85A}" {

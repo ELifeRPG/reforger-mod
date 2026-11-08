@@ -80,6 +80,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	protected ref array<Widget> m_aRows = {};
 	protected TextWidget m_wFromValue;
 	protected TextWidget m_wToValue;
+	protected TextWidget m_wToTag;
 	protected TextWidget m_wSummary;
 	protected TextWidget m_wNotice;
 	protected TextWidget m_wHint;
@@ -186,6 +187,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 		m_wFromValue = TextWidget.Cast(root.FindAnyWidget("FromValue"));
 		m_wToValue = TextWidget.Cast(root.FindAnyWidget("ToValue"));
+		m_wToTag = TextWidget.Cast(root.FindAnyWidget("ToTag"));
 		m_wSummary = TextWidget.Cast(root.FindAnyWidget("Summary"));
 		m_wNotice = TextWidget.Cast(root.FindAnyWidget("Notice"));
 		m_wHint = TextWidget.Cast(root.FindAnyWidget("Hint"));
@@ -235,7 +237,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		foreach (string name : inked)
 			ELIFE_PhoneStyle.SetColorOf(root, name, ink);
 
-		array<string> labels = {"FromLabel", "ToLabel", "NumberLabel", "AmountLabel"};
+		array<string> labels = {"FromLabel", "ToLabel", "NumberLabel", "AmountLabel", "ToTag"};
 		foreach (string name : labels)
 			ELIFE_PhoneStyle.SetColorOf(root, name, Faint());
 
@@ -358,7 +360,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 	//------------------------------------------------------------------------------------------------
 	//! Booked: the clerk hands back the receipt. Anything else stays on the slip with the reason.
-	void OnTransferResultAnswer(int reason, int amountCents, int feeCents, int balanceCents)
+	void OnTransferResultAnswer(int reason, string amount, string fee, string balance)
 	{
 		m_bWaiting = false;
 		if (reason == ELIFE_EClerkReason.NONE && m_Quote)
@@ -366,9 +368,9 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 			ELIFE_ClerkTransferReceipt receipt = new ELIFE_ClerkTransferReceipt();
 			receipt.targetNumber = m_Quote.targetNumber;
 			receipt.targetBankName = m_Quote.targetBankName;
-			receipt.amountCents = amountCents;
-			receipt.feeCents = feeCents;
-			receipt.balanceCents = balanceCents;
+			receipt.amount = amount;
+			receipt.fee = fee;
+			receipt.balance = balance;
 			receipt.Pack();
 			HandOver(ELIFE_EClerkDialog.TRANSFER_DONE, receipt.AsString());
 			return;
@@ -486,7 +488,8 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (amount > ELIFE_ATMComponent.MAX_BOOKING_AMOUNT)
 			return WidgetManager.Translate("#ELIFE-Clerk_Transfer_Limit", ELIFE_PhoneBankingService.FormatWholeMoney(ELIFE_ATMComponent.MAX_BOOKING_AMOUNT));
 
-		if (amount > 0 && amount * 100 + from.GetFeeCents(amount) > from.balanceCents)
+		//! The fee is unknown until booked.
+		if (amount > 0 && amount * 100 > from.balanceCents)
 			return "#ELIFE-Clerk_Reason_NotEnoughMoney";
 
 		return "";
@@ -672,21 +675,44 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Typed digits fill the boxes from the right, like a calculator: "1000" lands in the last four.
 	protected void SetAmountText(string text)
 	{
-		int position;
-		for (int i = 0; i < text.Length() && position < AMOUNT_BOXES; i++)
+		string digits;
+		for (int i = 0; i < text.Length() && digits.Length() < AMOUNT_BOXES; i++)
 		{
 			string character = text.Get(i);
-			if (DIGITS.Contains(character))
-			{
-				m_aAmount[position] = character;
-				position++;
-			}
+			if (DIGITS.Contains(character) && (character != "0" || !digits.IsEmpty()))
+				digits += character;
 		}
 
-		for (int i = position; i < AMOUNT_BOXES; i++)
-			m_aAmount[i] = "";
+		int offset = AMOUNT_BOXES - digits.Length();
+		for (int box = 0; box < AMOUNT_BOXES; box++)
+		{
+			if (box < offset)
+				m_aAmount[box] = "";
+			else
+				m_aAmount[box] = digits.Get(box - offset);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The boxes are places, as on the ATM: left of the first non-zero digit they stay empty, right of it they
+	//! read 0. So a 1 in the third box of six fills the rest with 0 and makes 1 000.
+	protected void NormalizeAmount()
+	{
+		bool started;
+		for (int i = 0; i < AMOUNT_BOXES; i++)
+		{
+			string character = m_aAmount[i];
+			if (!started && character != "" && character != "0")
+				started = true;
+
+			if (!started)
+				m_aAmount[i] = "";
+			else if (character == "")
+				m_aAmount[i] = "0";
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -940,7 +966,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		else if (m_eRow == ELIFE_ESlipRow.NUMBER || m_eRow == ELIFE_ESlipRow.AMOUNT)
 		{
 			m_bEditing = true;
-			m_iCursor = GetFirstEmpty();
+			m_iCursor = GetStartBox();
 		}
 		else if (m_eRow == ELIFE_ESlipRow.FROM)
 		{
@@ -990,7 +1016,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected int GetFirstEmpty()
+	protected int GetStartBox()
 	{
 		if (m_eRow == ELIFE_ESlipRow.NUMBER)
 		{
@@ -1003,12 +1029,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 			return ELIFE_BankAccountNumber.LENGTH - 1;
 		}
 
-		for (int i = 0; i < AMOUNT_BOXES; i++)
-		{
-			if (m_aAmount[i] == "")
-				return i;
-		}
-
+		//! The amount's boxes are places, so a controller starts on the ones, like the ATM's wheel.
 		return AMOUNT_BOXES - 1;
 	}
 
@@ -1022,17 +1043,25 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Up counts up: empty, then 0 to 9 (or A to Z), then empty again.
+	//! Up counts up. The number's boxes go empty, 0 to 9 (or A to Z), empty again; the amount's roll 0 to 9 with no carry.
 	protected void RollAtCursor(int direction)
 	{
-		array<string> chars = m_aAmount;
-		string alphabet = DIGITS;
-		if (m_eRow == ELIFE_ESlipRow.NUMBER)
+		if (m_eRow != ELIFE_ESlipRow.NUMBER)
 		{
-			chars = m_aNumber;
-			alphabet = GetAlphabet(m_iCursor);
+			if (!m_aAmount.IsIndexValid(m_iCursor))
+				return;
+
+			int digit = Math.Max(DIGITS.IndexOf(m_aAmount[m_iCursor]), 0);
+			digit = (digit + direction + 10) % 10;
+			m_aAmount[m_iCursor] = digit.ToString();
+			NormalizeAmount();
+			SyncEditsFromBoxes();
+			m_sNotice = "";
+			return;
 		}
 
+		array<string> chars = m_aNumber;
+		string alphabet = GetAlphabet(m_iCursor);
 		if (!chars.IsIndexValid(m_iCursor))
 			return;
 
@@ -1061,6 +1090,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (chars.IsIndexValid(m_iCursor))
 			chars[m_iCursor] = "";
 
+		NormalizeAmount();
 		SyncEditsFromBoxes();
 		Refresh();
 	}
@@ -1110,16 +1140,28 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 				m_wFromValue.SetText("—");
 		}
 
-		if (m_wToValue)
+		//! The number alone fits the row; whose it is goes on the small line under it.
+		string toValue = "—";
+		string toTag;
+		if (IsOtherTarget())
 		{
-			if (!m_aTargets.IsIndexValid(m_iTarget))
-				m_wToValue.SetText("—");
-			else if (IsOtherTarget())
-				m_wToValue.SetText("#ELIFE-Clerk_Transfer_OtherAccount");
-			else if (m_aTargetIsOwn[m_iTarget])
-				m_wToValue.SetText(WidgetManager.Translate("#ELIFE-Slip_Own", ELIFE_PhoneBankingService.GroupIban(m_aTargets[m_iTarget])));
-			else
-				m_wToValue.SetText(WidgetManager.Translate("#ELIFE-Slip_Recent", ELIFE_PhoneBankingService.GroupIban(m_aTargets[m_iTarget])));
+			toValue = "#ELIFE-Clerk_Transfer_OtherAccount";
+		}
+		else if (m_aTargets.IsIndexValid(m_iTarget))
+		{
+			toValue = ELIFE_PhoneBankingService.GroupIban(m_aTargets[m_iTarget]);
+			toTag = "#ELIFE-Slip_Recent";
+			if (m_aTargetIsOwn[m_iTarget])
+				toTag = "#ELIFE-Slip_Own";
+		}
+
+		if (m_wToValue)
+			m_wToValue.SetText(toValue);
+
+		if (m_wToTag)
+		{
+			m_wToTag.SetText(toTag);
+			m_wToTag.SetVisible(toTag != "");
 		}
 
 		if (m_aRows.IsIndexValid(ELIFE_ESlipRow.NUMBER) && m_aRows[ELIFE_ESlipRow.NUMBER])
@@ -1155,7 +1197,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (m_eRow == row && m_bEditing)
 			active = m_iCursor;
 		else if (m_eRow == row && IsTyping())
-			active = GetFirstEmpty();
+			active = GetStartBox();
 
 		foreach (int i, TextWidget text : texts)
 		{
@@ -1265,16 +1307,13 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 			return;
 		}
 
-		string balance = ELIFE_PhoneBankingService.FormatMoney(from.balanceCents);
-		int amount = GetAmount();
-		if (amount <= 0)
+		if (GetAmount() <= 0 || ELIFE_PhoneBankingService.IsFreeOfCharge(from.feeTerms))
 		{
-			m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Balance", balance));
+			m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Balance", from.balance));
 			return;
 		}
 
-		int feeCents = from.GetFeeCents(amount);
-		m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Summary", balance, ELIFE_PhoneBankingService.FormatMoney(feeCents), ELIFE_PhoneBankingService.FormatMoney(amount * 100 + feeCents)));
+		m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Summary", from.balance, from.feeTerms));
 	}
 
 	//------------------------------------------------------------------------------------------------

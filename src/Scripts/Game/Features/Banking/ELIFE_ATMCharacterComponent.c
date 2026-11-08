@@ -121,9 +121,10 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void SendQuote(RplId atmId, int quoteId, int amount, int feeCents, int totalCents)
+	//! feeTerms is the account's fee terms as display text.
+	void SendQuote(RplId atmId, int quoteId, int amount, string feeTerms)
 	{
-		Rpc(RpcDo_Quote, atmId, quoteId, amount, feeCents, totalCents);
+		Rpc(RpcDo_Quote, atmId, quoteId, amount, feeTerms);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -133,9 +134,10 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void SendResult(RplId atmId, int reason, int amount, int feeCents, int balanceCents, bool balanceKnown, int droppedAmount = 0)
+	//! fee and balance are the Bridge's display text; empty when not known.
+	void SendResult(RplId atmId, int reason, int amount, string fee, string balance, int droppedAmount = 0)
 	{
-		Rpc(RpcDo_Result, atmId, reason, amount, feeCents, balanceCents, balanceKnown, droppedAmount);
+		Rpc(RpcDo_Result, atmId, reason, amount, fee, balance, droppedAmount);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -293,11 +295,11 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
-	protected void RpcDo_Quote(RplId atmId, int quoteId, int amount, int feeCents, int totalCents)
+	protected void RpcDo_Quote(RplId atmId, int quoteId, int amount, string feeTerms)
 	{
 		ELIFE_ATMScreenComponent screen = FindScreen(atmId);
 		if (screen)
-			screen.OnQuote(quoteId, amount, feeCents, totalCents);
+			screen.OnQuote(quoteId, amount, feeTerms);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -311,11 +313,11 @@ class ELIFE_ATMCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
-	protected void RpcDo_Result(RplId atmId, int reason, int amount, int feeCents, int balanceCents, bool balanceKnown, int droppedAmount)
+	protected void RpcDo_Result(RplId atmId, int reason, int amount, string fee, string balance, int droppedAmount)
 	{
 		ELIFE_ATMScreenComponent screen = FindScreen(atmId);
 		if (screen)
-			screen.OnResult(reason, amount, feeCents, balanceCents, balanceKnown, droppedAmount);
+			screen.OnResult(reason, amount, fee, balance, droppedAmount);
 	}
 
 	//------------------------------------------------------------------------------------------------

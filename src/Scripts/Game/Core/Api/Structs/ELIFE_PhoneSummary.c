@@ -8,7 +8,7 @@ class ELIFE_PhoneSummary : JsonApiStruct
 	bool isPoweredOn;
 	ref array<string> blockedNumbers = {};
 	ref array<string> installedApps = {};
-	ELIFE_PhonePreferences preferences;
+	ref ELIFE_PhonePreferences preferences;
 
 	void ELIFE_PhoneSummary()
 	{

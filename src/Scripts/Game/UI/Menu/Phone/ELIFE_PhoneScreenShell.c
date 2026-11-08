@@ -3351,7 +3351,7 @@ class ELIFE_PhoneScreenShell
 		SetText(card, "CardLabel", account.GetDisplayNumber());
 		ELIFE_PhoneStyle.SetColorOf(card, "CardLabel", ELIFE_PhoneStyle.TextPrimary());
 
-		SetText(card, "CardValue", ELIFE_PhoneBankingService.FormatMoney(ELIFE_PhoneBankingService.ToCents(account.balance)));
+		SetText(card, "CardValue", account.balanceStr);
 		ELIFE_PhoneStyle.SetTypeOf(card, "CardValue", ELIFE_PhoneStyle.TEXT_TITLE, true, ELIFE_PhoneStyle.AccentBank());
 	}
 

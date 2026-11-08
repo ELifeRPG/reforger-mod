@@ -1754,22 +1754,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{A69690B2787BDD9F}" {
-   Id "ELIFE-ATM_FromBalance"
-   Target_en_us "From your balance"
-   Target_de_de "Von deinem Konto"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{DCCA0ABB10C8634D}" {
-   Id "ELIFE-ATM_ToBalance"
-   Target_en_us "To your balance"
-   Target_de_de "Auf dein Konto"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{5D331609CFBC24A9}" {
    Id "ELIFE-ATM_Step_Amount"
    Target_en_us "Amount"
@@ -2062,14 +2046,6 @@ StringTable {
    Id "ELIFE-ATM_RemainingBalance"
    Target_en_us "Remaining balance"
    Target_de_de "Verbleibender Kontostand"
-   Modified 1793293896
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{EB486A630621B8BE}" {
-   Id "ELIFE-ATM_Returned_Hint"
-   Target_en_us "The rest went back to your account. Cash paid out is in your inventory, or on the ground if your inventory is full."
-   Target_de_de "Der Rest ging zurück auf dein Konto. Ausgezahltes Bargeld liegt in deinem Inventar oder auf dem Boden, falls dein Inventar voll ist."
    Modified 1793293896
    Author "Robin"
    LastChanged "Robin"
@@ -2620,8 +2596,8 @@ StringTable {
   }
   CustomStringTableItem "{2275EDFFC13520BA}" {
    Id "ELIFE-Clerk_Transfer_Summary"
-   Target_en_us "Balance %1 · Fee %2 · Total %3"
-   Target_de_de "Kontostand %1 · Gebühr %2 · Gesamt %3"
+   Target_en_us "Balance %1 · Fee %2"
+   Target_de_de "Kontostand %1 · Gebühr %2"
    Modified 1794120000
    Author "Robin"
    LastChanged "Robin"
@@ -2738,14 +2714,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{E10FA9B8FADA5F02}" {
-   Id "ELIFE-Clerk_FeeTerms"
-   Target_en_us "%1 plus %2 % of the amount"
-   Target_de_de "%1 plus %2 % des Betrags"
-   Modified 1794122000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{153D3F7CC21C0A9F}" {
    Id "ELIFE-Clerk_Opened_Closing"
    Target_en_us "You can use it at any ATM right away."
@@ -2828,16 +2796,16 @@ StringTable {
   }
   CustomStringTableItem "{0D3DB661F1C005B4}" {
    Id "ELIFE-Slip_Own"
-   Target_en_us "%1 · own account"
-   Target_de_de "%1 · eigenes Konto"
+   Target_en_us "own account"
+   Target_de_de "eigenes Konto"
    Modified 1794131000
    Author "Robin"
    LastChanged "Robin"
   }
   CustomStringTableItem "{5BD1E48D3891A814}" {
    Id "ELIFE-Slip_Recent"
-   Target_en_us "%1 · recent"
-   Target_de_de "%1 · zuletzt"
+   Target_en_us "recently paid"
+   Target_de_de "zuletzt bezahlt"
    Modified 1794131000
    Author "Robin"
    LastChanged "Robin"

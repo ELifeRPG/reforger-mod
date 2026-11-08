@@ -1,28 +1,22 @@
 //------------------------------------------------------------------------------------------------
-//! One of the customer's accounts as the transfer form shows it, with the fee terms of its bank for the live preview.
+//! One of the customer's accounts as the transfer form shows it. Money is the Bridge's display text.
 class ELIFE_ClerkAccount : JsonApiStruct
 {
 	string number;
+	string balance;
+	//! Only for checking an amount on the slip.
 	int balanceCents;
 	string bankName;
-	int feeBaseCents;
-	float feeMultiplier;
+	string feeTerms;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkAccount()
 	{
 		RegV("number");
+		RegV("balance");
 		RegV("balanceCents");
 		RegV("bankName");
-		RegV("feeBaseCents");
-		RegV("feeMultiplier");
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Rounded to whole cents, like everything the player sees.
-	int GetFeeCents(int amount)
-	{
-		return feeBaseCents + Math.Round(amount * 100 * feeMultiplier);
+		RegV("feeTerms");
 	}
 }
 
@@ -50,7 +44,7 @@ class ELIFE_ClerkTransferQuote : JsonApiStruct
 	string targetNumber;
 	string targetBankName;
 	int amount;
-	int feeCents;
+	string feeTerms;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkTransferQuote()
@@ -60,7 +54,7 @@ class ELIFE_ClerkTransferQuote : JsonApiStruct
 		RegV("targetNumber");
 		RegV("targetBankName");
 		RegV("amount");
-		RegV("feeCents");
+		RegV("feeTerms");
 	}
 }
 
@@ -70,8 +64,6 @@ class ELIFE_BankClerkTransfers : Managed
 {
 	protected static const int QUOTE_LIFETIME_MS = 60000;
 	protected static const int HTTP_NOT_FOUND = 404;
-	protected static const int HTTP_CLIENT_ERROR_MIN = 400;
-	protected static const int HTTP_SERVER_ERROR_MIN = 500;
 	protected static const int MAX_RECENT = 5;
 
 	protected ELIFE_BankClerkComponent m_Clerk;
@@ -82,6 +74,9 @@ class ELIFE_BankClerkTransfers : Managed
 	protected ref ELIFE_BankListDto m_Banks;
 	protected ref ELIFE_BaseRestCallback m_LoadCallback;
 	protected bool m_bLoading;
+	//! Only one load request is out at a time, even across visits, so an answer always belongs to the request it reads.
+	protected bool m_bRequestInFlight;
+	protected bool m_bRestartLoad;
 	//! Outgoing transfers of every account, as "occurredAt|number" so they sort by time.
 	protected ref array<string> m_aSentTo = {};
 	protected int m_iHistoryIndex;
@@ -92,7 +87,7 @@ class ELIFE_BankClerkTransfers : Managed
 	protected ref ELIFE_ClerkTransferQuote m_Quote;
 	protected int m_iQuoteTick;
 
-	protected ref ELIFE_TransactionResultCallback m_TransferCallback;
+	protected ref ELIFE_BankBooking m_Booking;
 	protected int m_iBookingPlayerId;
 	protected string m_sBookingFrom;
 
@@ -111,6 +106,7 @@ class ELIFE_BankClerkTransfers : Managed
 		m_aAccounts.Clear();
 		m_Banks = null;
 		m_bLoading = false;
+		m_bRestartLoad = false;
 		m_bQuoteInFlight = false;
 		m_Quote = null;
 	}
@@ -138,13 +134,54 @@ class ELIFE_BankClerkTransfers : Managed
 		m_iPlayerId = playerId;
 		m_sCharacterId = characterId;
 		m_bLoading = true;
-		m_LoadCallback = api.ListCharacterBankAccounts(characterId, this, "OnLoadAccounts");
+
+		//! A request from the last visit is still out; its answer starts this load.
+		if (m_bRequestInFlight)
+		{
+			m_bRestartLoad = true;
+			return;
+		}
+
+		StartLoad();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StartLoad()
+	{
+		ELIFE_Api api = ELIFE_Api.GetInstance();
+		if (!api)
+		{
+			m_bLoading = false;
+			SendAccounts(m_iPlayerId, ELIFE_EClerkReason.UNAVAILABLE);
+			return;
+		}
+
+		m_bRequestInFlight = true;
+		m_LoadCallback = api.ListCharacterBankAccounts(m_sCharacterId, this, "OnLoadAccounts");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! False if the answer is no longer wanted: the visit ended, or a new load was asked for meanwhile.
+	protected bool TakeAnswer()
+	{
+		m_bRequestInFlight = false;
+		if (!m_bLoading)
+			return false;
+
+		if (m_bRestartLoad)
+		{
+			m_bRestartLoad = false;
+			StartLoad();
+			return false;
+		}
+
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void OnLoadAccounts(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
 	{
-		if (!m_bLoading || characterId != m_sCharacterId)
+		if (!TakeAnswer())
 			return;
 
 		if (status != ELIFE_EApiStatusCode.SUCCESS || !m_LoadCallback)
@@ -173,19 +210,20 @@ class ELIFE_BankClerkTransfers : Managed
 			return;
 		}
 
+		m_bRequestInFlight = true;
 		m_LoadCallback = api.ListBanks(this, "OnLoadBanks");
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Every account's fee depends on its own bank, not on the clerk's.
+	//! For the banks' names; each account carries its own fee terms.
 	void OnLoadBanks(ELIFE_EApiStatusCode status, JsonApiStruct data)
 	{
-		if (!m_bLoading)
+		if (!TakeAnswer())
 			return;
 
-		m_bLoading = false;
 		if (status != ELIFE_EApiStatusCode.SUCCESS || !m_LoadCallback)
 		{
+			m_bLoading = false;
 			SendAccounts(m_iPlayerId, ELIFE_EClerkReason.UNAVAILABLE);
 			return;
 		}
@@ -195,7 +233,6 @@ class ELIFE_BankClerkTransfers : Managed
 
 		m_aSentTo.Clear();
 		m_iHistoryIndex = 0;
-		m_bLoading = true;
 		LoadNextHistory();
 	}
 
@@ -211,13 +248,14 @@ class ELIFE_BankClerkTransfers : Managed
 			return;
 		}
 
+		m_bRequestInFlight = true;
 		m_LoadCallback = api.ListBankAccountTransactions(m_aAccounts[m_iHistoryIndex].number, this, "OnLoadHistory");
 	}
 
 	//------------------------------------------------------------------------------------------------
 	void OnLoadHistory(ELIFE_EApiStatusCode status, JsonApiStruct data, string accountNumber)
 	{
-		if (!m_bLoading || !m_aAccounts.IsIndexValid(m_iHistoryIndex) || accountNumber != m_aAccounts[m_iHistoryIndex].number)
+		if (!TakeAnswer())
 			return;
 
 		if (status == ELIFE_EApiStatusCode.SUCCESS && m_LoadCallback)
@@ -274,16 +312,16 @@ class ELIFE_BankClerkTransfers : Managed
 		{
 			foreach (ELIFE_BankAccountSummary account : m_aAccounts)
 			{
-				ELIFE_BankSummary bank = FindBank(account.bankId);
-				if (!bank)
-					continue;
-
 				ELIFE_ClerkAccount choice = new ELIFE_ClerkAccount();
 				choice.number = account.number;
-				choice.balanceCents = ELIFE_PhoneBankingService.ToCents(account.balance);
-				choice.bankName = bank.name;
-				choice.feeBaseCents = ELIFE_PhoneBankingService.ToCents(bank.transactionFeeBase);
-				choice.feeMultiplier = bank.transactionFeeMultiplier;
+				choice.balance = account.balanceStr;
+				choice.balanceCents = ELIFE_PhoneBankingService.MoneyTextToCents(account.balanceStr);
+				choice.feeTerms = account.feeTermsStr;
+
+				ELIFE_BankSummary bank = FindBank(account.bankId);
+				if (bank)
+					choice.bankName = bank.name;
+
 				list.items.Insert(choice);
 			}
 
@@ -323,13 +361,12 @@ class ELIFE_BankClerkTransfers : Managed
 		}
 
 		ELIFE_BankAccountSummary from = FindAccount(fromNumber);
-		ELIFE_BankSummary bank = FindBank(from.bankId);
 
 		m_Quote = new ELIFE_ClerkTransferQuote();
 		m_Quote.fromNumber = fromNumber;
 		m_Quote.targetNumber = ELIFE_BankAccountNumber.Normalize(targetText);
 		m_Quote.amount = amount;
-		m_Quote.feeCents = GetFeeCents(bank, amount);
+		m_Quote.feeTerms = from.feeTermsStr;
 		m_bQuoteInFlight = true;
 		m_TargetCallback = api.GetBankAccount(m_Quote.targetNumber, this, "OnTargetLoaded");
 	}
@@ -341,7 +378,7 @@ class ELIFE_BankClerkTransfers : Managed
 			return ELIFE_EClerkReason.UNAVAILABLE;
 
 		ELIFE_BankAccountSummary from = FindAccount(fromNumber);
-		if (!from || !FindBank(from.bankId))
+		if (!from)
 			return ELIFE_EClerkReason.UNAVAILABLE;
 
 		if (amount <= 0 || amount > ELIFE_ATMComponent.MAX_BOOKING_AMOUNT)
@@ -354,19 +391,11 @@ class ELIFE_BankClerkTransfers : Managed
 		if (target == fromNumber)
 			return ELIFE_EClerkReason.SAME_ACCOUNT;
 
-		ELIFE_BankSummary bank = FindBank(from.bankId);
-		int totalCents = amount * 100 + GetFeeCents(bank, amount);
-		if (totalCents > ELIFE_PhoneBankingService.ToCents(from.balance))
+		//! The fee is unknown until booked.
+		if (amount * 100 > ELIFE_PhoneBankingService.MoneyTextToCents(from.balanceStr))
 			return ELIFE_EClerkReason.NOT_ENOUGH_MONEY;
 
 		return ELIFE_EClerkReason.NONE;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Rounded to whole cents, the same as ELIFE_ClerkAccount.GetFeeCents() on the slip.
-	protected static int GetFeeCents(notnull ELIFE_BankSummary bank, int amount)
-	{
-		return ELIFE_PhoneBankingService.ToCents(bank.transactionFeeBase) + Math.Round(amount * 100 * bank.transactionFeeMultiplier);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -415,7 +444,7 @@ class ELIFE_BankClerkTransfers : Managed
 			copy.targetNumber = quote.targetNumber;
 			copy.targetBankName = quote.targetBankName;
 			copy.amount = quote.amount;
-			copy.feeCents = quote.feeCents;
+			copy.feeTerms = quote.feeTerms;
 			copy.Pack();
 			json = copy.AsString();
 		}
@@ -429,86 +458,86 @@ class ELIFE_BankClerkTransfers : Managed
 	{
 		if (IsBooking())
 		{
-			SendResult(playerId, ELIFE_EClerkReason.ACCOUNT_BUSY, 0, 0, 0);
+			SendResult(playerId, ELIFE_EClerkReason.ACCOUNT_BUSY);
 			return;
 		}
 
 		if (!m_Quote || m_Quote.quoteId != quoteId || playerId != m_iPlayerId || System.GetTickCount() - m_iQuoteTick > QUOTE_LIFETIME_MS)
 		{
-			SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED, 0, 0, 0);
+			SendResult(playerId, ELIFE_EClerkReason.QUOTE_EXPIRED);
 			return;
 		}
 
 		ELIFE_ClerkTransferQuote quote = m_Quote;
 		m_Quote = null;
 
-		ELIFE_Api api = ELIFE_Api.GetInstance();
-		if (!api)
+		if (!ELIFE_Api.GetInstance())
 		{
-			SendResult(playerId, ELIFE_EClerkReason.UNAVAILABLE, 0, 0, 0);
+			SendResult(playerId, ELIFE_EClerkReason.UNAVAILABLE);
 			return;
 		}
 
 		if (!ELIFE_ATMComponent.TryLockAccount(quote.fromNumber))
 		{
-			SendResult(playerId, ELIFE_EClerkReason.ACCOUNT_BUSY, 0, 0, 0);
+			SendResult(playerId, ELIFE_EClerkReason.ACCOUNT_BUSY);
 			return;
 		}
 
-		ELIFE_TransferRequest body = new ELIFE_TransferRequest();
-		body.amount = quote.amount;
-		body.characterId = m_sCharacterId;
-		body.targetNumber = quote.targetNumber;
-
 		m_iBookingPlayerId = playerId;
 		m_sBookingFrom = quote.fromNumber;
+		m_Booking = new ELIFE_BankBooking(ELIFE_EBankBookingKind.TRANSFER, quote.fromNumber, quote.amount * 100, m_sCharacterId, m_Clerk.GetSourceId(), quote.targetNumber);
 		Print(string.Format("ELIFE_BankClerkTransfers | transfer %1 from %2 to %3 for player %4", quote.amount, quote.fromNumber, quote.targetNumber, playerId), LogLevel.NORMAL);
-		m_TransferCallback = api.TransferBankAccountFunds(body, quote.fromNumber, this, "OnTransferred");
+		m_Booking.Start(this, "OnBankBookingDone");
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A refusal (4xx) booked nothing. Anything else may or may not have booked, and there's no safe retry yet, so the player is told to check.
-	void OnTransferred(ELIFE_EApiStatusCode status, JsonApiStruct data, string fromNumber)
+	void OnBankBookingDone(ELIFE_BankBooking booking)
 	{
-		if (fromNumber != m_sBookingFrom)
+		if (booking != m_Booking)
 			return;
 
+		string fromNumber = m_sBookingFrom;
 		ELIFE_ATMComponent.UnlockAccount(fromNumber);
 		int playerId = m_iBookingPlayerId;
 		m_sBookingFrom = "";
 		m_iBookingPlayerId = 0;
+		m_Booking = null;
 
-		ELIFE_TransactionResult result = ELIFE_TransactionResult.Cast(data);
-		if (status == ELIFE_EApiStatusCode.SUCCESS && result)
+		ELIFE_TransactionResult result = booking.GetResult();
+		ELIFE_BankAccountSummary from = FindAccount(fromNumber);
+		switch (booking.GetOutcome())
 		{
-			Print(string.Format("ELIFE_BankClerkTransfers | transferred %1, fee %2, from %3", result.amount, result.fee, fromNumber), LogLevel.NORMAL);
-			int amountCents = ELIFE_PhoneBankingService.ToCents(result.amount);
-			int balanceCents = ELIFE_PhoneBankingService.ToCents(result.newBalance);
-			ELIFE_BankAccountSummary from = FindAccount(fromNumber);
-			if (from)
-				from.balance = result.newBalance;
+			case ELIFE_EBankBookingOutcome.BOOKED:
+				Print(string.Format("ELIFE_BankClerkTransfers | transferred %1, fee %2, from %3", result.amountStr, result.feeStr, fromNumber), LogLevel.NORMAL);
+				if (from)
+					from.balanceStr = result.newBalanceStr;
 
-			SendResult(playerId, ELIFE_EClerkReason.NONE, amountCents, ELIFE_PhoneBankingService.ToCents(result.fee), balanceCents);
-			return;
+				SendResult(playerId, ELIFE_EClerkReason.NONE, result.amountStr, result.feeStr, result.newBalanceStr);
+				return;
+
+			case ELIFE_EBankBookingOutcome.CONFLICT:
+				if (booking.GetProblemCode() == "" || booking.GetProblemCode() == ELIFE_BankBooking.CODE_INSUFFICIENT_BALANCE)
+					SendResult(playerId, ELIFE_EClerkReason.NOT_ENOUGH_MONEY);
+				else
+					SendResult(playerId, ELIFE_EClerkReason.ACCOUNT_BUSY);
+
+				return;
+
+			case ELIFE_EBankBookingOutcome.DENIED:
+			case ELIFE_EBankBookingOutcome.INVALID:
+				SendResult(playerId, ELIFE_EClerkReason.FAILED);
+				return;
 		}
 
-		int httpCode;
-		if (m_TransferCallback)
-			httpCode = m_TransferCallback.GetHttpCode();
-
-		Print(string.Format("ELIFE_BankClerkTransfers | transfer from %1 failed, HTTP %2", fromNumber, httpCode), LogLevel.WARNING);
-		if (httpCode >= HTTP_CLIENT_ERROR_MIN && httpCode < HTTP_SERVER_ERROR_MIN)
-			SendResult(playerId, ELIFE_EClerkReason.FAILED, 0, 0, 0);
-		else
-			SendResult(playerId, ELIFE_EClerkReason.UNKNOWN_OUTCOME, 0, 0, 0);
+		SendResult(playerId, ELIFE_EClerkReason.UNKNOWN_OUTCOME);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void SendResult(int playerId, ELIFE_EClerkReason reason, int amountCents, int feeCents, int balanceCents)
+	protected void SendResult(int playerId, ELIFE_EClerkReason reason, string amount = "", string fee = "", string balance = "")
 	{
 		ELIFE_BankClerkCharacterComponent link = m_Clerk.GetLink(playerId);
 		if (link)
-			link.SendTransferResult(m_Clerk.GetRplId(), reason, amountCents, feeCents, balanceCents);
+			link.SendTransferResult(m_Clerk.GetRplId(), reason, amount, fee, balance);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -536,5 +565,19 @@ class ELIFE_BankClerkTransfers : Managed
 		}
 
 		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A clerk deleted mid-booking must not leave the account locked for the ATMs.
+	void ~ELIFE_BankClerkTransfers()
+	{
+		if (m_Booking)
+			m_Booking.Cancel();
+
+		if (m_sBookingFrom != "")
+		{
+			ELIFE_ATMComponent.UnlockAccount(m_sBookingFrom);
+			Print(string.Format("ELIFE_BankClerkTransfers | clerk deleted during a booking, UNRESOLVED: transfer from %1 for player %2", m_sBookingFrom, m_iBookingPlayerId), LogLevel.ERROR);
+		}
 	}
 }

@@ -78,7 +78,8 @@ modded class ELIFE_BankAccountSummary
 		copy.type = type;
 		copy.characterId = characterId;
 		copy.companyId = companyId;
-		copy.balance = balance;
+		copy.balanceStr = balanceStr;
+		copy.feeTermsStr = feeTermsStr;
 		return copy;
 	}
 
@@ -91,7 +92,7 @@ modded class ELIFE_BankAccountSummary
 		redacted.number = ELIFE_DataRedactor.RedactDigits(number);
 		redacted.type = type;
 		redacted.companyId = companyId;
-		redacted.balance = ELIFE_DataRedactor.RedactAmount(balance);
+		redacted.balanceStr = ELIFE_DataRedactor.RedactMoneyText(balanceStr);
 		return redacted;
 	}
 }
@@ -106,7 +107,7 @@ modded class ELIFE_BankAccountTransaction
 	static const string KIND_TRANSFERRED_IN = "TransferredIn";
 
 	//------------------------------------------------------------------------------------------------
-	//! The API sends amounts unsigned; direction comes from the kind.
+	//! amountStr is already signed; the kind says the direction for colour and the like.
 	bool IsOutgoing()
 	{
 		return kind == KIND_WITHDRAWN || kind == KIND_TRANSFERRED_OUT;
@@ -117,8 +118,8 @@ modded class ELIFE_BankAccountTransaction
 	{
 		ELIFE_BankAccountTransaction redacted = new ELIFE_BankAccountTransaction();
 		redacted.kind = kind;
-		redacted.amount = ELIFE_DataRedactor.RedactAmount(amount);
-		redacted.fee = ELIFE_DataRedactor.RedactAmount(fee);
+		redacted.amountStr = ELIFE_DataRedactor.RedactMoneyText(amountStr);
+		redacted.feeStr = ELIFE_DataRedactor.RedactMoneyText(feeStr);
 		redacted.occurredAt = occurredAt;
 		return redacted;
 	}

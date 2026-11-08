@@ -82,9 +82,10 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void SendTransferResult(RplId clerkId, int reason, int amountCents, int feeCents, int balanceCents)
+	//! amount, fee and balance are the Bridge's display text.
+	void SendTransferResult(RplId clerkId, int reason, string amount, string fee, string balance)
 	{
-		Rpc(RpcDo_TransferResult, clerkId, reason, amountCents, feeCents, balanceCents);
+		Rpc(RpcDo_TransferResult, clerkId, reason, amount, fee, balance);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -161,9 +162,9 @@ class ELIFE_BankClerkCharacterComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Owner)]
-	protected void RpcDo_TransferResult(RplId clerkId, int reason, int amountCents, int feeCents, int balanceCents)
+	protected void RpcDo_TransferResult(RplId clerkId, int reason, string amount, string fee, string balance)
 	{
-		ELIFE_BankClerkDialogBase.OnTransferResult(reason, amountCents, feeCents, balanceCents);
+		ELIFE_BankClerkDialogBase.OnTransferResult(reason, amount, fee, balance);
 	}
 
 	//------------------------------------------------------------------------------------------------

@@ -15,18 +15,19 @@ class ELIFE_ClerkTransferReceipt : JsonApiStruct
 {
 	string targetNumber;
 	string targetBankName;
-	int amountCents;
-	int feeCents;
-	int balanceCents;
+	//! The Bridge's display text.
+	string amount;
+	string fee;
+	string balance;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkTransferReceipt()
 	{
 		RegV("targetNumber");
 		RegV("targetBankName");
-		RegV("amountCents");
-		RegV("feeCents");
-		RegV("balanceCents");
+		RegV("amount");
+		RegV("fee");
+		RegV("balance");
 	}
 }
 
@@ -118,13 +119,13 @@ class ELIFE_BankClerkDialogBase : SCR_ConfigurableDialogUi
 
 	//------------------------------------------------------------------------------------------------
 	//! If the slip is gone (the player walked off), the transfer still happened, so a hint says so.
-	static void OnTransferResult(int reason, int amountCents, int feeCents, int balanceCents)
+	static void OnTransferResult(int reason, string amount, string fee, string balance)
 	{
 		ELIFE_TransferSlipMenu slip = ELIFE_TransferSlipMenu.GetOpen();
 		if (slip)
-			slip.OnTransferResultAnswer(reason, amountCents, feeCents, balanceCents);
+			slip.OnTransferResultAnswer(reason, amount, fee, balance);
 		else if (reason == ELIFE_EClerkReason.NONE)
-			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Clerk_TransferDone_Hint", ELIFE_PhoneBankingService.FormatMoney(amountCents)), "#ELIFE-Clerk_TransferDone_Title");
+			SCR_HintManagerComponent.ShowCustomHint(WidgetManager.Translate("#ELIFE-Clerk_TransferDone_Hint", amount), "#ELIFE-Clerk_TransferDone_Title");
 		else if (reason == ELIFE_EClerkReason.UNKNOWN_OUTCOME)
 			SCR_HintManagerComponent.ShowCustomHint("#ELIFE-Clerk_Reason_UnknownOutcome", "#ELIFE-Clerk_Title");
 	}
@@ -314,10 +315,8 @@ class ELIFE_BankClerkOpenAccountDialog : ELIFE_BankClerkDialogBase
 	{
 		super.OnMenuOpen(preset);
 
-		float percent = Math.Round(m_Clerk.GetFeeMultiplier() * 10000) / 100;
-		string fee = ELIFE_PhoneBankingService.FormatMoney(m_Clerk.GetFeeBaseCents());
 		string sentence = WidgetManager.Translate(preset.m_sMessage, m_Clerk.GetBankName());
-		SetStatement(sentence, Line("#ELIFE-Clerk_Label_BookingFee", WidgetManager.Translate("#ELIFE-Clerk_FeeTerms", fee, percent.ToString())));
+		SetStatement(sentence, Line("#ELIFE-Clerk_Label_BookingFee", m_Clerk.GetFeeTerms()));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -401,9 +400,9 @@ class ELIFE_BankClerkTransferDoneDialog : ELIFE_BankClerkDialogBase
 			target += " (" + receipt.targetBankName + ")";
 
 		string lines = Line("#ELIFE-Clerk_Transfer_To", target);
-		lines += Line("#ELIFE-Clerk_Transfer_Amount", ELIFE_PhoneBankingService.FormatMoney(receipt.amountCents));
-		lines += Line("#ELIFE-Clerk_Label_Fee", ELIFE_PhoneBankingService.FormatMoney(receipt.feeCents));
-		lines += Line("#ELIFE-Clerk_Label_NewBalance", ELIFE_PhoneBankingService.FormatMoney(receipt.balanceCents));
+		lines += Line("#ELIFE-Clerk_Transfer_Amount", receipt.amount);
+		lines += Line("#ELIFE-Clerk_Label_Fee", receipt.fee);
+		lines += Line("#ELIFE-Clerk_Label_NewBalance", receipt.balance);
 		SetStatement(preset.m_sMessage, lines);
 	}
 

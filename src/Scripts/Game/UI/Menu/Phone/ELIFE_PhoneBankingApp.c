@@ -143,7 +143,7 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 		{
 			name = account.GetDisplayNumber();
 			kind = KindLabel(account);
-			balance = ELIFE_PhoneBankingService.FormatMoney(ELIFE_PhoneBankingService.ToCents(account.balance));
+			balance = account.balanceStr;
 		}
 
 		if (m_wStatementName)
@@ -338,7 +338,7 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 
 			//! Kind lives on the group header (Personal/Company), so the account number is the row's name.
 			SetTextAndColor(row, "AccountName", account.GetDisplayNumber(), ELIFE_PhoneStyle.TextPrimary());
-			SetTextAndColor(row, "AccountBalance", ELIFE_PhoneBankingService.FormatMoney(ELIFE_PhoneBankingService.ToCents(account.balance)), m_Accent);
+			SetTextAndColor(row, "AccountBalance", account.balanceStr, m_Accent);
 
 			Widget buttonWidget = row.FindAnyWidget("AccountButton");
 			if (!buttonWidget)
@@ -381,16 +381,12 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 			SetTextAndColor(row, "Memo", Memo(tx), ELIFE_PhoneStyle.TextPrimary());
 			SetTextAndColor(row, "PostedAt", FormatDayTime(tx.occurredAt), ELIFE_PhoneStyle.TextSecondary());
 
-			int cents = ELIFE_PhoneBankingService.ToCents(tx.amount);
-			if (tx.IsOutgoing())
-				cents = -cents;
-
-			//! Direction is shown by the figure's colour only, no edge stripe down the row.
+			//! Direction is shown by the figure's colour only, no edge stripe down the row. The text is already signed.
 			Color amountColor = ELIFE_PhoneStyle.Positive();
-			if (cents < 0)
+			if (tx.IsOutgoing())
 				amountColor = ELIFE_PhoneStyle.Negative();
 
-			SetTextAndColor(row, "Amount", ELIFE_PhoneBankingService.FormatSignedMoney(cents), amountColor);
+			SetTextAndColor(row, "Amount", tx.amountStr, amountColor);
 		}
 	}
 
@@ -421,9 +417,8 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 	{
 		string memo = WidgetManager.Translate(KindText(tx.kind));
 
-		int feeCents = ELIFE_PhoneBankingService.ToCents(tx.fee);
-		if (feeCents > 0)
-			memo += " · " + WidgetManager.Translate("#ELIFE-Phone_Bank_Fee", ELIFE_PhoneBankingService.FormatMoney(feeCents));
+		if (!ELIFE_PhoneBankingService.IsZeroMoney(tx.feeStr))
+			memo += " · " + WidgetManager.Translate("#ELIFE-Phone_Bank_Fee", tx.feeStr);
 
 		return memo;
 	}

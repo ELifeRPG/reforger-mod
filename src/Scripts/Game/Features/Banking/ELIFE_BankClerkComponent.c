@@ -63,11 +63,9 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	//! Public, so it's replicated for every client's dialog title.
 	[RplProp()]
 	protected string m_sBankName;
-	//! The bank's booking fee: a base plus a share of the amount. Public terms, shown before opening an account.
+	//! The bank's current booking fee terms as display text. Public, shown before opening an account.
 	[RplProp()]
-	protected int m_iFeeBaseCents;
-	[RplProp()]
-	protected float m_fFeeMultiplier;
+	protected string m_sFeeTerms;
 
 	protected IEntity m_Customer;
 	protected int m_iLastRequestTick;
@@ -165,15 +163,20 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	int GetFeeBaseCents()
+	string GetFeeTerms()
 	{
-		return m_iFeeBaseCents;
+		return m_sFeeTerms;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	float GetFeeMultiplier()
+	//! Names this desk on bookings and starts their Idempotency-Keys, so it holds no comma.
+	string GetSourceId()
 	{
-		return m_fFeeMultiplier;
+		vector position = GetOwner().GetOrigin();
+		int x = Math.Round(position[0] * 10);
+		int y = Math.Round(position[1] * 10);
+		int z = Math.Round(position[2] * 10);
+		return string.Format("Clerk-%1-%2-%3-%4", m_sBankCode, x, y, z);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -368,7 +371,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 	{
 		if (!IsCustomer(playerId, character) || !IsUsableBy(character))
 		{
-			link.SendTransferResult(GetRplId(), ELIFE_EClerkReason.OUT_OF_RANGE, 0, 0, 0);
+			link.SendTransferResult(GetRplId(), ELIFE_EClerkReason.OUT_OF_RANGE, "", "", "");
 			return;
 		}
 
@@ -421,8 +424,7 @@ class ELIFE_BankClerkComponent : ScriptComponent
 			{
 				m_sBankId = bank.bankId;
 				m_sBankName = bank.name;
-				m_iFeeBaseCents = ELIFE_PhoneBankingService.ToCents(bank.transactionFeeBase);
-				m_fFeeMultiplier = bank.transactionFeeMultiplier;
+				m_sFeeTerms = bank.feeTermsStr;
 				Replication.BumpMe();
 				AnswerWaiting(true);
 				return;

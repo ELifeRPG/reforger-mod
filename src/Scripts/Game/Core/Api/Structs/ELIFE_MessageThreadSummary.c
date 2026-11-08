@@ -5,6 +5,7 @@ class ELIFE_MessageThreadSummary : JsonApiStruct
 	ref array<string> participants = {};
 	int unreadCount;
 	string lastMessageAt;
+	ref ELIFE_PhoneMessage lastMessage;
 
 	void ELIFE_MessageThreadSummary()
 	{
@@ -12,5 +13,6 @@ class ELIFE_MessageThreadSummary : JsonApiStruct
 		RegV("participants");
 		RegV("unreadCount");
 		RegV("lastMessageAt");
+		RegV("lastMessage");
 	}
 }

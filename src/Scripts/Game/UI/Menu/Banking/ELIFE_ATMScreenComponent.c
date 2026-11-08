@@ -200,17 +200,16 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected int m_iQuoteAsked;
 	protected int m_iQuoteId;
 	protected int m_iQuoteAmount;
-	protected int m_iQuoteFeeCents;
-	protected int m_iQuoteTotalCents;
+	protected string m_sQuoteFeeTerms;
 	protected int m_iBookingAmount;
 	protected int m_iProcessingStartTick;
 	protected int m_iCountStartTick;
 
 	protected ELIFE_EATMReason m_eResult;
 	protected int m_iResultAmount;
-	protected int m_iResultFeeCents;
-	protected int m_iResultBalanceCents;
-	protected bool m_bResultBalanceKnown;
+	//! Empty when the server didn't know it.
+	protected string m_sResultFee;
+	protected string m_sResultBalance;
 	protected int m_iResultDropped;
 	//! A paid result waiting out PROCESSING_MIN_MS.
 	protected bool m_bResultPending;
@@ -258,7 +257,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	{
 		if (!granted)
 		{
-			StoreResult(reason, 0, 0, 0, false);
+			StoreResult(reason, 0, "", "");
 			PresentResult();
 			return;
 		}
@@ -314,15 +313,14 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnQuote(int quoteId, int amount, int feeCents, int totalCents)
+	void OnQuote(int quoteId, int amount, string feeTerms)
 	{
 		if (m_iQuoteAsked == 0 || amount != m_iQuoteAsked)
 			return;
 
 		m_iQuoteId = quoteId;
 		m_iQuoteAmount = amount;
-		m_iQuoteFeeCents = feeCents;
-		m_iQuoteTotalCents = totalCents;
+		m_sQuoteFeeTerms = feeTerms;
 
 		//! The count stays up a moment, however fast the answer comes, so it reads as the machine counting.
 		int holdMs = ELIFE_ATMComponent.PROCESSING_MIN_MS - (System.GetTickCount() - m_iCountStartTick);
@@ -370,7 +368,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnResult(int reason, int amount, int feeCents, int balanceCents, bool balanceKnown, int droppedAmount)
+	void OnResult(int reason, int amount, string fee, string balance, int droppedAmount)
 	{
 		m_iQuoteId = 0;
 		m_sTyped = "";
@@ -385,7 +383,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			return;
 		}
 
-		StoreResult(reason, amount, feeCents, balanceCents, balanceKnown, droppedAmount);
+		StoreResult(reason, amount, fee, balance, droppedAmount);
 
 		int holdMs = ELIFE_ATMComponent.PROCESSING_MIN_MS - (System.GetTickCount() - m_iProcessingStartTick);
 		if (reason == ELIFE_EATMReason.PAID && m_bSessionOpen && m_eView == ELIFE_EATMScreen.PROCESSING && holdMs > 0)
@@ -505,7 +503,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				RollStandInAmount();
 
 			//! Reads the redacted statement's balance, which the result then shows.
-			m_bResultBalanceKnown = false;
+			m_sResultBalance = "";
 			m_bStatementAfterResult = true;
 		}
 
@@ -545,14 +543,12 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (m_eMirrorSeen == ELIFE_EATMScreen.OTHER_AMOUNT && m_sTyped != "")
 			amount = m_sTyped.ToInt();
 
+		int percent = Math.RandomInt(STAND_IN_FEE_MIN_PERCENT, STAND_IN_FEE_MAX_PERCENT);
 		m_iQuoteAmount = amount;
-		m_iQuoteFeeCents = amount * Math.RandomInt(STAND_IN_FEE_MIN_PERCENT, STAND_IN_FEE_MAX_PERCENT);
-		m_iQuoteTotalCents = amount * 100 + m_iQuoteFeeCents;
-		if (IsDeposit())
-			m_iQuoteTotalCents = amount * 100 - m_iQuoteFeeCents;
+		m_sQuoteFeeTerms = percent.ToString() + " %";
 		m_iBookingAmount = amount;
 		m_iResultAmount = amount;
-		m_iResultFeeCents = m_iQuoteFeeCents;
+		m_sResultFee = Money(amount * percent);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -660,13 +656,12 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void StoreResult(int reason, int amount, int feeCents, int balanceCents, bool balanceKnown, int droppedAmount = 0)
+	protected void StoreResult(int reason, int amount, string fee, string balance, int droppedAmount = 0)
 	{
 		m_eResult = reason;
 		m_iResultAmount = amount;
-		m_iResultFeeCents = feeCents;
-		m_iResultBalanceCents = balanceCents;
-		m_bResultBalanceKnown = balanceKnown;
+		m_sResultFee = fee;
+		m_sResultBalance = balance;
 		m_iResultDropped = droppedAmount;
 	}
 
@@ -1277,7 +1272,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (IsDeposit())
 			return amount <= GetCarriedCash();
 
-		return HasAccount() && amount * 100 <= ELIFE_PhoneBankingService.ToCents(m_Statement.account.balance);
+		return HasAccount() && amount * 100 <= ELIFE_PhoneBankingService.MoneyTextToCents(m_Statement.account.balanceStr);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1975,21 +1970,18 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		PlaceStack(CONTENT_LEFT, CONTENT_TOP, CONTENT_WIDTH, ABOVE_R4_BOTTOM);
 
 		ELIFE_EATMReason result = GetShownResult();
-		if (result != ELIFE_EATMReason.PAID && result != ELIFE_EATMReason.RETURNED)
+		if (result != ELIFE_EATMReason.PAID)
 		{
 			ShowRefusal(result);
 			return;
 		}
 
 		ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, ForKind("#ELIFE-ATM_PaidOut", "#ELIFE-ATM_Deposited"), Whole(m_iResultAmount));
-		ShowLine(m_wLine2, m_wLine2Label, m_wLine2Value, "#ELIFE-ATM_Fee", Money(m_iResultFeeCents));
+		ShowLine(m_wLine2, m_wLine2Label, m_wLine2Value, "#ELIFE-ATM_Fee", OrUnknown(m_sResultFee));
 		ShowText(m_wCaption, ForKind("#ELIFE-ATM_RemainingBalance", "#ELIFE-ATM_NewBalance"));
 		ShowFigure(GetResultBalanceText(), Accent());
 
-		if (result == ELIFE_EATMReason.PAID)
-			ShowText(m_wHeading, ForKind("#ELIFE-ATM_Complete", "#ELIFE-ATM_Deposit_Complete"));
-		else
-			ShowText(m_wBody, "#ELIFE-ATM_Returned_Hint");
+		ShowText(m_wHeading, ForKind("#ELIFE-ATM_Complete", "#ELIFE-ATM_Deposit_Complete"));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1998,15 +1990,10 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	{
 		ShowText(m_wCaption, ForKind("#ELIFE-ATM_Confirm_Receive", "#ELIFE-ATM_Counted"));
 		ShowFigure(Whole(m_iQuoteAmount), Accent());
-		string balanceKey = ForKind("#ELIFE-ATM_FromBalance", "#ELIFE-ATM_ToBalance");
-		if (m_iQuoteFeeCents <= 0)
-		{
-			ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, balanceKey, Money(m_iQuoteTotalCents));
-			return;
-		}
 
-		ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, "#ELIFE-ATM_Fee", Money(m_iQuoteFeeCents));
-		ShowLine(m_wLine2, m_wLine2Label, m_wLine2Value, balanceKey, Money(m_iQuoteTotalCents));
+		//! The exact fee is only known once booked.
+		if (!ELIFE_PhoneBankingService.IsFreeOfCharge(m_sQuoteFeeTerms))
+			ShowLine(m_wLine1, m_wLine1Label, m_wLine1Value, "#ELIFE-ATM_Fee", m_sQuoteFeeTerms);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2096,7 +2083,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			if (!m_aAccountDetails.IsIndexValid(slot))
 				continue;
 
-			string detailText = Money(ELIFE_PhoneBankingService.ToCents(account.balance));
+			string detailText = OrUnknown(account.balance);
 			if (account.bankName != "")
 				detailText = account.bankName + META_SEPARATOR + detailText;
 
@@ -2249,7 +2236,11 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		}
 		else
 		{
-			int value = m_sTyped.ToInt();
+			//! ToInt() throws on an empty string.
+			int value;
+			if (m_sTyped != "")
+				value = m_sTyped.ToInt();
+
 			int place = 1;
 			for (int i = m_iWheelPos + 1; i < digits; i++)
 			{
@@ -2491,15 +2482,15 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (!HasAccount())
 			return UNKNOWN_VALUE;
 
-		return Money(ELIFE_PhoneBankingService.ToCents(m_Statement.account.balance));
+		return OrUnknown(m_Statement.account.balanceStr);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! The statement from before the withdrawal would show the old balance, so it only counts once refreshed.
 	protected string GetResultBalanceText()
 	{
-		if (m_bResultBalanceKnown)
-			return Money(m_iResultBalanceCents);
+		if (m_sResultBalance != "")
+			return m_sResultBalance;
 
 		if (m_bStatementAfterResult)
 			return GetBalanceText();
@@ -2544,21 +2535,20 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		if (!transaction || !kind || !amount || !meta)
 			return;
 
-		int cents = ELIFE_PhoneBankingService.ToCents(transaction.amount);
-		if (transaction.IsOutgoing())
-			cents = -cents;
-
 		string metaText = ELIFE_PhoneAppBase.FormatDayTime(transaction.occurredAt);
-		int feeCents = ELIFE_PhoneBankingService.ToCents(transaction.fee);
-		if (feeCents > 0)
-			metaText += META_SEPARATOR + WidgetManager.Translate("#ELIFE-ATM_Tx_Fee", Money(feeCents));
+		if (!ELIFE_PhoneBankingService.IsZeroMoney(transaction.feeStr))
+			metaText += META_SEPARATOR + WidgetManager.Translate("#ELIFE-ATM_Tx_Fee", transaction.feeStr);
 
 		kind.SetText(GetKindText(transaction.kind));
-		amount.SetText(ELIFE_PhoneBankingService.FormatSignedMoney(cents));
-		if (cents > 0)
-			amount.SetColor(ELIFE_PhoneStyle.Positive());
-		else if (cents < 0)
-			amount.SetColor(ELIFE_PhoneStyle.Negative());
+		//! Already signed from this account's side.
+		amount.SetText(transaction.amountStr);
+		if (!ELIFE_PhoneBankingService.IsZeroMoney(transaction.amountStr))
+		{
+			if (transaction.IsOutgoing())
+				amount.SetColor(ELIFE_PhoneStyle.Negative());
+			else
+				amount.SetColor(ELIFE_PhoneStyle.Positive());
+		}
 		meta.SetText(metaText);
 	}
 
@@ -2579,6 +2569,15 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			return "#ELIFE-ATM_Tx_TransferredIn";
 
 		return kind;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected string OrUnknown(string text)
+	{
+		if (text == "")
+			return UNKNOWN_VALUE;
+
+		return text;
 	}
 
 	//------------------------------------------------------------------------------------------------
