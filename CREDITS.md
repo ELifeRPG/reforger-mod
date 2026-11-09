@@ -36,7 +36,7 @@ licensors give no warranty; see each license for details.
 - **Creator:** hexgrad (Kokoro-82M), Resemble AI (Chatterbox)
 - **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (Kokoro-82M), [MIT](https://opensource.org/license/mit) (Chatterbox)
 - **Changes:** generated audio carries Chatterbox's inaudible Perth watermark.
-- **Files:** `addons/ELifeRPG_Items/Sounds/VO/BankClerk/`
+- **Files:** `addons/ELifeRPG_NPC/Sounds/VO/BankClerk/`
 
 ## Bank clerk sound effects
 
@@ -44,7 +44,7 @@ licensors give no warranty; see each license for details.
 - **Creator:** Robhog, eddies2000, HarpyHarpHarp
 - **License:** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **Changes:** we cut and levelled the sounds.
-- **Files:** `addons/ELifeRPG_Items/Sounds/VO/BankClerk/Samples/Sfx/`
+- **Files:** `addons/ELifeRPG_NPC/Sounds/VO/BankClerk/Samples/Sfx/`
 
 ## ATM sounds
 

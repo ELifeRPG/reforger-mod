@@ -7,7 +7,8 @@ below the Workshop limits and lets the large, rarely changing art live apart fro
 
 | Addon | GUID | Contains | Depends on |
 | --- | --- | --- | --- |
-| `ELifeRPG_Items` | `14E46A965EE53285` | Art for general items: food (apple, plum), phone mesh, materials, screen textures and UI sounds | vanilla |
+| `ELifeRPG_Items` | `14E46A965EE53285` | Art for general items and props: meshes, materials, textures and sounds | vanilla |
+| `ELifeRPG_NPC` | `97B65A48A10C989D` | NPC art: voice lines and NPC sounds | vanilla |
 | `ELifeRPG_Vehicles` | `4B054C78918EAA22` | Car key art, vehicle lock sounds | vanilla |
 | `ELifeRPG_Vegetation` | `12BC1DE093734B8A` | Fruit tree materials and polyplanes | vanilla |
 | `ELifeRPG_Core` | `66EB6BA548DD28C2` | **All** scripts, configs, UI, localization and prefabs | vanilla + all asset addons |
