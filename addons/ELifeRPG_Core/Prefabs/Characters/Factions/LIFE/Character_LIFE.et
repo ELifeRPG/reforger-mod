@@ -25,7 +25,7 @@ SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_
   }
   ELIFE_ATMCharacterComponent "{D34B22879ABC80C6}" {
   }
-  ELIFE_BankClerkCharacterComponent "{E3A1C0D2B4F69857}" {
+  ELIFE_NpcCharacterComponent "{E3A1C0D2B4F69857}" {
   }
   ELIFE_BankPaperCharacterComponent "{5EF2696CB8070E29}" {
   }

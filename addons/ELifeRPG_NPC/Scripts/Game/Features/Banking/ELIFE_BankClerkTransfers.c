@@ -330,7 +330,7 @@ class ELIFE_BankClerkTransfers : Managed
 	//------------------------------------------------------------------------------------------------
 	protected void SendAccounts(int playerId, ELIFE_EClerkReason reason)
 	{
-		ELIFE_BankClerkCharacterComponent link = m_Clerk.GetLink(playerId);
+		ELIFE_NpcCharacterComponent link = m_Clerk.GetLink(playerId);
 		if (!link)
 			return;
 
@@ -356,7 +356,7 @@ class ELIFE_BankClerkTransfers : Managed
 		}
 
 		list.Pack();
-		link.SendClerkAccounts(m_Clerk.GetRplId(), reason, list.AsString());
+		m_Clerk.SendClerkAccounts(link, reason, list.AsString());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -483,7 +483,7 @@ class ELIFE_BankClerkTransfers : Managed
 	//------------------------------------------------------------------------------------------------
 	protected void SendQuote(int playerId, ELIFE_EClerkReason reason, ELIFE_ClerkTransferQuote quote)
 	{
-		ELIFE_BankClerkCharacterComponent link = m_Clerk.GetLink(playerId);
+		ELIFE_NpcCharacterComponent link = m_Clerk.GetLink(playerId);
 		if (!link)
 			return;
 
@@ -502,7 +502,7 @@ class ELIFE_BankClerkTransfers : Managed
 			json = copy.AsString();
 		}
 
-		link.SendTransferQuote(m_Clerk.GetRplId(), reason, json);
+		m_Clerk.SendTransferQuote(link, reason, json);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -719,9 +719,9 @@ class ELIFE_BankClerkTransfers : Managed
 	//------------------------------------------------------------------------------------------------
 	protected void SendResult(int playerId, ELIFE_EClerkReason reason, string amount = "", string fee = "", string balance = "")
 	{
-		ELIFE_BankClerkCharacterComponent link = m_Clerk.GetLink(playerId);
+		ELIFE_NpcCharacterComponent link = m_Clerk.GetLink(playerId);
 		if (link)
-			link.SendTransferResult(m_Clerk.GetRplId(), reason, amount, fee, balance);
+			m_Clerk.SendTransferResult(link, reason, amount, fee, balance);
 	}
 
 	//------------------------------------------------------------------------------------------------

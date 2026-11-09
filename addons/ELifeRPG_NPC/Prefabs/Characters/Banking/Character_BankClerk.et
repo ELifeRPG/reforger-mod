@@ -19,10 +19,13 @@ SCR_ChimeraCharacter : "{626874113CAE4387}Prefabs/Characters/Factions/CIV/Busine
    }
   }
   ELIFE_BankClerkComponent "{B80E89F5C2D29465}" {
+   m_sVoiceTable "{E277C14920362724}Configs/Banking/ELIFE_ClerkVoices.conf"
+   m_sDialogueConfig "{570E8AA28E1B73D5}Configs/Banking/ELIFE_ClerkDialogue.conf"
+   m_sDisplayName "#ELIFE-Clerk_Title"
   }
   ActionsManagerComponent "{520EA1D2F659CE02}" {
    additionalActions {
-    ELIFE_BankClerkTalkAction "{65BBB0C3AD7E380A}" {
+    ELIFE_NpcTalkAction "{65BBB0C3AD7E380A}" {
      ParentContextList {
       "Chest"
      }

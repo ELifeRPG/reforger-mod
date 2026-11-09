@@ -2,10 +2,10 @@
 //! Forwards clicks and hovers on the slip's buttons to the menu, by widget name.
 class ELIFE_TransferSlipClickHandler : ScriptedWidgetEventHandler
 {
-	protected ELIFE_TransferSlipMenu m_Menu;
+	protected ELIFE_TransferSlipForm m_Menu;
 
 	//------------------------------------------------------------------------------------------------
-	void ELIFE_TransferSlipClickHandler(ELIFE_TransferSlipMenu menu)
+	void ELIFE_TransferSlipClickHandler(ELIFE_TransferSlipForm menu)
 	{
 		m_Menu = menu;
 	}
@@ -50,9 +50,10 @@ enum ELIFE_ESlipRow
 
 //------------------------------------------------------------------------------------------------
 //! The transfer at the counter as a paper slip. Mouse and keyboard click and type; a controller moves over the rows and rolls the printed boxes.
-//! It is one step of the clerk visit: it opens over the clerk dialogue and hands back to it without ending the visit.
-class ELIFE_TransferSlipMenu : ChimeraMenuBase
+//! It is one step of the clerk visit: it opens over the clerk dialogue (in the generic ELIFE_FormMenu) and hands back to it without ending the visit.
+class ELIFE_TransferSlipForm : ELIFE_FormContent
 {
+	protected static const ResourceName LAYOUT = "{D329244BC328F6D9}UI/layouts/Menus/Banking/TransferSlip.layout";
 	protected static const ResourceName BOX_LAYOUT = "{5A2C97FF6C6F6A3E}UI/layouts/Menus/Banking/TransferSlipBox.layout";
 
 	//! The account number: EL printed, two check digits, four letters of the bank code, ten digits.
@@ -70,10 +71,10 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	protected static const string DIGITS = "0123456789";
 	protected static const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	protected static ELIFE_TransferSlipMenu s_Open;
+	protected static ELIFE_TransferSlipForm s_Open;
 
 	protected ELIFE_BankClerkComponent m_Clerk;
-	protected ELIFE_BankClerkCharacterComponent m_Link;
+	protected ELIFE_NpcCharacterComponent m_Link;
 
 	protected ref ELIFE_TransferSlipClickHandler m_ClickHandler;
 	protected ref array<Widget> m_aRowFocus = {};
@@ -144,33 +145,39 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	protected string m_sShownHint;
 
 	//------------------------------------------------------------------------------------------------
-	static bool Open(ELIFE_BankClerkComponent clerk, ELIFE_BankClerkCharacterComponent link)
+	static bool Open(ELIFE_BankClerkComponent clerk, ELIFE_NpcCharacterComponent link)
 	{
-		MenuManager menuManager = GetGame().GetMenuManager();
-		if (!menuManager || !clerk || !link)
+		if (!clerk || !link)
 			return false;
 
-		ELIFE_TransferSlipMenu menu = ELIFE_TransferSlipMenu.Cast(menuManager.OpenMenu(ChimeraMenuPreset.ELIFE_TransferSlipMenu));
-		if (!menu)
-			return false;
-
-		menu.Setup(clerk, link);
-		return true;
+		return ELIFE_FormMenu.Open(new ELIFE_TransferSlipForm(clerk, link)) != null;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	static ELIFE_TransferSlipMenu GetOpen()
+	void ELIFE_TransferSlipForm(ELIFE_BankClerkComponent clerk, ELIFE_NpcCharacterComponent link)
+	{
+		m_Clerk = clerk;
+		m_Link = link;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override ResourceName GetLayout()
+	{
+		return LAYOUT;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	static ELIFE_TransferSlipForm GetOpen()
 	{
 		return s_Open;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	override void OnMenuOpen()
+	override void OnOpen(notnull ELIFE_FormMenu menu, notnull Widget root)
 	{
-		super.OnMenuOpen();
+		super.OnOpen(menu, root);
 
 		s_Open = this;
-		Widget root = GetRootWidget();
 		m_ClickHandler = new ELIFE_TransferSlipClickHandler(this);
 
 		array<string> rowNames = {"RowFrom", "RowTo", "RowNumber", "RowAmount", "Actions"};
@@ -213,19 +220,9 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 			inputManager.AddActionListener("MenuBack", EActionTrigger.DOWN, OnBackAction);
 
 		m_sNotice = "#ELIFE-Clerk_Working";
-		Refresh();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected void Setup(ELIFE_BankClerkComponent clerk, ELIFE_BankClerkCharacterComponent link)
-	{
-		m_Clerk = clerk;
-		m_Link = link;
-
-		//! Here, not in OnMenuOpen: the clerk isn't known yet there.
 		m_Clerk.PlaySfx(ELIFE_BankClerkComponent.SFX_PAPER);
 		SetText("BankName", m_Clerk.GetBankName());
-		m_Link.RequestTransferAccounts(m_Clerk.GetOwner());
+		m_Link.Request(m_Clerk.GetOwner(), ELIFE_EClerkRequest.TRANSFER_ACCOUNTS);
 		Refresh();
 	}
 
@@ -362,7 +359,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 				return;
 			}
 
-			m_Link.RequestTransferConfirm(m_Clerk.GetOwner(), m_Quote.quoteId);
+			m_Link.Request(m_Clerk.GetOwner(), ELIFE_EClerkRequest.TRANSFER_CONFIRM, m_Quote.quoteId);
 			return;
 		}
 
@@ -799,7 +796,12 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		m_bWaiting = true;
 		m_bEditing = false;
 		m_sNotice = "#ELIFE-Clerk_Working";
-		m_Link.RequestTransferQuote(m_Clerk.GetOwner(), GetFromNumber(), GetTargetNumber(), GetAmount());
+		ELIFE_ClerkTransferQuote slip = new ELIFE_ClerkTransferQuote();
+		slip.fromNumber = GetFromNumber();
+		slip.targetNumber = GetTargetNumber();
+		slip.amount = GetAmount();
+		slip.Pack();
+		m_Link.Request(m_Clerk.GetOwner(), ELIFE_EClerkRequest.TRANSFER_QUOTE, 0, 0, slip.AsString());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -839,9 +841,9 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
-	override void OnMenuUpdate(float tDelta)
+	override void OnUpdate(float tDelta)
 	{
-		super.OnMenuUpdate(tDelta);
+		super.OnUpdate(tDelta);
 
 		if (m_bIsClosing)
 			return;
@@ -1345,7 +1347,7 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 
 	//------------------------------------------------------------------------------------------------
 	//! Hands back to the dialogue underneath; without one (it closed first), ending the visit is the slip's job.
-	override void OnMenuClose()
+	override void OnClose()
 	{
 		m_bIsClosing = true;
 		if (s_Open == this)
@@ -1361,6 +1363,6 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		else if (m_Link && m_Clerk)
 			m_Link.RequestClose(m_Clerk.GetOwner());
 
-		super.OnMenuClose();
+		super.OnClose();
 	}
 }

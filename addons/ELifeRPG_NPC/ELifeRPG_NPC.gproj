@@ -3,10 +3,27 @@ GameProject {
  GUID "97B65A48A10C989D"
  TITLE "ELifeRPG_NPC"
  Dependencies {
-  "58D0FB3206B6F859" "5614BBCCBB55ED1C"
+  "58D0FB3206B6F859" "5614BBCCBB55ED1C" "66EB6BA548DD28C2"
  }
  Configurations {
   GameProjectConfig PC {
+   WidgetManagerSettings WidgetManagerSettings "{B39F44CC3FB8558B}" {
+    StringTables {
+     StringTableDefinition "{E8B3C9C3EEE9B06D}" {
+      StringTableSource "{2C7D9B86E1055C75}Language/ELIFE_NPC_Localization.st"
+      Languages {
+       LanguageDefinition "{DC5ACCAEFF325F9E}" {
+        Code "en_us"
+        StringTableRuntime "{97DFEA685F0E906A}Language/ELIFE_NPC_Localization.en_us.conf"
+       }
+       LanguageDefinition "{44E74E100CE8A3B4}" {
+        Code "de_de"
+        StringTableRuntime "{6D328A0DAC38ADF9}Language/ELIFE_NPC_Localization.de_de.conf"
+       }
+      }
+     }
+    }
+   }
   }
   GameProjectConfig XBOX_ONE {
   }

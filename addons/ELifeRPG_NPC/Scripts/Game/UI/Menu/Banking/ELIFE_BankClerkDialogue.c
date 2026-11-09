@@ -3,7 +3,7 @@
 //! The tree is ELIFE_BankClerkComponent's dialogue config.
 
 //------------------------------------------------------------------------------------------------
-//! Only lines ELIFE_BankClerkComponent.IsAskableLine() allows are said; outcomes are the server's to say.
+//! Only lines his voice table marks askable are said; outcomes are the server's to say.
 [BaseContainerProps(), SCR_BaseContainerCustomTitleEnum(ELIFE_EClerkLine, "m_eLine")]
 class ELIFE_ClerkDialogueLine : ELIFE_DialogueLine
 {
@@ -13,9 +13,9 @@ class ELIFE_ClerkDialogueLine : ELIFE_DialogueLine
 	//------------------------------------------------------------------------------------------------
 	override void Speak(notnull ELIFE_DialogueController controller)
 	{
-		ELIFE_BankClerkDialogueController clerk = ELIFE_BankClerkDialogueController.Cast(controller);
-		if (clerk)
-			clerk.RequestSay(m_eLine);
+		ELIFE_NpcDialogueController npc = ELIFE_NpcDialogueController.Cast(controller);
+		if (npc && m_eLine != ELIFE_EClerkLine.NONE)
+			npc.RequestSay(typename.EnumToString(ELIFE_EClerkLine, m_eLine));
 	}
 }
 
@@ -229,16 +229,10 @@ class ELIFE_ClerkTransferReceipt : JsonApiStruct
 }
 
 //------------------------------------------------------------------------------------------------
-//! One visit at the counter. Ending the conversation, however it happens, says goodbye and frees the clerk.
-class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
+//! One visit at the counter, on top of the generic NPC conversation (which says goodbye and frees him at the end).
+class ELIFE_BankClerkDialogueController : ELIFE_NpcDialogueController
 {
-	//! The greeting can be heard just before the conversation opens; a line this recent is still shown.
-	protected static const int RECENT_LINE_MS = 5000;
-
 	protected ELIFE_BankClerkComponent m_Clerk;
-	protected ELIFE_BankClerkCharacterComponent m_Link;
-	//! The conversation opens before the replicated customer id may have arrived, so a mismatch only counts once it matched.
-	protected bool m_bSeenAsCustomer;
 	protected bool m_bOpeningAccount;
 	protected string m_sOpenedNode;
 	protected bool m_bSlipOpen;
@@ -255,7 +249,7 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 
 	//------------------------------------------------------------------------------------------------
 	//! After the server's grant. False if nothing opened.
-	static bool StartVisit(ELIFE_BankClerkComponent clerk, ELIFE_BankClerkCharacterComponent link)
+	static bool StartVisit(ELIFE_BankClerkComponent clerk, ELIFE_NpcCharacterComponent link)
 	{
 		if (!clerk || !link)
 			return false;
@@ -343,10 +337,10 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void ELIFE_BankClerkDialogueController(notnull ELIFE_BankClerkComponent clerk, notnull ELIFE_BankClerkCharacterComponent link)
+	//! Only a clerk is ever passed (see StartVisit).
+	void ELIFE_BankClerkDialogueController(notnull ELIFE_NpcComponent npc, notnull ELIFE_NpcCharacterComponent link)
 	{
-		m_Clerk = clerk;
-		m_Link = link;
+		m_Clerk = ELIFE_BankClerkComponent.Cast(npc);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -372,28 +366,13 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	{
 		ELIFE_EClerkAccountStatus accounts;
 		bool opened;
-		if (!m_Link.GetCustomerContext(m_Clerk.GetOwner(), accounts, opened))
+		if (!m_Clerk.GetCustomerContext(m_Link, accounts, opened))
 			return;
 
 		m_eAccounts = accounts;
 		m_bOpenedThisVisit = opened;
 		if (m_Menu)
 			m_Menu.UpdateReplies();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override ResourceName GetConfig()
-	{
-		return m_Clerk.GetDialogueConfig();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override IEntity GetSpeaker()
-	{
-		if (!m_Clerk)
-			return null;
-
-		return m_Clerk.GetOwner();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -407,51 +386,18 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The server releases the clerk on its own when the customer walks off, dies or idles; the conversation follows.
-	override bool IsAvailable()
-	{
-		if (!m_Clerk || !m_Link || !m_Clerk.IsUsableBy(SCR_PlayerController.GetLocalControlledEntity()))
-			return false;
-
-		if (m_Clerk.GetCustomerPlayerId() == SCR_PlayerController.GetLocalPlayerId())
-			m_bSeenAsCustomer = true;
-		else if (m_bSeenAsCustomer)
-			return false;
-
-		return true;
-	}
-
-	//------------------------------------------------------------------------------------------------
 	override void OnStart(notnull ELIFE_DialogueMenu menu)
 	{
 		super.OnStart(menu);
 
-		int voice, line, variant;
-		if (m_Clerk.GetRecentLine(RECENT_LINE_MS, voice, line, variant))
-			menu.SetSubtitle(ELIFE_BankClerkComponent.GetLineText(voice, line, variant));
-
 		//! Before the start node's replies are built, so it opens with the right ones.
 		ELIFE_EClerkAccountStatus accounts;
 		bool opened;
-		if (m_Link.GetCustomerContext(m_Clerk.GetOwner(), accounts, opened))
+		if (m_Clerk.GetCustomerContext(m_Link, accounts, opened))
 		{
 			m_eAccounts = accounts;
 			m_bOpenedThisVisit = opened;
 		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	override void OnEnd()
-	{
-		if (m_Link && m_Clerk)
-			m_Link.RequestClose(m_Clerk.GetOwner());
-	}
-
-	//------------------------------------------------------------------------------------------------
-	void RequestSay(ELIFE_EClerkLine line)
-	{
-		if (m_Link && m_Clerk)
-			m_Link.RequestSay(m_Clerk.GetOwner(), line);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -463,7 +409,7 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 		m_bOpeningAccount = true;
 		m_sOpenedNode = openedNode;
 		m_Menu.SetWaiting(true, "#ELIFE-Clerk_Working");
-		m_Link.RequestOpenAccount(m_Clerk.GetOwner());
+		Request(ELIFE_EClerkRequest.OPEN_ACCOUNT);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -493,7 +439,7 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 		if (!m_Menu || m_bSlipOpen || m_bPurposeBooking)
 			return;
 
-		m_bSlipOpen = ELIFE_TransferSlipMenu.Open(m_Clerk, m_Link);
+		m_bSlipOpen = ELIFE_TransferSlipForm.Open(m_Clerk, m_Link);
 		if (!m_bSlipOpen)
 			return;
 
@@ -535,7 +481,7 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 
 		m_sPaperNextNode = nextNode;
 		m_Menu.SetWaiting(true, "#ELIFE-Clerk_Working");
-		m_Link.RequestPaper(m_Clerk.GetOwner(), kind);
+		Request(ELIFE_EClerkRequest.PAPER, kind);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -573,7 +519,7 @@ class ELIFE_BankClerkDialogueController : ELIFE_DialogueController
 
 		ELIFE_ClerkTransferQuote quote = new ELIFE_ClerkTransferQuote();
 		quote.ExpandFromRAW(m_sPurposeQuote);
-		m_Link.RequestTransferPurpose(m_Clerk.GetOwner(), quote.quoteId, purpose);
+		Request(ELIFE_EClerkRequest.TRANSFER_PURPOSE, quote.quoteId, purpose);
 
 		if (purpose == ELIFE_ETransferPurpose.NONE)
 		{

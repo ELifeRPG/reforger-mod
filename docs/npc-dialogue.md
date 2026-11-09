@@ -4,7 +4,8 @@ Conversations with NPCs use one shared menu, `ELIFE_DialogueMenu`. A panel along
 the NPC's name, their spoken line as a subtitle, the details under it (names, figures), and the player's numbered
 replies. The world stays visible, so the player sees the NPC talking.
 
-The bank clerk is the first NPC that uses it.
+The bank clerk is the first NPC that uses it. Menu, tree model and controller base live in `ELifeRPG_Core`; each NPC's
+subclasses live in its package.
 
 ## Parts
 
@@ -31,37 +32,58 @@ hold, and `m_bNegate` flips one. To branch on context, give two replies the same
 When what a condition reads changes (for example a server answer arrives), the controller calls
 `menu.UpdateReplies()`.
 
+## Generic NPC core
+
+Service NPCs share one core in `ELifeRPG_Core` (`Scripts/Game/Features/NPC`). A concrete NPC lives in an optional
+package (the bank clerk is in `ELifeRPG_NPC`). Core never references a package, so removing the package removes
+the NPC and nothing else.
+
+| Part | What it does |
+|---|---|
+| `ELIFE_NpcComponent` | Serves one customer at a time: grant or refuse, visits, AFK and range release, idle, facing the customer, gestures, voice and line SFX. Subclass per NPC kind. |
+| `ELIFE_NpcCharacterComponent` | On the player character (`Character_LIFE.et`). Carries open, close, say and generic requests (`kind, a, b, text`) to the server, and grants and messages back. |
+| `ELIFE_NpcVoiceTable` | A `.conf` per NPC kind: optional voices, lines with variant count, askable flag, gesture, SFX and repeat cooldown, plus the greeting, goodbye, busy and unavailable lines. |
+| `ELIFE_NpcSpot` | Spawns the NPC (the world doesn't replicate placed characters) with its prefab and one voice. Optional `m_Variation` (`ELIFE_NpcSpotVariation`) picks look and voice from the position, for an NPC kind placed in many locations. |
+| `ELIFE_NpcLookList`, `Configs/NPC/ELIFE_NpcLooks_Civilian.conf` | Every vanilla civilian head with its matching body (11 looks, by name). A variation swaps head and body at spawn and keeps the prefab's clothing; `m_aLookNames` limits it to a subset, so two NPC kinds can use separate sets and never look alike. |
+| `ELIFE_NpcTalkAction` | The "talk" action on the NPC prefab. |
+| `ELIFE_NpcDialogueController`, `ELIFE_NpcDialogueLine` | A conversation that only talks: no script needed for a plain NPC. |
+| `ELIFE_FormMenu`, `ELIFE_FormContent` | A full-screen form opened on top of a conversation, with the package's own layout, so packages need no entry in `chimeraMenus.conf`. |
+
+Sound event: `<prefix><VOICE>_<LINE>[_<variant>]`. Subtitle id: the same with the subtitle prefix. Lines travel
+as their index in the voice table, so the server and the clients load the same file.
+
 ## Adding an NPC
 
-1. Subclass `ELIFE_DialogueController`. Override:
-    - `GetConfig()`: the NPC's tree.
-    - `GetSpeaker()`: the NPC entity, so its lines become subtitles.
-    - `GetSpeakerName()`: the name shown above the subtitle.
-    - `IsAvailable()`: when the conversation must end, for example out of range or dead.
-    - `OnEnd()`: cleanup, such as freeing the NPC on the server.
-2. Add a line class with the NPC's own line enum: subclass `ELIFE_DialogueLine` and override `Speak()` to ask
-   the server to say it. The server must check the line is one the client may ask for.
-3. When a line is heard on a client, call `ELIFE_DialogueMenu.OnSpeakerSaid(npcEntity, subtitleText)`. The open
-   conversation with that NPC shows it.
-4. Add actions and details the NPC needs as subclasses. They reach the NPC through
-   `ELIFE_YourController.Cast(menu.GetController())`.
-5. Write the tree `.conf` and set `m_sStartNode`.
-6. Open it with `ELIFE_DialogueMenu.Open(controller)` once the server has granted the conversation.
+1. Put everything for it in its package: prefab (inheriting a character, with your `ELIFE_NpcComponent`
+   subclass and `ELIFE_NpcTalkAction`), spot prefab, voice table, dialogue tree, string table (registered in the
+   package's `.gproj`), sounds and layouts.
+2. Set on the component: `m_sVoiceTable`, `m_sDialogueConfig`, `m_sDisplayName`.
+3. For an NPC that only talks, that is all: the default controller opens the tree, and `ELIFE_NpcDialogueLine`
+   asks for askable lines by name.
+4. For services, subclass `ELIFE_NpcComponent` and override what you need:
+    - Server: `IsReady`/`Prepare` (load something before granting, then `AnswerWaiting`), `CheckCustomer`,
+      `OnVisitStart`/`OnVisitEnd`, `OnRequest` (check with `CheckRequest`), `GetReasonLineName`. Answer with `Send`.
+    - Client: `OnGranted` (open your own controller), `OnMessage`, `GetRefusalText`.
+5. Subclass `ELIFE_NpcDialogueController` for your actions, details and conditions. They reach it through
+   `YourController.Cast(menu.GetController())` and send requests with `Request(kind, a, b, text)`.
+6. A form on top of the conversation: subclass `ELIFE_FormContent`, open it with `ELIFE_FormMenu.Open`, call
+   `menu.Suspend()` before and `menu.Resume()` plus `menu.ShowNode(...)` when it closes. While waiting for a server
+   answer, use `menu.SetWaiting(true, notice)`, which greys out the replies.
 
-A form that opens on top of the conversation (like the clerk's transfer slip) calls `menu.Suspend()` before
-opening and `menu.Resume()` plus `menu.ShowNode(...)` when it closes. While waiting for a server answer, use
-`menu.SetWaiting(true, notice)`, which greys out the replies.
+## Bank clerk (`ELifeRPG_NPC`)
 
-## Bank clerk
-
+- Component: `ELIFE_BankClerkComponent` (bank, customer lookup, greeting by context, opening accounts, papers)
+  with `ELIFE_BankClerkTransfers`. Requests and messages are `ELIFE_EClerkRequest` and `ELIFE_EClerkMessage`.
+- Looks: one prefab, `Character_BankClerk.et` (suit). His spot's variation uses all civilian looks and varies his voice.
+- Voice table: `Configs/Banking/ELIFE_ClerkVoices.conf`. Its line names match `ELIFE_EClerkLine` and the voice
+  tooling's `clerk_lines.py` (kept outside the repo): new lines need all three.
 - Controller: `ELIFE_BankClerkDialogueController` in `Scripts/Game/UI/Menu/Banking/ELIFE_BankClerkDialogue.c`,
-  with `ELIFE_ClerkDialogueLine`, the transfer slip and open-account actions, and the fee terms, new account
-  and receipt details.
-- Tree: `Configs/Banking/ELIFE_ClerkDialogue.conf`, set on `ELIFE_BankClerkComponent` (`m_sDialogueConfig`), so
-  one clerk can get a different tree.
+  with `ELIFE_ClerkDialogueLine`, the transfer slip (`ELIFE_TransferSlipForm`) and open-account actions, and the
+  fee terms, new account and receipt details.
+- Tree: `Configs/Banking/ELIFE_ClerkDialogue.conf`, set on the clerk prefab.
 - Context: when a visit starts, the server looks up the customer's accounts (`ELIFE_EClerkAccountStatus`). He
   greets customers of his bank with "welcome back", and anyone else with the in-game time of day or a plain
   hello. The result also reaches the client for `ELIFE_ClerkDialogueCondition_HasAccount` and
   `ELIFE_ClerkDialogueCondition_OpenedThisVisit`.
-- Subtitles are the exact wording he speaks: `ELIFE-ClerkVO_<VOICE>_<LINE>[_<variant>]`, generated with the
-  voice tooling outside the repo.
+- Texts: `Language/ELIFE_NPC_Localization.st` in the package. Subtitles are the exact wording he speaks:
+  `ELIFE-ClerkVO_<VOICE>_<LINE>[_<variant>]`, generated with the voice tooling.

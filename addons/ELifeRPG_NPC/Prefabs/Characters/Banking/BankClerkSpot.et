@@ -4,12 +4,7 @@ ELIFE_BankClerkSpot {
  respawnDelay 10
  firstSpawn 0
  m_sBankCode "FEBK"
- m_aClerkPrefabs {
-  "{1CDE9638206258F4}Prefabs/Characters/Banking/Character_BankClerk.et"
-  "{3E10ADCC7D6B093E}Prefabs/Characters/Banking/Character_BankClerk_B.et"
-  "{11F617014538410D}Prefabs/Characters/Banking/Character_BankClerk_C.et"
-  "{E456260443A19245}Prefabs/Characters/Banking/Character_BankClerk_D.et"
-  "{4918E193C8129C55}Prefabs/Characters/Banking/Character_BankClerk_E.et"
+ m_Variation ELIFE_NpcSpotVariation "{719AE147B6FC7876}" {
  }
  {
   GenericEntity {
