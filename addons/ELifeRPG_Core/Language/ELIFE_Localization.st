@@ -2436,9 +2436,9 @@ StringTable {
   }
   CustomStringTableItem "{3C18B0474E563C92}" {
    Id "ELIFE-Clerk_Transfer_Message"
-   Target_en_us "Transfers are booked at once. The fee is set by the bank of the account you pay from."
-   Target_de_de "Überweisungen werden sofort gebucht. Die Gebühr legt die Bank des Kontos fest, von dem Sie zahlen."
-   Modified 1794120000
+   Target_en_us "Transfers are booked at once. The fee is set by the bank of the account you pay from. Between your own accounts at the same bank there is no fee."
+   Target_de_de "Überweisungen werden sofort gebucht. Die Gebühr legt die Bank des Kontos fest, von dem Sie zahlen. Zwischen Ihren eigenen Konten bei derselben Bank fällt keine Gebühr an."
+   Modified 1794255032
    Author "Robin"
    LastChanged "Robin"
   }
@@ -4135,6 +4135,22 @@ StringTable {
    Target_en_us "The clerk has nothing to hand you."
    Target_de_de "Der Bankangestellte hat nichts für Sie."
    Modified 1794176700
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0FAECAF60047C656}" {
+   Id "ELIFE-Clerk_Transfer_SummaryFree"
+   Target_en_us "Balance %1 · No fee between your own accounts"
+   Target_de_de "Kontostand %1 · Keine Gebühr zwischen Ihren eigenen Konten"
+   Modified 1794255032
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A942CD2545286104}" {
+   Id "ELIFE-Clerk_OwnTransfersFree"
+   Target_en_us "Transfers between your own accounts at this bank are free."
+   Target_de_de "Überweisungen zwischen Ihren eigenen Konten bei dieser Bank sind kostenlos."
+   Modified 1794255032
    Author "Robin"
    LastChanged "Robin"
   }

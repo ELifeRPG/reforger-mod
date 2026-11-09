@@ -452,8 +452,8 @@ class ELIFE_BankClerkTransfers : Managed
 
 		m_Quote.quoteId = m_iNextQuoteId++;
 
-		//! A large amount waits for its purpose; the answer books it (RequestPurpose).
-		if (m_Quote.amount >= m_Clerk.GetPurposeThreshold())
+		//! A large amount waits for its purpose; the answer books it (RequestPurpose). Moving money between own accounts has none to declare.
+		if (m_Quote.amount >= m_Clerk.GetPurposeThreshold() && !IsFreeTransfer(FindAccount(m_Quote.fromNumber), target))
 		{
 			m_Quote.needsPurpose = true;
 			m_iQuoteTick = System.GetTickCount();
@@ -722,6 +722,13 @@ class ELIFE_BankClerkTransfers : Managed
 		ELIFE_BankClerkCharacterComponent link = m_Clerk.GetLink(playerId);
 		if (link)
 			link.SendTransferResult(m_Clerk.GetRplId(), reason, amount, fee, balance);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Mirrors the backend's rule (#188): both personal accounts of this character at one bank.
+	protected bool IsFreeTransfer(ELIFE_BankAccountSummary from, notnull ELIFE_BankAccountSummary target)
+	{
+		return from && target.characterId == m_sCharacterId && !target.IsCompany() && target.bankId == from.bankId;
 	}
 
 	//------------------------------------------------------------------------------------------------

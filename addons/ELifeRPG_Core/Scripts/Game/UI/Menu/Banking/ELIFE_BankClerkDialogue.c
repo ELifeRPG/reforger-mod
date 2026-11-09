@@ -100,7 +100,7 @@ class ELIFE_ClerkDialogueAction_OpenAccount : ELIFE_DialogueAction
 }
 
 //------------------------------------------------------------------------------------------------
-//! This bank's booking fee terms.
+//! This bank's booking fee terms, and that transfers between own accounts here cost nothing.
 [BaseContainerProps()]
 class ELIFE_ClerkDialogueDetails_FeeTerms : ELIFE_DialogueDetails
 {
@@ -115,7 +115,7 @@ class ELIFE_ClerkDialogueDetails_FeeTerms : ELIFE_DialogueDetails
 		if (terms == "")
 			return "";
 
-		return FormatLine("#ELIFE-Clerk_Label_BookingFee", terms);
+		return FormatLine("#ELIFE-Clerk_Label_BookingFee", terms) + "\n" + WidgetManager.Translate("#ELIFE-Clerk_OwnTransfersFree");
 	}
 }
 

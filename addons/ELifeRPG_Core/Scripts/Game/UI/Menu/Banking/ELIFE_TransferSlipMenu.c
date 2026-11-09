@@ -470,6 +470,23 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The backend charges nothing between a character's own personal accounts at one bank; every account on the slip is one.
+	protected bool IsFreeTransfer(notnull ELIFE_ClerkAccount from)
+	{
+		string target = ELIFE_BankAccountNumber.Normalize(GetTargetNumber());
+		if (target == from.number || ELIFE_BankAccountNumber.GetBankCode(target) != ELIFE_BankAccountNumber.GetBankCode(from.number))
+			return false;
+
+		foreach (ELIFE_ClerkAccount account : m_Accounts.items)
+		{
+			if (account.number == target)
+				return true;
+		}
+
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected int GetAmount()
 	{
 		string digits;
@@ -1314,6 +1331,12 @@ class ELIFE_TransferSlipMenu : ChimeraMenuBase
 		if (GetAmount() <= 0 || ELIFE_PhoneBankingService.IsFreeOfCharge(from.feeTerms))
 		{
 			m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Balance", from.balance));
+			return;
+		}
+
+		if (IsFreeTransfer(from))
+		{
+			m_wSummary.SetText(WidgetManager.Translate("#ELIFE-Clerk_Transfer_SummaryFree", from.balance));
 			return;
 		}
 
