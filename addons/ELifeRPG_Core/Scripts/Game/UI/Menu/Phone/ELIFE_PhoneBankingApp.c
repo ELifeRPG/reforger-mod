@@ -294,19 +294,36 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 		if (!m_wAccountGroups || count == 0)
 			return;
 
-		//! Personal and company accounts get separate groups, same CreateListGroup() path as Contacts/Messages.
+		//! Personal accounts first, then one group per company, same CreateListGroup() path as Contacts/Messages.
 		array<ELIFE_BankAccountSummary> personal = {};
-		array<ELIFE_BankAccountSummary> company = {};
+		array<string> companyKeys = {};
+		map<string, ref array<ELIFE_BankAccountSummary>> companies = new map<string, ref array<ELIFE_BankAccountSummary>>();
 
 		foreach (ELIFE_BankAccountSummary account : m_Accounts.items)
 		{
 			if (!account)
 				continue;
 
-			if (account.IsCompany())
-				company.Insert(account);
-			else
+			if (!account.IsCompany())
+			{
 				personal.Insert(account);
+				continue;
+			}
+
+			//! Keyed by id: two companies may share a name.
+			string companyKey = account.companyId;
+			if (companyKey == "")
+				companyKey = CompanyHeader(account);
+
+			array<ELIFE_BankAccountSummary> group = companies.Get(companyKey);
+			if (!group)
+			{
+				group = {};
+				companies.Set(companyKey, group);
+				companyKeys.Insert(companyKey);
+			}
+
+			group.Insert(account);
 		}
 
 		bool isFirst = true;
@@ -317,8 +334,22 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 			isFirst = false;
 		}
 
-		if (!company.IsEmpty())
-			FillAccountGroup(company, "#ELIFE-Phone_Bank_Company", isFirst);
+		foreach (string groupKey : companyKeys)
+		{
+			array<ELIFE_BankAccountSummary> companyAccounts = companies.Get(groupKey);
+			FillAccountGroup(companyAccounts, CompanyHeader(companyAccounts[0]), isFirst);
+			isFirst = false;
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected string CompanyHeader(notnull ELIFE_BankAccountSummary account)
+	{
+		string companyName = account.GetCompanyLabel();
+		if (companyName != "")
+			return companyName;
+
+		return "#ELIFE-Phone_Bank_Company";
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -336,7 +367,7 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 
 			ELIFE_PhoneStyle.ApplyGlass(row, true);
 
-			//! Kind lives on the group header (Personal/Company), so the account number is the row's name.
+			//! Kind lives on the group header (Personal or the company's name), so the account number is the row's name.
 			SetTextAndColor(row, "AccountName", account.GetDisplayNumber(), ELIFE_PhoneStyle.TextPrimary());
 			SetTextAndColor(row, "AccountBalance", account.balanceStr, m_Accent);
 
@@ -456,7 +487,7 @@ class ELIFE_PhoneBankingApp : ELIFE_PhoneAppBase
 	protected string KindLabel(notnull ELIFE_BankAccountSummary account)
 	{
 		if (account.IsCompany())
-			return WidgetManager.Translate("#ELIFE-Phone_Bank_Company");
+			return WidgetManager.Translate(CompanyHeader(account));
 
 		return WidgetManager.Translate("#ELIFE-Phone_Bank_Personal");
 	}

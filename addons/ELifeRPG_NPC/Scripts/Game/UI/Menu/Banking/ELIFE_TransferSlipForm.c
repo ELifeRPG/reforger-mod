@@ -80,6 +80,7 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 	protected ref array<Widget> m_aRowFocus = {};
 	protected ref array<Widget> m_aRows = {};
 	protected TextWidget m_wFromValue;
+	protected TextWidget m_wFromTag;
 	protected TextWidget m_wToValue;
 	protected TextWidget m_wToTag;
 	protected TextWidget m_wSummary;
@@ -196,6 +197,7 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 		}
 
 		m_wFromValue = TextWidget.Cast(root.FindAnyWidget("FromValue"));
+		m_wFromTag = TextWidget.Cast(root.FindAnyWidget("FromTag"));
 		m_wToValue = TextWidget.Cast(root.FindAnyWidget("ToValue"));
 		m_wToTag = TextWidget.Cast(root.FindAnyWidget("ToTag"));
 		m_wSummary = TextWidget.Cast(root.FindAnyWidget("Summary"));
@@ -239,7 +241,7 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 		foreach (string name : inked)
 			ELIFE_PhoneStyle.SetColorOf(root, name, ink);
 
-		array<string> labels = {"FromLabel", "ToLabel", "NumberLabel", "AmountLabel", "ToTag"};
+		array<string> labels = {"FromLabel", "ToLabel", "NumberLabel", "AmountLabel", "FromTag", "ToTag"};
 		foreach (string name : labels)
 			ELIFE_PhoneStyle.SetColorOf(root, name, Faint());
 
@@ -419,6 +421,19 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! A managed company account is named after its company rather than called the player's own.
+	protected string OwnTag(string number)
+	{
+		foreach (ELIFE_ClerkAccount account : m_Accounts.items)
+		{
+			if (account.number == number && account.companyName != "")
+				return account.companyName;
+		}
+
+		return "#ELIFE-Slip_Own";
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void AddTarget(string number, bool own)
 	{
 		m_aTargets.Insert(number);
@@ -467,17 +482,17 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The backend charges nothing between a character's own personal accounts at one bank; every account on the slip is one.
+	//! The backend charges nothing between a character's own personal accounts at one bank; company accounts never count.
 	protected bool IsFreeTransfer(notnull ELIFE_ClerkAccount from)
 	{
 		string target = ELIFE_BankAccountNumber.Normalize(GetTargetNumber());
-		if (target == from.number || ELIFE_BankAccountNumber.GetBankCode(target) != ELIFE_BankAccountNumber.GetBankCode(from.number))
+		if (from.company || target == from.number || ELIFE_BankAccountNumber.GetBankCode(target) != ELIFE_BankAccountNumber.GetBankCode(from.number))
 			return false;
 
 		foreach (ELIFE_ClerkAccount account : m_Accounts.items)
 		{
 			if (account.number == target)
-				return true;
+				return !account.company;
 		}
 
 		return false;
@@ -1163,6 +1178,16 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 				m_wFromValue.SetText("—");
 		}
 
+		if (m_wFromTag)
+		{
+			string fromTag;
+			if (from)
+				fromTag = from.companyName;
+
+			m_wFromTag.SetText(fromTag);
+			m_wFromTag.SetVisible(fromTag != "");
+		}
+
 		//! The number alone fits the row; whose it is goes on the small line under it.
 		string toValue = "—";
 		string toTag;
@@ -1175,7 +1200,7 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 			toValue = ELIFE_PhoneBankingService.GroupIban(m_aTargets[m_iTarget]);
 			toTag = "#ELIFE-Slip_Recent";
 			if (m_aTargetIsOwn[m_iTarget])
-				toTag = "#ELIFE-Slip_Own";
+				toTag = OwnTag(m_aTargets[m_iTarget]);
 		}
 
 		if (m_wToValue)

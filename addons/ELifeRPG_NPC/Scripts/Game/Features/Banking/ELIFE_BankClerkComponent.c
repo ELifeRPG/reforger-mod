@@ -384,8 +384,8 @@ class ELIFE_BankClerkComponent : ELIFE_NpcComponent
 			return;
 		}
 
-		m_CustomerLookup = new ELIFE_BankClerkCustomerLookup(this);
-		m_CustomerLookup.m_Callback = api.ListCharacterBankAccounts(characterId, m_CustomerLookup, "OnAnswer");
+		m_CustomerLookup = new ELIFE_BankClerkCustomerLookup(this, characterId);
+		m_CustomerLookup.m_Callback = api.ListManagedBankAccounts(characterId, m_CustomerLookup, "OnAnswer");
 		GetGame().GetCallqueue().CallLater(Greet, GREETING_LOOKUP_TIMEOUT_MS);
 	}
 
@@ -417,7 +417,7 @@ class ELIFE_BankClerkComponent : ELIFE_NpcComponent
 			ELIFE_BankAccountListDto list = new ELIFE_BankAccountListDto();
 			list.ExpandFromArray(callback.GetData());
 
-			//! The read has no ownership check of its own.
+			//! Only the customer's own personal accounts count; the managed list also holds company accounts.
 			m_eCustomerAccounts = ELIFE_EClerkAccountStatus.NO_ACCOUNT;
 			foreach (ELIFE_BankAccountSummary account : list.items)
 			{
@@ -875,18 +875,21 @@ class ELIFE_BankClerkComponent : ELIFE_NpcComponent
 class ELIFE_BankClerkCustomerLookup
 {
 	protected ELIFE_BankClerkComponent m_Clerk;
+	//! Kept here: the managed-list answer doesn't name the character.
+	protected string m_sCharacterId;
 	ref ELIFE_BaseRestCallback m_Callback;
 
 	//------------------------------------------------------------------------------------------------
-	void ELIFE_BankClerkCustomerLookup(ELIFE_BankClerkComponent clerk)
+	void ELIFE_BankClerkCustomerLookup(ELIFE_BankClerkComponent clerk, string characterId)
 	{
 		m_Clerk = clerk;
+		m_sCharacterId = characterId;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnAnswer(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
+	void OnAnswer(ELIFE_EApiStatusCode status, JsonApiStruct data)
 	{
 		if (m_Clerk)
-			m_Clerk.OnCustomerAccounts(this, status, characterId);
+			m_Clerk.OnCustomerAccounts(this, status, m_sCharacterId);
 	}
 }

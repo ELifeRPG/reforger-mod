@@ -57,17 +57,21 @@ class ELIFE_ATMAccountChoice : JsonApiStruct
 	//! The Bridge's display text.
 	string balance;
 	string bankName;
+	//! Empty for a personal account.
+	string companyName;
 
 	//------------------------------------------------------------------------------------------------
-	void ELIFE_ATMAccountChoice(string accountNumber = "", string accountBalance = "", string accountBankName = "")
+	void ELIFE_ATMAccountChoice(string accountNumber = "", string accountBalance = "", string accountBankName = "", string accountCompanyName = "")
 	{
 		number = accountNumber;
 		balance = accountBalance;
 		bankName = accountBankName;
+		companyName = accountCompanyName;
 
 		RegV("number");
 		RegV("balance");
 		RegV("bankName");
+		RegV("companyName");
 	}
 }
 
@@ -192,6 +196,8 @@ class ELIFE_ATMComponent : ScriptComponent
 
 	protected IEntity m_Occupant;
 	protected string m_sOccupantCharacterId;
+	//! Whose accounts the running load asked for; the managed-list answer doesn't name the character.
+	protected string m_sLoadCharacterId;
 	protected int m_iLastRequestTick;
 	protected int m_iLastHeartbeatTick;
 	protected int m_iLastRefreshTick;
@@ -879,7 +885,8 @@ class ELIFE_ATMComponent : ScriptComponent
 
 		m_bLoadInFlight = true;
 		m_bLoadStale = false;
-		m_LoadCallback = api.ListCharacterBankAccounts(m_sOccupantCharacterId, this, "OnLoadAccounts");
+		m_sLoadCharacterId = m_sOccupantCharacterId;
+		m_LoadCallback = api.ListManagedBankAccounts(m_sLoadCharacterId, this, "OnLoadAccounts");
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -911,10 +918,12 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnLoadAccounts(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
+	void OnLoadAccounts(ELIFE_EApiStatusCode status, JsonApiStruct data)
 	{
 		if (DropStaleLoad())
 			return;
+
+		string characterId = m_sLoadCharacterId;
 
 		if (status != ELIFE_EApiStatusCode.SUCCESS || !m_LoadCallback || !IsArrayBody(m_LoadCallback.GetData()))
 		{
@@ -926,11 +935,11 @@ class ELIFE_ATMComponent : ScriptComponent
 		ELIFE_BankAccountListDto list = new ELIFE_BankAccountListDto();
 		list.ExpandFromArray(m_LoadCallback.GetData());
 
-		//! The read has no ownership check of its own.
+		//! The managed list holds the character's own personal accounts plus the company accounts they may manage.
 		m_LoadedAccounts = new ELIFE_BankAccountListDto();
 		foreach (ELIFE_BankAccountSummary account : list.items)
 		{
-			if (account && account.characterId == characterId && account.number != "" && !account.IsCompany())
+			if (account && account.number != "" && (account.IsCompany() || account.characterId == characterId))
 				m_LoadedAccounts.items.Insert(account.Copy());
 		}
 
@@ -970,7 +979,7 @@ class ELIFE_ATMComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Bystanders get stand-in numbers and balances, and no ids. Bank names are public.
+	//! Bystanders get stand-in numbers and balances, and no ids. Bank and company names are public.
 	protected void PublishAccounts(notnull ELIFE_BankAccountListDto ownAccounts, ELIFE_BankListDto banks)
 	{
 		m_aAccountNumbers.Clear();
@@ -986,8 +995,9 @@ class ELIFE_ATMComponent : ScriptComponent
 			if (bank)
 				bankName = bank.name;
 
-			real.items.Insert(new ELIFE_ATMAccountChoice(account.number, account.balanceStr, bankName));
-			redacted.items.Insert(new ELIFE_ATMAccountChoice(ELIFE_DataRedactor.RedactDigits(account.number), ELIFE_DataRedactor.RedactMoneyText(account.balanceStr), bankName));
+			string companyName = account.GetCompanyLabel();
+			real.items.Insert(new ELIFE_ATMAccountChoice(account.number, account.balanceStr, bankName, companyName));
+			redacted.items.Insert(new ELIFE_ATMAccountChoice(ELIFE_DataRedactor.RedactDigits(account.number), ELIFE_DataRedactor.RedactMoneyText(account.balanceStr), bankName, companyName));
 		}
 
 		real.Pack();

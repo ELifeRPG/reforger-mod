@@ -201,19 +201,42 @@ FrameWidgetClass {
                 }
                }
               }
-              TextWidgetClass "{63268D016726A016}" {
-               Name "FromValue"
+              VerticalLayoutWidgetClass "{BB9F7BE99FDFC349}" {
+               Name "FromValueStack"
                Slot LayoutSlot "{B4BAB5D4058B8531}" {
                 VerticalAlign 1
                 SizeMode Fill
                }
-               Color 0.012 0.016 0.03 1
-               Text ""
-               "Font Size" 30
-               "Min Font Size" 30
-               "Horizontal Alignment" Center
-               FontProperties FontProperties "{FE35B12CAA1875CB}" {
-                Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+               {
+                TextWidgetClass "{63268D016726A016}" {
+                 Name "FromValue"
+                 Slot LayoutSlot "{E6DB4817D2E81C16}" {
+                  HorizontalAlign 3
+                 }
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 30
+                 "Min Font Size" 30
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{FE35B12CAA1875CB}" {
+                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 }
+                }
+                TextWidgetClass "{32053984AB913A9F}" {
+                 Name "FromTag"
+                 Slot LayoutSlot "{52B0DA968A6C0F21}" {
+                  HorizontalAlign 3
+                 }
+                 "Is Visible" 0
+                 Color 0.012 0.016 0.03 1
+                 Text ""
+                 "Font Size" 18
+                 "Min Font Size" 18
+                 "Horizontal Alignment" Center
+                 FontProperties FontProperties "{639E0B981507AC1D}" {
+                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 }
+                }
                }
               }
               ButtonWidgetClass "{82A6135E368C19C5}" {

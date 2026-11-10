@@ -62,6 +62,16 @@ modded class ELIFE_BankAccountSummary
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The owning company's name for a company account, empty for a personal one.
+	string GetCompanyLabel()
+	{
+		if (!IsCompany())
+			return "";
+
+		return companyName;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The number as players see it.
 	string GetDisplayNumber()
 	{
@@ -78,6 +88,7 @@ modded class ELIFE_BankAccountSummary
 		copy.type = type;
 		copy.characterId = characterId;
 		copy.companyId = companyId;
+		copy.companyName = companyName;
 		copy.balanceStr = balanceStr;
 		copy.feeTermsStr = feeTermsStr;
 		return copy;
@@ -92,6 +103,8 @@ modded class ELIFE_BankAccountSummary
 		redacted.number = ELIFE_DataRedactor.RedactDigits(number);
 		redacted.type = type;
 		redacted.companyId = companyId;
+		//! Company names are public.
+		redacted.companyName = companyName;
 		redacted.balanceStr = ELIFE_DataRedactor.RedactMoneyText(balanceStr);
 		return redacted;
 	}

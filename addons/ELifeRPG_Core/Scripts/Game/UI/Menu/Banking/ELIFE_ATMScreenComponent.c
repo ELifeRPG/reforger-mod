@@ -1881,7 +1881,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			case ELIFE_EATMScreen.HOME:
 				PlaceStack(CONTENT_LEFT, BELOW_R1_TOP, CONFIRM_WIDTH, CONTENT_BOTTOM);
 				if (HasAccount())
-					ShowText(m_wAccountNumber, m_Statement.account.GetDisplayNumber());
+					ShowText(m_wAccountNumber, GetAccountHeading());
 
 				ShowText(m_wCaption, "#ELIFE-ATM_Balance");
 				ShowFigure(GetBalanceText(), Accent());
@@ -2100,7 +2100,19 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The number on the label, the bank and balance under it. Bystanders get stand-ins for number and balance.
+	//! A company account leads with the company, so nobody mistakes it for their own money.
+	protected string GetAccountHeading()
+	{
+		string number = m_Statement.account.GetDisplayNumber();
+		string companyName = m_Statement.account.GetCompanyLabel();
+		if (companyName == "")
+			return number;
+
+		return companyName + META_SEPARATOR + number;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The number on the label; company, bank and balance under it. Bystanders get stand-ins for number and balance.
 	protected void SetAccountLabels()
 	{
 		if (!m_Accounts)
@@ -2121,6 +2133,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			string detailText = OrUnknown(account.balance);
 			if (account.bankName != "")
 				detailText = account.bankName + META_SEPARATOR + detailText;
+
+			if (account.companyName != "")
+				detailText = account.companyName + META_SEPARATOR + detailText;
 
 			m_aAccountDetails[slot].SetText(detailText);
 			m_aAccountDetails[slot].SetVisible(true);

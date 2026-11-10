@@ -8,6 +8,10 @@ class ELIFE_ClerkAccount : JsonApiStruct
 	int balanceCents;
 	string bankName;
 	string feeTerms;
+	//! A company account the customer may manage. Transfers from or to it are never free.
+	bool company;
+	//! Empty for a personal account.
+	string companyName;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_ClerkAccount()
@@ -17,6 +21,8 @@ class ELIFE_ClerkAccount : JsonApiStruct
 		RegV("balanceCents");
 		RegV("bankName");
 		RegV("feeTerms");
+		RegV("company");
+		RegV("companyName");
 	}
 }
 
@@ -184,7 +190,7 @@ class ELIFE_BankClerkTransfers : Managed
 		}
 
 		m_bRequestInFlight = true;
-		m_LoadCallback = api.ListCharacterBankAccounts(m_sCharacterId, this, "OnLoadAccounts");
+		m_LoadCallback = api.ListManagedBankAccounts(m_sCharacterId, this, "OnLoadAccounts");
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -206,7 +212,7 @@ class ELIFE_BankClerkTransfers : Managed
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnLoadAccounts(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
+	void OnLoadAccounts(ELIFE_EApiStatusCode status, JsonApiStruct data)
 	{
 		if (!TakeAnswer())
 			return;
@@ -221,11 +227,11 @@ class ELIFE_BankClerkTransfers : Managed
 		ELIFE_BankAccountListDto list = new ELIFE_BankAccountListDto();
 		list.ExpandFromArray(m_LoadCallback.GetData());
 
-		//! The read has no ownership check of its own.
+		//! The customer's own personal accounts plus the company accounts they may manage; the backend authorizes each booking.
 		m_aAccounts.Clear();
 		foreach (ELIFE_BankAccountSummary account : list.items)
 		{
-			if (account && account.characterId == characterId && account.number != "" && !account.IsCompany())
+			if (account && account.number != "" && (account.IsCompany() || account.characterId == m_sCharacterId))
 				m_aAccounts.Insert(account.Copy());
 		}
 
@@ -344,6 +350,8 @@ class ELIFE_BankClerkTransfers : Managed
 				choice.balance = account.balanceStr;
 				choice.balanceCents = ELIFE_PhoneBankingService.MoneyTextToCents(account.balanceStr);
 				choice.feeTerms = account.feeTermsStr;
+				choice.company = account.IsCompany();
+				choice.companyName = account.GetCompanyLabel();
 
 				ELIFE_BankSummary bank = FindBank(account.bankId);
 				if (bank)
@@ -728,7 +736,7 @@ class ELIFE_BankClerkTransfers : Managed
 	//! Mirrors the backend's rule (#188): both personal accounts of this character at one bank.
 	protected bool IsFreeTransfer(ELIFE_BankAccountSummary from, notnull ELIFE_BankAccountSummary target)
 	{
-		return from && target.characterId == m_sCharacterId && !target.IsCompany() && target.bankId == from.bankId;
+		return from && !from.IsCompany() && from.characterId == m_sCharacterId && !target.IsCompany() && target.characterId == m_sCharacterId && target.bankId == from.bankId;
 	}
 
 	//------------------------------------------------------------------------------------------------

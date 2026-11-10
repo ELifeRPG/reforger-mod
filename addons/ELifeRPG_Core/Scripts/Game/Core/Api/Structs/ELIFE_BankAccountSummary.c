@@ -6,6 +6,7 @@ class ELIFE_BankAccountSummary : JsonApiStruct
 	string type;
 	string characterId;
 	string companyId;
+	string companyName;
 	string balanceStr;
 	string feeTermsStr;
 
@@ -16,6 +17,7 @@ class ELIFE_BankAccountSummary : JsonApiStruct
 		RegV("type");
 		RegV("characterId");
 		RegV("companyId");
+		RegV("companyName");
 		RegV("balanceStr");
 		RegV("feeTermsStr");
 	}

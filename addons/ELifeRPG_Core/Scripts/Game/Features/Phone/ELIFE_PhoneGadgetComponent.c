@@ -2231,7 +2231,7 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 		{
 			//! The registered owner's accounts - like every other app here, it shows the phone's data, not the holder's.
 			m_mPendingFetches.Set(key, true);
-			m_mFetchCallbacks.Set(key, api.ListCharacterBankAccounts(m_sServerOwnerCharacterId, this, "OnBankAccountsFetched"));
+			m_mFetchCallbacks.Set(key, api.ListManagedBankAccounts(m_sServerOwnerCharacterId, this, "OnBankAccountsFetched"));
 		}
 		else if (key.StartsWith(DATA_BANK_STATEMENT_PREFIX) && m_sServerOwnerCharacterId != "")
 		{
@@ -2284,7 +2284,7 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	void OnBankAccountsFetched(ELIFE_EApiStatusCode status, JsonApiStruct data, string characterId)
+	void OnBankAccountsFetched(ELIFE_EApiStatusCode status, JsonApiStruct data)
 	{
 		//! Statements are keyed by position in this list, which a new account can shift.
 		array<string> statementKeys = {};

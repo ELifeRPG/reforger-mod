@@ -34,6 +34,20 @@ modded class ELIFE_Api
 		return cbx;
 	}
 
+	ELIFE_BaseRestCallback ListManagedBankAccounts(string managedBy, Managed instance = null, string functionName = "")
+	{
+		ELIFE_BaseRestCallback cbx = new ELIFE_BaseRestCallback;
+		cbx.SetCallback(instance, functionName);
+		string requestRoute = "bank-accounts";
+		string requestQuery = "";
+		if (managedBy != "")
+			requestQuery += string.Format("&managedBy=%1", managedBy);
+		if (requestQuery != "")
+			requestRoute += "?" + requestQuery.Substring(1, requestQuery.Length() - 1);
+		GetElifeApi().GET(cbx, requestRoute);
+		return cbx;
+	}
+
 	ELIFE_BankAccountSummaryCallback GetBankAccount(string number, Managed instance = null, string functionName = "")
 	{
 		ELIFE_BankAccountSummaryCallback cbx = new ELIFE_BankAccountSummaryCallback;
