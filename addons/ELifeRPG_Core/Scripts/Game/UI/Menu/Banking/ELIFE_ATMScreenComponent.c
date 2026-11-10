@@ -138,6 +138,10 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	//! A deposit's count runs as long as the bill counter (ELIFE_ATM_Counter.wav, 3.1 s with its fade-out).
 	protected const int COUNT_MIN_MS = 3000;
 	protected const float PAID_HINT_SECONDS = 5;
+	//! The zoom hint shows on the first few sessions of a game, until the player has zoomed in once.
+	protected const int INSPECT_HINT_MAX_SHOWS = 3;
+	protected const float INSPECT_HINT_SECONDS = 5;
+	protected static int s_iInspectHintsShown;
 	//! Occupant only: the confirm page's receipt choice, off again after each booking or cancel.
 	protected bool m_bWantReceipt;
 
@@ -287,6 +291,17 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_Interact.SetActive(true);
 		ELIFE_WorldScreenMenu.Open(m_Interact);
 		Render();
+		ShowInspectHint();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ShowInspectHint()
+	{
+		if (!m_Interact.CanInspect() || ELIFE_WorldScreenInteractComponent.HasInspected() || s_iInspectHintsShown >= INSPECT_HINT_MAX_SHOWS)
+			return;
+
+		s_iInspectHintsShown++;
+		SCR_HintManagerComponent.ShowCustomHint("#ELIFE-Hint_ATM_Inspect", "#ELIFE-ATM_Name", INSPECT_HINT_SECONDS);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1870,7 +1885,6 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 				ShowText(m_wCaption, "#ELIFE-ATM_Balance");
 				ShowFigure(GetBalanceText(), Accent());
-				RenderInspectHint();
 				return;
 			case ELIFE_EATMScreen.TRANSACTIONS:
 				RenderTransactions();
@@ -1922,21 +1936,6 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				RenderResult();
 				return;
 		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! The key does nothing without the menu, so bystanders aren't told about it.
-	protected void RenderInspectHint()
-	{
-		if (!m_bSessionOpen || !m_Interact || !m_Interact.CanInspect() || ELIFE_WorldScreenInteractComponent.HasInspected())
-			return;
-
-		if (IsPadMode())
-			ShowText(m_wBody, "#ELIFE-ATM_Inspect_Hint_Pad");
-		else
-			ShowText(m_wBody, "#ELIFE-ATM_Inspect_Hint");
-
-		m_wBody.SetColor(ELIFE_PhoneStyle.TextSecondary());
 	}
 
 	//------------------------------------------------------------------------------------------------

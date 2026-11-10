@@ -181,6 +181,8 @@ GenericEntity : "{E1E7ED9AD721B9F8}Prefabs/Props/Commercial/ATM_01.et" {
       Offset 0.09314 1.32275 0.104
      }
      Radius 0.4
+     Omnidirectional 0
+     VisibilityAngle 45
     }
    }
    additionalActions {

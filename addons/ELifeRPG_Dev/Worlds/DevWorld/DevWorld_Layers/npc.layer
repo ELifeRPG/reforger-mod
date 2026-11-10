@@ -1,0 +1,10 @@
+$grp ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankClerkSpot.et" {
+ BankClerkSpot {
+  coords 261 0 264
+  angles 0 180 0
+ }
+ BankClerkSpot2 {
+  coords 264.433 0 264.037
+  angles 0 180 0
+ }
+}

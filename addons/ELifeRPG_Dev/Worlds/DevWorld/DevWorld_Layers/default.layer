@@ -96,16 +96,6 @@ GenericEntity ATM_Bank : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank
 SCR_SpawnPoint PlayerSpawnPoint : "{6D3068348B1C867E}Prefabs/Spawning/SpawnPoint_LIFE.et" {
  coords 256 0 256
 }
-$grp ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankClerkSpot.et" {
- BankClerkSpot {
-  coords 261 0 264
-  angles 0 180 0
- }
- BankClerkSpot2 {
-  coords 264.433 0 264.037
-  angles 0 180 0
- }
-}
 Tree Tree_Plum : "{CEFEBF266E7040A9}Prefabs/Vegetation/Tree/ResourceTree_Plum.et" {
  coords 261 0 248
 }

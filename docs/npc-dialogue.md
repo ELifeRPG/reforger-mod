@@ -56,17 +56,23 @@ as their index in the voice table, so the server and the clients load the same f
 
 1. Put everything for it in its package: prefab (inheriting a character, with your `ELIFE_NpcComponent`
    subclass and `ELIFE_NpcTalkAction`), spot prefab, voice table, dialogue tree, string table (registered in the
-   package's `.gproj`), sounds and layouts.
+   package's `.gproj`), sounds and layouts. Restart Workbench after adding or renaming resources: until then
+   prefabs and layouts can't resolve the new GUIDs, even though scripts still compile.
 2. Set on the component: `m_sVoiceTable`, `m_sDialogueConfig`, `m_sDisplayName`.
-3. For an NPC that only talks, that is all: the default controller opens the tree, and `ELIFE_NpcDialogueLine`
+   Sounds: put the voice `.acp` files on the prefab's `SCR_CommunicationSoundComponent`, next to the vanilla
+   RadioProtocol ones (the lips only move for sounds played there). Put the SFX `.acp` files on its
+   `CharacterSoundComponent`.
+3. In the world, place the spot prefab, never the character. The world doesn't replicate placed characters, so
+   clients wouldn't see a placed one.
+4. For an NPC that only talks, that is all: the default controller opens the tree, and `ELIFE_NpcDialogueLine`
    asks for askable lines by name.
-4. For services, subclass `ELIFE_NpcComponent` and override what you need:
+5. For services, subclass `ELIFE_NpcComponent` and override what you need:
     - Server: `IsReady`/`Prepare` (load something before granting, then `AnswerWaiting`), `CheckCustomer`,
       `OnVisitStart`/`OnVisitEnd`, `OnRequest` (check with `CheckRequest`), `GetReasonLineName`. Answer with `Send`.
     - Client: `OnGranted` (open your own controller), `OnMessage`, `GetRefusalText`.
-5. Subclass `ELIFE_NpcDialogueController` for your actions, details and conditions. They reach it through
+6. Subclass `ELIFE_NpcDialogueController` for your actions, details and conditions. They reach it through
    `YourController.Cast(menu.GetController())` and send requests with `Request(kind, a, b, text)`.
-6. A form on top of the conversation: subclass `ELIFE_FormContent`, open it with `ELIFE_FormMenu.Open`, call
+7. A form on top of the conversation: subclass `ELIFE_FormContent`, open it with `ELIFE_FormMenu.Open`, call
    `menu.Suspend()` before and `menu.Resume()` plus `menu.ShowNode(...)` when it closes. While waiting for a server
    answer, use `menu.SetWaiting(true, notice)`, which greys out the replies.
 

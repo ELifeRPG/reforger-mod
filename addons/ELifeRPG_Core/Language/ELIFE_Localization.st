@@ -2218,14 +2218,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{E58B26D70F1C9A34}" {
-   Id "ELIFE-ATM_Inspect_Hint"
-   Target_en_us "Hold R to zoom in or out"
-   Target_de_de "Halte R zum Heran- oder Herauszoomen"
-   Modified 1793600000
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{2B1311F2F235A1A3}" {
    Id "ELIFE-ATM_Action_Deposit"
    Target_en_us "Deposit"
@@ -2350,14 +2342,6 @@ StringTable {
    Id "ELIFE-ATM_Reason_NotOffered"
    Target_en_us "This machine doesn't take deposits. Use one in a bank branch."
    Target_de_de "Dieser Automat nimmt keine Einzahlungen an. Nutze einen in einer Bankfiliale."
-   Modified 1794068452
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{3326FBBA4C2A0187}" {
-   Id "ELIFE-ATM_Inspect_Hint_Pad"
-   Target_en_us "Hold Y to zoom in or out"
-   Target_de_de "Halte Y zum Heran- oder Herauszoomen"
    Modified 1794068452
    Author "Robin"
    LastChanged "Robin"
@@ -2551,6 +2535,22 @@ StringTable {
    Target_en_us "Not available right now. Please try again later."
    Target_de_de "Gerade nicht verfügbar. Bitte versuchen Sie es später erneut."
    Modified 1794260679
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FD9E1A1F1E9DAAF3}" {
+   Id "ELIFE-ATM_Name"
+   Target_en_us "ATM"
+   Target_de_de "Geldautomat"
+   Modified 1794339514
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0B0F1A83651E5515}" {
+   Id "ELIFE-Hint_ATM_Inspect"
+   Target_en_us "Hold <action name='ELIFE_KeyInspect'/> to zoom in on the screen."
+   Target_de_de "Halte <action name='ELIFE_KeyInspect'/> gedrückt, um den Bildschirm heranzuzoomen."
+   Modified 1794339514
    Author "Robin"
    LastChanged "Robin"
   }
