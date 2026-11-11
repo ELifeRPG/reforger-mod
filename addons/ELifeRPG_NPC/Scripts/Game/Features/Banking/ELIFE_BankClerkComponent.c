@@ -13,6 +13,8 @@ enum ELIFE_EClerkReason
 	OUT_OF_RANGE,
 	//! The backend or the bank list can't be reached, or the clerk's bank code matches no bank.
 	UNAVAILABLE,
+	//! Outside his opening hours.
+	CLOSED,
 	//! One new account per visit, so the button can't mass-produce them.
 	ALREADY_OPENED,
 	//! The backend refused; nothing was booked.
@@ -294,6 +296,8 @@ class ELIFE_BankClerkComponent : ELIFE_NpcComponent
 			return "#ELIFE-Clerk_Busy";
 		if (reason == ELIFE_EClerkReason.OUT_OF_RANGE)
 			return "#ELIFE-Clerk_OutOfRange";
+		if (reason == ELIFE_EClerkReason.CLOSED)
+			return super.GetRefusalText(reason);
 
 		return "#ELIFE-Clerk_Unavailable";
 	}

@@ -5,6 +5,9 @@ class ELIFE_Seats
 {
 	static const string TAG = "ELIFE_Seat";
 
+	//! Right at the seat point the pose briefly lifts NPCs onto the prop.
+	protected static const float SIT_FORWARD = 0.07;
+
 	//------------------------------------------------------------------------------------------------
 	//! Server. Free seats within range of a position, nearest first.
 	static void FindFree(vector position, float range, notnull array<SCR_AISmartActionSentinelComponent> outSeats)
@@ -40,9 +43,8 @@ class ELIFE_Seats
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server. Works best from about 1 m in front of the seat, facing it. forward shifts the sitting point away from
-	//! the prop; right at the seat point the pose briefly lifts NPCs onto it.
-	static bool SitDown(notnull IEntity character, notnull SCR_AISmartActionSentinelComponent seat, float forward = 0)
+	//! Server. Works best from about 1 m in front of the seat, facing it.
+	static bool SitDown(notnull IEntity character, notnull SCR_AISmartActionSentinelComponent seat)
 	{
 		SCR_CharacterControllerComponent controller = GetController(character);
 		if (!controller || !IsFree(seat) || !controller.CanPlayLoiterAnimation(seat.GetLoiterAnimation()))
@@ -50,7 +52,6 @@ class ELIFE_Seats
 
 		vector transform[4];
 		GetSitTransform(seat, transform);
-		transform[3] = transform[3] - transform[2] * forward;
 		//! The pose belongs to the seat point, not the prop: with the prop, alignment to the seat didn't happen.
 		controller.StartLoitering(seat.GetOwner(), seat.GetLoiterAnimation(), false, true, true, transform);
 
@@ -112,7 +113,9 @@ class ELIFE_Seats
 		vector position = seatTransform[3] + seat.GetActionOffset().Multiply3(seatTransform);
 		vector look = seatTransform[3] + seat.GetLookPosition().Multiply3(seatTransform);
 		Math3D.DirectionAndUpMatrix(look - position, seatTransform[1], transform);
-		transform[3] = position;
+
+		//! The pose faces away from its target direction, so the sitter looks along -transform[2].
+		transform[3] = position - transform[2] * SIT_FORWARD;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -122,7 +125,6 @@ class ELIFE_Seats
 		vector transform[4];
 		GetSitTransform(seat, transform);
 
-		//! The pose faces away from its target direction, so the sitter looks along -transform[2].
 		return transform[3] - transform[2] * distance;
 	}
 

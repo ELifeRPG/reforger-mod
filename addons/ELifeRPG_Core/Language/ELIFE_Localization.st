@@ -2578,5 +2578,21 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{7C729F65DD8D13A3}" {
+   Id "ELIFE-Npc_Closed"
+   Target_en_us "Closed. Opens at %1."
+   Target_de_de "Geschlossen. Öffnet um %1."
+   Modified 1794410859
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E04D9DA757666489}" {
+   Id "ELIFE-Npc_TalkClosed"
+   Target_en_us "%1 (closed · opens %2)"
+   Target_de_de "%1 (geschlossen · öffnet %2)"
+   Modified 1794410859
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

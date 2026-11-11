@@ -23,6 +23,22 @@ class ELIFE_NpcTalkAction : ScriptedUserAction
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Closed: his name with when he opens, so players see it before asking.
+	override bool GetActionNameScript(out string outName)
+	{
+		if (!m_Npc || !m_Npc.IsClosed())
+			return false;
+
+		string name;
+		UIInfo info = GetUIInfo();
+		if (info)
+			name = WidgetManager.Translate(info.GetName());
+
+		outName = WidgetManager.Translate("#ELIFE-Npc_TalkClosed", name, m_Npc.GetOpensAtText());
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override bool CanBeShownScript(IEntity user)
 	{
 		return m_Npc && m_Npc.IsUsableBy(user);

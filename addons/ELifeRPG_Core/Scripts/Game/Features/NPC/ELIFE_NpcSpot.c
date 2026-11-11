@@ -32,6 +32,9 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 	[Attribute(desc: "Optional: vary look and voice by position. Leave empty for an NPC with a fixed look and voice.")]
 	protected ref ELIFE_NpcSpotVariation m_Variation;
 
+	[Attribute(desc: "Optional: opening hours for this place, instead of the NPC prefab's.")]
+	protected ref ELIFE_NpcSchedule m_ScheduleOverride;
+
 	protected bool m_bStandInHidden;
 
 	//------------------------------------------------------------------------------------------------
@@ -93,6 +96,7 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 
 		ApplyLook(newEnt);
 		npc.SetVoice(GetVoiceIndex(npc.GetVoiceCount()));
+		npc.SetSchedule(m_ScheduleOverride);
 		OnNpcSpawned(npc);
 	}
 

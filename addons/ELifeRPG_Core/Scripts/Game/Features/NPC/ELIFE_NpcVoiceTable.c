@@ -49,6 +49,9 @@ class ELIFE_NpcVoiceTable
 	[Attribute("UNAVAILABLE", UIWidgets.EditBox, "Said when he can't serve at all")]
 	string m_sUnavailableLine;
 
+	[Attribute("", UIWidgets.EditBox, "Said to someone who asks while he is closed (ELIFE_NpcSchedule); empty is none")]
+	string m_sClosedLine;
+
 	[Attribute()]
 	ref array<ref ELIFE_NpcVoiceLine> m_aLines;
 

@@ -22,6 +22,10 @@ SCR_ChimeraCharacter : "{626874113CAE4387}Prefabs/Characters/Factions/CIV/Busine
    m_sVoiceTable "{E277C14920362724}Configs/Banking/ELIFE_ClerkVoices.conf"
    m_sDialogueConfig "{570E8AA28E1B73D5}Configs/Banking/ELIFE_ClerkDialogue.conf"
    m_sDisplayName "#ELIFE-Clerk_Title"
+   m_Schedule ELIFE_NpcSchedule "{E7B627135723AFA1}" {
+    m_iOpenHour 8
+    m_iCloseHour 20
+   }
   }
   ActionsManagerComponent "{520EA1D2F659CE02}" {
    additionalActions {

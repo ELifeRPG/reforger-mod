@@ -12,7 +12,9 @@ enum ELIFE_ENpcReason
 	BUSY,
 	OUT_OF_RANGE,
 	//! He can't serve at all right now (backend down, nothing set up).
-	UNAVAILABLE
+	UNAVAILABLE,
+	//! Outside his opening hours (ELIFE_NpcSchedule), or not back at his spot yet.
+	CLOSED
 }
 
 //------------------------------------------------------------------------------------------------
@@ -44,6 +46,8 @@ class ELIFE_NpcComponent : ScriptComponent
 	protected static const int GESTURE_DELAY_MS = 300;
 	//! Lines the customer asks for are at least this far apart; one asked sooner waits, and a newer one replaces it.
 	protected static const int ASKED_LINE_COOLDOWN_MS = 500;
+	//! How often the server compares the in-game clock with his opening hours.
+	protected static const int SCHEDULE_CHECK_MS = 5000;
 
 	[Attribute("2.5", UIWidgets.Slider, "How far from him a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
@@ -56,6 +60,22 @@ class ELIFE_NpcComponent : ScriptComponent
 
 	[Attribute("", UIWidgets.EditBox, "His name above subtitles and on hints")]
 	protected string m_sDisplayName;
+
+	[Attribute(desc: "Optional opening hours. Without them he is always open; with them he leaves his spot when closed (ELIFE_NpcRoutine). A spot can override them.")]
+	protected ref ELIFE_NpcSchedule m_Schedule;
+
+	[RplProp()]
+	protected bool m_bClosed;
+	//! In-game minute of the day he opens next, for the talk action and the refusal hint; -1 is unknown.
+	[RplProp()]
+	protected int m_iOpensAtMinute = -1;
+
+	//! Server-side: off duty he walks around with AI; created when he first leaves his spot.
+	protected ref ELIFE_NpcRoutine m_Routine;
+	//! Server-side: where the spot put him.
+	protected vector m_vHomePosition;
+	//! Server-side: he couldn't leave his spot (no AI world), so he stays there while closed.
+	protected bool m_bStaysAtSpot;
 
 	//! Client-side: the current line, cut off by the next one.
 	protected AudioHandle m_hVoice = AudioHandle.Invalid;
@@ -112,7 +132,9 @@ class ELIFE_NpcComponent : ScriptComponent
 		{
 			//! Before anything can turn him: the spot spawns him facing his desk.
 			m_fHomeYaw = owner.GetYawPitchRoll()[0];
+			m_vHomePosition = owner.GetOrigin();
 			GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+			GetGame().GetCallqueue().CallLater(CheckSchedule, SCHEDULE_CHECK_MS, true);
 		}
 	}
 
@@ -187,6 +209,8 @@ class ELIFE_NpcComponent : ScriptComponent
 			return "#ELIFE-Npc_Busy";
 		if (reason == ELIFE_ENpcReason.OUT_OF_RANGE)
 			return "#ELIFE-Npc_OutOfRange";
+		if (reason == ELIFE_ENpcReason.CLOSED)
+			return WidgetManager.Translate("#ELIFE-Npc_Closed", GetOpensAtText());
 
 		return "#ELIFE-Npc_Unavailable";
 	}
@@ -204,6 +228,8 @@ class ELIFE_NpcComponent : ScriptComponent
 			return table.m_sBusyLine;
 		if (reason == ELIFE_ENpcReason.UNAVAILABLE)
 			return table.m_sUnavailableLine;
+		if (reason == ELIFE_ENpcReason.CLOSED)
+			return table.m_sClosedLine;
 
 		return "";
 	}
@@ -226,6 +252,12 @@ class ELIFE_NpcComponent : ScriptComponent
 		{
 			Print(string.Format("%1 | open refused, player %2 is dead or out of range", ClassName(), playerId), LogLevel.WARNING);
 			Refuse(link, ELIFE_ENpcReason.OUT_OF_RANGE);
+			return;
+		}
+
+		if (m_iCustomerPlayerId == 0 && !IsServing())
+		{
+			Refuse(link, ELIFE_ENpcReason.CLOSED);
 			return;
 		}
 
@@ -375,6 +407,10 @@ class ELIFE_NpcComponent : ScriptComponent
 		m_bVisitStarted = false;
 		OnVisitEnd();
 		Replication.BumpMe();
+
+		//! He closed during the visit; now he can leave.
+		if (m_bClosed)
+			GetGame().GetCallqueue().CallLater(CheckSchedule, IDLE_START_DELAY_MS);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -494,6 +530,133 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	// Opening hours
+	//------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from the spot, before the first schedule check.
+	void SetSchedule(ELIFE_NpcSchedule schedule)
+	{
+		if (schedule)
+			m_Schedule = schedule;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsClosed()
+	{
+		return m_bClosed;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! "08:00", or empty if unknown.
+	string GetOpensAtText()
+	{
+		return ELIFE_NpcSchedule.FormatMinute(m_iOpensAtMinute);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Open and at his spot.
+	protected bool IsServing()
+	{
+		return !m_bClosed && IsAtSpot();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Not out on his off-duty routine.
+	protected bool IsAtSpot()
+	{
+		return !m_Routine || m_Routine.IsOnDuty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. A visit that started before closing runs to its end, then he goes off duty; at opening he walks
+	//! back and opens once he is at his spot.
+	protected void CheckSchedule()
+	{
+		if (!m_Schedule)
+			return;
+
+		int minute = ELIFE_NpcSchedule.GetCurrentMinute();
+		if (minute < 0)
+			return;
+
+		if (m_Schedule.IsOpenAt(minute))
+		{
+			if (m_Routine && !m_Routine.IsOnDuty())
+			{
+				m_Routine.ReturnToDuty();
+				return;
+			}
+
+			SetClosed(false);
+			return;
+		}
+
+		SetClosed(true);
+
+		if (m_iCustomerPlayerId == 0 && IsAtSpot() && !m_bStaysAtSpot)
+			GoOffDuty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void SetClosed(bool closed)
+	{
+		int opensAt = -1;
+		if (m_Schedule)
+			opensAt = m_Schedule.GetOpenMinute();
+
+		if (m_bClosed == closed && m_iOpensAtMinute == opensAt)
+			return;
+
+		m_bClosed = closed;
+		m_iOpensAtMinute = opensAt;
+		Replication.BumpMe();
+		if (m_bClosed)
+			Print(string.Format("%1 | closed until %2", ClassName(), GetOpensAtText()), LogLevel.NORMAL);
+		else
+			Print(string.Format("%1 | open", ClassName()), LogLevel.NORMAL);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void GoOffDuty()
+	{
+		//! A turn back home after the last visit would fight the AI walk.
+		GetGame().GetCallqueue().Remove(TurnHome);
+		GetGame().GetCallqueue().Remove(TurnHomeStep);
+		GetGame().GetCallqueue().Remove(UpdateAttention);
+		StopIdle();
+
+		//! An idle that is still starting ignores the stop; the next schedule check tries again.
+		SCR_CharacterControllerComponent controller = GetController();
+		if (m_bIdleExiting || (controller && controller.IsLoitering()))
+			return;
+
+		if (!m_Routine)
+			m_Routine = new ELIFE_NpcRoutine(this, m_vHomePosition);
+
+		if (m_Routine.GoOffDuty())
+			return;
+
+		m_bStaysAtSpot = true;
+		GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override void OnDelete(IEntity owner)
+	{
+		if (m_Routine)
+			m_Routine.Dispose();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The routine brought him back to his spot; he faces his desk and opens if it is time.
+	void OnBackOnDuty()
+	{
+		TurnHome();
+		CheckSchedule();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	// Idle
 	//------------------------------------------------------------------------------------------------
 
@@ -509,7 +672,7 @@ class ELIFE_NpcComponent : ScriptComponent
 		}
 
 		SCR_CharacterControllerComponent controller = GetController();
-		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering())
+		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering() || !IsAtSpot())
 			return;
 
 		if (!controller.CanPlayLoiterAnimation(ELoiteringType.LOITERING))
@@ -1028,6 +1191,7 @@ class ELIFE_NpcComponent : ScriptComponent
 			GetGame().GetCallqueue().Remove(TurnHomeStep);
 			GetGame().GetCallqueue().Remove(PlayGesture);
 			GetGame().GetCallqueue().Remove(SayPendingAskedLine);
+			GetGame().GetCallqueue().Remove(CheckSchedule);
 		}
 	}
 }
