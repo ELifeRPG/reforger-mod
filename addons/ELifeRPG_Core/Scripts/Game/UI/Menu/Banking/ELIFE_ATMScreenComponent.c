@@ -131,7 +131,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected const int HEARTBEAT_INTERVAL_MS = 5000;
 	//! How long an outcome stays up once there's no session left to dismiss it with.
 	protected const int RESULT_LINGER_MS = 15000;
-	//! In Sounds/ATM/ELIFE_ATM_Sfx.acp, played from the machine: a key press, and the bill counter while it counts cash,
+	//! Sound events the ATM prop must provide, played from the machine: a key press, and the bill counter while it counts cash,
 	//! paid out for a withdrawal, taken in for a deposit.
 	protected const string KEY_SOUND = "SOUND_ELIFE_ATM_BEEP";
 	protected const string COUNTER_SOUND = "SOUND_ELIFE_ATM_COUNTER";
