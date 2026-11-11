@@ -1,0 +1,63 @@
+GenericEntity : "{5BAA975FE04E94EF}Prefabs/Props/Civilian/BenchStreet/StreetBench_01/BenchStreet_01_green.et" {
+ ID "F201314407645098"
+ components {
+  ELIFE_SeatPropComponent "{A2DE33E24ED0B0F2}" {
+  }
+  ActionsManagerComponent "{0ED730031B7C21C1}" {
+   ActionContexts {
+    UserActionContext "{FD19A0205BF809A1}" {
+     ContextName "seat_left"
+     Position PointInfo "{394AAD2C21ED6645}" {
+      Offset -0.4 0.5 0.15
+     }
+     Radius 0.4
+    }
+    UserActionContext "{042E325BAC2CDBFB}" {
+     ContextName "seat_right"
+     Position PointInfo "{E5B1F714C739CC59}" {
+      Offset 0.4 0.5 0.15
+     }
+     Radius 0.4
+    }
+   }
+   additionalActions {
+    ELIFE_SitUserAction "{990E8691DF87B0CF}" {
+     ParentContextList {
+      "seat_left"
+     }
+     m_iSmartActionId 0
+    }
+    ELIFE_SitUserAction "{A5B0960CA2504F20}" {
+     ParentContextList {
+      "seat_right"
+     }
+     m_iSmartActionId 1
+    }
+   }
+  }
+ }
+ {
+  GenericEntity Seat_Left : "{B4DE49B7D6E5A9A5}Prefabs/Props/Seating/ELIFE_SeatPoint.et" {
+   ID "777FD632A3736FA5"
+   components {
+    SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+     Tags {
+      "ELIFE_Seat" "ELIFE_Seat_0"
+     }
+    }
+   }
+   coords -0.4 0 0.65
+  }
+  GenericEntity Seat_Right : "{B4DE49B7D6E5A9A5}Prefabs/Props/Seating/ELIFE_SeatPoint.et" {
+   ID "6D8DC5DB9502CE2E"
+   components {
+    SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+     Tags {
+      "ELIFE_Seat" "ELIFE_Seat_1"
+     }
+    }
+   }
+   coords 0.4 0 0.65
+  }
+ }
+}

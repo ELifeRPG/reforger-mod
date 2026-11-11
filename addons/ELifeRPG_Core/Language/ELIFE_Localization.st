@@ -2554,5 +2554,29 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{6A11AFACF725E667}" {
+   Id "ELIFE-Seat_Sit"
+   Target_en_us "Sit down"
+   Target_de_de "Hinsetzen"
+   Modified 1794350328
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B217C77AC80CF67D}" {
+   Id "ELIFE-Seat_StandUp"
+   Target_en_us "Stand up"
+   Target_de_de "Aufstehen"
+   Modified 1794350328
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{234310FDC31CC8A8}" {
+   Id "ELIFE-Seat_Taken"
+   Target_en_us "Seat taken"
+   Target_de_de "Platz besetzt"
+   Modified 1794352389
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

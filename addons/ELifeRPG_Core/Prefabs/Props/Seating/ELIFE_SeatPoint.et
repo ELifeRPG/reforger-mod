@@ -1,0 +1,17 @@
+GenericEntity {
+ ID "B931324180F31B4D"
+ components {
+  SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+   AIBehaviorTree "{684D91360A81CF19}AI/BehaviorTrees/SmartActions/SA_LoiterPost.bt"
+   Tags {
+    "ELIFE_Seat"
+   }
+   m_vLookPosition 0 0 -1
+   m_eLoiterAnimation CUSTOM
+  }
+  Hierarchy "{53477061B045B48A}" {
+  }
+  RplComponent "{47E79B8695AC30DB}" {
+  }
+ }
+}

@@ -8,6 +8,19 @@ GenericWorldEntity world {
 GenericTerrainEntity DevTerrain {
  coords 0 0 0
 }
+SCR_AIWorld AIWorld : "{E0A05C76552E7F58}Prefabs/AI/SCR_AIWorld.et" {
+ components {
+  NavmeshWorldComponent "{5584F30E67F617AD}" {
+   NavmeshSettings NavmeshWorld "{50FC63BEBE3973C5}" {
+    NavmeshFilesConfig BaseNavmeshFilesConfig "{9D316B8DAFC4C334}" {
+     NavmeshFile "{4531A9BF3FB0EA41}Worlds/DevWorld/DevWorld_Soldiers.nmn"
+    }
+    UseNavmeshStreaming 0
+   }
+  }
+ }
+ coords 256 0 256
+}
 SCR_CameraManager CameraManager {
  coords 0 0 0
 }
