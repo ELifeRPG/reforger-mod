@@ -212,7 +212,7 @@ AudioClass {
   }
   SoundClass "434185" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 434185
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_FORM"
+   name "SOUND_ELIFE_CLERK_PUCK_CLOSED"
    version 5
    tl 792.27 2729.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -232,7 +232,7 @@ AudioClass {
   }
   SoundClass "438281" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 438281
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_FORM_2"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_FORM"
    version 5
    tl 792.27 3129.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -252,7 +252,7 @@ AudioClass {
   }
   SoundClass "442377" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 442377
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_PROCESSING"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_FORM_2"
    version 5
    tl 792.27 3529.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -272,7 +272,7 @@ AudioClass {
   }
   SoundClass "446473" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 446473
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_PROCESSING_2"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_PROCESSING"
    version 5
    tl 792.27 3929.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -292,7 +292,7 @@ AudioClass {
   }
   SoundClass "450569" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 450569
-   name "SOUND_ELIFE_CLERK_PUCK_CHECK_SLIP"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_PROCESSING_2"
    version 5
    tl 792.27 4329.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -312,7 +312,7 @@ AudioClass {
   }
   SoundClass "454665" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 454665
-   name "SOUND_ELIFE_CLERK_PUCK_NOT_ENOUGH_MONEY"
+   name "SOUND_ELIFE_CLERK_PUCK_CHECK_SLIP"
    version 5
    tl 792.27 4729.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -332,7 +332,7 @@ AudioClass {
   }
   SoundClass "458761" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 458761
-   name "SOUND_ELIFE_CLERK_PUCK_TARGET_NOT_FOUND"
+   name "SOUND_ELIFE_CLERK_PUCK_NOT_ENOUGH_MONEY"
    version 5
    tl 792.27 5129.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -352,7 +352,7 @@ AudioClass {
   }
   SoundClass "462857" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 462857
-   name "SOUND_ELIFE_CLERK_PUCK_ACCOUNT_BUSY"
+   name "SOUND_ELIFE_CLERK_PUCK_TARGET_NOT_FOUND"
    version 5
    tl 792.27 5529.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -372,7 +372,7 @@ AudioClass {
   }
   SoundClass "466953" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 466953
-   name "SOUND_ELIFE_CLERK_PUCK_QUOTE_EXPIRED"
+   name "SOUND_ELIFE_CLERK_PUCK_ACCOUNT_BUSY"
    version 5
    tl 792.27 5929.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -392,7 +392,7 @@ AudioClass {
   }
   SoundClass "471049" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 471049
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE"
+   name "SOUND_ELIFE_CLERK_PUCK_QUOTE_EXPIRED"
    version 5
    tl 792.27 6329.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -412,7 +412,7 @@ AudioClass {
   }
   SoundClass "475145" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 475145
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE_2"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE"
    version 5
    tl 792.27 6729.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -432,7 +432,7 @@ AudioClass {
   }
   SoundClass "479241" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 479241
-   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE_3"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE_2"
    version 5
    tl 792.27 7129.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -452,7 +452,7 @@ AudioClass {
   }
   SoundClass "483337" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 483337
-   name "SOUND_ELIFE_CLERK_PUCK_ACCOUNT_OPENED"
+   name "SOUND_ELIFE_CLERK_PUCK_TRANSFER_DONE_3"
    version 5
    tl 792.27 7529.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -472,7 +472,7 @@ AudioClass {
   }
   SoundClass "487433" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 487433
-   name "SOUND_ELIFE_CLERK_PUCK_ALREADY_OPENED"
+   name "SOUND_ELIFE_CLERK_PUCK_ACCOUNT_OPENED"
    version 5
    tl 792.27 7929.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -492,7 +492,7 @@ AudioClass {
   }
   SoundClass "491529" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 491529
-   name "SOUND_ELIFE_CLERK_PUCK_FAILED"
+   name "SOUND_ELIFE_CLERK_PUCK_ALREADY_OPENED"
    version 5
    tl 792.27 8329.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -512,7 +512,7 @@ AudioClass {
   }
   SoundClass "495625" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 495625
-   name "SOUND_ELIFE_CLERK_PUCK_UNKNOWN_OUTCOME"
+   name "SOUND_ELIFE_CLERK_PUCK_FAILED"
    version 5
    tl 792.27 8729.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -532,7 +532,7 @@ AudioClass {
   }
   SoundClass "499721" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 499721
-   name "SOUND_ELIFE_CLERK_PUCK_ANYTHING_ELSE"
+   name "SOUND_ELIFE_CLERK_PUCK_UNKNOWN_OUTCOME"
    version 5
    tl 792.27 9129.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -552,7 +552,7 @@ AudioClass {
   }
   SoundClass "503817" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 503817
-   name "SOUND_ELIFE_CLERK_PUCK_ANYTHING_ELSE_2"
+   name "SOUND_ELIFE_CLERK_PUCK_ANYTHING_ELSE"
    version 5
    tl 792.27 9529.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -572,7 +572,7 @@ AudioClass {
   }
   SoundClass "507913" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 507913
-   name "SOUND_ELIFE_CLERK_PUCK_OPEN_ACCOUNT_TERMS"
+   name "SOUND_ELIFE_CLERK_PUCK_ANYTHING_ELSE_2"
    version 5
    tl 792.27 9929.25
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -592,7 +592,7 @@ AudioClass {
   }
   SoundClass "512009" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 512009
-   name "SOUND_ELIFE_CLERK_PUCK_QUESTIONS"
+   name "SOUND_ELIFE_CLERK_PUCK_OPEN_ACCOUNT_TERMS"
    version 5
    tl 792.27 10329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -612,7 +612,7 @@ AudioClass {
   }
   SoundClass "516105" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 516105
-   name "SOUND_ELIFE_CLERK_PUCK_INFO_FEES"
+   name "SOUND_ELIFE_CLERK_PUCK_QUESTIONS"
    version 5
    tl 792.27 10729.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -632,7 +632,7 @@ AudioClass {
   }
   SoundClass "520201" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 520201
-   name "SOUND_ELIFE_CLERK_PUCK_INFO_TRANSFERS"
+   name "SOUND_ELIFE_CLERK_PUCK_INFO_FEES"
    version 5
    tl 792.27 11129.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -652,7 +652,7 @@ AudioClass {
   }
   SoundClass "524297" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 524297
-   name "SOUND_ELIFE_CLERK_PUCK_INFO_BALANCE"
+   name "SOUND_ELIFE_CLERK_PUCK_INFO_TRANSFERS"
    version 5
    tl 792.27 11529.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -672,7 +672,7 @@ AudioClass {
   }
   SoundClass "528393" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 528393
-   name "SOUND_ELIFE_CLERK_PUCK_INFO_CASH"
+   name "SOUND_ELIFE_CLERK_PUCK_INFO_BALANCE"
    version 5
    tl 792.27 11929.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -692,7 +692,7 @@ AudioClass {
   }
   SoundClass "532489" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 532489
-   name "SOUND_ELIFE_CLERK_PUCK_GREETING_MORNING"
+   name "SOUND_ELIFE_CLERK_PUCK_INFO_CASH"
    version 5
    tl 792.27 12329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -712,7 +712,7 @@ AudioClass {
   }
   SoundClass "536585" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 536585
-   name "SOUND_ELIFE_CLERK_PUCK_GREETING_AFTERNOON"
+   name "SOUND_ELIFE_CLERK_PUCK_GREETING_MORNING"
    version 5
    tl 792.27 12729.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -732,7 +732,7 @@ AudioClass {
   }
   SoundClass "540681" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 540681
-   name "SOUND_ELIFE_CLERK_PUCK_GREETING_EVENING"
+   name "SOUND_ELIFE_CLERK_PUCK_GREETING_AFTERNOON"
    version 5
    tl 792.27 13129.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -752,7 +752,7 @@ AudioClass {
   }
   SoundClass "544777" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 544777
-   name "SOUND_ELIFE_CLERK_PUCK_GREETING_RETURNING"
+   name "SOUND_ELIFE_CLERK_PUCK_GREETING_EVENING"
    version 5
    tl 792.27 13529.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -772,7 +772,7 @@ AudioClass {
   }
   SoundClass "548873" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 548873
-   name "SOUND_ELIFE_CLERK_PUCK_GREETING_RETURNING_2"
+   name "SOUND_ELIFE_CLERK_PUCK_GREETING_RETURNING"
    version 5
    tl 792.27 13929.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -792,7 +792,7 @@ AudioClass {
   }
   SoundClass "552969" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 552969
-   name "SOUND_ELIFE_CLERK_PUCK_NO_ACCOUNT"
+   name "SOUND_ELIFE_CLERK_PUCK_GREETING_RETURNING_2"
    version 5
    tl 792.27 14329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -812,7 +812,7 @@ AudioClass {
   }
   SoundClass "557065" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 557065
-   name "SOUND_ELIFE_CLERK_PUCK_ASK_PURPOSE"
+   name "SOUND_ELIFE_CLERK_PUCK_NO_ACCOUNT"
    version 5
    tl 792.27 14729.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -832,7 +832,7 @@ AudioClass {
   }
   SoundClass "561161" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 561161
-   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_GOODS"
+   name "SOUND_ELIFE_CLERK_PUCK_ASK_PURPOSE"
    version 5
    tl 792.27 15129.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -852,7 +852,7 @@ AudioClass {
   }
   SoundClass "565257" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 565257
-   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_RENT"
+   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_GOODS"
    version 5
    tl 792.27 15529.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -872,7 +872,7 @@ AudioClass {
   }
   SoundClass "569353" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 569353
-   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_GIFT"
+   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_RENT"
    version 5
    tl 792.27 15929.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -892,7 +892,7 @@ AudioClass {
   }
   SoundClass "573449" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 573449
-   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_BUSINESS"
+   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_GIFT"
    version 5
    tl 792.27 16329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -912,7 +912,7 @@ AudioClass {
   }
   SoundClass "577545" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 577545
-   name "SOUND_ELIFE_CLERK_PUCK_RECEIPT_HERE"
+   name "SOUND_ELIFE_CLERK_PUCK_PURPOSE_BUSINESS"
    version 5
    tl 792.27 16729.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -932,7 +932,7 @@ AudioClass {
   }
   SoundClass "581641" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 581641
-   name "SOUND_ELIFE_CLERK_PUCK_PAPERS_HERE"
+   name "SOUND_ELIFE_CLERK_PUCK_RECEIPT_HERE"
    version 5
    tl 792.27 17129.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -952,7 +952,7 @@ AudioClass {
   }
   SoundClass "585737" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 585737
-   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE"
+   name "SOUND_ELIFE_CLERK_PUCK_PAPERS_HERE"
    version 5
    tl 792.27 17529.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -972,7 +972,7 @@ AudioClass {
   }
   SoundClass "589833" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 589833
-   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE_2"
+   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE"
    version 5
    tl 792.27 17929.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -992,7 +992,7 @@ AudioClass {
   }
   SoundClass "593929" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
    id 593929
-   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE_3"
+   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE_2"
    version 5
    tl 792.27 18329.2
    parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
@@ -1002,6 +1002,26 @@ AudioClass {
      links {
       ConnectionClass "594962:65" {
        id 594962
+       port 65
+      }
+     }
+    }
+   }
+   outState 13323
+   outStatePort 19463
+  }
+  SoundClass "598025" : "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf" {
+   id 598025
+   name "SOUND_ELIFE_CLERK_PUCK_GOODBYE_3"
+   version 5
+   tl 792.27 18729.2
+   parent "{F15CE4B7EFD759CD}Sounds/_SharedData/Configs/Sound/RadioProtocol/Sound_RadioProtocol_AI.conf"
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "599058:65" {
+       id 599058
        port 65
       }
      }
@@ -1886,6 +1906,25 @@ AudioClass {
    varLocName "VoiceAmplitude"
    varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
   }
+  BusClass "600071" {
+   id 600071
+   name "Bus Voice Amplitude"
+   version 7
+   tl 256 18704
+   ins {
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "601092:65" {
+       id 601092
+       port 65
+      }
+     }
+    }
+   }
+   varLocName "VoiceAmplitude"
+   varLocalResource "{BA5100577C0511F6}Sounds/_SharedData/LocalVariables/LocalVariables_Voice.conf"
+  }
  }
  selectors {
  }
@@ -2084,6 +2123,10 @@ AudioClass {
       }
       ConnectionClass "593929:65" {
        id 593929
+       port 65
+      }
+      ConnectionClass "598025:65" {
+       id 598025
        port 65
       }
      }
@@ -2419,7 +2462,7 @@ AudioClass {
   }
   ShaderClass "435218" {
    id 435218
-   name "Shader PUCK_TRANSFER_FORM"
+   name "Shader PUCK_CLOSED"
    version 5
    tl 512 2704
    ins {
@@ -2466,7 +2509,7 @@ AudioClass {
   }
   ShaderClass "439314" {
    id 439314
-   name "Shader PUCK_TRANSFER_FORM_2"
+   name "Shader PUCK_TRANSFER_FORM"
    version 5
    tl 512 3104
    ins {
@@ -2513,7 +2556,7 @@ AudioClass {
   }
   ShaderClass "443410" {
    id 443410
-   name "Shader PUCK_TRANSFER_PROCESSING"
+   name "Shader PUCK_TRANSFER_FORM_2"
    version 5
    tl 512 3504
    ins {
@@ -2560,7 +2603,7 @@ AudioClass {
   }
   ShaderClass "447506" {
    id 447506
-   name "Shader PUCK_TRANSFER_PROCESSING_2"
+   name "Shader PUCK_TRANSFER_PROCESSING"
    version 5
    tl 512 3904
    ins {
@@ -2607,7 +2650,7 @@ AudioClass {
   }
   ShaderClass "451602" {
    id 451602
-   name "Shader PUCK_CHECK_SLIP"
+   name "Shader PUCK_TRANSFER_PROCESSING_2"
    version 5
    tl 512 4304
    ins {
@@ -2654,7 +2697,7 @@ AudioClass {
   }
   ShaderClass "455698" {
    id 455698
-   name "Shader PUCK_NOT_ENOUGH_MONEY"
+   name "Shader PUCK_CHECK_SLIP"
    version 5
    tl 512 4704
    ins {
@@ -2701,7 +2744,7 @@ AudioClass {
   }
   ShaderClass "459794" {
    id 459794
-   name "Shader PUCK_TARGET_NOT_FOUND"
+   name "Shader PUCK_NOT_ENOUGH_MONEY"
    version 5
    tl 512 5104
    ins {
@@ -2748,7 +2791,7 @@ AudioClass {
   }
   ShaderClass "463890" {
    id 463890
-   name "Shader PUCK_ACCOUNT_BUSY"
+   name "Shader PUCK_TARGET_NOT_FOUND"
    version 5
    tl 512 5504
    ins {
@@ -2795,7 +2838,7 @@ AudioClass {
   }
   ShaderClass "467986" {
    id 467986
-   name "Shader PUCK_QUOTE_EXPIRED"
+   name "Shader PUCK_ACCOUNT_BUSY"
    version 5
    tl 512 5904
    ins {
@@ -2842,7 +2885,7 @@ AudioClass {
   }
   ShaderClass "472082" {
    id 472082
-   name "Shader PUCK_TRANSFER_DONE"
+   name "Shader PUCK_QUOTE_EXPIRED"
    version 5
    tl 512 6304
    ins {
@@ -2889,7 +2932,7 @@ AudioClass {
   }
   ShaderClass "476178" {
    id 476178
-   name "Shader PUCK_TRANSFER_DONE_2"
+   name "Shader PUCK_TRANSFER_DONE"
    version 5
    tl 512 6704
    ins {
@@ -2936,7 +2979,7 @@ AudioClass {
   }
   ShaderClass "480274" {
    id 480274
-   name "Shader PUCK_TRANSFER_DONE_3"
+   name "Shader PUCK_TRANSFER_DONE_2"
    version 5
    tl 512 7104
    ins {
@@ -2983,7 +3026,7 @@ AudioClass {
   }
   ShaderClass "484370" {
    id 484370
-   name "Shader PUCK_ACCOUNT_OPENED"
+   name "Shader PUCK_TRANSFER_DONE_3"
    version 5
    tl 512 7504
    ins {
@@ -3030,7 +3073,7 @@ AudioClass {
   }
   ShaderClass "488466" {
    id 488466
-   name "Shader PUCK_ALREADY_OPENED"
+   name "Shader PUCK_ACCOUNT_OPENED"
    version 5
    tl 512 7904
    ins {
@@ -3077,7 +3120,7 @@ AudioClass {
   }
   ShaderClass "492562" {
    id 492562
-   name "Shader PUCK_FAILED"
+   name "Shader PUCK_ALREADY_OPENED"
    version 5
    tl 512 8304
    ins {
@@ -3124,7 +3167,7 @@ AudioClass {
   }
   ShaderClass "496658" {
    id 496658
-   name "Shader PUCK_UNKNOWN_OUTCOME"
+   name "Shader PUCK_FAILED"
    version 5
    tl 512 8704
    ins {
@@ -3171,7 +3214,7 @@ AudioClass {
   }
   ShaderClass "500754" {
    id 500754
-   name "Shader PUCK_ANYTHING_ELSE"
+   name "Shader PUCK_UNKNOWN_OUTCOME"
    version 5
    tl 512 9104
    ins {
@@ -3218,7 +3261,7 @@ AudioClass {
   }
   ShaderClass "504850" {
    id 504850
-   name "Shader PUCK_ANYTHING_ELSE_2"
+   name "Shader PUCK_ANYTHING_ELSE"
    version 5
    tl 512 9504
    ins {
@@ -3265,7 +3308,7 @@ AudioClass {
   }
   ShaderClass "508946" {
    id 508946
-   name "Shader PUCK_OPEN_ACCOUNT_TERMS"
+   name "Shader PUCK_ANYTHING_ELSE_2"
    version 5
    tl 512 9904
    ins {
@@ -3312,7 +3355,7 @@ AudioClass {
   }
   ShaderClass "513042" {
    id 513042
-   name "Shader PUCK_QUESTIONS"
+   name "Shader PUCK_OPEN_ACCOUNT_TERMS"
    version 5
    tl 512 10304
    ins {
@@ -3359,7 +3402,7 @@ AudioClass {
   }
   ShaderClass "517138" {
    id 517138
-   name "Shader PUCK_INFO_FEES"
+   name "Shader PUCK_QUESTIONS"
    version 5
    tl 512 10704
    ins {
@@ -3406,7 +3449,7 @@ AudioClass {
   }
   ShaderClass "521234" {
    id 521234
-   name "Shader PUCK_INFO_TRANSFERS"
+   name "Shader PUCK_INFO_FEES"
    version 5
    tl 512 11104
    ins {
@@ -3453,7 +3496,7 @@ AudioClass {
   }
   ShaderClass "525330" {
    id 525330
-   name "Shader PUCK_INFO_BALANCE"
+   name "Shader PUCK_INFO_TRANSFERS"
    version 5
    tl 512 11504
    ins {
@@ -3500,7 +3543,7 @@ AudioClass {
   }
   ShaderClass "529426" {
    id 529426
-   name "Shader PUCK_INFO_CASH"
+   name "Shader PUCK_INFO_BALANCE"
    version 5
    tl 512 11904
    ins {
@@ -3547,7 +3590,7 @@ AudioClass {
   }
   ShaderClass "533522" {
    id 533522
-   name "Shader PUCK_GREETING_MORNING"
+   name "Shader PUCK_INFO_CASH"
    version 5
    tl 512 12304
    ins {
@@ -3594,7 +3637,7 @@ AudioClass {
   }
   ShaderClass "537618" {
    id 537618
-   name "Shader PUCK_GREETING_AFTERNOON"
+   name "Shader PUCK_GREETING_MORNING"
    version 5
    tl 512 12704
    ins {
@@ -3641,7 +3684,7 @@ AudioClass {
   }
   ShaderClass "541714" {
    id 541714
-   name "Shader PUCK_GREETING_EVENING"
+   name "Shader PUCK_GREETING_AFTERNOON"
    version 5
    tl 512 13104
    ins {
@@ -3688,7 +3731,7 @@ AudioClass {
   }
   ShaderClass "545810" {
    id 545810
-   name "Shader PUCK_GREETING_RETURNING"
+   name "Shader PUCK_GREETING_EVENING"
    version 5
    tl 512 13504
    ins {
@@ -3735,7 +3778,7 @@ AudioClass {
   }
   ShaderClass "549906" {
    id 549906
-   name "Shader PUCK_GREETING_RETURNING_2"
+   name "Shader PUCK_GREETING_RETURNING"
    version 5
    tl 512 13904
    ins {
@@ -3782,7 +3825,7 @@ AudioClass {
   }
   ShaderClass "554002" {
    id 554002
-   name "Shader PUCK_NO_ACCOUNT"
+   name "Shader PUCK_GREETING_RETURNING_2"
    version 5
    tl 512 14304
    ins {
@@ -3829,7 +3872,7 @@ AudioClass {
   }
   ShaderClass "558098" {
    id 558098
-   name "Shader PUCK_ASK_PURPOSE"
+   name "Shader PUCK_NO_ACCOUNT"
    version 5
    tl 512 14704
    ins {
@@ -3876,7 +3919,7 @@ AudioClass {
   }
   ShaderClass "562194" {
    id 562194
-   name "Shader PUCK_PURPOSE_GOODS"
+   name "Shader PUCK_ASK_PURPOSE"
    version 5
    tl 512 15104
    ins {
@@ -3923,7 +3966,7 @@ AudioClass {
   }
   ShaderClass "566290" {
    id 566290
-   name "Shader PUCK_PURPOSE_RENT"
+   name "Shader PUCK_PURPOSE_GOODS"
    version 5
    tl 512 15504
    ins {
@@ -3970,7 +4013,7 @@ AudioClass {
   }
   ShaderClass "570386" {
    id 570386
-   name "Shader PUCK_PURPOSE_GIFT"
+   name "Shader PUCK_PURPOSE_RENT"
    version 5
    tl 512 15904
    ins {
@@ -4017,7 +4060,7 @@ AudioClass {
   }
   ShaderClass "574482" {
    id 574482
-   name "Shader PUCK_PURPOSE_BUSINESS"
+   name "Shader PUCK_PURPOSE_GIFT"
    version 5
    tl 512 16304
    ins {
@@ -4064,7 +4107,7 @@ AudioClass {
   }
   ShaderClass "578578" {
    id 578578
-   name "Shader PUCK_RECEIPT_HERE"
+   name "Shader PUCK_PURPOSE_BUSINESS"
    version 5
    tl 512 16704
    ins {
@@ -4111,7 +4154,7 @@ AudioClass {
   }
   ShaderClass "582674" {
    id 582674
-   name "Shader PUCK_PAPERS_HERE"
+   name "Shader PUCK_RECEIPT_HERE"
    version 5
    tl 512 17104
    ins {
@@ -4158,7 +4201,7 @@ AudioClass {
   }
   ShaderClass "586770" {
    id 586770
-   name "Shader PUCK_GOODBYE"
+   name "Shader PUCK_PAPERS_HERE"
    version 5
    tl 512 17504
    ins {
@@ -4205,7 +4248,7 @@ AudioClass {
   }
   ShaderClass "590866" {
    id 590866
-   name "Shader PUCK_GOODBYE_2"
+   name "Shader PUCK_GOODBYE"
    version 5
    tl 512 17904
    ins {
@@ -4252,7 +4295,7 @@ AudioClass {
   }
   ShaderClass "594962" {
    id 594962
-   name "Shader PUCK_GOODBYE_3"
+   name "Shader PUCK_GOODBYE_2"
    version 5
    tl 512 18304
    ins {
@@ -4288,6 +4331,53 @@ AudioClass {
      links {
       ConnectionClass "595975:65" {
        id 595975
+       port 65
+      }
+     }
+    }
+   }
+   pi {
+    7 0
+   }
+  }
+  ShaderClass "599058" {
+   id 599058
+   name "Shader PUCK_GOODBYE_3"
+   version 5
+   tl 512 18704
+   ins {
+    ConnectionsClass "con:0" {
+     id 0
+     links {
+      ConnectionClass "310300:65" {
+       id 310300
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:1" {
+     id 1
+     links {
+      ConnectionClass "181267:65" {
+       id 181267
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:2" {
+     id 2
+     links {
+      ConnectionClass "182293:65" {
+       id 182293
+       port 65
+      }
+     }
+    }
+    ConnectionsClass "con:64" {
+     id 64
+     links {
+      ConnectionClass "600071:65" {
+       id 600071
        port 65
       }
      }
@@ -4445,9 +4535,25 @@ AudioClass {
   }
   BankLocalClass "437252" {
    id 437252
-   name "ELIFE_CLERK_PUCK_TRANSFER_FORM"
+   name "ELIFE_CLERK_PUCK_CLOSED"
    version 7
    tl -1250 2722.51
+   pi {
+    10 0
+   }
+   Samples {
+    AudioBankSampleClass "ELIFE_Clerk_Puck_Closed.wav" {
+     Filename "{ACA003A455D8A9AB}Sounds/VO/BankClerk/Samples/Puck/ELIFE_Clerk_Puck_Closed.wav"
+     Probability 100
+     Index 0
+    }
+   }
+  }
+  BankLocalClass "441348" {
+   id 441348
+   name "ELIFE_CLERK_PUCK_TRANSFER_FORM"
+   version 7
+   tl -1250 3122.51
    pi {
     10 0
    }
@@ -4459,11 +4565,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "441348" {
-   id 441348
+  BankLocalClass "445444" {
+   id 445444
    name "ELIFE_CLERK_PUCK_TRANSFER_FORM_2"
    version 7
-   tl -1250 3122.51
+   tl -1250 3522.51
    pi {
     10 0
    }
@@ -4475,11 +4581,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "445444" {
-   id 445444
+  BankLocalClass "449540" {
+   id 449540
    name "ELIFE_CLERK_PUCK_TRANSFER_PROCESSING"
    version 7
-   tl -1250 3522.51
+   tl -1250 3922.51
    pi {
     10 0
    }
@@ -4491,11 +4597,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "449540" {
-   id 449540
+  BankLocalClass "453636" {
+   id 453636
    name "ELIFE_CLERK_PUCK_TRANSFER_PROCESSING_2"
    version 7
-   tl -1250 3922.51
+   tl -1250 4322.51
    pi {
     10 0
    }
@@ -4507,11 +4613,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "453636" {
-   id 453636
+  BankLocalClass "457732" {
+   id 457732
    name "ELIFE_CLERK_PUCK_CHECK_SLIP"
    version 7
-   tl -1250 4322.51
+   tl -1250 4722.51
    pi {
     10 0
    }
@@ -4523,11 +4629,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "457732" {
-   id 457732
+  BankLocalClass "461828" {
+   id 461828
    name "ELIFE_CLERK_PUCK_NOT_ENOUGH_MONEY"
    version 7
-   tl -1250 4722.51
+   tl -1250 5122.51
    pi {
     10 0
    }
@@ -4539,11 +4645,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "461828" {
-   id 461828
+  BankLocalClass "465924" {
+   id 465924
    name "ELIFE_CLERK_PUCK_TARGET_NOT_FOUND"
    version 7
-   tl -1250 5122.51
+   tl -1250 5522.51
    pi {
     10 0
    }
@@ -4555,11 +4661,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "465924" {
-   id 465924
+  BankLocalClass "470020" {
+   id 470020
    name "ELIFE_CLERK_PUCK_ACCOUNT_BUSY"
    version 7
-   tl -1250 5522.51
+   tl -1250 5922.51
    pi {
     10 0
    }
@@ -4571,11 +4677,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "470020" {
-   id 470020
+  BankLocalClass "474116" {
+   id 474116
    name "ELIFE_CLERK_PUCK_QUOTE_EXPIRED"
    version 7
-   tl -1250 5922.51
+   tl -1250 6322.51
    pi {
     10 0
    }
@@ -4587,11 +4693,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "474116" {
-   id 474116
+  BankLocalClass "478212" {
+   id 478212
    name "ELIFE_CLERK_PUCK_TRANSFER_DONE"
    version 7
-   tl -1250 6322.51
+   tl -1250 6722.51
    pi {
     10 0
    }
@@ -4603,11 +4709,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "478212" {
-   id 478212
+  BankLocalClass "482308" {
+   id 482308
    name "ELIFE_CLERK_PUCK_TRANSFER_DONE_2"
    version 7
-   tl -1250 6722.51
+   tl -1250 7122.51
    pi {
     10 0
    }
@@ -4619,11 +4725,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "482308" {
-   id 482308
+  BankLocalClass "486404" {
+   id 486404
    name "ELIFE_CLERK_PUCK_TRANSFER_DONE_3"
    version 7
-   tl -1250 7122.51
+   tl -1250 7522.51
    pi {
     10 0
    }
@@ -4635,11 +4741,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "486404" {
-   id 486404
+  BankLocalClass "490500" {
+   id 490500
    name "ELIFE_CLERK_PUCK_ACCOUNT_OPENED"
    version 7
-   tl -1250 7522.51
+   tl -1250 7922.51
    pi {
     10 0
    }
@@ -4651,11 +4757,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "490500" {
-   id 490500
+  BankLocalClass "494596" {
+   id 494596
    name "ELIFE_CLERK_PUCK_ALREADY_OPENED"
    version 7
-   tl -1250 7922.51
+   tl -1250 8322.51
    pi {
     10 0
    }
@@ -4667,11 +4773,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "494596" {
-   id 494596
+  BankLocalClass "498692" {
+   id 498692
    name "ELIFE_CLERK_PUCK_FAILED"
    version 7
-   tl -1250 8322.51
+   tl -1250 8722.51
    pi {
     10 0
    }
@@ -4683,11 +4789,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "498692" {
-   id 498692
+  BankLocalClass "502788" {
+   id 502788
    name "ELIFE_CLERK_PUCK_UNKNOWN_OUTCOME"
    version 7
-   tl -1250 8722.51
+   tl -1250 9122.51
    pi {
     10 0
    }
@@ -4699,11 +4805,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "502788" {
-   id 502788
+  BankLocalClass "506884" {
+   id 506884
    name "ELIFE_CLERK_PUCK_ANYTHING_ELSE"
    version 7
-   tl -1250 9122.51
+   tl -1250 9522.51
    pi {
     10 0
    }
@@ -4715,11 +4821,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "506884" {
-   id 506884
+  BankLocalClass "510980" {
+   id 510980
    name "ELIFE_CLERK_PUCK_ANYTHING_ELSE_2"
    version 7
-   tl -1250 9522.51
+   tl -1250 9922.51
    pi {
     10 0
    }
@@ -4731,11 +4837,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "510980" {
-   id 510980
+  BankLocalClass "515076" {
+   id 515076
    name "ELIFE_CLERK_PUCK_OPEN_ACCOUNT_TERMS"
    version 7
-   tl -1250 9922.51
+   tl -1250 10322.5
    pi {
     10 0
    }
@@ -4747,11 +4853,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "515076" {
-   id 515076
+  BankLocalClass "519172" {
+   id 519172
    name "ELIFE_CLERK_PUCK_QUESTIONS"
    version 7
-   tl -1250 10322.5
+   tl -1250 10722.5
    pi {
     10 0
    }
@@ -4763,11 +4869,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "519172" {
-   id 519172
+  BankLocalClass "523268" {
+   id 523268
    name "ELIFE_CLERK_PUCK_INFO_FEES"
    version 7
-   tl -1250 10722.5
+   tl -1250 11122.5
    pi {
     10 0
    }
@@ -4779,11 +4885,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "523268" {
-   id 523268
+  BankLocalClass "527364" {
+   id 527364
    name "ELIFE_CLERK_PUCK_INFO_TRANSFERS"
    version 7
-   tl -1250 11122.5
+   tl -1250 11522.5
    pi {
     10 0
    }
@@ -4795,11 +4901,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "527364" {
-   id 527364
+  BankLocalClass "531460" {
+   id 531460
    name "ELIFE_CLERK_PUCK_INFO_BALANCE"
    version 7
-   tl -1250 11522.5
+   tl -1250 11922.5
    pi {
     10 0
    }
@@ -4811,11 +4917,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "531460" {
-   id 531460
+  BankLocalClass "535556" {
+   id 535556
    name "ELIFE_CLERK_PUCK_INFO_CASH"
    version 7
-   tl -1250 11922.5
+   tl -1250 12322.5
    pi {
     10 0
    }
@@ -4827,11 +4933,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "535556" {
-   id 535556
+  BankLocalClass "539652" {
+   id 539652
    name "ELIFE_CLERK_PUCK_GREETING_MORNING"
    version 7
-   tl -1250 12322.5
+   tl -1250 12722.5
    pi {
     10 0
    }
@@ -4843,11 +4949,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "539652" {
-   id 539652
+  BankLocalClass "543748" {
+   id 543748
    name "ELIFE_CLERK_PUCK_GREETING_AFTERNOON"
    version 7
-   tl -1250 12722.5
+   tl -1250 13122.5
    pi {
     10 0
    }
@@ -4859,11 +4965,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "543748" {
-   id 543748
+  BankLocalClass "547844" {
+   id 547844
    name "ELIFE_CLERK_PUCK_GREETING_EVENING"
    version 7
-   tl -1250 13122.5
+   tl -1250 13522.5
    pi {
     10 0
    }
@@ -4875,11 +4981,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "547844" {
-   id 547844
+  BankLocalClass "551940" {
+   id 551940
    name "ELIFE_CLERK_PUCK_GREETING_RETURNING"
    version 7
-   tl -1250 13522.5
+   tl -1250 13922.5
    pi {
     10 0
    }
@@ -4891,11 +4997,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "551940" {
-   id 551940
+  BankLocalClass "556036" {
+   id 556036
    name "ELIFE_CLERK_PUCK_GREETING_RETURNING_2"
    version 7
-   tl -1250 13922.5
+   tl -1250 14322.5
    pi {
     10 0
    }
@@ -4907,11 +5013,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "556036" {
-   id 556036
+  BankLocalClass "560132" {
+   id 560132
    name "ELIFE_CLERK_PUCK_NO_ACCOUNT"
    version 7
-   tl -1250 14322.5
+   tl -1250 14722.5
    pi {
     10 0
    }
@@ -4923,11 +5029,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "560132" {
-   id 560132
+  BankLocalClass "564228" {
+   id 564228
    name "ELIFE_CLERK_PUCK_ASK_PURPOSE"
    version 7
-   tl -1250 14722.5
+   tl -1250 15122.5
    pi {
     10 0
    }
@@ -4939,11 +5045,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "564228" {
-   id 564228
+  BankLocalClass "568324" {
+   id 568324
    name "ELIFE_CLERK_PUCK_PURPOSE_GOODS"
    version 7
-   tl -1250 15122.5
+   tl -1250 15522.5
    pi {
     10 0
    }
@@ -4955,11 +5061,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "568324" {
-   id 568324
+  BankLocalClass "572420" {
+   id 572420
    name "ELIFE_CLERK_PUCK_PURPOSE_RENT"
    version 7
-   tl -1250 15522.5
+   tl -1250 15922.5
    pi {
     10 0
    }
@@ -4971,11 +5077,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "572420" {
-   id 572420
+  BankLocalClass "576516" {
+   id 576516
    name "ELIFE_CLERK_PUCK_PURPOSE_GIFT"
    version 7
-   tl -1250 15922.5
+   tl -1250 16322.5
    pi {
     10 0
    }
@@ -4987,11 +5093,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "576516" {
-   id 576516
+  BankLocalClass "580612" {
+   id 580612
    name "ELIFE_CLERK_PUCK_PURPOSE_BUSINESS"
    version 7
-   tl -1250 16322.5
+   tl -1250 16722.5
    pi {
     10 0
    }
@@ -5003,11 +5109,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "580612" {
-   id 580612
+  BankLocalClass "584708" {
+   id 584708
    name "ELIFE_CLERK_PUCK_RECEIPT_HERE"
    version 7
-   tl -1250 16722.5
+   tl -1250 17122.5
    pi {
     10 0
    }
@@ -5019,11 +5125,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "584708" {
-   id 584708
+  BankLocalClass "588804" {
+   id 588804
    name "ELIFE_CLERK_PUCK_PAPERS_HERE"
    version 7
-   tl -1250 17122.5
+   tl -1250 17522.5
    pi {
     10 0
    }
@@ -5035,11 +5141,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "588804" {
-   id 588804
+  BankLocalClass "592900" {
+   id 592900
    name "ELIFE_CLERK_PUCK_GOODBYE"
    version 7
-   tl -1250 17522.5
+   tl -1250 17922.5
    pi {
     10 0
    }
@@ -5051,11 +5157,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "592900" {
-   id 592900
+  BankLocalClass "596996" {
+   id 596996
    name "ELIFE_CLERK_PUCK_GOODBYE_2"
    version 7
-   tl -1250 17922.5
+   tl -1250 18322.5
    pi {
     10 0
    }
@@ -5067,11 +5173,11 @@ AudioClass {
     }
    }
   }
-  BankLocalClass "596996" {
-   id 596996
+  BankLocalClass "601092" {
+   id 601092
    name "ELIFE_CLERK_PUCK_GOODBYE_3"
    version 7
-   tl -1250 18322.5
+   tl -1250 18722.5
    pi {
     10 0
    }
@@ -5304,6 +5410,10 @@ AudioClass {
        id 593929
        port 5
       }
+      ConnectionClass "598025:5" {
+       id 598025
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -5515,6 +5625,10 @@ AudioClass {
       }
       ConnectionClass "593929:5" {
        id 593929
+       port 5
+      }
+      ConnectionClass "598025:5" {
+       id 598025
        port 5
       }
      }
@@ -5739,6 +5853,10 @@ AudioClass {
        id 593929
        port 5
       }
+      ConnectionClass "598025:5" {
+       id 598025
+       port 5
+      }
      }
     }
     ConnectionsClass "con:1" {
@@ -5959,6 +6077,10 @@ AudioClass {
       }
       ConnectionClass "593929:5" {
        id 593929
+       port 5
+      }
+      ConnectionClass "598025:5" {
+       id 598025
        port 5
       }
      }

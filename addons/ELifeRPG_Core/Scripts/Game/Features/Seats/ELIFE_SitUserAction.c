@@ -3,6 +3,11 @@
 //! when someone walks out of the pose.
 class ELIFE_SitUserAction : SCR_LoiterUserAction
 {
+	//! Vanilla only slides the player onto the seat from close in front; elsewhere the pose starts where they stand.
+	protected static const float REACH = 1.0;
+	//! cos of the widest angle off the seat's facing, 60 degrees.
+	protected static const float FRONT_COS = 0.5;
+
 	//------------------------------------------------------------------------------------------------
 	protected SCR_AISmartActionSentinelComponent GetSeat()
 	{
@@ -34,6 +39,27 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected bool IsInFront(notnull IEntity user, notnull SCR_AISmartActionSentinelComponent seat)
+	{
+		vector transform[4];
+		ELIFE_Seats.GetSitTransform(seat, transform);
+
+		vector toUser = user.GetOrigin() - transform[3];
+		toUser[1] = 0;
+		float distance = toUser.Length();
+		if (distance > REACH)
+			return false;
+
+		//! Right on the spot there's no direction to check.
+		if (distance < 0.01)
+			return true;
+
+		vector facing = transform[2] * -1;
+		facing[1] = 0;
+		return vector.Dot(toUser.Normalized(), facing.Normalized()) >= FRONT_COS;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override bool GetActionNameScript(out string outName)
 	{
 		if (IsSittingHere(SCR_PlayerController.GetLocalControlledEntity()))
@@ -57,18 +83,24 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 			return false;
 		}
 
-		return GetSeat() != null;
+		//! Also checked here: the server may not ask CanBeShown.
+		SCR_AISmartActionSentinelComponent seat = GetSeat();
+		return seat && IsInFront(user, seat);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Vanilla hides actions while a pose plays; this one stays, to stand up again.
+	//! Vanilla hides actions while a pose plays; this one stays, to stand up again. Sitting is only offered from the front.
 	override bool CanBeShownScript(IEntity user)
 	{
-		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(user);
-		if (!character || !SCR_ScriptedUserAction.IsUserPlayingBlockingAnimation(character))
+		if (IsSittingHere(user))
 			return true;
 
-		return IsSittingHere(user);
+		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(user);
+		if (!character || SCR_ScriptedUserAction.IsUserPlayingBlockingAnimation(character))
+			return false;
+
+		SCR_AISmartActionSentinelComponent seat = GetSeat();
+		return seat && IsInFront(user, seat);
 	}
 
 	//------------------------------------------------------------------------------------------------

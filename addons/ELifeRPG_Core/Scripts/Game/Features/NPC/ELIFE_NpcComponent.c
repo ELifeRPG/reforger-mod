@@ -1120,7 +1120,8 @@ class ELIFE_NpcComponent : ScriptComponent
 
 		m_sLastSubtitle = table.GetSubtitle(voiceId, line, variant);
 		m_iLastLineTick = System.GetTickCount();
-		ELIFE_DialogueMenu.OnSpeakerSaid(GetOwner(), m_sLastSubtitle);
+		if (!ELIFE_DialogueMenu.OnSpeakerSaid(GetOwner(), m_sLastSubtitle))
+			ELIFE_NpcSubtitles.Show(GetOwner(), m_sDisplayName, m_sLastSubtitle, voice, m_hVoice);
 	}
 
 	//------------------------------------------------------------------------------------------------

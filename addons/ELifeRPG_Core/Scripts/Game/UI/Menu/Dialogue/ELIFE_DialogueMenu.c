@@ -106,10 +106,14 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 
 	//------------------------------------------------------------------------------------------------
 	//! For any NPC whose line is heard on this machine; only an open conversation with that speaker shows it.
-	static void OnSpeakerSaid(IEntity speaker, string text)
+	//! False if no open conversation took it.
+	static bool OnSpeakerSaid(IEntity speaker, string text)
 	{
-		if (s_Open && speaker && s_Open.m_Controller && s_Open.m_Controller.GetSpeaker() == speaker)
-			s_Open.SetSubtitle(text);
+		if (!s_Open || !speaker || !s_Open.m_Controller || s_Open.m_Controller.GetSpeaker() != speaker)
+			return false;
+
+		s_Open.SetSubtitle(text);
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -213,6 +217,8 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	void SetSubtitle(string text)
 	{
 		m_sSubtitle = text;
+		//! A line said just before the conversation opened may still be on the HUD.
+		ELIFE_NpcSubtitles.Clear();
 		Refresh();
 	}
 

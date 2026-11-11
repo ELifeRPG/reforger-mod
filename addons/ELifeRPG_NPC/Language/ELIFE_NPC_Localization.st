@@ -1626,5 +1626,29 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{9F989F3D4B778C94}" {
+   Id "ELIFE-ClerkVO_PUCK_CLOSED"
+   Target_en_us "I'm sorry, we're closed. Our opening hours are on the sign."
+   Target_de_de "Es tut mir leid, wir haben geschlossen. Unsere Öffnungszeiten stehen auf dem Schild."
+   Modified 1794416615
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A1B6055C73FD69BF}" {
+   Id "ELIFE-ClerkVO_LEWIS_CLOSED"
+   Target_en_us "I'm afraid we're closed at the moment. You'll find our opening hours on the sign."
+   Target_de_de "Bedaure, wir haben derzeit geschlossen. Unsere Öffnungszeiten finden Sie auf dem Schild."
+   Modified 1794416615
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{16862D29C74B8C39}" {
+   Id "ELIFE-ClerkVO_MICHAEL_CLOSED"
+   Target_en_us "Sorry, we're closed right now. The opening hours are up on the sign."
+   Target_de_de "Sorry, wir haben gerade zu. Die Öffnungszeiten stehen auf dem Schild."
+   Modified 1794416615
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

@@ -42,6 +42,7 @@ enum ELIFE_EClerkLine
 	GREETING,
 	BUSY,
 	UNAVAILABLE,
+	CLOSED,
 	TRANSFER_FORM,
 	TRANSFER_PROCESSING,
 	CHECK_SLIP,
@@ -264,6 +265,7 @@ class ELIFE_BankClerkComponent : ELIFE_NpcComponent
 		{
 			case ELIFE_EClerkReason.BUSY: return ELIFE_EClerkLine.BUSY;
 			case ELIFE_EClerkReason.UNAVAILABLE: return ELIFE_EClerkLine.UNAVAILABLE;
+			case ELIFE_EClerkReason.CLOSED: return ELIFE_EClerkLine.CLOSED;
 			case ELIFE_EClerkReason.ALREADY_OPENED: return ELIFE_EClerkLine.ALREADY_OPENED;
 			case ELIFE_EClerkReason.FAILED: return ELIFE_EClerkLine.FAILED;
 			case ELIFE_EClerkReason.INVALID_AMOUNT: return ELIFE_EClerkLine.CHECK_SLIP;
