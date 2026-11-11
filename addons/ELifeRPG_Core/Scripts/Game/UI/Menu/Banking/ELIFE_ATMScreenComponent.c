@@ -31,13 +31,18 @@ class ELIFE_ATMSideLabel
 	Widget m_wRoot;
 	Widget m_wTab;
 	TextWidget m_wText;
+	ImageWidget m_wIcon;
 	bool m_bEnabled;
+	//! Tinted at rest, so a company account never looks like the player's own.
+	bool m_bCompany;
 }
 
 //------------------------------------------------------------------------------------------------
 //! Client-local view of ELIFE_ATMComponent. It computes no money: every figure comes from the server.
 class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 {
+	//! As in ATMSideLabel.layout.
+	protected static const float LABEL_ICON_SIZE = 36;
 	protected const ResourceName LAYOUT_SIDE_LABEL = "{B7D2E94A10C6F358}UI/layouts/Menus/Banking/ATMSideLabel.layout";
 	protected const ResourceName LAYOUT_ROW = "{4C81F6A3D95E07B2}UI/layouts/Menus/Banking/ATMTransactionRow.layout";
 
@@ -151,6 +156,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 	protected Widget m_wStackArea;
 	protected Widget m_wRows;
 	protected TextWidget m_wAccountNumber;
+	protected ref Color m_AccountNumberColor;
+	protected ref Color m_AccountDetailColor;
 	protected TextWidget m_wPageMark;
 	protected TextWidget m_wMachineId;
 	protected ref array<TextWidget> m_aSteps = {};
@@ -1382,6 +1389,8 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		m_wStackArea = contentRoot.FindAnyWidget("StackArea");
 		m_wRows = contentRoot.FindAnyWidget("Rows");
 		m_wAccountNumber = TextWidget.Cast(contentRoot.FindAnyWidget("AccountNumber"));
+		if (m_wAccountNumber)
+			m_AccountNumberColor = m_wAccountNumber.GetColor();
 		m_wPageMark = TextWidget.Cast(contentRoot.FindAnyWidget("PageMark"));
 		m_wBankName = TextWidget.Cast(contentRoot.FindAnyWidget("BankName"));
 		m_wHeading = FindWrappedText(contentRoot, "Heading");
@@ -1544,6 +1553,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		label.m_wRoot = root;
 		label.m_wTab = tab;
 		label.m_wText = text;
+		label.m_wIcon = ImageWidget.Cast(root.FindAnyWidget("Icon"));
 		m_aLabels.Insert(label);
 	}
 
@@ -1559,6 +1569,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		FrameSlot.SetAnchor(detail, 1, 0);
 		FrameSlot.SetAlignment(detail, 1, 0.5);
 		FrameSlot.SetPos(detail, -(ELIFE_PhoneStyle.SPACE_2 + ELIFE_PhoneStyle.SPACE_3), centreY + ACCOUNT_DETAIL_OFFSET);
+		if (m_aAccountDetails.IsEmpty())
+			m_AccountDetailColor = detail.GetColor();
+
 		m_aAccountDetails.Insert(detail);
 	}
 
@@ -1625,10 +1638,14 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		{
 			label.m_wText.SetText("");
 			label.m_bEnabled = false;
+			label.m_bCompany = false;
+			if (label.m_wIcon)
+				label.m_wIcon.SetVisible(false);
 		}
 
 		m_wHeading.SetVisible(false);
 		m_wAccountNumber.SetVisible(false);
+		m_wAccountNumber.SetColor(m_AccountNumberColor);
 		m_wLine1.SetVisible(false);
 		m_wLine2.SetVisible(false);
 		m_wCaption.SetVisible(false);
@@ -1641,6 +1658,7 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 		foreach (TextWidget detail : m_aAccountDetails)
 		{
 			detail.SetVisible(false);
+			detail.SetColor(m_AccountDetailColor);
 		}
 
 		m_wRows.SetVisible(false);
@@ -1881,7 +1899,11 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 			case ELIFE_EATMScreen.HOME:
 				PlaceStack(CONTENT_LEFT, BELOW_R1_TOP, CONFIRM_WIDTH, CONTENT_BOTTOM);
 				if (HasAccount())
+				{
 					ShowText(m_wAccountNumber, GetAccountHeading());
+					if (m_Statement.account.IsCompany())
+						m_wAccountNumber.SetColor(ELIFE_PhoneStyle.AccentCompany());
+				}
 
 				ShowText(m_wCaption, "#ELIFE-ATM_Balance");
 				ShowFigure(GetBalanceText(), Accent());
@@ -2125,7 +2147,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				break;
 
 			ELIFE_ATMAccountChoice account = m_Accounts.items[index];
+			bool company = account.companyName != "";
 			SetLabel(button, ELIFE_PhoneBankingService.GroupIban(account.number));
+			SetLabelIcon(button, company);
 
 			if (!m_aAccountDetails.IsIndexValid(slot))
 				continue;
@@ -2138,6 +2162,9 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				detailText = account.companyName + META_SEPARATOR + detailText;
 
 			m_aAccountDetails[slot].SetText(detailText);
+			if (company)
+				m_aAccountDetails[slot].SetColor(ELIFE_PhoneStyle.AccentCompany());
+
 			m_aAccountDetails[slot].SetVisible(true);
 		}
 
@@ -2146,6 +2173,24 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 
 		if (HasNextAccountPage())
 			SetLabel(BUTTON_L2, "#ELIFE-ATM_Action_Next");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Marks the label as a company or a personal account.
+	protected void SetLabelIcon(string id, bool company)
+	{
+		foreach (ELIFE_ATMSideLabel label : m_aLabels)
+		{
+			if (label.m_sId != id)
+				continue;
+
+			label.m_bCompany = company;
+			if (!label.m_wIcon)
+				return;
+
+			label.m_wIcon.SetVisible(ELIFE_PhoneStyle.LoadAccountIcon(label.m_wIcon, company, LABEL_ICON_SIZE));
+			return;
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -2234,10 +2279,23 @@ class ELIFE_ATMScreenComponent : ELIFE_WorldScreenComponent
 				label.m_wTab.SetColor(AccentDeep());
 				label.m_wText.SetColor(OnAccentDeep());
 			}
+			else if (label.m_bCompany)
+			{
+				label.m_wTab.SetColor(ELIFE_PhoneStyle.SurfaceCompany());
+				label.m_wText.SetColor(ELIFE_PhoneStyle.TextPrimary());
+			}
 			else
 			{
 				label.m_wTab.SetColor(ELIFE_PhoneStyle.SurfaceRaised());
 				label.m_wText.SetColor(ELIFE_PhoneStyle.TextPrimary());
+			}
+
+			if (label.m_wIcon)
+			{
+				if (label.m_bCompany && label.m_bEnabled && label.m_sId != m_sPressedButton && label.m_sId != m_sHoveredButton)
+					label.m_wIcon.SetColor(ELIFE_PhoneStyle.AccentCompany());
+				else
+					label.m_wIcon.SetColor(label.m_wText.GetColor());
 			}
 		}
 	}

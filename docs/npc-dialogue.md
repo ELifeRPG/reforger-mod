@@ -76,6 +76,51 @@ as their index in the voice table, so the server and the clients load the same f
    `menu.Suspend()` before and `menu.Resume()` plus `menu.ShowNode(...)` when it closes. While waiting for a server
    answer, use `menu.SetWaiting(true, notice)`, which greys out the replies.
 
+## Opening hours
+
+- Set `m_Schedule` (`ELIFE_NpcSchedule`) on the NPC prefab's `ELIFE_NpcComponent`. It takes an opening and a
+  closing time in in-game time. A closing time before the opening time means open over midnight, and the same time
+  for both means always open. Without a schedule the NPC never closes.
+- To give one location different hours, set `m_ScheduleOverride` on its `ELIFE_NpcSpot`.
+- The server checks the schedule every 5 s. Once closed, the talk action reads "closed · opens 08:00" and
+  conversations are refused with the `CLOSED` reason. Put that line in the voice table as `m_sClosedLine`.
+  Closing time is the last moment to start a conversation. One that is already running carries on, and he goes
+  off duty after it ends.
+
+## Off-duty routine
+
+While closed, `ELIFE_NpcRoutine` (server) puts the NPC in his own AI group. He walks to a free seat within 20 m
+of his spot, picking one at random with nearer seats more likely. If no seat is free, he wanders within 20 m and
+keeps checking. He never despawns. At opening time he gets up, walks back, snaps onto his spot and serves again.
+
+The routine needs vanilla AI: an `SCR_AIWorld` with a Soldiers navmesh in the world. Without one he stays at his
+spot, closed. On small worlds, set `UseNavmeshStreaming 0` on the navmesh, or AI never walks. After placing new
+seats or obstacles, re-bake the navmesh so he can reach them.
+
+## Opening-hours sign
+
+`Prefabs/Props/Signs/SignWall_01_65x45_Hours.et` (`ELifeRPG_Props`). Place it within 25 m of an NPC spot that
+has opening hours. It needs no linking: `ELIFE_NpcHoursSignComponent` reads the hours of the nearest such spot
+(override first, else the NPC prefab's schedule) and renders them on the plate within 20 m. With no spot in range
+the plate stays blank. Change the heading or range on the component.
+
+## Seats
+
+Players get a "Sit" action on each free seat, shown only from within 1 m in front of it. A taken seat shows it
+greyed out. Off-duty NPCs use the same seats (see above). Logic is in `ELifeRPG_Core`
+(`Scripts/Game/Features/Seats`), seating props in `ELifeRPG_Props` (`BenchStreet_01_Seats.et` is the example).
+
+To make a new seating prop:
+
+1. Inherit the vanilla prop and add `ELIFE_SeatPropComponent` (tracks who sits where and replicates it).
+2. Add one child per seat from `Prefabs/Props/Seating/ELIFE_SeatPoint.et` (Core). Place it on the floor in front of the
+   seat with its -Z axis towards the prop, like the bench's (0.65 m out). On its `SCR_AISmartActionSentinelComponent`, keep the `ELIFE_Seat` tag and
+   add `ELIFE_Seat_<n>` (0, 1, …). The number is needed because runtime child order doesn't follow the prefab. The
+   seat point carries a `Hierarchy` component, so it moves with the prop.
+3. On the prop's `ActionsManagerComponent`, add one `UserActionContext` per seat, at the seat, and one
+   `ELIFE_SitUserAction` per seat with that context and `m_iSmartActionId` = the seat's `<n>`.
+4. Restart Workbench if the prefab is new, then re-bake the navmesh where you place it.
+
 ## Bank clerk (`ELifeRPG_NPC`)
 
 - Component: `ELIFE_BankClerkComponent` (bank, customer lookup, greeting by context, opening accounts, papers)
@@ -87,6 +132,7 @@ as their index in the voice table, so the server and the clients load the same f
   with `ELIFE_ClerkDialogueLine`, the transfer slip (`ELIFE_TransferSlipForm`) and open-account actions, and the
   fee terms, new account and receipt details.
 - Tree: `Configs/Banking/ELIFE_ClerkDialogue.conf`, set on the clerk prefab.
+- Hours: 08:00–20:00 on the prefab. Closed, he says `CLOSED` and points to the sign.
 - Context: when a visit starts, the server looks up the customer's accounts (`ELIFE_EClerkAccountStatus`). He
   greets customers of his bank with "welcome back", and anyone else with the in-game time of day or a plain
   hello. The result also reaches the client for `ELIFE_ClerkDialogueCondition_HasAccount` and

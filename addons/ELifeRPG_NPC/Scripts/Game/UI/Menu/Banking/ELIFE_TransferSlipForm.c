@@ -55,6 +55,8 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 {
 	protected static const ResourceName LAYOUT = "{D329244BC328F6D9}UI/layouts/Menus/Banking/TransferSlip.layout";
 	protected static const ResourceName BOX_LAYOUT = "{5A2C97FF6C6F6A3E}UI/layouts/Menus/Banking/TransferSlipBox.layout";
+	//! As FromTagIcon and ToTagIcon in the layout.
+	protected static const float TAG_ICON_SIZE = 20;
 
 	//! The account number: EL printed, two check digits, four letters of the bank code, ten digits.
 	protected static const int NUMBER_FIXED = 2;
@@ -81,8 +83,12 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 	protected ref array<Widget> m_aRows = {};
 	protected TextWidget m_wFromValue;
 	protected TextWidget m_wFromTag;
+	protected Widget m_wFromTagLine;
+	protected ImageWidget m_wFromTagIcon;
 	protected TextWidget m_wToValue;
 	protected TextWidget m_wToTag;
+	protected Widget m_wToTagLine;
+	protected ImageWidget m_wToTagIcon;
 	protected TextWidget m_wSummary;
 	protected TextWidget m_wNotice;
 	protected TextWidget m_wHint;
@@ -198,8 +204,12 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 
 		m_wFromValue = TextWidget.Cast(root.FindAnyWidget("FromValue"));
 		m_wFromTag = TextWidget.Cast(root.FindAnyWidget("FromTag"));
+		m_wFromTagLine = root.FindAnyWidget("FromTagLine");
+		m_wFromTagIcon = ImageWidget.Cast(root.FindAnyWidget("FromTagIcon"));
 		m_wToValue = TextWidget.Cast(root.FindAnyWidget("ToValue"));
 		m_wToTag = TextWidget.Cast(root.FindAnyWidget("ToTag"));
+		m_wToTagLine = root.FindAnyWidget("ToTagLine");
+		m_wToTagIcon = ImageWidget.Cast(root.FindAnyWidget("ToTagIcon"));
 		m_wSummary = TextWidget.Cast(root.FindAnyWidget("Summary"));
 		m_wNotice = TextWidget.Cast(root.FindAnyWidget("Notice"));
 		m_wHint = TextWidget.Cast(root.FindAnyWidget("Hint"));
@@ -421,16 +431,57 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! A managed company account is named after its company rather than called the player's own.
-	protected string OwnTag(string number)
+	protected ELIFE_ClerkAccount FindOwnAccount(string number)
 	{
 		foreach (ELIFE_ClerkAccount account : m_Accounts.items)
 		{
-			if (account.number == number && account.companyName != "")
-				return account.companyName;
+			if (account.number == number)
+				return account;
 		}
 
-		return "#ELIFE-Slip_Own";
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The line under an account: whose it is, with an icon. A company stands out in bold violet ink with its own icon;
+	//! otherwise sprite is from the vanilla wrapper set, or empty for none.
+	protected void SetTag(TextWidget tag, Widget line, ImageWidget icon, string text, string sprite, bool company)
+	{
+		if (!tag)
+			return;
+
+		tag.SetText(text);
+		Color color = Faint();
+		ResourceName font = ELIFE_PhoneStyle.FONT_REGULAR;
+		if (company)
+		{
+			color = ELIFE_PhoneStyle.InkCompany();
+			font = ELIFE_PhoneStyle.FONT_BOLD;
+		}
+
+		tag.SetColor(color);
+		tag.SetFont(font);
+		tag.SetBold(company);
+
+		if (icon)
+		{
+			icon.SetColor(color);
+			bool loaded;
+			if (company)
+				loaded = ELIFE_PhoneStyle.LoadAccountIcon(icon, true, TAG_ICON_SIZE);
+			else if (sprite != "" && icon.LoadImageFromSet(0, ELIFE_PhoneStyle.ICON_SET_WRAPPER, sprite))
+			{
+				ELIFE_PhoneStyle.FitIcon(icon, TAG_ICON_SIZE);
+				loaded = true;
+			}
+
+			icon.SetVisible(loaded);
+		}
+
+		if (line)
+			line.SetVisible(text != "");
+		else
+			tag.SetVisible(text != "");
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1178,19 +1229,18 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 				m_wFromValue.SetText("—");
 		}
 
-		if (m_wFromTag)
-		{
-			string fromTag;
-			if (from)
-				fromTag = from.companyName;
-
-			m_wFromTag.SetText(fromTag);
-			m_wFromTag.SetVisible(fromTag != "");
-		}
+		if (from && from.company)
+			SetTag(m_wFromTag, m_wFromTagLine, m_wFromTagIcon, from.companyName, "", true);
+		else if (from)
+			SetTag(m_wFromTag, m_wFromTagLine, m_wFromTagIcon, "#ELIFE-Slip_Own", ELIFE_PhoneStyle.ICON_ACCOUNT_PERSONAL, false);
+		else
+			SetTag(m_wFromTag, m_wFromTagLine, m_wFromTagIcon, "", "", false);
 
 		//! The number alone fits the row; whose it is goes on the small line under it.
 		string toValue = "—";
 		string toTag;
+		string toIcon;
+		bool toCompany;
 		if (IsOtherTarget())
 		{
 			toValue = "#ELIFE-Clerk_Transfer_OtherAccount";
@@ -1199,18 +1249,28 @@ class ELIFE_TransferSlipForm : ELIFE_FormContent
 		{
 			toValue = ELIFE_PhoneBankingService.GroupIban(m_aTargets[m_iTarget]);
 			toTag = "#ELIFE-Slip_Recent";
+			toIcon = "recently";
 			if (m_aTargetIsOwn[m_iTarget])
-				toTag = OwnTag(m_aTargets[m_iTarget]);
+			{
+				ELIFE_ClerkAccount target = FindOwnAccount(m_aTargets[m_iTarget]);
+				toCompany = target && target.company;
+				if (toCompany)
+				{
+					toTag = target.companyName;
+					toIcon = "";
+				}
+				else
+				{
+					toTag = "#ELIFE-Slip_Own";
+					toIcon = ELIFE_PhoneStyle.ICON_ACCOUNT_PERSONAL;
+				}
+			}
 		}
 
 		if (m_wToValue)
 			m_wToValue.SetText(toValue);
 
-		if (m_wToTag)
-		{
-			m_wToTag.SetText(toTag);
-			m_wToTag.SetVisible(toTag != "");
-		}
+		SetTag(m_wToTag, m_wToTagLine, m_wToTagIcon, toTag, toIcon, toCompany);
 
 		if (m_aRows.IsIndexValid(ELIFE_ESlipRow.NUMBER) && m_aRows[ELIFE_ESlipRow.NUMBER])
 			m_aRows[ELIFE_ESlipRow.NUMBER].SetVisible(IsOtherTarget());

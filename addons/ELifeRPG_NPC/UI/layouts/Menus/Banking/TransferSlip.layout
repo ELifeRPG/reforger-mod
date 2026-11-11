@@ -222,19 +222,38 @@ FrameWidgetClass {
                   Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
                  }
                 }
-                TextWidgetClass "{32053984AB913A9F}" {
-                 Name "FromTag"
-                 Slot LayoutSlot "{52B0DA968A6C0F21}" {
-                  HorizontalAlign 3
+                HorizontalLayoutWidgetClass "{5D2A9C7E31B84F06}" {
+                 Name "FromTagLine"
+                 Slot LayoutSlot "{B83E5A1D7C0F4296}" {
+                  HorizontalAlign 1
                  }
                  "Is Visible" 0
-                 Color 0.012 0.016 0.03 1
-                 Text ""
-                 "Font Size" 18
-                 "Min Font Size" 18
-                 "Horizontal Alignment" Center
-                 FontProperties FontProperties "{639E0B981507AC1D}" {
-                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 {
+                  ImageWidgetClass "{9E41B7C0D2A3685F}" {
+                   Name "FromTagIcon"
+                   Slot LayoutSlot "{2C7F04E9B1D6A538}" {
+                    VerticalAlign 1
+                    Padding 0 0 6 0
+                   }
+                   "Is Visible" 0
+                   Color 0.012 0.016 0.03 1
+                   Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+                   Size 20 20
+                  }
+                  TextWidgetClass "{32053984AB913A9F}" {
+                   Name "FromTag"
+                   Slot LayoutSlot "{52B0DA968A6C0F21}" {
+                    VerticalAlign 1
+                   }
+                   Color 0.012 0.016 0.03 1
+                   Text ""
+                   "Font Size" 18
+                   "Min Font Size" 18
+                   "Horizontal Alignment" Center
+                   FontProperties FontProperties "{639E0B981507AC1D}" {
+                    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                   }
+                  }
                  }
                 }
                }
@@ -366,18 +385,38 @@ FrameWidgetClass {
                   Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
                  }
                 }
-                TextWidgetClass "{EBAE3E609D655744}" {
-                 Name "ToTag"
-                 Slot LayoutSlot "{7434534B6A415857}" {
-                  HorizontalAlign 3
+                HorizontalLayoutWidgetClass "{71C4E2B09A5D3F68}" {
+                 Name "ToTagLine"
+                 Slot LayoutSlot "{46F1B83C2E9A0D57}" {
+                  HorizontalAlign 1
                  }
-                 Color 0.012 0.016 0.03 1
-                 Text ""
-                 "Font Size" 18
-                 "Min Font Size" 18
-                 "Horizontal Alignment" Center
-                 FontProperties FontProperties "{48270E5985837AC5}" {
-                  Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                 "Is Visible" 0
+                 {
+                  ImageWidgetClass "{0B6D9F3A4E8C2175}" {
+                   Name "ToTagIcon"
+                   Slot LayoutSlot "{E5A20C7B9D41F836}" {
+                    VerticalAlign 1
+                    Padding 0 0 6 0
+                   }
+                   "Is Visible" 0
+                   Color 0.012 0.016 0.03 1
+                   Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+                   Size 20 20
+                  }
+                  TextWidgetClass "{EBAE3E609D655744}" {
+                   Name "ToTag"
+                   Slot LayoutSlot "{7434534B6A415857}" {
+                    VerticalAlign 1
+                   }
+                   Color 0.012 0.016 0.03 1
+                   Text ""
+                   "Font Size" 18
+                   "Min Font Size" 18
+                   "Horizontal Alignment" Center
+                   FontProperties FontProperties "{48270E5985837AC5}" {
+                    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+                   }
+                  }
                  }
                 }
                }

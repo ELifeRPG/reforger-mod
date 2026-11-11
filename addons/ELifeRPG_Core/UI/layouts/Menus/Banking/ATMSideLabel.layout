@@ -11,19 +11,38 @@ OverlayWidgetClass {
    style rounded_12px
    "no focus" 1
   }
-  TextWidgetClass "{64755B0B51F3D6DC}" {
-   Name "Text"
+  HorizontalLayoutWidgetClass "{8E2B47D1C3A95F60}" {
+   Name "Line"
    Slot OverlayWidgetSlot "{C3415D36848FECFA}" {
     HorizontalAlign 1
     VerticalAlign 1
     Padding 24 12 24 12
    }
-   Color 0.8378 0.8626 0.9222 1
-   Text ""
-   "Font Size" 40
-   "Min Font Size" 40
-   FontProperties FontProperties "{DA71FB37E7CFDCBC}" {
-    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   {
+    ImageWidgetClass "{4F1C8A2D9B37E650}" {
+     Name "Icon"
+     Slot LayoutSlot "{A1D93E5C7F2B8406}" {
+      VerticalAlign 1
+      Padding 0 0 14 0
+     }
+     "Is Visible" 0
+     Color 0.8378 0.8626 0.9222 1
+     Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+     Size 36 36
+    }
+    TextWidgetClass "{64755B0B51F3D6DC}" {
+     Name "Text"
+     Slot LayoutSlot "{7B5E20C9D84A1F3E}" {
+      VerticalAlign 1
+     }
+     Color 0.8378 0.8626 0.9222 1
+     Text ""
+     "Font Size" 40
+     "Min Font Size" 40
+     FontProperties FontProperties "{DA71FB37E7CFDCBC}" {
+      Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+     }
+    }
    }
   }
  }
