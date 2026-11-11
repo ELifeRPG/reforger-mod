@@ -20,3 +20,7 @@ $grp GenericEntity : "{189D4F010C08D8F2}Prefabs/Props/Seating/BenchStreet_01_Sea
   angles 0 180 0
  }
 }
+GenericEntity TestHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
+ coords 262.7 1.6 262.5
+ angles 0 180 0
+}

@@ -1,0 +1,73 @@
+FrameWidgetClass {
+ Name "SignRoot"
+ {
+  ImageWidgetClass "{1C60B9C1584738AB}" {
+   Name "Background"
+   Slot FrameWidgetSlot "{A97669E4619297A6}" {
+    Anchor 0 0 1 1
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 0
+    OffsetRight 0
+    SizeY 0
+    OffsetBottom 0
+   }
+   Color 0 0 0 1
+  }
+  VerticalLayoutWidgetClass "{A3306ABB1913D18F}" {
+   Name "Lines"
+   Slot FrameWidgetSlot "{E774FC18743BF2B3}" {
+    Anchor 0.5 0.5 0.5 0.5
+    PositionX 10
+    OffsetLeft 10
+    PositionY -105
+    OffsetTop -105
+    Alignment 0.5 0.5
+    SizeToContent 1
+   }
+   {
+    TextWidgetClass "{14441437DC43E967}" {
+     Name "Title"
+     Slot LayoutSlot "{6A9FFB3EFA600D52}" {
+      HorizontalAlign 1
+      Padding 0 8 0 8
+     }
+     Color 1 1 1 1
+     Text ""
+     "Font Size" 110
+     "Min Font Size" 110
+     "Horizontal Alignment" Center
+    }
+    TextWidgetClass "{55355683DADFFDF1}" {
+     Name "Days"
+     Slot LayoutSlot "{C328C639811D0CAA}" {
+      HorizontalAlign 1
+      Padding 0 8 0 8
+     }
+     Color 1 1 1 1
+     Text ""
+     "Font Size" 80
+     "Min Font Size" 80
+     "Horizontal Alignment" Center
+    }
+    TextWidgetClass "{F6C9AB037BA58952}" {
+     Name "Hours"
+     Slot LayoutSlot "{9A185FCB1F1C70A1}" {
+      HorizontalAlign 1
+      Padding 0 8 0 8
+     }
+     Color 1 1 1 1
+     Text ""
+     "Font Size" 120
+     "Min Font Size" 120
+     "Horizontal Alignment" Center
+     FontProperties FontProperties "{05DEA934932CC1F1}" {
+      Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+     }
+    }
+   }
+  }
+ }
+}

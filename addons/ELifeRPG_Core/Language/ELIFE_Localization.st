@@ -2578,6 +2578,30 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{E0C702992BDA19DC}" {
+   Id "ELIFE-Sign_OpeningHours"
+   Target_en_us "Opening hours"
+   Target_de_de "Öffnungszeiten"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DBCE4924B34A1D0A}" {
+   Id "ELIFE-Sign_Daily"
+   Target_en_us "Daily"
+   Target_de_de "Täglich"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AA29A15D1EEA3A17}" {
+   Id "ELIFE-Sign_AlwaysOpen"
+   Target_en_us "Open 24 hours"
+   Target_de_de "Durchgehend geöffnet"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
   CustomStringTableItem "{7C729F65DD8D13A3}" {
    Id "ELIFE-Npc_Closed"
    Target_en_us "Closed. Opens at %1."

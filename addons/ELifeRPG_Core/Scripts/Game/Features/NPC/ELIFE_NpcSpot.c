@@ -37,6 +37,64 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 
 	protected bool m_bStandInHidden;
 
+	//! Every spot in the world, on server and clients, so props near one find it without a link.
+	protected static ref array<ELIFE_NpcSpot> s_aSpots = {};
+
+	protected ref ELIFE_NpcSchedule m_PrefabSchedule;
+	protected bool m_bPrefabScheduleRead;
+
+	//------------------------------------------------------------------------------------------------
+	void ELIFE_NpcSpot(IEntitySource src, IEntity parent)
+	{
+		s_aSpots.Insert(this);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	void ~ELIFE_NpcSpot()
+	{
+		if (s_aSpots)
+			s_aSpots.RemoveItem(this);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! This place's opening hours: the spot's override, else the NPC prefab's. Null if he keeps no hours.
+	//! Read from the prefab, so it also works on clients, where the spawned NPC doesn't carry them.
+	ELIFE_NpcSchedule GetSchedule()
+	{
+		if (m_ScheduleOverride)
+			return m_ScheduleOverride;
+
+		if (!m_bPrefabScheduleRead)
+		{
+			m_bPrefabScheduleRead = true;
+			m_PrefabSchedule = ELIFE_NpcSchedule.FromPrefab(m_rnPrefab);
+		}
+
+		return m_PrefabSchedule;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The nearest spot within range whose NPC keeps opening hours, or null.
+	static ELIFE_NpcSpot FindNearestWithSchedule(vector position, float range)
+	{
+		ELIFE_NpcSpot nearest;
+		float nearestDistance = range * range;
+		foreach (ELIFE_NpcSpot spot : s_aSpots)
+		{
+			if (!spot)
+				continue;
+
+			float distance = vector.DistanceSq(position, spot.GetOrigin());
+			if (distance > nearestDistance || !spot.GetSchedule())
+				continue;
+
+			nearest = spot;
+			nearestDistance = distance;
+		}
+
+		return nearest;
+	}
+
 	//------------------------------------------------------------------------------------------------
 	//! Stable for a placed spot: the same position always gives the same pick. Look and voice use different
 	//! factors, so any look can get any voice.

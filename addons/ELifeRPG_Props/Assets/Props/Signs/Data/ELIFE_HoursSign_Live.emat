@@ -1,0 +1,7 @@
+MatPBRDecal {
+ BlendMode AlphaBlend
+ Color 0.04 0.04 0.04 1
+ RoughnessScale 0.6
+ MetalnessScale 0
+ OpacityMap "$rendertarget"
+}

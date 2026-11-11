@@ -43,6 +43,51 @@ class ELIFE_NpcSchedule
 	}
 
 	//------------------------------------------------------------------------------------------------
+	bool IsAlwaysOpen()
+	{
+		return GetOpenMinute() == GetCloseMinute();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! "08:00 – 20:00"
+	string FormatHours()
+	{
+		return FormatMinute(GetOpenMinute()) + " – " + FormatMinute(GetCloseMinute());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The schedule set on an NPC prefab's ELIFE_NpcComponent, or null.
+	static ELIFE_NpcSchedule FromPrefab(ResourceName prefab)
+	{
+		if (prefab.IsEmpty())
+			return null;
+
+		Resource resource = Resource.Load(prefab);
+		if (!resource || !resource.IsValid())
+			return null;
+
+		IEntitySource source = resource.GetResource().ToEntitySource();
+		if (!source)
+			return null;
+
+		for (int i = 0, count = source.GetComponentCount(); i < count; i++)
+		{
+			IEntityComponentSource component = source.GetComponent(i);
+			typename type = component.GetClassName().ToType();
+			if (!type || !type.IsInherited(ELIFE_NpcComponent))
+				continue;
+
+			BaseContainer schedule = component.GetObject("m_Schedule");
+			if (!schedule)
+				return null;
+
+			return ELIFE_NpcSchedule.Cast(BaseContainerTools.CreateInstanceFromContainer(schedule));
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! In-game minute of the day, or -1 in a world without a clock.
 	static int GetCurrentMinute()
 	{
