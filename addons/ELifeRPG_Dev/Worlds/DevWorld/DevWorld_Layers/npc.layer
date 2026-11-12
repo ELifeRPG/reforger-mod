@@ -7,4 +7,20 @@ $grp ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankCle
   coords 264.433 0 264.037
   angles 0 180 0
  }
+ BankClerkSpot3 {
+  coords 267.9 0 264
+  angles 0 180 0
+ }
+ BankClerkSpot4 {
+  coords 271.3 0 264
+  angles 0 180 0
+ }
+ BankClerkSpot5 {
+  coords 257.5 0 264
+  angles 0 180 0
+ }
+ BankClerkSpot6 {
+  coords 254 0 264
+  angles 0 180 0
+ }
 }

@@ -1,26 +1,23 @@
 GenericEntity DevTime {
  components {
   ELIFE_DevTimeComponent "{8B431FD25BD0BBE7}" {
-   m_iStartHour 7
-   m_iStartMinute 0
+   m_iStartHour 19
+   m_iStartMinute 50
+   m_fDaySeconds 90
   }
  }
  coords 250 0 260
 }
-$grp GenericEntity : "{189D4F010C08D8F2}Prefabs/Props/Seating/BenchStreet_01_Seats.et" {
- TestBench {
-  coords 252 0 252
- }
- TestBench2 {
-  coords 271 0 257
-  angles 0 -90 0
- }
- TestBench3 {
-  coords 258 0 275
-  angles 0 180 0
- }
-}
 GenericEntity TestHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
  coords 262.7 1.6 262.5
  angles 0 180 0
+}
+GenericEntity TestChair : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seats.et" {
+ coords 256 0 255
+}
+GenericEntity TestSofa : "{59D408A3148997CD}Prefabs/Props/Seating/Sofa_02_green_Seats.et" {
+ coords 262.5 0 255
+}
+GenericEntity TestChairOffice : "{0585A1DEDDD2A328}Prefabs/Props/Seating/ChairOffice_01_Seats.et" {
+ coords 266 0 255
 }

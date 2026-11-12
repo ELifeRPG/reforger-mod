@@ -1,0 +1,40 @@
+GenericEntity : "{BD02400CAB005CE8}Prefabs/Props/Furniture/Chair_01/Chair_01_blue.et" {
+ ID "F2087C31F3D6AC74"
+ components {
+  ELIFE_SeatPropComponent "{BD60FCBC903411A7}" {
+  }
+  ActionsManagerComponent "{9320F58278530FD2}" {
+   ActionContexts {
+    UserActionContext "{F1D2E3F7FC643736}" {
+     ContextName "seat"
+     Position PointInfo "{C581D2AC4069F004}" {
+      Offset 0 0.5 0.04
+     }
+     Radius 0.4
+    }
+   }
+   additionalActions {
+    ELIFE_SitUserAction "{61616D4CCC457F1D}" {
+     ParentContextList {
+      "seat"
+     }
+     m_iSmartActionId 0
+    }
+   }
+  }
+ }
+ scale 0.93
+ {
+  GenericEntity Seat : "{B4DE49B7D6E5A9A5}Prefabs/Props/Seating/ELIFE_SeatPoint.et" {
+   ID "E34123CC7BFEF6B5"
+   components {
+    SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+     Tags {
+      "ELIFE_Seat" "ELIFE_Seat_0"
+     }
+    }
+   }
+   coords 0 0 0.54
+  }
+ }
+}

@@ -119,6 +119,15 @@ class ELIFE_Seats
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! How far, along the ground, the character is from where the pose should have put him.
+	static float GetSitError(notnull IEntity character, notnull SCR_AISmartActionSentinelComponent seat)
+	{
+		vector transform[4];
+		GetSitTransform(seat, transform);
+		return vector.DistanceXZ(character.GetOrigin(), transform[3]);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! NPCs approach from here so they start the sit facing the seat; otherwise the pose swings them onto the prop.
 	static vector GetApproachPoint(notnull SCR_AISmartActionSentinelComponent seat, float distance)
 	{

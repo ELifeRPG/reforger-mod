@@ -1,0 +1,64 @@
+GenericEntity : "{BD74E024F375A541}Prefabs/Props/Furniture/Sofa_02/Sofa_02_green.et" {
+ ID "6FEAB5521351AFF7"
+ components {
+  ELIFE_SeatPropComponent "{17CC63F4D1471CF9}" {
+  }
+  ActionsManagerComponent "{A1E214BCD4397438}" {
+   ActionContexts {
+    UserActionContext "{129AF4A5F67B2117}" {
+     ContextName "seat_left"
+     Position PointInfo "{869C68D5DD725053}" {
+      Offset -0.5 0.45 0.25
+     }
+     Radius 0.4
+    }
+    UserActionContext "{F90FF326025BFE2D}" {
+     ContextName "seat_right"
+     Position PointInfo "{85B077497EFD13E3}" {
+      Offset 0.5 0.45 0.25
+     }
+     Radius 0.4
+    }
+   }
+   additionalActions {
+    ELIFE_SitUserAction "{61A4D340C6C27AE1}" {
+     ParentContextList {
+      "seat_left"
+     }
+     m_iSmartActionId 0
+    }
+    ELIFE_SitUserAction "{F4263C2CA75476F2}" {
+     ParentContextList {
+      "seat_right"
+     }
+     m_iSmartActionId 1
+    }
+   }
+  }
+ }
+ scale 1.07
+ {
+  GenericEntity Seat_Left : "{B4DE49B7D6E5A9A5}Prefabs/Props/Seating/ELIFE_SeatPoint.et" {
+   ID "CD363C739BF4658B"
+   components {
+    SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+     Tags {
+      "ELIFE_Seat" "ELIFE_Seat_0"
+     }
+    }
+   }
+   coords -0.5 0 0.7
+  }
+  GenericEntity Seat_Right : "{B4DE49B7D6E5A9A5}Prefabs/Props/Seating/ELIFE_SeatPoint.et" {
+   ID "2189C3810B61E35F"
+   components {
+    SCR_AISmartActionSentinelComponent "{74A68A6B229B3AA4}" {
+     Tags {
+      "ELIFE_Seat" "ELIFE_Seat_1"
+     }
+    }
+   }
+   coords 0.5 0 0.7
+  }
+ }
+}

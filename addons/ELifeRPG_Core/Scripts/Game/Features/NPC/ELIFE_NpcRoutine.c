@@ -3,6 +3,8 @@ enum ELIFE_ENpcRoutineState
 {
 	//! At his spot, AI off; the NPC component serves.
 	ON_DUTY,
+	//! After a bad landing: a step back in front of the seat before walking in again.
+	BACKING_OFF,
 	TO_SEAT,
 	SITTING,
 	WANDERING,
@@ -34,6 +36,12 @@ class ELIFE_NpcRoutine
 	protected static const float SIT_FROM_MAX_DISTANCE = 1.2;
 	//! The pose takes a moment to start before losing it counts as being pushed off.
 	protected static const float SIT_GRACE_S = 3;
+	//! From when the slide onto the seat is over he must stay this close; others can stop it short or push him off.
+	protected static const float SIT_CHECK_S = 1.5;
+	protected static const float SIT_TOLERANCE = 0.15;
+	//! Fresh approaches to the same seat after a bad landing, before he picks another one.
+	protected static const int SIT_RETRIES = 2;
+	protected static const float BACK_OFF_DISTANCE = 1.2;
 
 	protected static const float SEAT_RANGE = 20;
 	//! Seat choice weight is 1 / (this + distance in m): a seat 2 m away is about three times as likely as one 15 m away.
@@ -58,6 +66,7 @@ class ELIFE_NpcRoutine
 	protected float m_fPauseSeconds;
 	protected vector m_vTarget;
 	protected vector m_vLastPosition;
+	protected int m_iSitRetries;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_NpcRoutine(notnull ELIFE_NpcComponent npc, vector home)
@@ -132,12 +141,16 @@ class ELIFE_NpcRoutine
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void LookForSeat()
+	//! skip: a seat not to pick this time, e.g. the one he kept landing off.
+	protected void LookForSeat(SCR_AISmartActionSentinelComponent skip = null)
 	{
 		LeaveSeat();
 
 		array<SCR_AISmartActionSentinelComponent> seats = {};
 		ELIFE_Seats.FindFree(m_vHome, SEAT_RANGE, seats);
+		if (skip)
+			seats.RemoveItem(skip);
+
 		if (seats.IsEmpty())
 		{
 			Wander();
@@ -145,6 +158,7 @@ class ELIFE_NpcRoutine
 		}
 
 		m_Seat = PickSeat(seats);
+		m_iSitRetries = 0;
 		vector seatPoint = ELIFE_Seats.GetPosition(m_Seat);
 		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
 		m_vTarget = seatPoint;
@@ -215,6 +229,11 @@ class ELIFE_NpcRoutine
 
 		switch (m_eState)
 		{
+			case ELIFE_ENpcRoutineState.BACKING_OFF:
+			{
+				TickBackingOff();
+				return;
+			}
 			case ELIFE_ENpcRoutineState.TO_SEAT:
 			{
 				TickToSeat();
@@ -222,6 +241,12 @@ class ELIFE_NpcRoutine
 			}
 			case ELIFE_ENpcRoutineState.SITTING:
 			{
+				if (m_Seat && m_fStateSeconds >= SIT_CHECK_S && ELIFE_Seats.GetSitError(m_Character, m_Seat) > SIT_TOLERANCE)
+				{
+					RetrySeat();
+					return;
+				}
+
 				if (m_fStateSeconds >= SIT_GRACE_S && !ELIFE_Seats.IsSitting(m_Character, m_Seat))
 					LookForSeat();
 
@@ -279,6 +304,39 @@ class ELIFE_NpcRoutine
 		}
 
 		SetState(ELIFE_ENpcRoutineState.SITTING);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Landed off the seat: up again and a fresh approach, or another seat after SIT_RETRIES.
+	protected void RetrySeat()
+	{
+		if (m_iSitRetries >= SIT_RETRIES)
+		{
+			LookForSeat(m_Seat);
+			return;
+		}
+
+		m_iSitRetries++;
+		ELIFE_Seats.StandUp(m_Character, m_Seat);
+		//! Sitting again from where he is would land the same; the walk in has to start afresh.
+		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, BACK_OFF_DISTANCE), ELIFE_ENpcRoutineState.BACKING_OFF);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void TickBackingOff()
+	{
+		if (!m_Seat || m_fStateSeconds > WALK_TIMEOUT_S)
+		{
+			LookForSeat();
+			return;
+		}
+
+		if (!HasArrived(m_vTarget))
+			return;
+
+		vector seatPoint = ELIFE_Seats.GetPosition(m_Seat);
+		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
+		m_vTarget = seatPoint;
 	}
 
 	//------------------------------------------------------------------------------------------------

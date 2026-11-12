@@ -114,9 +114,12 @@ To make a new seating prop:
 
 1. Inherit the vanilla prop and add `ELIFE_SeatPropComponent` (tracks who sits where and replicates it).
 2. Add one child per seat from `Prefabs/Props/Seating/ELIFE_SeatPoint.et` (Core). Place it on the floor in front of the
-   seat with its -Z axis towards the prop, like the bench's (0.65 m out). On its `SCR_AISmartActionSentinelComponent`, keep the `ELIFE_Seat` tag and
-   add `ELIFE_Seat_<n>` (0, 1, …). The number is needed because runtime child order doesn't follow the prefab. The
-   seat point carries a `Hierarchy` component, so it moves with the prop.
+   seat with its -Z axis towards the prop, like the bench's (0.65 m out). On its `SCR_AISmartActionSentinelComponent`,
+   keep the `ELIFE_Seat` tag and add `ELIFE_Seat_<n>` (0, 1, …). The number is needed because runtime child order
+   doesn't follow the prefab. The seat point carries a `Hierarchy` component, so it moves with the prop.
+   Keep seats at least 0.75 m apart (the character's collision capsule), or sitters push each other off them.
+   The sitting height comes from the animation, not the seat point. To match a seat to the pose, scale the prop
+   (`scale` on the prefab root); the seat points scale with it.
 3. On the prop's `ActionsManagerComponent`, add one `UserActionContext` per seat, at the seat, and one
    `ELIFE_SitUserAction` per seat with that context and `m_iSmartActionId` = the seat's `<n>`.
 4. Restart Workbench if the prefab is new, then re-bake the navmesh where you place it.
