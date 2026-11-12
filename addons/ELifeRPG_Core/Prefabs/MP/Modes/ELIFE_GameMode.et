@@ -1,11 +1,18 @@
 ELIFE_GameMode : "{0F307326459A1395}Prefabs/MP/Modes/GameMode_Base.et" {
  ID "597F1CE401B0CCF5"
  components {
+  ELIFE_JoinSessionManagerComponent "{FEE5C10F7DF66519}" {
+   m_aAppearancePrefabs {
+    "{9FA4749AF6C55D96}Prefabs/Characters/Factions/LIFE/Character_LIFE.et" "{EA69140AA60696EA}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_01.et" "{CBDECCF09B61ACF1}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_02.et" "{1151F8EF4E43F547}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_03.et" "{495046C5DFE1BDD2}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_04.et" "{7FD4A5B13943B9E4}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_05.et" "{13AAAE204BC5DB96}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_06.et" "{A42DBEE1E564B2D8}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_07.et" "{54CBA88FC2B7CDA4}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_08.et" "{B48D9F586F09259E}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_09.et" "{373D351D2D370889}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_10.et"
+   }
+   m_vMenuCameraPosition 8 25 5
+   m_vMenuCameraAngles 0 -30 0
+  }
   SCR_CommandingManagerComponent "{60805FAC3F9F11D9}" {
    m_sCommandsConfigPath "{E00271487BABACFC}Configs/Emotes/ELIFE_EmoteCommands.conf"
   }
   SCR_GameOverScreenManagerComponent "{56DEC646298AD219}" {
-   m_GameOverScreenConfig SCR_GameOverScreenConfig "{56DEC6462FFDD82D}" : "{651583FFFB7FC765}Configs/GameOverScreen/GameOverScreensConfig.conf" {
+   m_GameOverScreenConfig SCR_GameOverScreenConfig "{56DEC6462FFDD82D}" : "{651583FFFB7FC765}Configs/GameOverScreen/BaseGameOverScreensConfig.conf" {
    }
   }
   SCR_GroupsManagerComponent "{5706EC99934496F5}" {
@@ -13,7 +20,9 @@ ELIFE_GameMode : "{0F307326459A1395}Prefabs/MP/Modes/GameMode_Base.et" {
    m_iPlayableGroupFrequencyOffset 500
   }
   SCR_RespawnSystemComponent "{56B2B4793051E7C9}" {
-   m_SpawnLogic SCR_AutoSpawnLogic "{597F1CE4157D4F84}" {
+   m_SpawnLogic ELIFE_JoinSpawnLogic "{597F1CE4157D4F84}" {
+    m_eDisconnectPlayerControllerBehaviour DELETE
+    m_eDisconnectCharacterBehaviour DELETE
    }
   }
   SCR_VotingManagerComponent "{5650BB6B6089393A}" : "{37037CBB8B4CD354}Prefabs/MP/Components/VotingManagerComponent.ct" {
@@ -31,7 +40,8 @@ ELIFE_GameMode : "{0F307326459A1395}Prefabs/MP/Modes/GameMode_Base.et" {
    Streamable Disabled
   }
  }
+ Flags 0 0x3
  coords 974.412 1.879 12149.478
- Flags 0
- m_bUseSpawnPreload 0
+ PlayerControllerPrefab "{0660CD51E324582A}Prefabs/Characters/Core/ELIFE_PlayerController.et"
+ m_bUseSpawnPreload 1
 }

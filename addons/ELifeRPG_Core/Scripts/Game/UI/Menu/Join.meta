@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{C23F2B4F52B632B9}Scripts/Game/UI/Menu/Join"
+ Configurations {
+  FolderResourceClass PC {
+  }
+  FolderResourceClass XBOX_ONE : PC {
+  }
+  FolderResourceClass XBOX_SERIES : PC {
+  }
+  FolderResourceClass PS4 : PC {
+  }
+  FolderResourceClass HEADLESS : PC {
+  }
+ }
+}

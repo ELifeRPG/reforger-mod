@@ -1,0 +1,185 @@
+OverlayWidgetClass {
+ Name "JoinCreate"
+ "Ignore Cursor" 0
+ {
+  SizeLayoutWidgetClass "{585329F372FF13D6}" {
+   Name "PreviewSize"
+   "Ignore Cursor" 1
+   Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+    Padding 840 0 0 0
+   }
+   {
+    ItemPreviewWidgetClass "{552068601B16C353}" {
+     Name "Preview"
+     "Ignore Cursor" 1
+     Slot AlignableSlot "{3A18467C5F282CEA}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     "Use Engine Scale" 0
+     Color 1 1 1 1
+     "Use clear color" 1
+     "Clear Color" 0 0 0 0
+     "Blend mode" Blend
+    }
+   }
+  }
+  SizeLayoutWidgetClass "{585329F372FF13D6}" {
+   Name "CreateSize"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+    HorizontalAlign 0
+    VerticalAlign 1
+    Padding 80 0 0 0
+   }
+   AllowWidthOverride 1
+   WidthOverride 760
+   {
+    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+     Name "CreateCard"
+     "Ignore Cursor" 0
+     {
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "CreateTitle"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 1
+        Padding 0 0 0 16
+       }
+       Text ""
+       "Font Size" 32
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      ButtonWidgetClass "{8A8D204BCC3E75C5}" : "{0022F0B45ADBC5AC}UI/layouts/WidgetLibrary/EditBox/WLib_EditBox.layout" {
+       Name "FirstName"
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 0 0 12
+       }
+       components {
+        SCR_EditBoxComponent "{547290FFBD5B33E9}" {
+         m_bUseLabel 1
+         m_sLabel "#ELIFE-Join_FirstName"
+        }
+       }
+      }
+      ButtonWidgetClass "{6FB755BC64B823B2}" : "{0022F0B45ADBC5AC}UI/layouts/WidgetLibrary/EditBox/WLib_EditBox.layout" {
+       Name "LastName"
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 0 0 12
+       }
+       components {
+        SCR_EditBoxComponent "{547290FFBD5B33E9}" {
+         m_bUseLabel 1
+         m_sLabel "#ELIFE-Join_LastName"
+        }
+       }
+      }
+      ButtonWidgetClass "{986A3A4068B720D7}" : "{C9DF0E6590F6C388}UI/layouts/WidgetLibrary/SpinBox/WLib_SpinBox.layout" {
+       Name "Appearance"
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 0 0 12
+       }
+       components {
+        SCR_SpinBoxComponent "{5472C6CBC0640458}" {
+         m_sLabel "#ELIFE-Join_Face"
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "CreateErrorRow"
+       "Ignore Cursor" 0
+       "Is Visible" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 0 0 12
+       }
+       Color 0.947 0.056 0.056 1
+       {
+        ImageWidgetClass "{E45E5C3683901214}" {
+         Name "CreateErrorIcon"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{8B7FFA394FC6B0A2}" {
+          VerticalAlign 1
+          Padding 0 0 8 0
+         }
+         "Inherit Color" 1
+         Texture "{D17288006833490F}UI/Textures/Icons/icons_wrapperUI-32.imageset"
+         Image "warning"
+         Size 32 32
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "CreateError"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+         }
+         "Inherit Color" 1
+         Text ""
+         "Font Size" 18
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "CreateButtons"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{BA6368A7CFF1CE0F}" {
+        HorizontalAlign 3
+        Padding 0 16 0 0
+       }
+       {
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "BackSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 1
+          Padding 0 0 12 0
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{AA12623E083C3F5B}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonBack"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "CreateSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 2
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{D82AF83060F8A151}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonCreate"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

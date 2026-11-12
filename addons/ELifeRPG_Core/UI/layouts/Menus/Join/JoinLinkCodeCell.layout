@@ -1,0 +1,23 @@
+SizeLayoutWidgetClass "{585329F372FF13D6}" {
+ Name "CodeCell"
+ "Ignore Cursor" 1
+ AllowWidthOverride 1
+ WidthOverride 36
+ AllowHeightOverride 1
+ HeightOverride 40
+ {
+  TextWidgetClass "{C90A058802B62F38}" {
+   Name "CellText"
+   "Ignore Cursor" 1
+   Slot AlignableSlot "{3A18467C5F282CEA}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   Text ""
+   "Font Size" 28
+   FontProperties FontProperties "{046156ED68C9F36D}" {
+    Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+   }
+  }
+ }
+}

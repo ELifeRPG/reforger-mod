@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{54CBA88FC2B7CDA4}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_08.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

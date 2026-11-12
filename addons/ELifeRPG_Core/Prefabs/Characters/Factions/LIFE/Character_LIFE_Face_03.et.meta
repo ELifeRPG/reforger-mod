@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{1151F8EF4E43F547}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_03.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -10,3 +10,6 @@ ELIFE_GameMode ELIFE_GameMode : "{E9922930097C3FD4}Prefabs/MP/Modes/ELIFE_GameMo
 SCR_LoadoutManager LoadoutManager : "{318E93063CC0FC86}Prefabs/MP/Managers/Loadouts/ELIFE_LoadoutManager.et" {
  coords 0 0 0
 }
+ItemPreviewManagerEntity ItemPreviewManager : "{9F18C476AB860F3B}Prefabs/World/Game/ItemPreviewManager.et" {
+ coords 0 0 0
+}

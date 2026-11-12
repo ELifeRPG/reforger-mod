@@ -146,6 +146,102 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{4D8620C587BC036B}" {
+   Id "ELIFE-Join_CheckAgain"
+   Target_en_us "Check again"
+   Target_de_de "Erneut prüfen"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{C69B2A6A74A1E8F8}" {
+   Id "ELIFE-Join_Copied"
+   Target_en_us "Copied"
+   Target_de_de "Kopiert"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{25DBEF3D9FCFF184}" {
+   Id "ELIFE-Join_LinkCode"
+   Target_en_us "Link code"
+   Target_de_de "Verknüpfungscode"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{D0EDBEE3536EE323}" {
+   Id "ELIFE-Join_LinkCodeMissing"
+   Target_en_us "No link code received. Try “Check again”."
+   Target_de_de "Kein Verknüpfungscode erhalten. Versuche „Erneut prüfen“."
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{5C1E8A3B72D4F061}" {
+   Id "ELIFE-Join_LinkCopy"
+   Target_en_us "Copy link"
+   Target_de_de "Link kopieren"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{A7D09E4C3B12F856}" {
+   Id "ELIFE-Join_LinkHideQr"
+   Target_en_us "Hide QR-Code"
+   Target_de_de "QR-Code ausblenden"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{62154A5CEA8E8120}" {
+   Id "ELIFE-Join_LinkNotYet"
+   Target_en_us "Your account is not linked yet."
+   Target_de_de "Dein Konto ist noch nicht verknüpft."
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{6C9A4D2E81F07B35}" {
+   Id "ELIFE-Join_LinkOptional"
+   Target_en_us "Link your web account to keep your characters across platforms. You can do this later."
+   Target_de_de "Verknüpfe dein Webkonto, um deine Charaktere plattformübergreifend zu behalten. Das kannst du auch später tun."
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{3F62B8D1E9C05A74}" {
+   Id "ELIFE-Join_LinkShowQr"
+   Target_en_us "Show QR-Code"
+   Target_de_de "QR-Code anzeigen"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{1A8D6F3C5E20B974}" {
+   Id "ELIFE-Join_LinkSkip"
+   Target_en_us "Continue without linking"
+   Target_de_de "Ohne Verknüpfung fortfahren"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{E183DF7E345C7B25}" {
+   Id "ELIFE-Join_LinkText"
+   Target_en_us "Scan the QR code or copy the link, sign in or create an account, then link your game account with this code."
+   Target_de_de "Scanne den QR-Code oder kopiere den Link, melde dich an oder erstelle ein Konto und verknüpfe dann dein Spielkonto mit diesem Code."
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{7D57C7133FFE6C6F}" {
+   Id "ELIFE-Join_LinkTitle"
+   Target_en_us "Create or link your account"
+   Target_de_de "Konto erstellen oder verknüpfen"
+   Modified 1793534967
+   Author "Nico"
+   LastChanged "Nico"
+  }
   CustomStringTableItem "{A4B81C09E1D2F703}" {
    Id "ELIFE-Phone_App_Bank"
    Target_en_us "Bank"
@@ -1609,6 +1705,270 @@ StringTable {
    Modified 1793034546
    Author "Robin"
    LastChanged "Robin"
+  }
+  CustomStringTableItem "{166F72C4AE7F17A9}" {
+   Id "ELIFE-Join_Appearance"
+   Target_en_us "Appearance"
+   Target_de_de "Aussehen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{F61A6340CF681C70}" {
+   Id "ELIFE-Join_AppearanceInvalid"
+   Target_en_us "Appearance isn't available."
+   Target_de_de "Dieses Aussehen ist nicht verfügbar."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{DC21B8F348B8AD76}" {
+   Id "ELIFE-Join_Back"
+   Target_en_us "Back"
+   Target_de_de "Zurück"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{1D0EC457C85DCA87}" {
+   Id "ELIFE-Join_BannedAppeal"
+   Target_en_us "Appeal"
+   Target_de_de "Einspruch"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{E7C71932EA306AEA}" {
+   Id "ELIFE-Join_BannedReason"
+   Target_en_us "Reason"
+   Target_de_de "Grund"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{1DE88CF1E10E037B}" {
+   Id "ELIFE-Join_BannedText"
+   Target_en_us "You can't join this server right now."
+   Target_de_de "Du kannst diesem Server im Moment nicht beitreten."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{2F7CED2A0F400AA4}" {
+   Id "ELIFE-Join_BannedTitle"
+   Target_en_us "You are banned from this server."
+   Target_de_de "Du bist von diesem Server gesperrt."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{F7A4FC4D021C591F}" {
+   Id "ELIFE-Join_BannedUntil"
+   Target_en_us "Until"
+   Target_de_de "Bis"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{C6595E08C51E264B}" {
+   Id "ELIFE-Join_Connecting"
+   Target_en_us "Connecting"
+   Target_de_de "Verbindung wird hergestellt"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{7C5E365CFE89D7C0}" {
+   Id "ELIFE-Join_Create"
+   Target_en_us "Create"
+   Target_de_de "Erstellen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{34AF5377F0ED6E87}" {
+   Id "ELIFE-Join_CreateFailed"
+   Target_en_us "Could not create the character."
+   Target_de_de "Der Charakter konnte nicht erstellt werden."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{D59DAB0D5A71FDE0}" {
+   Id "ELIFE-Join_CreateTitle"
+   Target_en_us "Create character"
+   Target_de_de "Charakter erstellen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{B47995D2D52B93CC}" {
+   Id "ELIFE-Join_Disconnecting"
+   Target_en_us "Disconnecting…"
+   Target_de_de "Verbindung wird getrennt…"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{697070A2A7C60BD0}" {
+   Id "ELIFE-Join_ErrorBackend"
+   Target_en_us "The server is unavailable right now. Try again in a moment."
+   Target_de_de "Der Server ist gerade nicht erreichbar. Versuche es gleich noch einmal."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{10DFEF77CD00E771}" {
+   Id "ELIFE-Join_ErrorIdentity"
+   Target_en_us "Your account could not be verified."
+   Target_de_de "Dein Konto konnte nicht überprüft werden."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{BF1EEC9ABCC679A0}" {
+   Id "ELIFE-Join_ErrorTitle"
+   Target_en_us "Could not join"
+   Target_de_de "Beitritt fehlgeschlagen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{B7E2D41F0A96C358}" {
+   Id "ELIFE-Join_Face"
+   Target_en_us "Face"
+   Target_de_de "Gesicht"
+   Modified 1793529839
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{C1E1B2CE853F5DF9}" {
+   Id "ELIFE-Join_FirstName"
+   Target_en_us "First name"
+   Target_de_de "Vorname"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{67BF8146CDE28BB3}" {
+   Id "ELIFE-Join_LastName"
+   Target_en_us "Last name"
+   Target_de_de "Nachname"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{9816C74AF6ED016D}" {
+   Id "ELIFE-Join_Leave"
+   Target_en_us "Leave"
+   Target_de_de "Verlassen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{3D716F033EABAA11}" {
+   Id "ELIFE-Join_Loading"
+   Target_en_us "Loading character"
+   Target_de_de "Charakter wird geladen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{1E1BE225CC650CEC}" {
+   Id "ELIFE-Join_NameInvalid"
+   Target_en_us "Names may only contain letters, hyphens and apostrophes."
+   Target_de_de "Namen dürfen nur Buchstaben, Bindestriche und Apostrophe enthalten."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{4C1E61F24C841438}" {
+   Id "ELIFE-Join_NameNotAllowed"
+   Target_en_us "That name isn't allowed."
+   Target_de_de "Dieser Name ist nicht erlaubt."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{36D9DEDCBA6F6010}" {
+   Id "ELIFE-Join_NameTooLong"
+   Target_en_us "Names can have at most 20 characters."
+   Target_de_de "Namen dürfen höchstens 20 Zeichen lang sein."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{A825B470E6E451FC}" {
+   Id "ELIFE-Join_NameTooShort"
+   Target_en_us "Names need at least 2 characters."
+   Target_de_de "Namen brauchen mindestens 2 Zeichen."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{08FB78911FCCB359}" {
+   Id "ELIFE-Join_NewCharacter"
+   Target_en_us "New character"
+   Target_de_de "Neuer Charakter"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{232AA28B840615ED}" {
+   Id "ELIFE-Join_Play"
+   Target_en_us "Play"
+   Target_de_de "Spielen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{4B460464F49514D8}" {
+   Id "ELIFE-Join_SelectFailed"
+   Target_en_us "Could not select that character."
+   Target_de_de "Dieser Charakter konnte nicht ausgewählt werden."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{90D964FE41BE5592}" {
+   Id "ELIFE-Join_SelectTitle"
+   Target_en_us "Choose a character"
+   Target_de_de "Charakter wählen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{7E2EF6E5EAD1B805}" {
+   Id "ELIFE-Join_SpawnFailed"
+   Target_en_us "Could not spawn"
+   Target_de_de "Spawnen fehlgeschlagen"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{C6A0DE8B41EE9E7C}" {
+   Id "ELIFE-Join_WhitelistText"
+   Target_en_us "This server only admits whitelisted players. Request access at the link below."
+   Target_de_de "Dieser Server lässt nur Spieler von der Whitelist zu. Fordere den Zugang über den Link unten an."
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{BF00CF674061F346}" {
+   Id "ELIFE-Join_WhitelistTitle"
+   Target_en_us "Whitelist required"
+   Target_de_de "Whitelist erforderlich"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{41E3F0FC05F34835}" {
+   Id "ELIFE-Join_WhitelistUrl"
+   Target_en_us "Link"
+   Target_de_de "Link"
+   Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
   }
  }
 }

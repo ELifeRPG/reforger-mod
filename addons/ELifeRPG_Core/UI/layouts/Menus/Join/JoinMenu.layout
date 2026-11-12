@@ -1,0 +1,13 @@
+OverlayWidgetClass : "{01FD644AD2B6317D}UI/layouts/Menus/Common/MenuBackground.layout" {
+ Name "rootFrame"
+ {
+  OverlayWidgetClass "{67FCF11DB2975FDB}" {
+   Name "Content"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{7A1D4C2E9B036F58}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+  }
+ }
+}

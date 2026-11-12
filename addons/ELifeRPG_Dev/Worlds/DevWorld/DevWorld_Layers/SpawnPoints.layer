@@ -7,3 +7,7 @@ $grp ELIFE_PrefabSpawn {
 SCR_SpawnPoint PlayerSpawnPoint : "{6D3068348B1C867E}Prefabs/Spawning/SpawnPoint_LIFE.et" {
  coords 8.616 0.569 5.767
 }
+ELIFE_RespawnPoint Hospital : "{652A9F832614A8CA}Prefabs/Spawning/ELIFE_RespawnPoint.et" {
+ coords 12 0.5 8
+ m_sName "Hospital"
+}

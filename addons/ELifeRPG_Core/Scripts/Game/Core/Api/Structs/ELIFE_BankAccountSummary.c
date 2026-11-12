@@ -11,7 +11,6 @@ class ELIFE_BankAccountSummary : JsonApiStruct
 
 	void ELIFE_BankAccountSummary()
 	{
-		RegV("bankAccountId");
 		RegV("bankId");
 		RegV("number");
 		RegV("type");

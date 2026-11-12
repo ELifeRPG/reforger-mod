@@ -1,0 +1,457 @@
+OverlayWidgetClass {
+ Name "JoinLink"
+ "Ignore Cursor" 0
+ {
+  SizeLayoutWidgetClass "{585329F372FF13D6}" {
+   Name "LinkSize"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+    HorizontalAlign 1
+    VerticalAlign 1
+   }
+   AllowWidthOverride 1
+   WidthOverride 760
+   {
+    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+     Name "LinkCard"
+     "Ignore Cursor" 0
+     Slot AlignableSlot "{3A18467C5F282CEA}" {
+      HorizontalAlign 3
+      VerticalAlign 1
+     }
+     {
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "LinkTitleRow"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 1
+       }
+       {
+        ImageWidgetClass "{E45E5C3683901214}" {
+         Name "LinkTitleIcon"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{8B7FFA394FC6B0A2}" {
+          VerticalAlign 1
+          Padding 0 0 12 0
+         }
+         "Inherit Color" 1
+         Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+         Image "linked"
+         Size 32 32
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "LinkTitle"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+         }
+         Text ""
+         "Font Size" 32
+         FontProperties FontProperties "{046156ED68C9F36D}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "ShowLinkRow"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 16 0 0
+       }
+       {
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "ShowLinkSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 1
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{3D7E0B94C1A65F28}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonShowLink"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+       }
+      }
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "LinkText"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 16 0 0
+       }
+       Text ""
+       "Font Size" 18
+       "Horizontal Alignment" Center
+      }
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "LinkOptional"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 3
+        Padding 0 6 0 0
+       }
+       Text ""
+       "Font Size" 16
+       "Horizontal Alignment" Center
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "CopyLinkRow"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 16 0 0
+       }
+       {
+        ButtonWidgetClass "{15351AE6B0358A54}" {
+         Name "CopyLinkButton"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          VerticalAlign 1
+         }
+         style blank
+         {
+          HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+           Name "CopyLinkContent"
+           "Ignore Cursor" 1
+           Slot ButtonWidgetSlot "{C39C161E43BECED4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+           {
+            TextWidgetClass "{C90A058802B62F38}" {
+             Name "CopyLinkText"
+             "Ignore Cursor" 1
+             Slot LayoutSlot "{590892F7F42667F5}" {
+              VerticalAlign 1
+             }
+             Text ""
+             "Font Size" 18
+            }
+            ImageWidgetClass "{E45E5C3683901214}" {
+             Name "CopyLinkIcon"
+             "Ignore Cursor" 1
+             Slot LayoutSlot "{8B7FFA394FC6B0A2}" {
+              VerticalAlign 1
+              Padding 8 0 0 0
+             }
+             "Inherit Color" 1
+             Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+             Image "copy"
+             Size 32 32
+            }
+           }
+          }
+         }
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "CopiedUrl"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+          Padding 0 0 0 12
+         }
+         "Is Visible" 0
+         Text "#ELIFE-Join_Copied"
+         "Font Size" 16
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "CodeRow"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 16 0 0
+       }
+       {
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "LinkCodeLabel"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+          Padding 0 0 16 0
+         }
+         Text ""
+         "Font Size" 18
+        }
+        ButtonWidgetClass "{15351AE6B0358A54}" {
+         Name "LinkCodeButton"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          VerticalAlign 1
+         }
+         style blank
+         {
+          OverlayWidgetClass "{13415CD2329C6FC3}" {
+           Name "LinkCodeOverlay"
+           "Ignore Cursor" 1
+           Slot ButtonWidgetSlot "{C39C161E43BECED4}" {
+            HorizontalAlign 0
+            VerticalAlign 3
+           }
+           {
+            HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+             Name "LinkCodeCells"
+             "Ignore Cursor" 1
+             Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+              HorizontalAlign 0
+              VerticalAlign 3
+             }
+            }
+           }
+          }
+         }
+        }
+        ButtonWidgetClass "{15351AE6B0358A54}" {
+         Name "CopyCodeButton"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          VerticalAlign 1
+          Padding 8 0 0 0
+         }
+         style blank
+         {
+          ImageWidgetClass "{E45E5C3683901214}" {
+           Name "CopyCodeIcon"
+           "Ignore Cursor" 1
+           Slot ButtonWidgetSlot "{C39C161E43BECED4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+           "Inherit Color" 1
+           Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+           Image "copy"
+           Size 32 32
+          }
+         }
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "CopiedCode"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+          Padding 0 0 0 12
+         }
+         "Is Visible" 0
+         Text "#ELIFE-Join_Copied"
+         "Font Size" 16
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "LinkCodeMissing"
+         "Ignore Cursor" 1
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+         }
+         "Is Visible" 0
+         Text ""
+         "Font Size" 18
+         "Horizontal Alignment" Center
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "LinkHintRow"
+       "Ignore Cursor" 0
+       "Is Visible" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 12 0 0
+       }
+       Color 0.947 0.056 0.056 1
+       {
+        ImageWidgetClass "{E45E5C3683901214}" {
+         Name "LinkHintIcon"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{8B7FFA394FC6B0A2}" {
+          VerticalAlign 1
+          Padding 0 0 8 0
+         }
+         "Inherit Color" 1
+         Texture "{D17288006833490F}UI/Textures/Icons/icons_wrapperUI-32.imageset"
+         Image "warning"
+         Size 32 32
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "LinkHint"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+         }
+         "Inherit Color" 1
+         Text ""
+         "Font Size" 18
+         "Horizontal Alignment" Center
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "LinkButtons"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{BA6368A7CFF1CE0F}" {
+        HorizontalAlign 1
+        Padding 0 16 0 0
+       }
+       {
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "LeaveSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 1
+          Padding 0 0 12 0
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{D1F5CC5E6B4CB49D}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonLeave"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "SkipSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 2
+          Padding 0 0 12 0
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{9E4B2C71D85A36F0}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonSkip"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "CheckSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 2
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{64A81849738F3CCC}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonCheck"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+  OverlayWidgetClass "{13415CD2329C6FC3}" {
+   Name "QrOverlay"
+   "Ignore Cursor" 0
+   "Is Visible" 0
+   Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   {
+    BlurWidgetClass "{7E3A9C1D5B2F4A60}" {
+     Name "QrBlur"
+     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 1 1 1 1
+     Intensity 1.0
+    }
+    SmartPanelWidgetClass "{4C8F2E6A1B9D3C57}" {
+     Name "QrDim"
+     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 0.004 0.0048 0.0075 0.55
+     "no focus" 1
+    }
+    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+     Name "QrStack"
+     "Ignore Cursor" 0
+     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+      HorizontalAlign 1
+      VerticalAlign 1
+     }
+     {
+      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+       Name "QrSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+       }
+       AllowWidthOverride 1
+       WidthOverride 300
+       AllowHeightOverride 1
+       HeightOverride 300
+       {
+        CanvasWidgetClass "{FF284786682B0AE0}" {
+         Name "QrCanvas"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{3A18467C5F282CEA}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 1
+        }
+       }
+      }
+      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+       Name "HideQrSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 16 0 0
+       }
+       AllowWidthOverride 1
+       WidthOverride 220
+       AllowHeightOverride 1
+       HeightOverride 44
+       {
+        ButtonWidgetClass "{B2E7C4A91D05F368}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+         Name "ButtonHideQr"
+         Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

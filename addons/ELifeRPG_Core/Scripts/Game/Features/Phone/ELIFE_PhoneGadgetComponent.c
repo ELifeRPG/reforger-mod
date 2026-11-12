@@ -1101,7 +1101,9 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 		}
 
 		//! Holding an unlocked phone isn't owning it - only the registered owner may lock everyone else out.
-		if (ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId) != m_sServerOwnerCharacterId)
+		//! An empty id is no character at all, so it never counts as the owner, even against an empty owner id.
+		string holderCharacterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		if (holderCharacterId == "" || holderCharacterId != m_sServerOwnerCharacterId)
 		{
 			NotifyPinChangeResult(ELIFE_EPinChangeResult.FAILED);
 			return;
@@ -1197,8 +1199,13 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 		if (!api)
 			return;
 
+		//! No confirmed character (no player, or the session has not reached SPAWNING): a phone must not be owned by "". Nothing is sent or stored.
+		string ownerCharacterId = ELIFE_CharacterIdentity.GetCharacterId(playerId);
+		if (ownerCharacterId == "")
+			return;
+
 		ELIFE_ProvisionPhoneRequest request = new ELIFE_ProvisionPhoneRequest();
-		request.characterId = ELIFE_CharacterIdentity.GetCharacterId(playerId);
+		request.characterId = ownerCharacterId;
 		request.pin = pin;
 
 		m_sServerOwnerCharacterId = request.characterId;
@@ -1254,8 +1261,13 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 			return;
 
 		//! The owner needs no PIN here, but the generated request always carries the field, so send the real one.
+		//! Without a confirmed character the phone stays off; RetryConnectivity calls this again.
+		string powerCharacterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		if (powerCharacterId == "")
+			return;
+
 		ELIFE_SetPhonePowerRequest request = new ELIFE_SetPhonePowerRequest();
-		request.characterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		request.characterId = powerCharacterId;
 		request.isPoweredOn = true;
 		request.pin = m_sServerPin;
 
@@ -1997,7 +2009,8 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 	{
 		ELIFE_Api api = ELIFE_Api.GetInstance();
 		ELIFE_PhoneAppEntry app = ELIFE_PhoneAppCatalog.FindByKey(appKey);
-		if (m_sPhoneId == "" || !api || !app || app.IsSystem() || m_sPendingAppKey != "")
+		string characterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		if (m_sPhoneId == "" || !api || !app || app.IsSystem() || m_sPendingAppKey != "" || characterId == "")
 		{
 			NotifyAppInstallResult(appKey, installed, false);
 			return;
@@ -2006,8 +2019,6 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 		//! The catalog's casing, which is the backend's.
 		m_sPendingAppKey = app.m_sAppKey;
 		m_bPendingInstall = installed;
-
-		string characterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
 
 		if (installed)
 		{
@@ -2066,8 +2077,13 @@ class ELIFE_PhoneGadgetComponent : SCR_GadgetComponent
 		if (!api || m_sPhoneId == "" || m_iSystemInstallsPending > 0 || !HasInstalledApps())
 			return;
 
+		//! No confirmed character: the system apps are not re-installed now. The next app list fetch tries again.
+		string systemCharacterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		if (systemCharacterId == "")
+			return;
+
 		ELIFE_PhoneActorRequest request = new ELIFE_PhoneActorRequest();
-		request.characterId = ELIFE_CharacterIdentity.GetCharacterId(m_iOwnerPlayerId);
+		request.characterId = systemCharacterId;
 		request.pin = m_sServerPin;
 
 		array<ref ELIFE_PhoneAppEntry> catalog = ELIFE_PhoneAppCatalog.GetEntries();

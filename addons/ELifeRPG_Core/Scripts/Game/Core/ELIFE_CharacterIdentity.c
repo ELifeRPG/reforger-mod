@@ -1,12 +1,20 @@
 //------------------------------------------------------------------------------------------------
-//! Placeholder until real character-selection persistence lands. Swap this method's body
-//! for the real characterId lookup once that exists; callers don't need to change.
+//! Character identity of players. The characterId is the one the player selected and the backend confirmed
+//! (ELIFE_JoinSessionManagerComponent.GetConfirmedCharacterId). Server only; "" when no character is confirmed.
 class ELIFE_CharacterIdentity
 {
-	//! Fixed demo characterId from Dummy API/phone-api-overview.md.
+	//! Server-side. The confirmed characterId of this player, or "" when there is none yet, the player is gone, or this is not the server.
+	//! Callers must treat "" as "no character": do not provision or act on it.
 	static string GetCharacterId(int playerId)
 	{
-		return "8a1e2d3c-4f5a-4b6c-9d7e-8f9a0b1c2d3e";
+		if (!Replication.IsServer())
+			return "";
+
+		ELIFE_JoinSessionManagerComponent manager = ELIFE_JoinSessionManagerComponent.GetInstance();
+		if (!manager)
+			return "";
+
+		return manager.GetConfirmedCharacterId(playerId);
 	}
 
 	//------------------------------------------------------------------------------------------------

@@ -1,0 +1,144 @@
+OverlayWidgetClass {
+ Name "JoinSelect"
+ "Ignore Cursor" 0
+ {
+  SizeLayoutWidgetClass "{585329F372FF13D6}" {
+   Name "SelectSize"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+    Padding 24 24 24 24
+   }
+   AllowWidthOverride 1
+   WidthOverride 720
+   {
+    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+     Name "SelectCard"
+     "Ignore Cursor" 0
+     {
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "SelectTitle"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 1
+        Padding 0 0 0 16
+       }
+       Text ""
+       "Font Size" 32
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+       Name "CardScrollSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{CAACC60A6C69A186}" {
+        HorizontalAlign 1
+        Padding 0 0 0 16
+       }
+       AllowHeightOverride 1
+       HeightOverride 380
+       {
+        ScrollLayoutWidgetClass "{DF47F0F49DB3E40A}" {
+         Name "CardScroll"
+         "Ignore Cursor" 0
+         {
+          VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+           Name "CardList"
+           "Ignore Cursor" 0
+          }
+         }
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "SelectErrorRow"
+       "Ignore Cursor" 0
+       "Is Visible" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 0 0 12
+       }
+       Color 0.947 0.056 0.056 1
+       {
+        ImageWidgetClass "{E45E5C3683901214}" {
+         Name "SelectErrorIcon"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{8B7FFA394FC6B0A2}" {
+          VerticalAlign 1
+          Padding 0 0 8 0
+         }
+         "Inherit Color" 1
+         Texture "{D17288006833490F}UI/Textures/Icons/icons_wrapperUI-32.imageset"
+         Image "warning"
+         Size 32 32
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "SelectError"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{590892F7F42667F5}" {
+          VerticalAlign 1
+         }
+         "Inherit Color" 1
+         Text ""
+         "Font Size" 18
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "SelectButtons"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{BA6368A7CFF1CE0F}" {
+        HorizontalAlign 2
+       }
+       {
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "NewSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 1
+          Padding 0 0 12 0
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{C568DBA7CAF94C0B}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonNew"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "PlaySize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+          HorizontalAlign 2
+         }
+         AllowWidthOverride 1
+         WidthOverride 220
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{406FDC959C1A9CD8}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "ButtonPlay"
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

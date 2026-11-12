@@ -1,0 +1,86 @@
+ButtonWidgetClass "{15351AE6B0358A54}" {
+ Name "CardButton"
+ "Ignore Cursor" 0
+ Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
+  HorizontalAlign 1
+  Padding 0 0 12 12
+ }
+ Color 1 1 1 1
+ style blank
+ components {
+  SCR_ButtonTextComponent "{1D5E008805ECB781}" {
+   m_BackgroundDefault 0 0 0 0.6
+   m_BackgroundHovered 0 0 0 0.9
+  }
+ }
+ {
+  OverlayWidgetClass "{13415CD2329C6FC3}" {
+   Name "CardOverlay"
+   "Ignore Cursor" 1
+   Slot ButtonWidgetSlot "{C39C161E43BECED4}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+    Padding 12 12 12 12
+   }
+   {
+    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+     Name "CardBody"
+     "Ignore Cursor" 1
+     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+       Name "PreviewSize"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 3
+       }
+       AllowWidthOverride 1
+       WidthOverride 160
+       AllowHeightOverride 1
+       HeightOverride 160
+       {
+        ItemPreviewWidgetClass "{552068601B16C353}" {
+         Name "Preview"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{3A18467C5F282CEA}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         "Use Engine Scale" 0
+         Color 1 1 1 1
+         "Use clear color" 1
+         "Clear Color" 0 0 0 0
+         "Blend mode" Blend
+        }
+       }
+      }
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "CardName"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{CAACC60A6C69A186}" {
+        HorizontalAlign 3
+        Padding 0 8 0 0
+       }
+       Text ""
+       "Font Size" 20
+      }
+     }
+    }
+    PanelWidgetClass "{4BABA3A0CB85D212}" {
+     Name "CardSelected"
+     "Ignore Cursor" 1
+     "Is Visible" 0
+     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 1 0.597 0.198 1
+     style outline_2px
+    }
+   }
+  }
+ }
+}
