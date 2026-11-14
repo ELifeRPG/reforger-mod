@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------------------------
-//! m_iSmartActionId is the seat number. Occupancy lives in ELIFE_SeatPropComponent: vanilla's occupant stays set
-//! when someone walks out of the pose.
+//! m_iSmartActionId is the seat number. Occupancy lives in ELIFE_SeatPropComponent (ELIFE_PosePropComponent), which
+//! also gives clients the seat point and sit transform: the seat point's smart action only exists on the server.
 class ELIFE_SitUserAction : SCR_LoiterUserAction
 {
 	//! Vanilla only slides the player onto the seat from close in front; elsewhere the pose starts where they stand.
@@ -9,9 +9,20 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 	protected static const float FRONT_COS = 0.5;
 
 	//------------------------------------------------------------------------------------------------
+	//! Server only.
 	protected SCR_AISmartActionSentinelComponent GetSeat()
 	{
 		return ELIFE_Seats.GetSeat(GetOwner(), m_iSmartActionId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected IEntity GetSeatPoint()
+	{
+		ELIFE_SeatPropComponent prop = GetProp();
+		if (!prop)
+			return null;
+
+		return prop.GetSeatPoint(m_iSmartActionId);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -23,26 +34,16 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 	//------------------------------------------------------------------------------------------------
 	protected bool IsSittingHere(IEntity user)
 	{
-		SCR_AISmartActionSentinelComponent seat = GetSeat();
-		return user && seat && ELIFE_Seats.IsSitting(user, seat);
+		return ELIFE_Poses.IsInPoseOn(user, GetSeatPoint());
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The server checks first and uses its live sitters, so two players can't take the same seat at once.
-	protected bool IsTakenByOther(notnull ELIFE_SeatPropComponent prop, IEntity user)
+	protected bool IsInFront(notnull IEntity user)
 	{
-		if (!Replication.IsServer())
-			return prop.IsTaken(m_iSmartActionId);
-
-		IEntity sitter = prop.GetSitter(m_iSmartActionId);
-		return sitter && sitter != user;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected bool IsInFront(notnull IEntity user, notnull SCR_AISmartActionSentinelComponent seat)
-	{
+		ELIFE_SeatPropComponent prop = GetProp();
 		vector transform[4];
-		ELIFE_Seats.GetSitTransform(seat, transform);
+		if (!prop || !prop.GetSitTransform(m_iSmartActionId, transform))
+			return false;
 
 		vector toUser = user.GetOrigin() - transform[3];
 		toUser[1] = 0;
@@ -77,30 +78,28 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 			return true;
 
 		ELIFE_SeatPropComponent prop = GetProp();
-		if (prop && IsTakenByOther(prop, user))
+		if (prop && prop.IsTakenByOther(m_iSmartActionId, user))
 		{
 			SetCannotPerformReason("#ELIFE-Seat_Taken");
 			return false;
 		}
 
 		//! Also checked here: the server may not ask CanBeShown.
-		SCR_AISmartActionSentinelComponent seat = GetSeat();
-		return seat && IsInFront(user, seat);
+		return IsInFront(user);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Vanilla hides actions while a pose plays; this one stays, to stand up again. Sitting is only offered from the front.
 	override bool CanBeShownScript(IEntity user)
 	{
+
 		if (IsSittingHere(user))
 			return true;
 
-		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(user);
-		if (!character || SCR_ScriptedUserAction.IsUserPlayingBlockingAnimation(character))
+		if (!ELIFE_Poses.CanStartPose(user))
 			return false;
 
-		SCR_AISmartActionSentinelComponent seat = GetSeat();
-		return seat && IsInFront(user, seat);
+		return IsInFront(user);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -131,17 +130,17 @@ class ELIFE_SitUserAction : SCR_LoiterUserAction
 	override void StartAction(IEntity pUserEntity)
 	{
 		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(pUserEntity);
-		SCR_AISmartActionSentinelComponent seat = GetSeat();
-		if (!character || !seat || !m_isValid)
+		IEntity seatPoint = GetSeatPoint();
+		if (!character || !seatPoint || !m_isValid)
 			return;
 
-		SCR_CharacterControllerComponent controller = SCR_CharacterControllerComponent.Cast(character.GetCharacterController());
+		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
 		if (!controller)
 			return;
 
 		//! Consumed, like vanilla: each use carries its own data from the server.
 		m_isValid = false;
-		controller.StartLoitering(seat.GetOwner(), m_eLoiteringType, m_bHolsterWeapon, true, true, m_targetPosition);
+		controller.StartLoitering(seatPoint, m_eLoiteringType, m_bHolsterWeapon, true, true, m_targetPosition);
 	}
 
 	//------------------------------------------------------------------------------------------------

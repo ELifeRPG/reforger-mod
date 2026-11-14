@@ -1,35 +1,82 @@
 //------------------------------------------------------------------------------------------------
 [ComponentEditorProps(category: "ELifeRPG/Seats", description: "On a seating prop: who sits on which of its seats. Required for its sit actions.")]
-class ELIFE_SeatPropComponentClass : ScriptComponentClass
+class ELIFE_SeatPropComponentClass : ELIFE_PosePropComponentClass
 {
 }
 
 //------------------------------------------------------------------------------------------------
-//! Sitters who lose the pose free their seat on the next check; clients only get the taken seat numbers.
-class ELIFE_SeatPropComponent : ScriptComponent
+//! Spots are the seat numbers (ELIFE_Seats.TAG_n on the seat points); the pose is on the seat point, not the prop.
+//! The seat points' smart action (SCR_AISmartActionSentinelComponent) only exists on the server, so the server
+//! publishes what clients need per seat: its number, seat point and sit transform.
+class ELIFE_SeatPropComponent : ELIFE_PosePropComponent
 {
-	protected static const int CHECK_INTERVAL_MS = 1000;
-	//! The pose starts a moment after it's asked for; until then a new sitter doesn't count as gone.
-	protected static const int SIT_GRACE_MS = 2000;
+	//! The prop's children may not be there yet on the first try.
+	protected static const int PUBLISH_RETRY_MS = 1000;
+	protected static const int PUBLISH_TRIES = 10;
 
 	[RplProp()]
-	protected ref array<int> m_aTaken = {};
+	protected ref array<int> m_aSeatIndices = {};
+	[RplProp()]
+	protected ref array<RplId> m_aSeatPointIds = {};
+	//! Four vectors per seat, in m_aSeatIndices order.
+	[RplProp()]
+	protected ref array<vector> m_aSitTransforms = {};
 
-	protected ref map<int, IEntity> m_mSitters = new map<int, IEntity>();
-	protected ref map<int, int> m_mSince = new map<int, int>();
-	//! Seat points by number, built on first use; a prop's children don't change.
+	//! Server. Seat points by number, built on use; rebuilt while one is missing.
 	protected ref map<int, SCR_AISmartActionSentinelComponent> m_mSeats;
+	protected int m_iPublishTries;
 
 	//------------------------------------------------------------------------------------------------
-	bool IsTaken(int index)
+	//! The seat point entity the pose is on, on every machine.
+	IEntity GetSeatPoint(int index)
 	{
-		return m_aTaken.Contains(index);
+		if (Replication.IsServer())
+		{
+			SCR_AISmartActionSentinelComponent seat = GetSeat(index);
+			if (seat)
+				return seat.GetOwner();
+
+			return null;
+		}
+
+		int i = m_aSeatIndices.Find(index);
+		if (i < 0)
+			return null;
+
+		return GetEntity(m_aSeatPointIds[i]);
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Where the sitting pose starts (ELIFE_Seats.GetSitTransform), on every machine. False if unknown here yet.
+	bool GetSitTransform(int index, out vector transform[4])
+	{
+		if (Replication.IsServer())
+		{
+			SCR_AISmartActionSentinelComponent seat = GetSeat(index);
+			if (!seat)
+				return false;
+
+			ELIFE_Seats.GetSitTransform(seat, transform);
+			return true;
+		}
+
+		int i = m_aSeatIndices.Find(index);
+		if (i < 0 || m_aSitTransforms.Count() < (i + 1) * 4)
+			return false;
+
+		for (int k = 0; k < 4; k++)
+		{
+			transform[k] = m_aSitTransforms[i * 4 + k];
+		}
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server only (the smart action doesn't exist on clients).
 	SCR_AISmartActionSentinelComponent GetSeat(int index)
 	{
-		if (!m_mSeats)
+		if (!m_mSeats || !m_mSeats.Get(index))
 		{
 			m_mSeats = new map<int, SCR_AISmartActionSentinelComponent>();
 			array<SCR_AISmartActionSentinelComponent> seats = {};
@@ -46,127 +93,100 @@ class ELIFE_SeatPropComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server. Who sits there, or null.
-	IEntity GetSitter(int index)
+	override protected bool IsInPose(int spot, notnull IEntity character)
 	{
-		if (!m_mSitters.Contains(index))
-			return null;
-
-		IEntity sitter = m_mSitters.Get(index);
-
-		if (!IsGone(index, sitter, System.GetTickCount()))
-			return sitter;
-
-		Free(index);
-		return null;
+		return ELIFE_Poses.IsInPoseOn(character, GetSeatPoint(spot));
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected bool IsGone(int index, IEntity sitter, int now)
+	override protected float GetPoseError(int spot, notnull IEntity character)
 	{
-		if (now - m_mSince.Get(index) < SIT_GRACE_MS)
-			return false;
+		vector transform[4];
+		if (!GetSitTransform(spot, transform))
+			return 0;
 
-		SCR_AISmartActionSentinelComponent seat = GetSeat(index);
-		return !seat || !sitter || !ELIFE_Seats.IsSitting(sitter, seat);
+		return vector.DistanceXZ(character.GetOrigin(), transform[3]);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server.
-	void Take(int index, notnull IEntity character)
+	override void OnPostInit(IEntity owner)
 	{
-		m_mSitters.Set(index, character);
-		m_mSince.Set(index, System.GetTickCount());
-
-		//! Keeps vanilla smart-action AI off it too.
-		SCR_AISmartActionSentinelComponent seat = GetSeat(index);
-		if (seat)
-			seat.SetActionAccessible(false);
-
-		Update();
+		super.OnPostInit(owner);
+		if (GetGame().InPlayMode())
+			GetGame().GetCallqueue().CallLater(PublishSeats, 0);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server. Only frees the seat if that character sits there.
-	void Release(int index, notnull IEntity character)
+	//! Server. Publishes the seats for clients, once the seat points are there.
+	protected void PublishSeats()
 	{
-		if (m_mSitters.Get(index) != character)
+		if (Replication.IsClient() || !m_aSeatIndices.IsEmpty())
 			return;
 
-		Free(index);
-		Update();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected void Free(int index)
-	{
-		m_mSitters.Remove(index);
-		m_mSince.Remove(index);
-
-		SCR_AISmartActionSentinelComponent seat = GetSeat(index);
-		if (seat)
-			seat.SetActionAccessible(true);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Server. Drops sitters who no longer sit there.
-	protected void CleanUp()
-	{
-		int now = System.GetTickCount();
-		array<int> gone = {};
-		foreach (int index, IEntity sitter : m_mSitters)
+		//! Right after loading, replication may not run yet (Workbench host): then IsServer is false and the seat
+		//! points' ids aren't valid. Published too early or not at all, clients got no sit action.
+		if (!Replication.IsRunning() || !Replication.IsServer())
 		{
-			if (IsGone(index, sitter, now))
-				gone.Insert(index);
-		}
-
-		foreach (int index : gone)
-		{
-			Free(index);
-		}
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Server. Tells the clients, and keeps checking while anyone sits here.
-	protected void Update()
-	{
-		if (!Replication.IsServer())
+			GetGame().GetCallqueue().CallLater(PublishSeats, PUBLISH_RETRY_MS);
 			return;
+		}
 
-		CleanUp();
-
-		bool changed = m_aTaken.Count() != m_mSitters.Count();
-		if (!changed)
+		array<SCR_AISmartActionSentinelComponent> seats = {};
+		ELIFE_Seats.GetSeats(GetOwner(), seats);
+		foreach (SCR_AISmartActionSentinelComponent seat : seats)
 		{
-			foreach (int index : m_aTaken)
+			int index = ELIFE_Seats.GetIndex(seat);
+			if (index < 0)
+				continue;
+
+			RplId seatPointId = SCR_EntityHelper.EntityToRplId(seat.GetOwner());
+			if (seatPointId == RplId.Invalid())
+				continue;
+
+			vector transform[4];
+			ELIFE_Seats.GetSitTransform(seat, transform);
+			m_aSeatIndices.Insert(index);
+			m_aSeatPointIds.Insert(seatPointId);
+			for (int k = 0; k < 4; k++)
 			{
-				if (!m_mSitters.Contains(index))
-				{
-					changed = true;
-					break;
-				}
+				m_aSitTransforms.Insert(transform[k]);
 			}
 		}
 
-		if (changed)
+		if (!m_aSeatIndices.IsEmpty())
 		{
-			m_aTaken.Clear();
-			foreach (int index, IEntity sitter : m_mSitters)
-			{
-				m_aTaken.Insert(index);
-			}
-
 			Replication.BumpMe();
+			return;
 		}
 
-		GetGame().GetCallqueue().Remove(Update);
-		if (!m_mSitters.IsEmpty())
-			GetGame().GetCallqueue().CallLater(Update, CHECK_INTERVAL_MS);
+		m_iPublishTries++;
+		if (m_iPublishTries < PUBLISH_TRIES)
+			GetGame().GetCallqueue().CallLater(PublishSeats, PUBLISH_RETRY_MS);
+		else
+			Print(string.Format("%1 | no seat points on %2", ClassName(), GetOwner()), LogLevel.WARNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	override void OnDelete(IEntity owner)
 	{
-		GetGame().GetCallqueue().Remove(Update);
+		super.OnDelete(owner);
+		GetGame().GetCallqueue().Remove(PublishSeats);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Keeps vanilla smart-action AI off a taken seat.
+	override protected void OnTaken(int spot)
+	{
+		SCR_AISmartActionSentinelComponent seat = GetSeat(spot);
+		if (seat)
+			seat.SetActionAccessible(false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	override protected void OnFreed(int spot)
+	{
+		SCR_AISmartActionSentinelComponent seat = GetSeat(spot);
+		if (seat)
+			seat.SetActionAccessible(true);
 	}
 }

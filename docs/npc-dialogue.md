@@ -112,7 +112,9 @@ greyed out. Off-duty NPCs use the same seats (see above). Logic is in `ELifeRPG_
 
 To make a new seating prop:
 
-1. Inherit the vanilla prop and add `ELIFE_SeatPropComponent` (tracks who sits where and replicates it).
+1. Inherit the vanilla prop and add `ELIFE_SeatPropComponent` (tracks who sits where and replicates it). The seat
+   points' smart action only exists on the server, so this component also publishes each seat's point and sit
+   position for clients; without it, other players get no sit action.
 2. Add one child per seat from `Prefabs/Props/Seating/ELIFE_SeatPoint.et` (Core). Place it on the floor in front of the
    seat with its -Z axis towards the prop, like the bench's (0.65 m out). On its `SCR_AISmartActionSentinelComponent`,
    keep the `ELIFE_Seat` tag and add `ELIFE_Seat_<n>` (0, 1, …). The number is needed because runtime child order

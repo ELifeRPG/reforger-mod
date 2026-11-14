@@ -46,7 +46,7 @@ class ELIFE_Seats
 	//! Server. Works best from about 1 m in front of the seat, facing it.
 	static bool SitDown(notnull IEntity character, notnull SCR_AISmartActionSentinelComponent seat)
 	{
-		SCR_CharacterControllerComponent controller = GetController(character);
+		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
 		if (!controller || !IsFree(seat) || !controller.CanPlayLoiterAnimation(seat.GetLoiterAnimation()))
 			return false;
 
@@ -70,7 +70,7 @@ class ELIFE_Seats
 	{
 		if (IsSitting(character, seat))
 		{
-			SCR_CharacterControllerComponent controller = GetController(character);
+			SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
 			controller.StopLoitering(false);
 
 			//! The heading is still the walk-in one, facing the seat; without this the NPC turns all the way round first.
@@ -93,8 +93,7 @@ class ELIFE_Seats
 	//! The character holds the sitting pose on that seat.
 	static bool IsSitting(notnull IEntity character, notnull SCR_AISmartActionSentinelComponent seat)
 	{
-		SCR_CharacterControllerComponent controller = GetController(character);
-		return controller && !controller.IsDead() && controller.IsLoiteringOnEntity(seat.GetOwner());
+		return ELIFE_Poses.IsInPoseOn(character, seat.GetOwner());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -138,22 +137,12 @@ class ELIFE_Seats
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected static SCR_CharacterControllerComponent GetController(IEntity character)
-	{
-		ChimeraCharacter chimera = ChimeraCharacter.Cast(character);
-		if (!chimera)
-			return null;
-
-		return SCR_CharacterControllerComponent.Cast(chimera.GetCharacterController());
-	}
-
-	//------------------------------------------------------------------------------------------------
 	//! Server. Nobody sits there.
 	static bool IsFree(notnull SCR_AISmartActionSentinelComponent seat)
 	{
 		ELIFE_SeatPropComponent prop = GetPropComponent(seat);
 		if (prop)
-			return !prop.GetSitter(GetIndex(seat));
+			return !prop.GetHolder(GetIndex(seat));
 
 		return seat.IsActionAccessible();
 	}
