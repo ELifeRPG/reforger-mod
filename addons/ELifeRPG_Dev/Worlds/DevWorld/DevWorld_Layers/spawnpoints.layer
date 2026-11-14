@@ -1,0 +1,7 @@
+ELIFE_RespawnPoint RESPAWN_Hospital : "{652A9F832614A8CA}Prefabs/Spawning/ELIFE_RespawnPoint.et" {
+ coords 316.687 1.286 260.415
+}
+SCR_DestructibleBuildingEntity : "{EF7848FA0FF4B76B}Prefabs/Structures/Military/Houses/HospitalMilitary_E_01/HospitalMilitary_01_base.et" {
+ coords 312.425 -0.25 260.425
+ angles 0 -90 0
+}
