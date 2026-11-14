@@ -1,0 +1,21 @@
+AnimSrcGraph {
+ AnimSetTemplate "{168BD49F814E98C1}anims/Beds/ELIFE_Bed.ast"
+ ControlTemplate AnimSrcGCT "{6C1E2A90B4D3F707}" {
+  Variables {
+   AnimSrcGCTVarInt NPC_Speech {
+    MinValue -2
+    MaxValue 10
+   }
+  }
+  Commands {
+   AnimSrcGCTCmd CMD_Gesture_NPC {
+   }
+  }
+ }
+ Debug AnimSrcGD "{6C1E2A90B4D3F708}" {
+ }
+ GraphFilesResourceNames {
+  "{116200E6F2A1996D}anims/Beds/ELIFE_Bed.agf"
+ }
+ DefaultRunNode "MasterControl"
+}

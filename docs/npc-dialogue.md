@@ -89,9 +89,14 @@ as their index in the voice table, so the server and the clients load the same f
 
 ## Off-duty routine
 
-While closed, `ELIFE_NpcRoutine` (server) puts the NPC in his own AI group. He walks to a free seat within 20 m
-of his spot, picking one at random with nearer seats more likely. If no seat is free, he wanders within 20 m and
-keeps checking. He never despawns. At opening time he gets up, walks back, snaps onto his spot and serves again.
+While closed, `ELIFE_NpcRoutine` (server) puts the NPC in his own AI group. He walks to a free seat or bed within
+20 m of his spot, picking one at random with nearer places more likely and beds a little more likely than seats
+(breaks are when NPCs sleep). If nothing is free, he wanders within 20 m and keeps checking. He never despawns. At
+opening time he gets up (from a bed, after the get-up has played), walks back, snaps onto his spot and serves again.
+Pushed off a seat or a bed, he gets up and takes it again; after two tries he picks another place. If the pose
+breaks without him being moved, he picks again at random (seat or bed). Other characters pass through anyone sitting
+or lying, so pushes are rare. While he lies on a bed he sleeps (`ELIFE_NpcComponent.IsSleeping`, replicated): the
+talk action is hidden and he says nothing.
 
 The routine needs vanilla AI: an `SCR_AIWorld` with a Soldiers navmesh in the world. Without one he stays at his
 spot, closed. On small worlds, set `UseNavmeshStreaming 0` on the navmesh, or AI never walks. After placing new
@@ -125,6 +130,37 @@ To make a new seating prop:
 3. On the prop's `ActionsManagerComponent`, add one `UserActionContext` per seat, at the seat, and one
    `ELIFE_SitUserAction` per seat with that context and `m_iSmartActionId` = the seat's `<n>`.
 4. Restart Workbench if the prefab is new, then re-bake the navmesh where you place it.
+
+## Beds
+
+Players get "Lie down" beside either long side of a bed, within 0.5 m of the start spot. They turn to it, sit down,
+turn half round and lie down along the bed. The lie-down and the get-up can't be cut short. Once lying, "Get up" or
+jump gets up. One character per bed; a taken bed shows the action greyed out. From the turn until he lies still, no
+other seat or bed is offered (`ELIFE_Poses.SetStarting`).
+
+- Logic in `ELifeRPG_Core` (`Scripts/Game/Features/Beds`): `ELIFE_BedComponent` tracks who lies on the bed (server)
+  and plays the pose where the character is owned; `LieDown` and `GetUp` also work for NPCs, called on the server.
+  `ELIFE_LieUserAction` is the action.
+- The bed itself in `ELifeRPG_Props`: `Prefabs/Props/Sleeping/Bed_01_Sleep.et` and its animations in `anims/Beds`.
+
+To make a bed: inherit the vanilla prop, add `ELIFE_BedComponent` and set its graph (`.agr`), animation set (`.asi`),
+lie-down length and start distance (from the bed's centre line to where the lie-down starts). Add a
+`UserActionContext` over the bed and an `ELIFE_LieUserAction` with it, like `Bed_01_Sleep.et`. The animations are
+made for one bed size: `Bed_01`'s fit beds 0.51 m high and 1.12 m wide.
+
+## Shared by seats and beds
+
+`ELifeRPG_Core/Scripts/Game/Features/Poses`: `ELIFE_PosePropComponent` is the base of `ELIFE_SeatPropComponent` and
+`ELIFE_BedComponent`. It tracks who holds which numbered spot (a seat number, or 0 for a bed), frees spots whose
+holder left the pose and replicates the taken ones and their holders. Other characters pass through a holder in the
+pose (applied on every machine): the pose only moves the body, so the collision capsule stays where the pose started.
+A player pushed more than 0.15 m off his place gets up anyway (checked on his own machine, `GetPoseError`/`EndPose`);
+NPCs take the place again through their routine. `ELIFE_Poses` has the character helpers (controller, "in the pose
+on", owned here, free to start a pose, finish a stuck pose).
+
+A new kind of pose prop extends the base and overrides `GetPoseError` (without it pushes are never noticed). Override
+`IsInPose` only if the pose isn't on the prop itself (seats: on the seat point), and `EndPose`, `OnTaken`/`OnFreed`
+where needed.
 
 ## Bank clerk (`ELifeRPG_NPC`)
 

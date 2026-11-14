@@ -7,14 +7,20 @@ enum ELIFE_ENpcRoutineState
 	BACKING_OFF,
 	TO_SEAT,
 	SITTING,
+	TO_BED,
+	LYING,
+	//! Pushed off the bed: the get-up plays before he walks back to the start.
+	BED_RETRY,
+	//! The get-up plays before he walks back.
+	GETTING_UP,
 	WANDERING,
 	PAUSING,
 	RETURNING
 }
 
 //------------------------------------------------------------------------------------------------
-//! Server-only. Off duty an NPC sits on free seats near his spot or wanders, using vanilla AI; needs an AI world
-//! with a navmesh.
+//! Server-only. Off duty an NPC sits on a free seat or lies on a free bed near his spot, or wanders, using vanilla
+//! AI; needs an AI world with a navmesh.
 class ELIFE_NpcRoutine
 {
 	protected static const ResourceName GROUP_PREFAB = "{000CD338713F2B5A}Prefabs/AI/Groups/Group_Base.et";
@@ -36,16 +42,30 @@ class ELIFE_NpcRoutine
 	protected static const float SIT_FROM_MAX_DISTANCE = 1.2;
 	//! The pose takes a moment to start before losing it counts as being pushed off.
 	protected static const float SIT_GRACE_S = 3;
-	//! From when the slide onto the seat is over he must stay this close; others can stop it short or push him off.
+	//! The tolerance check on a seat starts this long after sitting down, once the slide onto it is over.
 	protected static const float SIT_CHECK_S = 1.5;
-	protected static const float SIT_TOLERANCE = 0.15;
-	//! Fresh approaches to the same seat after a bad landing, before he picks another one.
+	//! Sitting or lying, he must stay this close to where the pose put him; others can push him off.
+	protected static const float REST_TOLERANCE = 0.15;
+	//! Fresh approaches to the same seat or bed after a bad landing or stop, before he picks another place.
 	protected static const int SIT_RETRIES = 2;
 	protected static const float BACK_OFF_DISTANCE = 1.2;
 
 	protected static const float SEAT_RANGE = 20;
-	//! Seat choice weight is 1 / (this + distance in m): a seat 2 m away is about three times as likely as one 15 m away.
+	//! Choice weight is 1 / (this + distance in m): a place 2 m away is about three times as likely as one 15 m away.
 	protected static const float SEAT_DISTANCE_WEIGHT = 4;
+	//! Breaks are mostly when NPCs sleep: a bed weighs this much more than a seat as far away.
+	protected static const float BED_PREFERENCE = 1.5;
+	//! Lies down on the way in from this close to the bed's start.
+	protected static const float LIE_FROM_DISTANCE = 0.5;
+	//! Stopped, he still lies down from this close: the turn and the alignment slide him onto the start. Under the
+	//! bed's turn cancel distance (reach 0.5 + drift 0.5).
+	protected static const float LIE_FROM_MAX_DISTANCE = 0.9;
+	//! The waypoint lies this far past the start, inside the bed: he stops short of it (about 0.85 m), at the start.
+	protected static const float BED_WAYPOINT_PAST = 0.6;
+	//! The turn and the start of the pose come first; losing it before this doesn't count.
+	protected static const float LIE_GRACE_S = 6;
+	//! The get-up is over by then at the latest (one asked for during the lie-down waits for it: up to ~18 s).
+	protected static const float GET_UP_TIMEOUT_S = 25;
 	protected static const float WANDER_RADIUS = 20;
 	//! A walk that takes longer than this has got stuck; he picks something else.
 	protected static const float WALK_TIMEOUT_S = 40;
@@ -61,6 +81,7 @@ class ELIFE_NpcRoutine
 	protected SCR_AIGroup m_Group;
 	protected AIWaypoint m_Waypoint;
 	protected SCR_AISmartActionSentinelComponent m_Seat;
+	protected ELIFE_BedComponent m_Bed;
 	protected ELIFE_ENpcRoutineState m_eState = ELIFE_ENpcRoutineState.ON_DUTY;
 	protected float m_fStateSeconds;
 	protected float m_fPauseSeconds;
@@ -107,7 +128,7 @@ class ELIFE_NpcRoutine
 	//------------------------------------------------------------------------------------------------
 	bool IsReturning()
 	{
-		return m_eState == ELIFE_ENpcRoutineState.RETURNING;
+		return m_eState == ELIFE_ENpcRoutineState.RETURNING || m_eState == ELIFE_ENpcRoutineState.GETTING_UP;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -123,57 +144,86 @@ class ELIFE_NpcRoutine
 			return false;
 		}
 
-		LookForSeat();
+		LookForRest();
 		GetGame().GetCallqueue().Remove(Tick);
 		GetGame().GetCallqueue().CallLater(Tick, TICK_MS, true);
 		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! He gets up if he sits and walks back to his spot; the NPC component is told once he is there.
+	//! He gets up if he sits or lies and walks back to his spot; the NPC component is told once he is there.
 	void ReturnToDuty()
 	{
 		if (IsOnDuty() || IsReturning())
 			return;
 
 		LeaveSeat();
+		if (LeaveBed())
+		{
+			ReplaceWaypoint(null);
+			SetState(ELIFE_ENpcRoutineState.GETTING_UP);
+			return;
+		}
+
 		WalkTo(m_vHome, ELIFE_ENpcRoutineState.RETURNING);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! skip: a seat not to pick this time, e.g. the one he kept landing off.
-	protected void LookForSeat(SCR_AISmartActionSentinelComponent skip = null)
+	//! A free seat or bed near his spot, else he wanders. skipSeat, skipBed: not to pick this time, e.g. the one he
+	//! kept landing off or couldn't reach.
+	protected void LookForRest(SCR_AISmartActionSentinelComponent skipSeat = null, ELIFE_BedComponent skipBed = null)
 	{
 		LeaveSeat();
+		LeaveBed();
 
 		array<SCR_AISmartActionSentinelComponent> seats = {};
 		ELIFE_Seats.FindFree(m_vHome, SEAT_RANGE, seats);
-		if (skip)
-			seats.RemoveItem(skip);
+		if (skipSeat)
+			seats.RemoveItem(skipSeat);
 
-		if (seats.IsEmpty())
+		array<ELIFE_BedComponent> beds = {};
+		ELIFE_BedComponent.FindFree(m_vHome, SEAT_RANGE, beds);
+		if (skipBed)
+			beds.RemoveItem(skipBed);
+
+		if (seats.IsEmpty() && beds.IsEmpty())
 		{
 			Wander();
 			return;
 		}
 
-		m_Seat = PickSeat(seats);
 		m_iSitRetries = 0;
-		vector seatPoint = ELIFE_Seats.GetPosition(m_Seat);
-		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
-		m_vTarget = seatPoint;
+		int pick = PickRest(seats, beds);
+		if (pick < seats.Count())
+		{
+			m_Seat = seats[pick];
+			WalkToSeat();
+			return;
+		}
+
+		m_Bed = beds[pick - seats.Count()];
+		WalkToBed();
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Random, but nearer seats are likelier, so he doesn't always take the same one.
-	protected SCR_AISmartActionSentinelComponent PickSeat(notnull array<SCR_AISmartActionSentinelComponent> seats)
+	//! Random, but nearer places are likelier, so he doesn't always take the same one; beds a little more (BED_PREFERENCE).
+	//! Returns an index into seats, then beds after them.
+	protected int PickRest(notnull array<SCR_AISmartActionSentinelComponent> seats, notnull array<ELIFE_BedComponent> beds)
 	{
 		array<float> weights = {};
 		float total;
 		foreach (SCR_AISmartActionSentinelComponent seat : seats)
 		{
-			float weight = 1 / (SEAT_DISTANCE_WEIGHT + vector.Distance(m_vHome, ELIFE_Seats.GetPosition(seat)));
-			weights.Insert(weight);
+			weights.Insert(GetWeight(ELIFE_Seats.GetPosition(seat), 1));
+		}
+
+		foreach (ELIFE_BedComponent bed : beds)
+		{
+			weights.Insert(GetWeight(bed.GetOwner().GetOrigin(), BED_PREFERENCE));
+		}
+
+		foreach (float weight : weights)
+		{
 			total += weight;
 		}
 
@@ -182,10 +232,34 @@ class ELIFE_NpcRoutine
 		{
 			roll -= weight;
 			if (roll <= 0)
-				return seats[i];
+				return i;
 		}
 
-		return seats[seats.Count() - 1];
+		return weights.Count() - 1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected float GetWeight(vector position, float preference)
+	{
+		return preference / (SEAT_DISTANCE_WEIGHT + vector.Distance(m_vHome, position));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void WalkToSeat()
+	{
+		vector seatPoint = ELIFE_Seats.GetPosition(m_Seat);
+		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
+		m_vTarget = seatPoint;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! To the start on the bed's side nearer to him.
+	protected void WalkToBed()
+	{
+		vector transform[4];
+		m_Bed.GetStartTransformFrom(m_Character.GetOrigin(), transform);
+		//! The start faces away from the bed.
+		WalkTo(transform[3] - transform[2] * BED_WAYPOINT_PAST, ELIFE_ENpcRoutineState.TO_BED);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -216,6 +290,21 @@ class ELIFE_NpcRoutine
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! True if he lies (or lies down) there and now gets up; the get-up takes a while.
+	protected bool LeaveBed()
+	{
+		m_Npc.SetSleeping(false);
+		ELIFE_BedComponent bed = m_Bed;
+		m_Bed = null;
+		if (!bed || (!bed.IsLyingHere(m_Character) && bed.GetPhase(m_Character) == ELIFE_EBedPhase.NONE))
+			return false;
+
+		bed.GetUp(m_Character);
+		m_Bed = bed;
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void Tick()
 	{
 		CharacterControllerComponent controller = ChimeraCharacter.Cast(m_Character).GetCharacterController();
@@ -241,14 +330,49 @@ class ELIFE_NpcRoutine
 			}
 			case ELIFE_ENpcRoutineState.SITTING:
 			{
-				if (m_Seat && m_fStateSeconds >= SIT_CHECK_S && ELIFE_Seats.GetSitError(m_Character, m_Seat) > SIT_TOLERANCE)
+				TickResting(SIT_CHECK_S, SIT_GRACE_S);
+				return;
+			}
+			case ELIFE_ENpcRoutineState.TO_BED:
+			{
+				TickToBed();
+				return;
+			}
+			case ELIFE_ENpcRoutineState.LYING:
+			{
+				//! The bed's pose only counts once it has started (after the turn), so no extra check delay.
+				TickResting(0, LIE_GRACE_S);
+				return;
+			}
+			case ELIFE_ENpcRoutineState.BED_RETRY:
+			{
+				if (!m_Bed)
 				{
-					RetrySeat();
+					LookForRest();
 					return;
 				}
 
-				if (m_fStateSeconds >= SIT_GRACE_S && !ELIFE_Seats.IsSitting(m_Character, m_Seat))
-					LookForSeat();
+				bool risen = !m_Bed.IsLyingHere(m_Character) && m_Bed.GetPhase(m_Character) != ELIFE_EBedPhase.LYING_DOWN;
+				if (!risen && m_fStateSeconds <= GET_UP_TIMEOUT_S)
+					return;
+
+				FinishStuckGetUp();
+				if (m_iSitRetries > SIT_RETRIES)
+					LookForRest(null, m_Bed);
+				else
+					WalkToBed();
+
+				return;
+			}
+			case ELIFE_ENpcRoutineState.GETTING_UP:
+			{
+				bool up = !m_Bed || (!m_Bed.IsLyingHere(m_Character) && m_Bed.GetPhase(m_Character) != ELIFE_EBedPhase.LYING_DOWN);
+				if (up || m_fStateSeconds > GET_UP_TIMEOUT_S)
+				{
+					FinishStuckGetUp();
+					m_Bed = null;
+					WalkTo(m_vHome, ELIFE_ENpcRoutineState.RETURNING);
+				}
 
 				return;
 			}
@@ -262,7 +386,7 @@ class ELIFE_NpcRoutine
 			case ELIFE_ENpcRoutineState.PAUSING:
 			{
 				if (m_fStateSeconds >= m_fPauseSeconds)
-					LookForSeat();
+					LookForRest();
 
 				return;
 			}
@@ -279,7 +403,7 @@ class ELIFE_NpcRoutine
 	{
 		if (!m_Seat || m_fStateSeconds > WALK_TIMEOUT_S)
 		{
-			LookForSeat();
+			LookForRest();
 			return;
 		}
 
@@ -299,7 +423,7 @@ class ELIFE_NpcRoutine
 		if (!ELIFE_Seats.SitDown(m_Character, m_Seat))
 		{
 			m_Seat = null;
-			LookForSeat();
+			LookForRest();
 			return;
 		}
 
@@ -307,16 +431,148 @@ class ELIFE_NpcRoutine
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Landed off the seat: up again and a fresh approach, or another seat after SIT_RETRIES.
-	protected void RetrySeat()
+	protected void TickToBed()
 	{
-		if (m_iSitRetries >= SIT_RETRIES)
+		if (!m_Bed || m_fStateSeconds > WALK_TIMEOUT_S)
 		{
-			LookForSeat(m_Seat);
+			LookForRest(null, m_Bed);
 			return;
 		}
 
+		vector transform[4];
+		m_Bed.GetStartTransformFrom(m_Character.GetOrigin(), transform);
+		float distance = vector.DistanceXZ(m_Character.GetOrigin(), transform[3]);
+		if (distance > LIE_FROM_DISTANCE && !HasArrived(m_vTarget))
+			return;
+
+		//! Stopped too far out: once more, then another place.
+		if (distance > LIE_FROM_MAX_DISTANCE)
+		{
+			Print(string.Format("%1 | %2 stopped %3 m from the bed's start (try %4)", ClassName(), m_Character, distance, m_iSitRetries + 1), LogLevel.VERBOSE);
+			if (m_iSitRetries >= SIT_RETRIES)
+			{
+				LookForRest(null, m_Bed);
+				return;
+			}
+
+			m_iSitRetries++;
+			WalkToBed();
+			return;
+		}
+
+		//! Without a waypoint the AI idles and leaves the pose alone. Taken meanwhile: LieDown says no.
+		ReplaceWaypoint(null);
+		Print(string.Format("%1 | %2 lies down %3 m from the bed's start", ClassName(), m_Character, distance), LogLevel.VERBOSE);
+		if (!m_Bed.LieDown(m_Character))
+		{
+			Print(string.Format("%1 | %2: bed taken or without animations", ClassName(), m_Character), LogLevel.VERBOSE);
+			LookForRest(null, m_Bed);
+			return;
+		}
+
+		m_Npc.SetSleeping(true);
+		SetState(ELIFE_ENpcRoutineState.LYING);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Sitting or lying. Pushed off the spot he takes it again (RetryRest). The pose broken some other way (unclear
+	//! why): a fresh random pick, seat or bed.
+	protected void TickResting(float checkSeconds, float graceSeconds)
+	{
+		if (!m_Seat && !m_Bed)
+		{
+			LookForRest();
+			return;
+		}
+
+		bool inPose = IsInRestPose();
+		float error = GetRestError();
+		if (inPose && m_fStateSeconds >= checkSeconds && error > REST_TOLERANCE)
+		{
+			Print(string.Format("%1 | %2 pushed %3 m off his place", ClassName(), m_Character, error), LogLevel.VERBOSE);
+			RetryRest();
+			return;
+		}
+
+		if (!inPose && m_fStateSeconds >= graceSeconds && !IsRestStarting())
+		{
+			Print(string.Format("%1 | %2 lost the pose", ClassName(), m_Character), LogLevel.VERBOSE);
+			LookForRest();
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsInRestPose()
+	{
+		if (m_Seat)
+			return ELIFE_Seats.IsSitting(m_Character, m_Seat);
+
+		return m_Bed && m_Bed.IsLyingHere(m_Character);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The bed's pose is still on its way (turning, held back by vanilla); a seat's starts at once.
+	protected bool IsRestStarting()
+	{
+		return m_Bed && m_Bed.GetPhase(m_Character) != ELIFE_EBedPhase.NONE;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! How far, along the ground, he is from where the pose put him.
+	protected float GetRestError()
+	{
+		if (m_Seat)
+			return ELIFE_Seats.GetSitError(m_Character, m_Seat);
+
+		if (m_Bed)
+			return m_Bed.GetLieError(m_Character);
+
+		return 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The same place again: up, a fresh approach, down; another place after SIT_RETRIES.
+	protected void RetryRest()
+	{
 		m_iSitRetries++;
+		if (m_Bed)
+		{
+			RetryBed();
+			return;
+		}
+
+		if (m_iSitRetries > SIT_RETRIES)
+		{
+			LookForRest(m_Seat);
+			return;
+		}
+
+		RetrySeat();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Off a bed he always gets up first (a waypoint would cut the get-up short); BED_RETRY then walks back or picks
+	//! another place.
+	protected void RetryBed()
+	{
+		m_Npc.SetSleeping(false);
+		ReplaceWaypoint(null);
+		m_Bed.GetUp(m_Character);
+		SetState(ELIFE_ENpcRoutineState.BED_RETRY);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The get-up timed out but he still lies there: vanilla's stop can hang on a pushed server-owned character.
+	protected void FinishStuckGetUp()
+	{
+		if (m_Bed && m_Bed.IsLyingHere(m_Character))
+			ELIFE_Poses.FinishPose(m_Character);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Up again and a fresh approach from a step back.
+	protected void RetrySeat()
+	{
 		ELIFE_Seats.StandUp(m_Character, m_Seat);
 		//! Sitting again from where he is would land the same; the walk in has to start afresh.
 		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, BACK_OFF_DISTANCE), ELIFE_ENpcRoutineState.BACKING_OFF);
@@ -327,16 +583,14 @@ class ELIFE_NpcRoutine
 	{
 		if (!m_Seat || m_fStateSeconds > WALK_TIMEOUT_S)
 		{
-			LookForSeat();
+			LookForRest();
 			return;
 		}
 
 		if (!HasArrived(m_vTarget))
 			return;
 
-		vector seatPoint = ELIFE_Seats.GetPosition(m_Seat);
-		WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
-		m_vTarget = seatPoint;
+		WalkToSeat();
 	}
 
 	//------------------------------------------------------------------------------------------------

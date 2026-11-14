@@ -2618,5 +2618,29 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{3F1A6C2B8D4E5071}" {
+   Id "ELIFE-Bed_LieDown"
+   Target_en_us "Lie down"
+   Target_de_de "Hinlegen"
+   Modified 1794460000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8B2D4F6A1C3E5092}" {
+   Id "ELIFE-Bed_GetUp"
+   Target_en_us "Get up"
+   Target_de_de "Aufstehen"
+   Modified 1794460000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C47E91A3B5D2F0A8}" {
+   Id "ELIFE-Bed_Taken"
+   Target_en_us "Bed taken"
+   Target_de_de "Bett belegt"
+   Modified 1794460000
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

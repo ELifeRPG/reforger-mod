@@ -1,0 +1,14 @@
+AnimSetInstanceSource "{6C1E2A90B4D3F702}" {
+ Template "{168BD49F814E98C1}anims/Beds/ELIFE_Bed.ast"
+ Lines {
+  AnimSetInstanceSource_Line "Bed.Lie.In" {
+   Resource "{D23BCA55DC4B3938}anims/Beds/ELIFE_bed_lie_in.anm"
+  }
+  AnimSetInstanceSource_Line "Bed.Lie.Loop" {
+   Resource "{EC747B2B958E16B6}anims/Beds/ELIFE_bed_lie_loop.anm"
+  }
+  AnimSetInstanceSource_Line "Bed.Lie.Out" {
+   Resource "{70B9617B610BBAF5}anims/Beds/ELIFE_bed_lie_out.anm"
+  }
+ }
+}

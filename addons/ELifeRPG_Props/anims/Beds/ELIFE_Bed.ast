@@ -1,0 +1,15 @@
+AnimSetTemplateSource {
+ Groups {
+  AnimSetTemplateSource_AnimationGroup "{6C1E2A90B4D3F701}" {
+   Name "Bed"
+   Animations {
+    "In"
+    "Loop"
+    "Out"
+   }
+   Columns {
+    "Lie"
+   }
+  }
+ }
+}

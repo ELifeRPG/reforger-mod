@@ -1,0 +1,18 @@
+MetaFileClass {
+ Name "{EC747B2B958E16B6}anims/Beds/ELIFE_bed_lie_loop.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

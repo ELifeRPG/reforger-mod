@@ -1,0 +1,102 @@
+AnimSrcGraphFile {
+ Sheets {
+  AnimSrcGraphSheet Master {
+   Nodes {
+    AnimSrcNodeStateMachine MasterControl {
+     EditorPos 0 0
+     states {
+      AnimSrcNodeState Lie {
+       EditorPos 0 1
+       Child "LieG"
+       StartCondition "NPC_Speech == 1"
+       TimeStorage "Real Time"
+      }
+     }
+     transitions {
+      AnimSrcNodeTransition "{6C1E2A90B4D3F703}" {
+       FromState ""
+       ToState "Lie"
+       Condition "NPC_Speech == 1"
+       PostEval 1
+      }
+     }
+    }
+    AnimSrcNodeGroupSelect LieG {
+     EditorPos 0 2
+     Child "BedSTM"
+     Group "Bed"
+     Column "Lie"
+    }
+    AnimSrcNodeStateMachine BedSTM {
+     EditorPos 0 3
+     states {
+      AnimSrcNodeState In {
+       EditorPos -2 4
+       Child "BedInSrc"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState Loop {
+       EditorPos 0 4
+       Child "BedLoopSrc"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState Out {
+       EditorPos 2 4
+       Child "BedOutEnd"
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+     }
+     transitions {
+      AnimSrcNodeTransition "{6C1E2A90B4D3F704}" {
+       FromState "In"
+       ToState "Loop"
+       Duration "0.2"
+       Condition "RemainingTimeLess(0.2)"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{6C1E2A90B4D3F705}" {
+       FromState "Loop"
+       ToState "Out"
+       Duration "0.2"
+       Condition "NPC_Speech == -1"
+      }
+      AnimSrcNodeTransition "{6C1E2A90B4D3F706}" {
+       FromState "In"
+       ToState "Out"
+       Duration "0.3"
+       StartTime "1-GetLowerTime()"
+       Condition "NPC_Speech == -1"
+       PostEval 1
+      }
+     }
+    }
+    AnimSrcNodeSource BedInSrc {
+     EditorPos -2 5
+     Source "Bed.In"
+    }
+    AnimSrcNodeSource BedLoopSrc {
+     EditorPos 0 5
+     Source "Bed.Loop"
+    }
+    AnimSrcNodeEvent BedOutEnd {
+     EditorPos 2 4.5
+     Child "BedOutSrc"
+     Events {
+      AnimSrcEventGeneric "{6C1E2A90B4D3F715}" {
+       Name "Gesture_End"
+       MainPathOnly 1
+       InitOnly 0
+       Condition "RemainingTimeLess(0.1)"
+       Once 1
+      }
+     }
+    }
+    AnimSrcNodeSource BedOutSrc {
+     EditorPos 2 5
+     Source "Bed.Out"
+    }
+   }
+  }
+ }
+}

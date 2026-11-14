@@ -21,3 +21,6 @@ GenericEntity TestSofa : "{59D408A3148997CD}Prefabs/Props/Seating/Sofa_02_green_
 GenericEntity TestChairOffice : "{0585A1DEDDD2A328}Prefabs/Props/Seating/ChairOffice_01_Seats.et" {
  coords 266 0 255
 }
+GenericEntity TestBed : "{A7D35C19E04B62F8}Prefabs/Props/Sleeping/Bed_01_Sleep.et" {
+ coords 250 0 256
+}

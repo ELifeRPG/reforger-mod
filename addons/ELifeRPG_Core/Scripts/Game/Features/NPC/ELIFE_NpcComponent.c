@@ -69,6 +69,9 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! In-game minute of the day he opens next, for the talk action and the refusal hint; -1 is unknown.
 	[RplProp()]
 	protected int m_iOpensAtMinute = -1;
+	//! Off duty, lying on a bed: no talk action, no lines.
+	[RplProp()]
+	protected bool m_bSleeping;
 
 	//! Server-side: off duty he walks around with AI; created when he first leaves his spot.
 	protected ref ELIFE_NpcRoutine m_Routine;
@@ -242,6 +245,13 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! Server-only.
 	void RequestOpen(int playerId, notnull IEntity character, notnull ELIFE_NpcCharacterComponent link)
 	{
+		//! Asleep he doesn't answer (the talk action is hidden; this catches one sent just before).
+		if (m_bSleeping)
+		{
+			link.SendGrant(GetRplId(), false, ELIFE_ENpcReason.CLOSED);
+			return;
+		}
+
 		if (m_iCustomerPlayerId != 0 && (m_iCustomerPlayerId != playerId || character != m_Customer))
 		{
 			Refuse(link, ELIFE_ENpcReason.BUSY);
@@ -545,6 +555,24 @@ class ELIFE_NpcComponent : ScriptComponent
 	bool IsClosed()
 	{
 		return m_bClosed;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Replicated: he sleeps on a bed (from the lie-down to the get-up).
+	bool IsSleeping()
+	{
+		return m_bSleeping;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from ELIFE_NpcRoutine.
+	void SetSleeping(bool sleeping)
+	{
+		if (m_bSleeping == sleeping)
+			return;
+
+		m_bSleeping = sleeping;
+		Replication.BumpMe();
 	}
 
 	//------------------------------------------------------------------------------------------------

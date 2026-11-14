@@ -5,6 +5,7 @@ addons/ELifeRPG_Core/Scripts/WorkbenchGame/
 
 resourceDatabase.rdb
 *.blend1
+*.txa
 docs/banking-backend-issue.md
 
 ## Docs site (zensical)
