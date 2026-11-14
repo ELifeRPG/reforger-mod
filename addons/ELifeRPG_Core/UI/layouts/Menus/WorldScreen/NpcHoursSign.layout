@@ -67,6 +67,22 @@ FrameWidgetClass {
       Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
      }
     }
+    TextWidgetClass "{7D2E4A91C6B35F08}" {
+     Name "Hours2"
+     Slot LayoutSlot "{3B8F6C2D91E4A75B}" {
+      HorizontalAlign 1
+      Padding 0 8 0 8
+     }
+     "Is Visible" 0
+     Color 1 1 1 1
+     Text ""
+     "Font Size" 120
+     "Min Font Size" 120
+     "Horizontal Alignment" Center
+     FontProperties FontProperties "{C59A1E7024B6D3F1}" {
+      Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+     }
+    }
    }
   }
  }

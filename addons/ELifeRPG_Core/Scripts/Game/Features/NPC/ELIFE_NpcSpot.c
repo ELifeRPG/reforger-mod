@@ -35,13 +35,20 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 	[Attribute(desc: "Optional: opening hours for this place, instead of the NPC prefab's.")]
 	protected ref ELIFE_NpcSchedule m_ScheduleOverride;
 
+	[Attribute("", UIWidgets.EditBox, "Name of this place on the map (shop, branch), may be a string table key. Empty: the NPC's display name.")]
+	protected string m_sMapName;
+
 	protected bool m_bStandInHidden;
 
 	//! Every spot in the world, on server and clients, so props near one find it without a link.
 	protected static ref array<ELIFE_NpcSpot> s_aSpots = {};
 
+	//! From the ELIFE_NpcComponent of the prefab this spot spawns, read once.
+	protected bool m_bPrefabRead;
 	protected ref ELIFE_NpcSchedule m_PrefabSchedule;
-	protected bool m_bPrefabScheduleRead;
+	protected string m_sPrefabDisplayName;
+	protected ResourceName m_sPrefabMapIcon;
+	protected vector m_vPrefabMapColor;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_NpcSpot(IEntitySource src, IEntity parent)
@@ -64,13 +71,85 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 		if (m_ScheduleOverride)
 			return m_ScheduleOverride;
 
-		if (!m_bPrefabScheduleRead)
-		{
-			m_bPrefabScheduleRead = true;
-			m_PrefabSchedule = ELIFE_NpcSchedule.FromPrefab(m_rnPrefab);
-		}
-
+		ReadPrefab();
 		return m_PrefabSchedule;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The NPC's display name from his prefab (works on clients, where he may not be spawned).
+	string GetDisplayName()
+	{
+		ReadPrefab();
+		return m_sPrefabDisplayName;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The place's own name (m_sMapName), may be empty or a string table key.
+	string GetPlaceName()
+	{
+		return m_sMapName;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! This place's name on the map: m_sMapName, else the NPC's display name. May be a string table key.
+	string GetMapName()
+	{
+		if (!m_sMapName.IsEmpty())
+			return m_sMapName;
+
+		return GetDisplayName();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The NPC's map icon from his prefab, or empty.
+	ResourceName GetMapIcon()
+	{
+		ReadPrefab();
+		return m_sPrefabMapIcon;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The NPC's map colour while open, sRGB; zero if he has none.
+	vector GetMapColor()
+	{
+		ReadPrefab();
+		return m_vPrefabMapColor;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void ReadPrefab()
+	{
+		if (m_bPrefabRead)
+			return;
+
+		m_bPrefabRead = true;
+		if (m_rnPrefab.IsEmpty())
+			return;
+
+		Resource resource = Resource.Load(m_rnPrefab);
+		if (!resource || !resource.IsValid())
+			return;
+
+		IEntitySource source = resource.GetResource().ToEntitySource();
+		if (!source)
+			return;
+
+		for (int i = 0, count = source.GetComponentCount(); i < count; i++)
+		{
+			IEntityComponentSource component = source.GetComponent(i);
+			typename type = component.GetClassName().ToType();
+			if (!type || !type.IsInherited(ELIFE_NpcComponent))
+				continue;
+
+			BaseContainer schedule = component.GetObject("m_Schedule");
+			if (schedule)
+				m_PrefabSchedule = ELIFE_NpcSchedule.Cast(BaseContainerTools.CreateInstanceFromContainer(schedule));
+
+			component.Get("m_sDisplayName", m_sPrefabDisplayName);
+			component.Get("m_sMapIcon", m_sPrefabMapIcon);
+			component.Get("m_vMapColor", m_vPrefabMapColor);
+			return;
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -124,6 +203,7 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 
 	//------------------------------------------------------------------------------------------------
 	//! A stand-in (child entities) may mark the spot in the editor. Its parts aren't attached yet at init, so it's hidden on the first frame.
+	//! Children with a script component in their tree (e.g. an hours sign) are real props and stay visible.
 	protected override void EOnFrame(IEntity owner, float timeSlice)
 	{
 		super.EOnFrame(owner, timeSlice);
@@ -135,9 +215,29 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 		IEntity part = GetChildren();
 		while (part)
 		{
-			part.ClearFlags(EntityFlags.VISIBLE, false);
+			if (!HasScriptInTree(part))
+				part.ClearFlags(EntityFlags.VISIBLE, false);
+
 			part = part.GetSibling();
 		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static bool HasScriptInTree(notnull IEntity entity)
+	{
+		if (entity.FindComponent(ScriptComponent))
+			return true;
+
+		IEntity child = entity.GetChildren();
+		while (child)
+		{
+			if (HasScriptInTree(child))
+				return true;
+
+			child = child.GetSibling();
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------------------------------------

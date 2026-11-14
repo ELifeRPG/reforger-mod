@@ -34,6 +34,11 @@ Do not start a parallel shell. Hook the existing one:
 3. If it has an in-phone page: subclass `ELIFE_PhoneAppBase` and return it from
    `CreateApp()`. Map does not (`hasPage` false) — it hands off to the fullscreen
    map, and the screen behind it stays home.
+   The Map app also unlocks M (vanilla's `GadgetMap`) without a map item: `ELIFE_PhoneMapKey`
+   opens the same map when the active phone has it installed. The map (`ELIFE_MapMenuUI`)
+   closes on M, Esc/B or N. Opened from the phone, M returns to the phone, Esc/B and N put it away;
+   N over the M map swaps it for the phone. With a map item, M leaves the phone alone: vanilla takes the
+   map item out and opens its own map.
 4. Implement `GetTitle`, `GetScreenState`, `CreateRoot`, `OnOpened` / `OnClosing`.
    Claim the trailing slot with `ShowNavAction` if the page has one named action;
    it is reset hidden on every bind.

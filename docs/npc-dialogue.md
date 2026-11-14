@@ -81,8 +81,10 @@ as their index in the voice table, so the server and the clients load the same f
 - Set `m_Schedule` (`ELIFE_NpcSchedule`) on the NPC prefab's `ELIFE_NpcComponent`. It takes an opening and a
   closing time in in-game time. A closing time before the opening time means open over midnight, and the same time
   for both means always open. Without a schedule the NPC never closes.
+- For a break, tick `m_bSecondRange` and set a second opening and closing time (e.g. 09:00–15:00 and
+  16:00–02:00). During the break he goes off duty like after closing, and "opens" shows the next range's start.
 - To give one location different hours, set `m_ScheduleOverride` on its `ELIFE_NpcSpot`.
-- The server checks the schedule every 5 s. Once closed, the talk action reads "closed · opens 08:00" and
+- The server checks the schedule every 5 s. Once closed, the talk action reads "closed · opens 09:00" and
   conversations are refused with the `CLOSED` reason. Put that line in the voice table as `m_sClosedLine`.
   Closing time is the last moment to start a conversation. One that is already running carries on, and he goes
   off duty after it ends.
@@ -104,10 +106,26 @@ seats or obstacles, re-bake the navmesh so he can reach them.
 
 ## Opening-hours sign
 
-`Prefabs/Props/Signs/SignWall_01_65x45_Hours.et` (`ELifeRPG_Props`). Place it within 25 m of an NPC spot that
-has opening hours. It needs no linking: `ELIFE_NpcHoursSignComponent` reads the hours of the nearest such spot
-(override first, else the NPC prefab's schedule) and renders them on the plate within 20 m. With no spot in range
-the plate stays blank. Change the heading or range on the component.
+`Prefabs/Props/Signs/SignWall_01_65x45_Hours.et` (`ELifeRPG_Props`). `ELIFE_NpcHoursSignComponent` shows the
+hours of one NPC spot (its override first, else the NPC prefab's schedule) on the plate within 20 m, with a second
+hours line when the schedule has a second range.
+
+- Linked: place the sign under the spot in the World Editor (as its child, at any depth). It then always shows that
+  spot's hours and moves with it. Use this when several NPCs with different hours stand close together.
+- Unlinked: place it anywhere within 25 m of a spot with opening hours; it shows the nearest one.
+
+With neither, the plate stays blank. Change the heading or the range on the component.
+Tick "Show name" to put the spot's `m_sMapName` in the heading instead (long names shrink to fit; without a name
+the heading stays).
+
+A sign also puts its spot on the map (one marker per spot, however many signs): the NPC's `m_sMapIcon`
+(`ELIFE_NpcComponent`, a white icon; the bank clerk's is `ELifeRPG_NPC/UI/Textures/Map/ELIFE_MapIcon_Bank`), and
+"name · open until 15:00" or "name · closed · opens 16:00" (name: the spot's `m_sMapName`, e.g. the bank or shop, else
+the NPC's display name), in the NPC's `m_vMapColor` while open (sRGB; the clerk's is the bank gold, black falls
+back to the marker config's green) and grey while closed. Each client works
+the state out from the hours and the in-game clock, and refreshes it while the map is open. Logic in
+`ELIFE_NpcMapMarker.c` (Core); the marker type is added to the game mode's marker config,
+`Configs/Map/ELIFE_MapMarkerConfig.conf`, where the open and closed colours are set.
 
 ## Seats
 
@@ -181,7 +199,8 @@ where needed.
   with `ELIFE_ClerkDialogueLine`, the transfer slip (`ELIFE_TransferSlipForm`) and open-account actions, and the
   fee terms, new account and receipt details.
 - Tree: `Configs/Banking/ELIFE_ClerkDialogue.conf`, set on the clerk prefab.
-- Hours: 08:00–20:00 on the prefab. Closed, he says `CLOSED` and points to the sign.
+- Hours: 09:00–15:00 and 16:00–02:00 (the schedule's default times with `m_bSecondRange` ticked: a break of one
+  hour, open into the night). Closed, he says `CLOSED` and points to the sign.
 - Context: when a visit starts, the server looks up the customer's accounts (`ELIFE_EClerkAccountStatus`). He
   greets customers of his bank with "welcome back", and anyone else with the in-game time of day or a plain
   hello. The result also reaches the client for `ELIFE_ClerkDialogueCondition_HasAccount` and

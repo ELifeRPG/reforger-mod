@@ -8,6 +8,10 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 	protected bool m_bHolsterOnClose = true;
 	protected bool m_bIsClosing;
 
+	//! Frames the map handoff waits for this menu to close, about a second.
+	protected static const int MAP_OPEN_TRIES = 60;
+	protected static int s_iMapOpenTries;
+
 	//! Previous-frame key state, for press edges.
 	protected ref array<bool> m_aDigitHeld = {false, false, false, false, false, false, false, false, false, false};
 	protected bool m_bBackHeld;
@@ -131,16 +135,28 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 		m_bIsClosing = true;
 		Close();
 
-		//! Close() is deferred, so open the map a tick later or it stacks on the phone menu.
-		GetGame().GetCallqueue().CallLater(OpenMapMenuDeferred, 0, false);
+		//! Close() is deferred; static because this menu may be destroyed before the queued call runs.
+		s_iMapOpenTries = 0;
+		GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
+		GetGame().GetCallqueue().CallLater(OpenMapWhenPhoneClosed, 0, true);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void OpenMapMenuDeferred()
+	protected static void OpenMapWhenPhoneClosed()
 	{
 		MenuManager menuManager = GetGame().GetMenuManager();
-		if (menuManager)
+		s_iMapOpenTries++;
+		if (!menuManager || s_iMapOpenTries > MAP_OPEN_TRIES)
+		{
+			GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
+			return;
+		}
+
+		if (!menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMapMenu) && !menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMenu))
 			menuManager.OpenMenu(ChimeraMenuPreset.ELIFE_PhoneMapMenu);
+
+		if (menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMapMenu))
+			GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
 	}
 
 	//------------------------------------------------------------------------------------------------

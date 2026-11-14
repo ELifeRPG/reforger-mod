@@ -61,6 +61,12 @@ class ELIFE_NpcComponent : ScriptComponent
 	[Attribute("", UIWidgets.EditBox, "His name above subtitles and on hints")]
 	protected string m_sDisplayName;
 
+	[Attribute("", UIWidgets.ResourceNamePicker, "Map icon for his spot, shown where an opening-hours sign belongs to it (white on transparent; tinted open/closed).", "edds")]
+	protected ResourceName m_sMapIcon;
+
+	[Attribute("0 0 0", UIWidgets.ColorPicker, "Map icon and label colour while open, sRGB (black: the marker config's default). Closed is always grey.")]
+	protected vector m_vMapColor;
+
 	[Attribute(desc: "Optional opening hours. Without them he is always open; with them he leaves his spot when closed (ELIFE_NpcRoutine). A spot can override them.")]
 	protected ref ELIFE_NpcSchedule m_Schedule;
 
@@ -629,9 +635,11 @@ class ELIFE_NpcComponent : ScriptComponent
 	//------------------------------------------------------------------------------------------------
 	protected void SetClosed(bool closed)
 	{
+		//! Only while closed: open, the next opening flips twice a day and would bump and log "open" again.
 		int opensAt = -1;
-		if (m_Schedule)
-			opensAt = m_Schedule.GetOpenMinute();
+		int minute = ELIFE_NpcSchedule.GetCurrentMinute();
+		if (closed && m_Schedule && minute >= 0)
+			opensAt = m_Schedule.GetNextOpenMinute(minute);
 
 		if (m_bClosed == closed && m_iOpensAtMinute == opensAt)
 			return;

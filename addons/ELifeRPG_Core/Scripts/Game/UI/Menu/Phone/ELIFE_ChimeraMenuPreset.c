@@ -4,6 +4,7 @@ modded enum ChimeraMenuPreset
 {
 	ELIFE_PhoneMenu,
 	ELIFE_PhoneMapMenu,
+	ELIFE_MapMenu,
 	ELIFE_WorldScreenMenu,
 	ELIFE_FormMenu,
 	ELIFE_DialogueMenu

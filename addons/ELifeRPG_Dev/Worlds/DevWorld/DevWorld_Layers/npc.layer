@@ -1,7 +1,23 @@
 $grp ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankClerkSpot.et" {
  BankClerkSpot {
   coords 261 0 264
+  m_sMapName "Federal E-Life Bank"
   angles 0 180 0
+  {
+   GenericEntity TestHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
+    coords -1.7 1.6 1.5
+    {
+     GenericEntity Hours {
+      ID "B34025ABF06461BB"
+      components {
+       ELIFE_NpcHoursSignComponent "{5695042524977E52}" {
+        m_bShowName 1
+       }
+      }
+     }
+    }
+   }
+  }
  }
  BankClerkSpot2 {
   coords 264.433 0 264.037

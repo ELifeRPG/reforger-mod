@@ -37,6 +37,10 @@ TimeAndWeatherManagerEntity TimeAndWeatherManager : "{A3BAF78F6F03315B}Prefabs/W
 SCR_FactionManager FactionManager : "{C4747BA20C71D8E2}Prefabs/MP/Managers/Factions/ELIFE_FactionManager.et" {
  coords 0 0 0
 }
+SCR_MapEntity MapEntity : "{731564B66F91B107}Prefabs/World/Game/MapEntity.et" {
+ coords 256 0 256
+ "Map Geometry Data" "{5C83E1A97D24B6F0}Worlds/DevWorld/DevWorld.topo"
+}
 ELIFE_GameMode ELIFE_GameMode : "{E9922930097C3FD4}Prefabs/MP/Modes/ELIFE_GameMode.et" {
  coords 0 0 0
 }

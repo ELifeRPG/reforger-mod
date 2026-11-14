@@ -2642,5 +2642,29 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{4A7C2E91D35B6F08}" {
+   Id "ELIFE-Map_Open"
+   Target_en_us "%1 · open"
+   Target_de_de "%1 · geöffnet"
+   Modified 1794500000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8E3B5D17A2C94F60}" {
+   Id "ELIFE-Map_OpenUntil"
+   Target_en_us "%1 · open until %2"
+   Target_de_de "%1 · geöffnet bis %2"
+   Modified 1794500000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C1F6A8E4529D7B33}" {
+   Id "ELIFE-Map_ClosedOpens"
+   Target_en_us "%1 · closed · opens %2"
+   Target_de_de "%1 · geschlossen · öffnet %2"
+   Modified 1794500000
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

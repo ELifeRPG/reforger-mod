@@ -1,20 +1,38 @@
 //------------------------------------------------------------------------------------------------
-//! One daily opening time and closing time in in-game time, set on an NPC prefab and optionally overridden on its
-//! spot. Closing before opening means open over midnight; the same time for both means always open.
+//! Daily opening hours in in-game time, set on an NPC prefab and optionally overridden on its spot: one range, plus
+//! an optional second one (e.g. a break between them). In each range, closing before opening means open over
+//! midnight; the same time for both in the first range means always open.
 [BaseContainerProps()]
 class ELIFE_NpcSchedule
 {
-	[Attribute("8", UIWidgets.Slider, "Opens at this hour", "0 23 1")]
+	[Attribute("9", UIWidgets.Slider, "Opens at this hour", "0 23 1")]
 	protected int m_iOpenHour;
 
 	[Attribute("0", UIWidgets.Slider, "and minute", "0 59 1")]
 	protected int m_iOpenMinute;
 
-	[Attribute("20", UIWidgets.Slider, "Closes at this hour", "0 23 1")]
+	[Attribute("15", UIWidgets.Slider, "Closes at this hour", "0 23 1")]
 	protected int m_iCloseHour;
 
 	[Attribute("0", UIWidgets.Slider, "and minute", "0 59 1")]
 	protected int m_iCloseMinute;
+
+	[Attribute("0", UIWidgets.CheckBox, "Also open in a second range, e.g. after a break")]
+	protected bool m_bSecondRange;
+
+	[Attribute("16", UIWidgets.Slider, "Second range opens at this hour", "0 23 1")]
+	protected int m_iSecondOpenHour;
+
+	[Attribute("0", UIWidgets.Slider, "and minute", "0 59 1")]
+	protected int m_iSecondOpenMinute;
+
+	[Attribute("2", UIWidgets.Slider, "Second range closes at this hour", "0 23 1")]
+	protected int m_iSecondCloseHour;
+
+	[Attribute("0", UIWidgets.Slider, "and minute", "0 59 1")]
+	protected int m_iSecondCloseMinute;
+
+	protected static const int DAY_MINUTES = 24 * 60;
 
 	//------------------------------------------------------------------------------------------------
 	int GetOpenMinute()
@@ -29,17 +47,30 @@ class ELIFE_NpcSchedule
 	}
 
 	//------------------------------------------------------------------------------------------------
+	bool HasSecondRange()
+	{
+		return m_bSecondRange && !IsAlwaysOpen() && GetSecondOpenMinute() != GetSecondCloseMinute();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	int GetSecondOpenMinute()
+	{
+		return m_iSecondOpenHour * 60 + m_iSecondOpenMinute;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	int GetSecondCloseMinute()
+	{
+		return m_iSecondCloseHour * 60 + m_iSecondCloseMinute;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	bool IsOpenAt(int minute)
 	{
-		int open = GetOpenMinute();
-		int close = GetCloseMinute();
-		if (open == close)
+		if (IsAlwaysOpen() || IsInRange(minute, GetOpenMinute(), GetCloseMinute()))
 			return true;
 
-		if (open < close)
-			return minute >= open && minute < close;
-
-		return minute >= open || minute < close;
+		return HasSecondRange() && IsInRange(minute, GetSecondOpenMinute(), GetSecondCloseMinute());
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -49,42 +80,70 @@ class ELIFE_NpcSchedule
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! "08:00 – 20:00"
+	//! When he opens next after the given minute: the nearer of the ranges' opening times. -1 if always open.
+	int GetNextOpenMinute(int minute)
+	{
+		if (IsAlwaysOpen())
+			return -1;
+
+		int next = GetOpenMinute();
+		if (HasSecondRange() && MinutesUntil(minute, GetSecondOpenMinute()) < MinutesUntil(minute, next))
+			next = GetSecondOpenMinute();
+
+		return next;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! When the range open at the given minute closes, or -1 if none is open (or he is always open).
+	int GetCloseMinuteAt(int minute)
+	{
+		if (IsAlwaysOpen())
+			return -1;
+
+		if (IsInRange(minute, GetOpenMinute(), GetCloseMinute()))
+			return GetCloseMinute();
+
+		if (HasSecondRange() && IsInRange(minute, GetSecondOpenMinute(), GetSecondCloseMinute()))
+			return GetSecondCloseMinute();
+
+		return -1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! "08:00 – 20:00": the first range.
 	string FormatHours()
 	{
 		return FormatMinute(GetOpenMinute()) + " – " + FormatMinute(GetCloseMinute());
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The schedule set on an NPC prefab's ELIFE_NpcComponent, or null.
-	static ELIFE_NpcSchedule FromPrefab(ResourceName prefab)
+	//! The second range like FormatHours, or "" without one.
+	string FormatSecondHours()
 	{
-		if (prefab.IsEmpty())
-			return null;
+		if (!HasSecondRange())
+			return "";
 
-		Resource resource = Resource.Load(prefab);
-		if (!resource || !resource.IsValid())
-			return null;
+		return FormatMinute(GetSecondOpenMinute()) + " – " + FormatMinute(GetSecondCloseMinute());
+	}
 
-		IEntitySource source = resource.GetResource().ToEntitySource();
-		if (!source)
-			return null;
+	//------------------------------------------------------------------------------------------------
+	//! Closing before opening means over midnight.
+	protected static bool IsInRange(int minute, int open, int close)
+	{
+		if (open < close)
+			return minute >= open && minute < close;
 
-		for (int i = 0, count = source.GetComponentCount(); i < count; i++)
-		{
-			IEntityComponentSource component = source.GetComponent(i);
-			typename type = component.GetClassName().ToType();
-			if (!type || !type.IsInherited(ELIFE_NpcComponent))
-				continue;
+		if (open > close)
+			return minute >= open || minute < close;
 
-			BaseContainer schedule = component.GetObject("m_Schedule");
-			if (!schedule)
-				return null;
+		return false;
+	}
 
-			return ELIFE_NpcSchedule.Cast(BaseContainerTools.CreateInstanceFromContainer(schedule));
-		}
-
-		return null;
+	//------------------------------------------------------------------------------------------------
+	//! Minutes from one minute of the day forward to another, 0 to 1439.
+	protected static int MinutesUntil(int from, int to)
+	{
+		return (to - from + DAY_MINUTES) % DAY_MINUTES;
 	}
 
 	//------------------------------------------------------------------------------------------------

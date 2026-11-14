@@ -11,10 +11,6 @@ GenericEntity DevTime {
 GenericEntity TestChairOffice : "{0585A1DEDDD2A328}Prefabs/Props/Seating/ChairOffice_01_Seats.et" {
  coords 266 0 255
 }
-GenericEntity TestHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
- coords 262.7 1.6 262.5
- angles 0 180 0
-}
 GenericEntity TestBed02 : "{4304469353FDB5EE}Prefabs/Props/Sleeping/Bed_02_Sleep.et" {
  coords 244 0 248
 }
