@@ -41,7 +41,7 @@ SESSION_PENDING          CONNECTING screen, PlayerConnected, 15 s timeout
  LOADING_CHARACTER ── select ok ──────────────► SPAWNING (DoSpawn_S, LIFE)
  SPAWNING ── 3 failed attempts ───────────────► REJECTED
  SPAWNING ── OnPlayerSpawned_S ───────────────► IN_GAME
- IN_GAME ── entity lost ──────────────────────► SPAWNING (respawn after 5 s, nearest respawn point)
+ IN_GAME ── entity lost ──────────────────────► SPAWNING (respawn after 5 s, random respawn point)
 
  Any state ── disconnect or kick ─────────────► ENDED
 ```
@@ -305,17 +305,21 @@ After a successful select or create, `ELIFE_JoinSpawnLogic.DoSpawn_S` runs:
    player's components. A refusal or a missing piece counts as a spawn failure.
 3. Prefab: the appearance prefab for the chosen index. Index 0 is the default. An empty list falls
    back to `Character_LIFE.et`.
-4. Position (`ELIFE_SpawnLocator.FindJoinPosition`):
-   - One random LIFE `SCR_SpawnPoint` (`GetRandomSpawnPointForFaction("LIFE")`).
-   - A clear spot within 5 m of it is used. If there is none, the point's origin is used (WARNING).
+4. Position (`ELIFE_SpawnLocator.FindJoinPosition`, mode `m_eSpawnMode` of the session manager):
+   - One random `ELIFE_SpawnPoint` of that mode (`ELIFE_SpawnPoint.GetRandom(mode)`).
+   - A clear spot within the point's `m_iRadius` is used. If there is none, the point's origin is used
+     (WARNING).
    - Yaw is the point's yaw.
-   - No LIFE point: `FindRandomPosition` (WARNING).
+   - No point of that mode: `FindRandomPosition` (WARNING).
+   - The saved API position is not used yet. Every join is treated as a first spawn (see
+     [Spawn points and modes](#spawn-points-and-modes)).
 5. `SCR_FreeSpawnData(prefab, pos, angles)` goes to `SCR_RespawnComponent.RequestSpawn`. A refusal is
    a spawn failure.
 
 `FindRandomPosition` tries up to 30 random points in the world bounds. A point must be above the
 ocean level plus 1 m and have a clear spot within 5 m. The yaw is random. If all tries fail, it uses
-the origin of a LIFE point. If there is none, the spawn fails.
+the origin of any `ELIFE_SpawnPoint`. If there is none, the spawn fails. The vanilla `SCR_SpawnPoint`
+is not used.
 
 ### Outcome
 
@@ -332,14 +336,39 @@ the origin of a LIFE point. If there is none, the spawn fails.
   the tick cached while IN_GAME.
 - The respawn is due after `m_fRespawnDelaySeconds` (5). The 1 s tick triggers it, so it can be a
   little late. No menu is shown; the same character and appearance are used.
-- Position (`FindRespawnPosition`): nearest `ELIFE_RespawnPoint` to the death position, then a clear
-  spot within 5 m of it. No registered point, or no clear spot: WARNING, then random.
+- Position (`FindRespawnPosition`): a random `ELIFE_RespawnPoint`, then a clear spot within 5 m of it.
+  No registered point, or no clear spot: WARNING, then random.
 
 ### Respawn points
 
 - Prefab `Prefabs/Spawning/ELIFE_RespawnPoint.et`, property `m_sName` (for example `Hospital`).
 - It registers on the server in play mode only. It is removed when deleted.
-- The DevWorld has one, `Hospital`, in `SpawnPoints.layer`.
+- Death respawn picks one at random. It is not the nearest to the death position.
+- The DevWorld has one, `Hospital`, in `DevWorld_Layers/spawnpoints.layer`.
+
+### Spawn points and modes
+
+- Prefab `Prefabs/Spawning/ELIFE_SpawnPoint.et`. It is used for the join spawn only.
+- It registers on the server in play mode only, like the respawn point.
+- Attributes:
+
+| Attribute | Default | Purpose |
+|---|---|---|
+| `m_eSpawnMode` | `RANDOM_FIRST_SPAWN` | Mode this point belongs to. |
+| `m_sName` | empty | Name in the spawn selection screen (not built yet). |
+| `m_sImage` | empty | Image in the spawn selection screen (not built yet). |
+| `m_iRadius` | 5 | Radius in metres. The player spawns at a clear spot within it. |
+
+- The session manager has `m_eSpawnMode`. Only points with the same mode are used for joins.
+- Mode `RANDOM_FIRST_SPAWN`: a random point of this mode.
+- Mode `SELECT_PER_RESTART`: the same as above for now. The player will pick a point once per server
+  restart.
+- No point of the mode: WARNING, then a random position.
+
+Open:
+
+- TODO: use the saved API position on join. Until then, every join is a first spawn.
+- TODO: the spawn selection screen for `SELECT_PER_RESTART`. Until then, it picks a random point.
 
 ### Gear and state
 
@@ -465,6 +494,7 @@ On `ELIFE_JoinSessionManagerComponent`. Defaults are from the `[Attribute]` decl
 | `m_fRespawnDelaySeconds` | 5 | no | Death to respawn. |
 | `m_fRecheckCooldownSeconds` | 30 | no | Cooldown for Check again. The client mirrors it. |
 | `m_iMaxSpawnAttempts` | 3 | no | Spawn attempts before REJECTED. |
+| `m_eSpawnMode` | `RANDOM_FIRST_SPAWN` | no | Spawn mode for joins. Only `ELIFE_SpawnPoint`s of this mode are used. See [Spawn points and modes](#spawn-points-and-modes). |
 | `m_iUnlinkedMaxRetries` | 3 | no | Automatic retries for `unlinked`. |
 | `m_fUnlinkedRetryDelaySeconds` | 5 | no | First retry delay. Doubles. |
 | `m_sWhitelistUrl` | `""` | no | Link on the NOT_WHITELISTED screen. |
@@ -516,8 +546,8 @@ ELIFE_Join | session=<id> identity=<gameIdentityId> player=<playerId> <message>
 - [ ] Game mode is `Prefabs/MP/Modes/ELIFE_GameMode.et`. It has the session manager, `ELIFE_JoinSpawnLogic`, the
       appearance list, and `PlayerControllerPrefab` set to `ELIFE_PlayerController.et`.
 - [ ] Backend: `ELifeRPG.json` with `serverUrl` for the Bridge. See [Backend API client](backend-api.md).
-- [ ] At least one `SCR_SpawnPoint` for faction `LIFE` in the world. `Prefabs/Spawning/SpawnPoint_LIFE.et`
-      is the prefab. Without one, the first spawn uses a random position and logs a WARNING.
+- [ ] At least one `ELIFE_SpawnPoint` (`Prefabs/Spawning/ELIFE_SpawnPoint.et`) whose mode matches
+      `m_eSpawnMode`. Without one, the join spawn uses a random position and logs a WARNING.
 - [ ] One `ELIFE_RespawnPoint` (`Prefabs/Spawning/ELIFE_RespawnPoint.et`) with `m_sName` set. Without one,
       respawn uses a random position and logs a WARNING.
 - [ ] Loadout manager `Prefabs/MP/Managers/Loadouts/ELIFE_LoadoutManager.et` in the world. Its loadout is

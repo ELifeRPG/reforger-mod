@@ -1,3 +1,3 @@
-SCR_SpawnPoint : "{6D3068348B1C867E}Prefabs/Spawning/SpawnPoint_LIFE.et" {
+ELIFE_SpawnPoint : "{C59AAC5F160A9968}Prefabs/Spawning/ELIFE_SpawnPoint.et" {
  coords 3150.139 18.539 2629.647
 }
