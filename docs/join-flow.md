@@ -348,7 +348,7 @@ is not used.
 
 ### Spawn points and modes
 
-- Prefab `Prefabs/Spawning/ELIFE_SpawnPoint.et`. It is used for the join spawn only.
+- Prefab `Prefabs/Spawning/ELIFE_SpawnPoint.et`. Used for the join spawn. Also the last-resort origin of a random position, so a death respawn can use it when no respawn point works.
 - It registers on the server in play mode only, like the respawn point.
 - Attributes:
 
