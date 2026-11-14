@@ -5,7 +5,7 @@ class ELIFE_RespawnPointClass : GenericEntityClass
 
 //------------------------------------------------------------------------------------------------
 /*!
-	Named point where a dead player comes back (spec 5.7). The server keeps the play-mode instances in a static list;
+	Named point where a dead player comes back, picked at random among the registered points (spec 5.7). The server keeps the play-mode instances in a static list;
 	edit-mode and client instances never join it, and the destructor always takes the point out.
 */
 class ELIFE_RespawnPoint : GenericEntity
@@ -35,24 +35,12 @@ class ELIFE_RespawnPoint : GenericEntity
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Closest registered respawn point to `pos`, or null when none is registered.
-	static ELIFE_RespawnPoint FindNearest(vector pos)
+	//! Random registered respawn point, or null when none is registered.
+	static ELIFE_RespawnPoint GetRandom()
 	{
-		if (!s_aPoints)
+		if (!s_aPoints || s_aPoints.Count() == 0)
 			return null;
 
-		ELIFE_RespawnPoint best = null;
-		float bestDist = 0;
-		foreach (ELIFE_RespawnPoint point : s_aPoints)
-		{
-			float dist = vector.Distance(point.GetOrigin(), pos);
-			if (!best || dist < bestDist)
-			{
-				bestDist = dist;
-				best = point;
-			}
-		}
-
-		return best;
+		return s_aPoints[Math.RandomInt(0, s_aPoints.Count())];
 	}
 }

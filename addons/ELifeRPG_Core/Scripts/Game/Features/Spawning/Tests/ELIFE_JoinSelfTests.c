@@ -43,6 +43,7 @@ class ELIFE_JoinSelfTests
 		Test_SpawnPoint_DiscWithinRadius();
 		Test_SpawnPoint_DiscRadiusZero();
 		Test_SpawnPoint_NoneRegistered();
+		Test_RespawnPoint_NoneRegistered();
 
 		ELIFE_JoinSessionManagerComponent mgr = ELIFE_JoinSessionManagerComponent.GetInstance();
 		if (mgr)
@@ -731,6 +732,13 @@ class ELIFE_JoinSelfTests
 		Check(ELIFE_SpawnPoint.GetRandom(ELIFE_ESpawnMode.RANDOM_FIRST_SPAWN) == null, "spawn point: GetRandom first spawn is null when none registered", "expected null");
 		Check(ELIFE_SpawnPoint.GetRandom(ELIFE_ESpawnMode.SELECT_PER_RESTART) == null, "spawn point: GetRandom per restart is null when none registered", "expected null");
 		Check(ELIFE_SpawnPoint.GetRandomAny() == null, "spawn point: GetRandomAny is null when none registered", "expected null");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Respawn points register only in play mode on the server, so in edit mode GetRandom is null.
+	protected static void Test_RespawnPoint_NoneRegistered()
+	{
+		Check(ELIFE_RespawnPoint.GetRandom() == null, "respawn point: GetRandom is null when none registered", "expected null");
 	}
 
 	//------------------------------------------------------------------------------------------------

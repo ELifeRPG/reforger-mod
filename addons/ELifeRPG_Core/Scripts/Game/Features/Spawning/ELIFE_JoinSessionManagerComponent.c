@@ -29,6 +29,9 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("3", UIWidgets.EditBox, desc: "Spawn attempts before the player is rejected")]
 	int m_iMaxSpawnAttempts;
 
+	[Attribute("0", UIWidgets.ComboBox, desc: "Spawn mode for joins. Moves to the backend later", enums: ParamEnumArray.FromEnum(ELIFE_ESpawnMode))]
+	protected ELIFE_ESpawnMode m_eSpawnMode;
+
 	[Attribute("3", UIWidgets.EditBox, desc: "Automatic connect retries when the backend answers unlinked")]
 	int m_iUnlinkedMaxRetries;
 
@@ -440,7 +443,14 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Position and prefab for the next spawn: the last death spot when there is one (respawn point), otherwise a LIFE spawn point (first join). False when no position can be found.
+	//! Spawn mode of the join spawn points.
+	ELIFE_ESpawnMode GetSpawnMode()
+	{
+		return m_eSpawnMode;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Position and prefab for the next spawn: a random respawn point after a death, otherwise a random spawn point of the server's spawn mode (first join). False when no position can be found.
 	bool BuildSpawnRequest(int playerId, out ResourceName prefab, out vector pos, out vector angles)
 	{
 		ELIFE_JoinSession s = GetSession(playerId);
@@ -449,11 +459,11 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 
 		prefab = GetAppearancePrefab(s.m_iSelectedAppearance);
 
-		// TODO: use the saved backend position when available
 		if (s.m_vLastDeathPos != vector.Zero)
-			return ELIFE_SpawnLocator.FindRespawnPosition(s.m_vLastDeathPos, pos, angles, s.Describe());
+			return ELIFE_SpawnLocator.FindRespawnPosition(pos, angles, s.Describe());
 
-		return ELIFE_SpawnLocator.FindJoinPosition(pos, angles, s.Describe());
+		// TODO: use the saved backend position when available
+		return ELIFE_SpawnLocator.FindJoinPosition(m_eSpawnMode, pos, angles, s.Describe());
 	}
 
 	//------------------------------------------------------------------------------------------------
