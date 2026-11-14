@@ -1,5 +1,11 @@
 ELIFE_RespawnPoint RESPAWN_Hospital : "{652A9F832614A8CA}Prefabs/Spawning/ELIFE_RespawnPoint.et" {
  coords 316.687 1.286 260.415
+ m_sName "Hospital St. Philipe"
+}
+ELIFE_SpawnPoint Test1 : "{C59AAC5F160A9968}Prefabs/Spawning/ELIFE_SpawnPoint.et" {
+ coords 254.998 0 242.684
+ m_sName "Test1"
+ m_sImage "{96A553E9F0E57986}UI/Textures/DLC/RallyDLCShowcase.edds"
 }
 SCR_DestructibleBuildingEntity : "{EF7848FA0FF4B76B}Prefabs/Structures/Military/Houses/HospitalMilitary_E_01/HospitalMilitary_01_base.et" {
  coords 312.425 -0.25 260.425
