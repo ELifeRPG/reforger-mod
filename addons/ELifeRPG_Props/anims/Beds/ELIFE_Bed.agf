@@ -5,27 +5,45 @@ AnimSrcGraphFile {
     AnimSrcNodeStateMachine MasterControl {
      EditorPos 0 0
      states {
-      AnimSrcNodeState Lie {
+      AnimSrcNodeState HeadLeft {
        EditorPos 0 1
-       Child "LieG"
+       Child "HeadLeftG"
        StartCondition "NPC_Speech == 1"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState HeadRight {
+       EditorPos 2 1
+       Child "HeadRightG"
+       StartCondition "NPC_Speech == 2"
        TimeStorage "Real Time"
       }
      }
      transitions {
       AnimSrcNodeTransition "{6C1E2A90B4D3F703}" {
        FromState ""
-       ToState "Lie"
+       ToState "HeadLeft"
        Condition "NPC_Speech == 1"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{6C1E2A90B4D3F716}" {
+       FromState ""
+       ToState "HeadRight"
+       Condition "NPC_Speech == 2"
        PostEval 1
       }
      }
     }
-    AnimSrcNodeGroupSelect LieG {
+    AnimSrcNodeGroupSelect HeadLeftG {
      EditorPos 0 2
      Child "BedSTM"
      Group "Bed"
-     Column "Lie"
+     Column "HeadLeft"
+    }
+    AnimSrcNodeGroupSelect HeadRightG {
+     EditorPos 2 2
+     Child "BedSTM"
+     Group "Bed"
+     Column "HeadRight"
     }
     AnimSrcNodeStateMachine BedSTM {
      EditorPos 0 3

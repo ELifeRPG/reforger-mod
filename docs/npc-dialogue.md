@@ -135,23 +135,31 @@ To make a new seating prop:
 
 Players get "Lie down" beside either long side of a bed, within 0.5 m of the start spot. They turn to it, sit down,
 turn half round and lie down along the bed. The lie-down and the get-up can't be cut short. Once lying, "Get up" or
-jump gets up. One character per bed; a taken bed shows the action greyed out. From the turn until he lies still, no
+jump gets up. One character per bed (per side on double beds); a taken bed shows the action greyed out. From the turn until he lies still, no
 other seat or bed is offered (`ELIFE_Poses.SetStarting`).
 
 - Logic in `ELifeRPG_Core` (`Scripts/Game/Features/Beds`): `ELIFE_BedComponent` tracks who lies on the bed (server)
   and plays the pose where the character is owned; `LieDown` and `GetUp` also work for NPCs, called on the server.
   `ELIFE_LieUserAction` is the action.
-- The bed itself in `ELifeRPG_Props`: `Prefabs/Props/Sleeping/Bed_01_Sleep.et` and its animations in `anims/Beds`.
+- The beds in `ELifeRPG_Props` (`Prefabs/Props/Sleeping`), one per vanilla bed: `Bed_01_Sleep`, `Bed_02_Sleep`,
+  `BedMedical_01_Sleep`, `BunkBed_01_Sleep` and `BunkBed_01_Double_Sleep` (lower bunk), the military cots
+  `CotMilitary_US_01_Sleep` and `CotMilitary_USSR_01_Sleep`, and the double beds `BedDouble_01_Sleep` and
+  `BedDouble_02_Sleep` (one sleeper per side, each on his half). The animations are in `anims/Beds`.
 
-To make a bed: inherit the vanilla prop, add `ELIFE_BedComponent` and set its graph (`.agr`), animation set (`.asi`),
-lie-down length and start distance (from the bed's centre line to where the lie-down starts). Add a
-`UserActionContext` over the bed and an `ELIFE_LieUserAction` with it, like `Bed_01_Sleep.et`. The animations are
-made for one bed size: `Bed_01`'s fit beds 0.51 m high and 1.12 m wide.
+To make a bed: inherit the vanilla prop, add `ELIFE_BedComponent` and set its graph (`.agr`), animation set (`.asi`)
+and lie-down length. Set the start distance from the bed's centre line to where the lie-down starts: half the bed's
+width plus 0.40 m (the clips end with the hips 0.96 m behind the start). Tick `m_bLengthAlongX` if the bed's long side
+runs along X, `m_bHeadAtPositiveEnd` if the head end is +Z (+X along X; default -Z), and `m_bSleeperPerSide` for
+a double bed. Add a `UserActionContext` over the bed and an
+`ELIFE_LieUserAction` with it, like `Bed_01_Sleep.et`. A double bed gets one context and action per half, where the
+body will lie, with the action's `m_iSpot` set (0 for the half at -X, 1 for the other), like the sofa's seats
+(`BedDouble_01_Sleep.et`): each half has its own state and is only offered from its side. The clips are made for `Bed_01` (mattress 0.51 m high): if a
+bed's mattress sits higher or lower, scale the prefab like the seats.
 
 ## Shared by seats and beds
 
 `ELifeRPG_Core/Scripts/Game/Features/Poses`: `ELIFE_PosePropComponent` is the base of `ELIFE_SeatPropComponent` and
-`ELIFE_BedComponent`. It tracks who holds which numbered spot (a seat number, or 0 for a bed), frees spots whose
+`ELIFE_BedComponent`. It tracks who holds which numbered spot (a seat number; for a bed 0, or 0 and 1 on a double bed, one per long side), frees spots whose
 holder left the pose and replicates the taken ones and their holders. Other characters pass through a holder in the
 pose (applied on every machine): the pose only moves the body, so the collision capsule stays where the pose started.
 A player pushed more than 0.15 m off his place gets up anyway (checked on his own machine, `GetPoseError`/`EndPose`);

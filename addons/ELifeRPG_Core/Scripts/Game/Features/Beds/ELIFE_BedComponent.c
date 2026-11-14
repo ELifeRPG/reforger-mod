@@ -14,7 +14,22 @@ enum ELIFE_EBedPhase
 }
 
 //------------------------------------------------------------------------------------------------
-[ComponentEditorProps(category: "ELifeRPG/Beds", description: "On a bed prop: one character at a time lies down on it. Needs an ELIFE_LieUserAction and the bed's animations.")]
+//! Where a sleeper is owned: his lie-down on one bed.
+class ELIFE_BedSleeper
+{
+	IEntity m_Character;
+	ELIFE_EBedPhase m_ePhase;
+	int m_iPhaseStart;
+	//! When the pose really started (vanilla holds it back while holstering and aligning); 0 before.
+	int m_iPoseStart;
+	//! Turning: the heading we step, not the body's (steps from the body's yaw were too small for the body to follow).
+	float m_fHeading;
+	//! Get-up asked for during the lie-down: done once it has played.
+	bool m_bGetUpAsked;
+}
+
+//------------------------------------------------------------------------------------------------
+[ComponentEditorProps(category: "ELifeRPG/Beds", description: "On a bed prop: characters lie down on it, one per bed or one per side. Needs an ELIFE_LieUserAction and the bed's animations.")]
 class ELIFE_BedComponentClass : ELIFE_PosePropComponentClass
 {
 }
@@ -22,10 +37,11 @@ class ELIFE_BedComponentClass : ELIFE_PosePropComponentClass
 //------------------------------------------------------------------------------------------------
 //! The lie-down is a custom loiter on the bed with the bed prop's own graph, started where the character is owned.
 //! He turns to the start beside a long side, back to the bed; the clips sit him down, turn him half round (root
-//! motion) and lay him along the bed. The bed is spot 0 of ELIFE_PosePropComponent.
+//! motion) and lay him along the bed. Spot 0 of ELIFE_PosePropComponent, or with one sleeper per side spot 0 for the
+//! side at -width and spot 1 for the other. The clips lay the head to the character's left or right, whichever is the head end from his side.
 class ELIFE_BedComponent : ELIFE_PosePropComponent
 {
-	[Attribute("", UIWidgets.ResourceNamePicker, "Animation graph with the lie-down, idle and get-up for this bed (state at NPC_Speech 1).", "agr")]
+	[Attribute("", UIWidgets.ResourceNamePicker, "Animation graph with the lie-down, idle and get-up for this bed (states at NPC_Speech 1: head to the left, 2: to the right).", "agr")]
 	protected ResourceName m_sGraph;
 
 	[Attribute("", UIWidgets.ResourceNamePicker, "Its animation set instance.", "asi")]
@@ -34,22 +50,30 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	[Attribute("8600", UIWidgets.EditBox, "How long the lie-down clip plays, in ms, from the start of the pose. Getting up is offered after it.")]
 	protected int m_iLieDownMs;
 
-	[Attribute("0.96", UIWidgets.EditBox, "From the bed's centre line (its Z axis) to the start, in m. The clips end with the hips this far behind the start.")]
+	[Attribute("0.96", UIWidgets.EditBox, "From the bed's centre line (its long axis) to the start, in m. The clips end with the hips 0.96 m behind the start.")]
 	protected float m_fStartDistance;
 
 	[Attribute("0.5", UIWidgets.EditBox, "Lying down is offered this close to the start, in m. From further the pose starts off the spot.")]
 	protected float m_fStartReach;
 
-	static const int SPOT = 0;
+	[Attribute("0", UIWidgets.CheckBox, "The bed's long side runs along its X axis instead of Z (e.g. the military cots).")]
+	protected bool m_bLengthAlongX;
 
-	//! NPC_Speech value of the graph's "Lie" state.
-	protected static const int LIE = 1;
+	[Attribute("0", UIWidgets.CheckBox, "One sleeper per long side, each on his half (double beds). Otherwise one sleeper for the whole bed.")]
+	protected bool m_bSleeperPerSide;
+
+	[Attribute("0", UIWidgets.CheckBox, "The head end is the bed's +Z end (+X with the long side along X) instead of -Z (-X).")]
+	protected bool m_bHeadAtPositiveEnd;
+
+	//! NPC_Speech values of the graph's states: lying down with the head to the character's left or to his right.
+	protected static const int LIE_HEAD_LEFT = 1;
+	protected static const int LIE_HEAD_RIGHT = 2;
 	protected static const string CONTROL_VARIABLE = "NPC_Speech";
 	//! Vanilla's alignment alone turns him too fast: he turns to the start first, at this speed (deg per second).
 	protected static const float TURN_SPEED = 180;
 	//! Turned enough within this many degrees; the alignment does the rest.
 	protected static const float TURN_DONE = 4;
-	protected static const int TURN_STEP_MS = 20;
+	protected static const int TICK_MS = 20;
 	//! Lies down anyway after this, facing or not.
 	protected static const int TURN_TIMEOUT_MS = 2000;
 	//! Walking further than this past the reach during the turn cancels the lie-down; it would start off the bed.
@@ -63,17 +87,11 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	//! Every bed in the world, for FindFree.
 	protected static ref array<ELIFE_BedComponent> s_aBeds = {};
 
-	//! Where the sleeper is owned.
-	protected IEntity m_Local;
-	protected ELIFE_EBedPhase m_ePhase;
-	protected int m_iPhaseStart;
-	//! Turning: the heading we step, not the body's (steps from the body's yaw were too small for the body to follow).
-	protected float m_fHeading;
-	//! Get-up asked for during the lie-down: done once it has played.
-	protected bool m_bGetUpAsked;
+	//! Where the sleepers are owned: their lie-downs on this bed.
+	protected ref array<ref ELIFE_BedSleeper> m_aSleepers = {};
 
 	//------------------------------------------------------------------------------------------------
-	//! Server. Free beds within range of a position, nearest first.
+	//! Server. Beds with a free spot within range of a position, nearest first.
 	static void FindFree(vector position, float range, notnull array<ELIFE_BedComponent> outBeds)
 	{
 		outBeds.Clear();
@@ -81,7 +99,7 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 		float rangeSq = range * range;
 		foreach (ELIFE_BedComponent bed : s_aBeds)
 		{
-			if (!bed || bed.GetHolder(SPOT))
+			if (!bed || !bed.HasFreeSpot())
 				continue;
 
 			float distance = vector.DistanceSq(position, bed.GetOwner().GetOrigin());
@@ -98,6 +116,23 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Server.
+	bool HasFreeSpot()
+	{
+		if (!GetHolder(0))
+			return true;
+
+		return m_bSleeperPerSide && !GetHolder(1);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The spot of the side a position is on.
+	int GetSpotFor(vector position)
+	{
+		return GetSpotOfSide(GetSide(position));
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The character holds the pose on this bed (from the start of the lie-down to the end of the get-up).
 	bool IsLyingHere(IEntity character)
 	{
@@ -108,14 +143,15 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	//! Where the character is owned: his phase on this bed.
 	ELIFE_EBedPhase GetPhase(IEntity character)
 	{
-		if (!character || character != m_Local)
+		ELIFE_BedSleeper sleeper = FindSleeper(character);
+		if (!sleeper)
 			return ELIFE_EBedPhase.NONE;
 
 		//! The pose ended without us (jumping out of the idle, death) or never started.
-		if (m_ePhase >= ELIFE_EBedPhase.LYING && !IsLyingHere(character))
+		if (sleeper.m_ePhase >= ELIFE_EBedPhase.LYING && !IsLyingHere(character))
 			return ELIFE_EBedPhase.NONE;
 
-		return m_ePhase;
+		return sleeper.m_ePhase;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -139,7 +175,7 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Where the lie-down starts: beside the long side the character is on, back to the bed. The pose turns him half
-	//! round and ends with the hips on the bed's centre line.
+	//! round and ends with the hips m_fStartDistance - 0.96 m from the bed's centre line (on it, or on his half).
 	void GetStartTransform(notnull IEntity character, out vector transform[4])
 	{
 		GetStartTransformFrom(character.GetOrigin(), transform);
@@ -149,24 +185,31 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	//! The start on the long side nearer to a position, e.g. where an NPC walks from.
 	void GetStartTransformFrom(vector position, out vector transform[4])
 	{
-		vector bed[4];
-		GetOwner().GetWorldTransform(bed);
+		GetStartTransformOnSide(GetSide(position), transform);
+	}
 
-		float side = 1;
-		if (GetOwner().CoordToLocal(position)[0] < 0)
-			side = -1;
+	//------------------------------------------------------------------------------------------------
+	//! Server. The start of a side the character may take, the nearer one first. False if both are taken.
+	bool GetFreeStartTransform(notnull IEntity character, out vector transform[4])
+	{
+		int side = GetSide(character.GetOrigin());
+		if (!IsTakenByOther(GetSpotOfSide(side), character))
+		{
+			GetStartTransformOnSide(side, transform);
+			return true;
+		}
 
-		vector outward = bed[0] * side;
-		transform[0] = -bed[2] * side;
-		transform[1] = bed[1];
-		transform[2] = outward;
-		transform[3] = bed[3] + outward * m_fStartDistance;
+		if (!m_bSleeperPerSide || IsTakenByOther(GetSpotOfSide(-side), character))
+			return false;
+
+		GetStartTransformOnSide(-side, transform);
+		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Server and where the character is owned (the action runs on both; for an NPC that is the server).
-	//! The server takes the bed, the owner turns him to the start and lies him down. False if the server finds the
-	//! bed taken by someone else (an NPC was beaten to it) or the bed has no animations.
+	//! The server takes his side's spot, the owner turns him to the start and lies him down. False if the server finds
+	//! it taken by someone else (an NPC was beaten to it) or the bed has no animations.
 	bool LieDown(notnull IEntity character)
 	{
 		if (m_sGraph.IsEmpty() || m_sGraphInstance.IsEmpty())
@@ -175,63 +218,156 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 			return false;
 		}
 
+		int spot = GetSpotFor(character.GetOrigin());
 		if (Replication.IsServer())
 		{
-			if (IsTakenByOther(SPOT, character))
+			if (IsTakenByOther(spot, character))
 				return false;
 
-			Take(SPOT, character);
+			Take(spot, character);
 		}
 
 		if (!ELIFE_Poses.IsOwned(character) || GetPhase(character) != ELIFE_EBedPhase.NONE)
 			return true;
 
-		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
-		if (!controller)
+		if (!ELIFE_Poses.GetController(character))
 			return false;
 
-		if (m_Local != character)
-			ELIFE_Poses.SetStarting(m_Local, false);
+		ELIFE_BedSleeper sleeper = FindSleeper(character);
+		if (!sleeper)
+		{
+			sleeper = new ELIFE_BedSleeper();
+			sleeper.m_Character = character;
+			m_aSleepers.Insert(sleeper);
+		}
 
-		m_Local = character;
-		m_bGetUpAsked = false;
-		SetPhase(ELIFE_EBedPhase.TURNING);
-		m_fHeading = character.GetYawPitchRoll()[0];
-		GetGame().GetCallqueue().Remove(Turn);
-		GetGame().GetCallqueue().CallLater(Turn, TURN_STEP_MS, true, character);
+		sleeper.m_bGetUpAsked = false;
+		sleeper.m_iPoseStart = 0;
+		sleeper.m_fHeading = character.GetYawPitchRoll()[0];
+		SetPhase(sleeper, ELIFE_EBedPhase.TURNING);
+		StartTicking();
 		return true;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Where the character is owned. While still turning to the start he just doesn't lie down; during the lie-down
-	//! the get-up waits until it has played. The server frees the bed once the pose has ended.
+	//! the get-up waits until it has played. The server frees the spot once the pose has ended.
 	void GetUp(notnull IEntity character)
 	{
 		if (!ELIFE_Poses.IsOwned(character))
 			return;
 
+		ELIFE_BedSleeper sleeper = FindSleeper(character);
 		ELIFE_EBedPhase phase = GetPhase(character);
 		if (phase == ELIFE_EBedPhase.TURNING)
-		{
-			StopTurning();
-			SetPhase(ELIFE_EBedPhase.NONE);
-			if (Replication.IsServer())
-				Release(SPOT, character);
-		}
+			CancelTurn(sleeper);
 		else if (phase == ELIFE_EBedPhase.LYING_DOWN)
-			m_bGetUpAsked = true;
+			sleeper.m_bGetUpAsked = true;
 		else if (phase == ELIFE_EBedPhase.LYING)
-			StandUp(character);
+			StandUp(sleeper);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void Turn(IEntity character)
+	//! +1 or -1: which long side of the bed a position is on.
+	protected int GetSide(vector position)
 	{
-		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
-		if (!character || !controller || controller.IsDead() || character != m_Local)
+		vector local = GetOwner().CoordToLocal(position);
+		float across = local[0];
+		if (m_bLengthAlongX)
+			across = local[2];
+
+		if (across < 0)
+			return -1;
+
+		return 1;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected int GetSpotOfSide(int side)
+	{
+		if (m_bSleeperPerSide && side > 0)
+			return 1;
+
+		return 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void GetStartTransformOnSide(int side, out vector transform[4])
+	{
+		vector bed[4];
+		GetOwner().GetWorldTransform(bed);
+
+		vector across = bed[0];
+		if (m_bLengthAlongX)
+			across = bed[2];
+
+		float sign = side;
+		vector outward = across * sign;
+		Math3D.DirectionAndUpMatrix(outward, bed[1], transform);
+		transform[3] = bed[3] + outward * m_fStartDistance;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected ELIFE_BedSleeper FindSleeper(IEntity character)
+	{
+		if (!character)
+			return null;
+
+		foreach (ELIFE_BedSleeper sleeper : m_aSleepers)
 		{
-			StopTurning();
-			SetPhase(ELIFE_EBedPhase.NONE);
+			if (sleeper.m_Character == character)
+				return sleeper;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StartTicking()
+	{
+		GetGame().GetCallqueue().Remove(Tick);
+		GetGame().GetCallqueue().CallLater(Tick, TICK_MS, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Where owned, while anyone here turns or lies down: the turn, the start of the pose and the end of the lie-down.
+	protected void Tick()
+	{
+		bool busy;
+		array<ELIFE_BedSleeper> gone = {};
+		foreach (ELIFE_BedSleeper sleeper : m_aSleepers)
+		{
+			if (!sleeper.m_Character)
+			{
+				gone.Insert(sleeper);
+				continue;
+			}
+
+			if (sleeper.m_ePhase == ELIFE_EBedPhase.TURNING)
+				TickTurning(sleeper);
+			else if (sleeper.m_ePhase == ELIFE_EBedPhase.LYING_DOWN)
+				TickLyingDown(sleeper);
+
+			busy = busy || sleeper.m_ePhase == ELIFE_EBedPhase.TURNING || sleeper.m_ePhase == ELIFE_EBedPhase.LYING_DOWN;
+		}
+
+		foreach (ELIFE_BedSleeper sleeper : gone)
+		{
+			m_aSleepers.RemoveItem(sleeper);
+		}
+
+		if (!busy)
+			GetGame().GetCallqueue().Remove(Tick);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void TickTurning(notnull ELIFE_BedSleeper sleeper)
+	{
+		IEntity character = sleeper.m_Character;
+		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
+		if (!controller || controller.IsDead())
+		{
+			SetPhase(sleeper, ELIFE_EBedPhase.NONE);
 			return;
 		}
 
@@ -240,98 +376,105 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 		if (vector.DistanceXZ(character.GetOrigin(), transform[3]) > m_fStartReach + TURN_DRIFT)
 		{
 			Print(string.Format("%1 | %2 left the start while turning", ClassName(), character), LogLevel.VERBOSE);
-			StopTurning();
-			SetPhase(ELIFE_EBedPhase.NONE);
-			if (Replication.IsServer())
-				Release(SPOT, character);
-
+			CancelTurn(sleeper);
 			return;
 		}
 
 		float want = Math3D.MatrixToAngles(transform)[0];
-		float step = TURN_SPEED * TURN_STEP_MS / 1000;
-		m_fHeading += Math.Clamp(AngleTo(m_fHeading, want), -step, step);
-		controller.SetHeadingAngle(m_fHeading * Math.DEG2RAD, true);
+		float step = TURN_SPEED * TICK_MS / 1000;
+		sleeper.m_fHeading += Math.Clamp(AngleTo(sleeper.m_fHeading, want), -step, step);
+		controller.SetHeadingAngle(sleeper.m_fHeading * Math.DEG2RAD, true);
 
 		bool facing = Math.AbsFloat(AngleTo(character.GetYawPitchRoll()[0], want)) <= TURN_DONE;
-		if (!facing && System.GetTickCount() - m_iPhaseStart < TURN_TIMEOUT_MS)
+		if (!facing && System.GetTickCount() - sleeper.m_iPhaseStart < TURN_TIMEOUT_MS)
 			return;
 
-		StopTurning();
-		StartPose(character, controller, transform);
+		StartPose(sleeper, controller, transform);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void StopTurning()
+	protected void CancelTurn(notnull ELIFE_BedSleeper sleeper)
 	{
-		GetGame().GetCallqueue().Remove(Turn);
+		SetPhase(sleeper, ELIFE_EBedPhase.NONE);
+		if (Replication.IsServer() && sleeper.m_Character)
+			Release(GetSpotFor(sleeper.m_Character.GetOrigin()), sleeper.m_Character);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void StartPose(notnull IEntity character, notnull SCR_CharacterControllerComponent controller, vector transform[4])
+	protected void StartPose(notnull ELIFE_BedSleeper sleeper, notnull SCR_CharacterControllerComponent controller, vector transform[4])
 	{
 		//! Like vanilla's emote configs: no command (the main graph's CMD_Gestures would play its own loiter) and the
 		//! variable by name, bound once our graph is attached.
+		int lie = LIE_HEAD_LEFT;
+		if (IsHeadRightAt(transform))
+			lie = LIE_HEAD_RIGHT;
+
 		SCR_LoiterCustomAnimData data = SCR_LoiterCustomAnimData.CreateInstance(commandName: string.Empty,
-			graphName: m_sGraph, graphInstanceName: m_sGraphInstance, controlVariableValue: LIE, controlVariableName: CONTROL_VARIABLE);
+			graphName: m_sGraph, graphInstanceName: m_sGraphInstance, controlVariableValue: lie, controlVariableName: CONTROL_VARIABLE);
 
 		//! Player input off, or jumping, firing or sprinting would cut the lie-down short. Back on once lying.
 		controller.StartLoitering(GetOwner(), ELoiteringType.CUSTOM, true, true, true, transform, true, data);
-		SetPhase(ELIFE_EBedPhase.LYING_DOWN);
-		GetGame().GetCallqueue().Remove(WaitForPose);
-		GetGame().GetCallqueue().CallLater(WaitForPose, TURN_STEP_MS, true, character);
+		SetPhase(sleeper, ELIFE_EBedPhase.LYING_DOWN);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The head goes to the character's right (+X of the start) if that is towards the bed's head end.
+	protected bool IsHeadRightAt(vector transform[4])
+	{
+		vector bed[4];
+		GetOwner().GetWorldTransform(bed);
+
+		vector headEnd = bed[2];
+		if (m_bLengthAlongX)
+			headEnd = bed[0];
+
+		if (!m_bHeadAtPositiveEnd)
+			headEnd = headEnd * -1.0;
+
+		return vector.Dot(transform[0], headEnd) > 0;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! The clip's time counts from when the pose really starts: vanilla holds it back while holstering and aligning.
-	protected void WaitForPose(IEntity character)
+	protected void TickLyingDown(notnull ELIFE_BedSleeper sleeper)
 	{
-		if (!character || character != m_Local || m_ePhase != ELIFE_EBedPhase.LYING_DOWN)
+		IEntity character = sleeper.m_Character;
+		int now = System.GetTickCount();
+		if (sleeper.m_iPoseStart == 0)
 		{
-			GetGame().GetCallqueue().Remove(WaitForPose);
-			if (!character)
-				SetPhase(ELIFE_EBedPhase.NONE);
+			if (IsLyingHere(character))
+			{
+				sleeper.m_iPoseStart = now;
+				return;
+			}
 
+			if (now - sleeper.m_iPhaseStart < START_TIMEOUT_MS)
+				return;
+
+			//! Never started: drop the held-back start (not a pose that started elsewhere meanwhile) and give the input back.
+			Print(string.Format("%1 | the lying pose of %2 never started", ClassName(), character), LogLevel.WARNING);
+			SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
+			if (controller && !controller.IsLoitering() && controller.GetScrInputContext() && controller.GetScrInputContext().m_iLoiteringType >= 0)
+				controller.StopLoitering(false);
+
+			SetInputDisabled(character, false);
+			SetPhase(sleeper, ELIFE_EBedPhase.NONE);
 			return;
 		}
 
-		if (IsLyingHere(character))
-		{
-			GetGame().GetCallqueue().Remove(WaitForPose);
-			GetGame().GetCallqueue().CallLater(OnLaidDown, m_iLieDownMs, false, character);
-			return;
-		}
-
-		if (System.GetTickCount() - m_iPhaseStart < START_TIMEOUT_MS)
-			return;
-
-		//! Never started: drop the held-back start (not a pose that started elsewhere meanwhile) and give the input back.
-		Print(string.Format("%1 | the lying pose of %2 never started", ClassName(), character), LogLevel.WARNING);
-		GetGame().GetCallqueue().Remove(WaitForPose);
-		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
-		if (controller && !controller.IsLoitering() && controller.GetScrInputContext() && controller.GetScrInputContext().m_iLoiteringType >= 0)
-			controller.StopLoitering(false);
-
-		SetInputDisabled(character, false);
-		SetPhase(ELIFE_EBedPhase.NONE);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected void OnLaidDown(IEntity character)
-	{
-		if (!character || character != m_Local || m_ePhase != ELIFE_EBedPhase.LYING_DOWN)
+		if (now - sleeper.m_iPoseStart < m_iLieDownMs)
 			return;
 
 		if (!IsLyingHere(character))
 		{
-			SetPhase(ELIFE_EBedPhase.NONE);
+			SetPhase(sleeper, ELIFE_EBedPhase.NONE);
 			return;
 		}
 
-		SetPhase(ELIFE_EBedPhase.LYING);
-		if (m_bGetUpAsked)
+		SetPhase(sleeper, ELIFE_EBedPhase.LYING);
+		if (sleeper.m_bGetUpAsked)
 		{
-			StandUp(character);
+			StandUp(sleeper);
 			return;
 		}
 
@@ -340,27 +483,27 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void StandUp(notnull IEntity character)
+	protected void StandUp(notnull ELIFE_BedSleeper sleeper)
 	{
-		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
+		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(sleeper.m_Character);
 		if (!controller)
 			return;
 
-		SetInputDisabled(character, true);
+		SetInputDisabled(sleeper.m_Character, true);
 		controller.StopLoitering(false);
-		SetPhase(ELIFE_EBedPhase.GETTING_UP);
+		SetPhase(sleeper, ELIFE_EBedPhase.GETTING_UP);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void SetPhase(ELIFE_EBedPhase phase)
+	protected void SetPhase(notnull ELIFE_BedSleeper sleeper, ELIFE_EBedPhase phase)
 	{
-		m_ePhase = phase;
-		m_iPhaseStart = System.GetTickCount();
-		ELIFE_Poses.SetStarting(m_Local, phase == ELIFE_EBedPhase.TURNING || phase == ELIFE_EBedPhase.LYING_DOWN);
+		sleeper.m_ePhase = phase;
+		sleeper.m_iPhaseStart = System.GetTickCount();
+		ELIFE_Poses.SetStarting(sleeper.m_Character, phase == ELIFE_EBedPhase.TURNING || phase == ELIFE_EBedPhase.LYING_DOWN);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void SetInputDisabled(notnull IEntity character, bool disabled)
+	protected void SetInputDisabled(IEntity character, bool disabled)
 	{
 		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
 		if (controller && controller.GetScrInputContext())
@@ -382,11 +525,12 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 		if (super.IsGone(spot, holder, now))
 			return true;
 
+		//! A side changer lying on the other side of a double bed no longer holds this one.
 		if (IsLyingHere(holder))
-			return false;
+			return GetSpotFor(holder.GetOrigin()) != spot;
 
 		SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(holder);
-		return !controller || controller.IsDead() || GetLieError(holder) > m_fStartReach + TURN_DRIFT + SERVER_DRIFT_MARGIN;
+		return !controller || controller.IsDead() || GetErrorAtSpot(spot, holder) > m_fStartReach + TURN_DRIFT + SERVER_DRIFT_MARGIN;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -400,7 +544,23 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	//------------------------------------------------------------------------------------------------
 	override protected float GetPoseError(int spot, notnull IEntity character)
 	{
-		return GetLieError(character);
+		return GetErrorAtSpot(spot, character);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Like GetLieError, but on double beds from the start of the spot's own side, not the one he is on now.
+	protected float GetErrorAtSpot(int spot, notnull IEntity character)
+	{
+		if (!m_bSleeperPerSide)
+			return GetLieError(character);
+
+		int side = -1;
+		if (spot == 1)
+			side = 1;
+
+		vector transform[4];
+		GetStartTransformOnSide(side, transform);
+		return vector.DistanceXZ(character.GetOrigin(), transform[3]);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -430,26 +590,32 @@ class ELIFE_BedComponent : ELIFE_PosePropComponent
 	override void OnDelete(IEntity owner)
 	{
 		//! The bed goes (destroyed) under someone owned here: input back and up, the bed's "Get up" goes with it.
-		if (m_Local && m_ePhase >= ELIFE_EBedPhase.LYING_DOWN && ELIFE_Poses.IsOwned(m_Local))
+		foreach (ELIFE_BedSleeper sleeper : m_aSleepers)
 		{
-			SetInputDisabled(m_Local, false);
-			SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(m_Local);
-			//! Also a start vanilla still holds back (holstering, aligning): it would start later on no bed.
-			SCR_ScriptedCharacterInputContext input;
-			if (controller)
-				input = controller.GetScrInputContext();
+			IEntity character = sleeper.m_Character;
+			if (!character)
+				continue;
 
-			bool pending = controller && !controller.IsLoitering() && input && input.m_iLoiteringType >= 0;
-			if (controller && (controller.IsLoiteringOnEntity(owner) || pending))
-				controller.StopLoitering(false);
+			if (sleeper.m_ePhase >= ELIFE_EBedPhase.LYING_DOWN && ELIFE_Poses.IsOwned(character))
+			{
+				SetInputDisabled(character, false);
+				SCR_CharacterControllerComponent controller = ELIFE_Poses.GetController(character);
+				//! Also a start vanilla still holds back (holstering, aligning): it would start later on no bed.
+				SCR_ScriptedCharacterInputContext input;
+				if (controller)
+					input = controller.GetScrInputContext();
+
+				bool pending = controller && !controller.IsLoitering() && input && input.m_iLoiteringType >= 0;
+				if (controller && (controller.IsLoiteringOnEntity(owner) || pending))
+					controller.StopLoitering(false);
+			}
+
+			ELIFE_Poses.SetStarting(character, false);
 		}
 
-		ELIFE_Poses.SetStarting(m_Local, false);
-		m_Local = null;
+		m_aSleepers.Clear();
 		super.OnDelete(owner);
 		s_aBeds.RemoveItem(this);
-		GetGame().GetCallqueue().Remove(WaitForPose);
-		GetGame().GetCallqueue().Remove(Turn);
-		GetGame().GetCallqueue().Remove(OnLaidDown);
+		GetGame().GetCallqueue().Remove(Tick);
 	}
 }

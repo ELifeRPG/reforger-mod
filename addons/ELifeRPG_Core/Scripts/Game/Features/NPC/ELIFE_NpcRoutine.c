@@ -82,6 +82,8 @@ class ELIFE_NpcRoutine
 	protected AIWaypoint m_Waypoint;
 	protected SCR_AISmartActionSentinelComponent m_Seat;
 	protected ELIFE_BedComponent m_Bed;
+	//! The start WalkToBed picked: on a double bed maybe the far side, not the one he is on now.
+	protected vector m_vBedStart;
 	protected ELIFE_ENpcRoutineState m_eState = ELIFE_ENpcRoutineState.ON_DUTY;
 	protected float m_fStateSeconds;
 	protected float m_fPauseSeconds;
@@ -253,11 +255,17 @@ class ELIFE_NpcRoutine
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! To the start on the bed's side nearer to him.
+	//! To the start on a free side of the bed, the nearer one first (double beds take one sleeper per side).
 	protected void WalkToBed()
 	{
 		vector transform[4];
-		m_Bed.GetStartTransformFrom(m_Character.GetOrigin(), transform);
+		if (!m_Bed.GetFreeStartTransform(m_Character, transform))
+		{
+			LookForRest(null, m_Bed);
+			return;
+		}
+
+		m_vBedStart = transform[3];
 		//! The start faces away from the bed.
 		WalkTo(transform[3] - transform[2] * BED_WAYPOINT_PAST, ELIFE_ENpcRoutineState.TO_BED);
 	}
@@ -439,9 +447,8 @@ class ELIFE_NpcRoutine
 			return;
 		}
 
-		vector transform[4];
-		m_Bed.GetStartTransformFrom(m_Character.GetOrigin(), transform);
-		float distance = vector.DistanceXZ(m_Character.GetOrigin(), transform[3]);
+		//! Within LIE_FROM_MAX_DISTANCE of it he is on its side, so LieDown takes that side's spot.
+		float distance = vector.DistanceXZ(m_Character.GetOrigin(), m_vBedStart);
 		if (distance > LIE_FROM_DISTANCE && !HasArrived(m_vTarget))
 			return;
 

@@ -1,5 +1,5 @@
 MetaFileClass {
- Name "{D23BCA55DC4B3938}anims/Beds/ELIFE_bed_lie_in.anm"
+ Name "{70B9617B610BBAF5}anims/Beds/ELIFE_bed_lie_out_left.anm"
  Configurations {
   TXAResourceClass PC {
    SourceProfile "101_FullBodyABS"

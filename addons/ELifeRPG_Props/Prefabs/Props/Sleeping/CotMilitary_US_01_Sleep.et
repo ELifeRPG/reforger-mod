@@ -1,0 +1,30 @@
+GenericEntity : "{C9CFDED29542A968}Prefabs/Props/Military/Furniture/CotMilitary_US_01.et" {
+ ID "425238E8E5CD75C0"
+ components {
+  ELIFE_BedComponent "{425238E8E5CD75C1}" {
+   m_sGraph "{F3EEF053F8F5A7FC}anims/Beds/ELIFE_Bed.agr"
+   m_sGraphInstance "{CD0057CB4DB84B20}anims/Beds/ELIFE_Bed.asi"
+   m_iLieDownMs 8600
+   m_fStartDistance 0.83
+   m_bLengthAlongX 1
+  }
+  ActionsManagerComponent "{425238E8E5CD75C2}" {
+   ActionContexts {
+    UserActionContext "{425238E8E5CD75C3}" {
+     ContextName "bed"
+     Position PointInfo "{425238E8E5CD75C4}" {
+      Offset 0 0.5 0
+     }
+     Radius 1.2
+    }
+   }
+   additionalActions {
+    ELIFE_LieUserAction "{425238E8E5CD75C5}" {
+     ParentContextList {
+      "bed"
+     }
+    }
+   }
+  }
+ }
+}

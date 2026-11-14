@@ -8,19 +8,43 @@ GenericEntity DevTime {
  }
  coords 250 0 260
 }
+GenericEntity TestChairOffice : "{0585A1DEDDD2A328}Prefabs/Props/Seating/ChairOffice_01_Seats.et" {
+ coords 266 0 255
+}
 GenericEntity TestHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
  coords 262.7 1.6 262.5
  angles 0 180 0
 }
-GenericEntity TestChair : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seats.et" {
- coords 256 0 255
+GenericEntity TestBed02 : "{4304469353FDB5EE}Prefabs/Props/Sleeping/Bed_02_Sleep.et" {
+ coords 244 0 248
+}
+GenericEntity TestBedDouble01 : "{56004CFA23F8473A}Prefabs/Props/Sleeping/BedDouble_01_Sleep.et" {
+ coords 263 0 248
 }
 GenericEntity TestSofa : "{59D408A3148997CD}Prefabs/Props/Seating/Sofa_02_green_Seats.et" {
  coords 262.5 0 255
 }
-GenericEntity TestChairOffice : "{0585A1DEDDD2A328}Prefabs/Props/Seating/ChairOffice_01_Seats.et" {
- coords 266 0 255
+GenericEntity TestCotUS : "{5E24164A7D24B4E1}Prefabs/Props/Sleeping/CotMilitary_US_01_Sleep.et" {
+ coords 256 0 248
+}
+GenericEntity TestBunkBed : "{68FF934C3FAEBE25}Prefabs/Props/Sleeping/BunkBed_01_Sleep.et" {
+ coords 250 0 248
+}
+GenericEntity TestBunkBedDouble : "{8887484750114850}Prefabs/Props/Sleeping/BunkBed_01_Double_Sleep.et" {
+ coords 253 0 248
+}
+GenericEntity TestBedDouble02 : "{96CD18750D903873}Prefabs/Props/Sleeping/BedDouble_02_Sleep.et" {
+ coords 267 0 248
+}
+GenericEntity TestChair : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seats.et" {
+ coords 256 0 255
+}
+GenericEntity TestCotUSSR : "{9B547DCE4A592EB2}Prefabs/Props/Sleeping/CotMilitary_USSR_01_Sleep.et" {
+ coords 259 0 248
 }
 GenericEntity TestBed : "{A7D35C19E04B62F8}Prefabs/Props/Sleeping/Bed_01_Sleep.et" {
  coords 250 0 256
+}
+GenericEntity TestBedMedical : "{D90FF1618005D0DC}Prefabs/Props/Sleeping/BedMedical_01_Sleep.et" {
+ coords 247 0 248
 }

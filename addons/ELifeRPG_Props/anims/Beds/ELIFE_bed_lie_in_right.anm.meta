@@ -1,7 +1,8 @@
 MetaFileClass {
- Name "{70B9617B610BBAF5}anims/Beds/ELIFE_bed_lie_out.anm"
+ Name "{878AE53ABD81AD4B}anims/Beds/ELIFE_bed_lie_in_right.anm"
  Configurations {
   TXAResourceClass PC {
+   SourcePath "ELIFE_bed_lie.blend"
    SourceProfile "101_FullBodyABS"
   }
   TXAResourceClass XBOX_ONE : PC {
