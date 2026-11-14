@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{C59AAC5F160A9968}Prefabs/Spawning/ELIFE_SpawnPoint.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

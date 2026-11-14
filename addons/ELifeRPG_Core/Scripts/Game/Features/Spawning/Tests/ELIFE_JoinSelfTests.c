@@ -40,6 +40,9 @@ class ELIFE_JoinSelfTests
 		Test_Qr_VersionChoiceAndLimit();
 		Test_Qr_LongStringVersion13();
 		Test_Qr_CodewordCounts();
+		Test_SpawnPoint_DiscWithinRadius();
+		Test_SpawnPoint_DiscRadiusZero();
+		Test_SpawnPoint_NoneRegistered();
 
 		ELIFE_JoinSessionManagerComponent mgr = ELIFE_JoinSessionManagerComponent.GetInstance();
 		if (mgr)
@@ -692,6 +695,42 @@ class ELIFE_JoinSelfTests
 				ok = false;
 		}
 		Check(ok, "qr: codeword count matches the spec table for versions 1-20", "");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! 200 samples in a disc of radius 5 around (100, 7, 200): every point keeps the centre height and lies within the radius.
+	protected static void Test_SpawnPoint_DiscWithinRadius()
+	{
+		vector center = Vector(100, 7, 200);
+		bool ok = true;
+		for (int i = 0; i < 200; i++)
+		{
+			vector p = ELIFE_SpawnPoint.RandomPointInDisc(center, 5);
+			float dx = p[0] - center[0];
+			float dz = p[2] - center[2];
+			if (p[1] != 7 || Math.Sqrt(dx * dx + dz * dz) > 5.001)
+				ok = false;
+		}
+
+		Check(ok, "spawn point: disc samples stay within radius at centre height", "a sample left the disc or changed height");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A radius of 0 or less gives the centre itself.
+	protected static void Test_SpawnPoint_DiscRadiusZero()
+	{
+		vector center = Vector(100, 7, 200);
+		Check(ELIFE_SpawnPoint.RandomPointInDisc(center, 0) == center, "spawn point: radius 0 gives the centre", "expected centre");
+		Check(ELIFE_SpawnPoint.RandomPointInDisc(center, -3) == center, "spawn point: negative radius gives the centre", "expected centre");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Registration only happens in play mode on the server, so in Workbench edit mode no point is registered and every lookup is null.
+	protected static void Test_SpawnPoint_NoneRegistered()
+	{
+		Check(ELIFE_SpawnPoint.GetRandom(ELIFE_ESpawnMode.RANDOM_FIRST_SPAWN) == null, "spawn point: GetRandom first spawn is null when none registered", "expected null");
+		Check(ELIFE_SpawnPoint.GetRandom(ELIFE_ESpawnMode.SELECT_PER_RESTART) == null, "spawn point: GetRandom per restart is null when none registered", "expected null");
+		Check(ELIFE_SpawnPoint.GetRandomAny() == null, "spawn point: GetRandomAny is null when none registered", "expected null");
 	}
 
 	//------------------------------------------------------------------------------------------------
