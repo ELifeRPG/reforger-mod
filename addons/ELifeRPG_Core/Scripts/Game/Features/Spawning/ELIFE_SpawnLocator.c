@@ -62,7 +62,7 @@ class ELIFE_SpawnLocator
 
 		// FindPositionInRadius sets pos to the point's origin when it finds no clear spot.
 		if (!point.FindPositionInRadius(pos))
-			Print(string.Format("ELIFE_Join | %1 no clear spot at spawn point %2, using its origin", who, point.GetName()), LogLevel.WARNING);
+			Print(string.Format("ELIFE_Join | %1 no clear spot at spawn point %2, using its origin", who, point.GetDisplayName()), LogLevel.WARNING);
 
 		// Face the way the spawn point faces (GetYawPitchRoll: index 0 is yaw).
 		angles = Vector(0, point.GetYawPitchRoll()[0], 0);

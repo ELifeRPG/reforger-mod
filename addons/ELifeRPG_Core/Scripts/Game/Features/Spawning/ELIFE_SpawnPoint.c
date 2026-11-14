@@ -56,7 +56,8 @@ class ELIFE_SpawnPoint : GenericEntity
 	}
 
 	//------------------------------------------------------------------------------------------------
-	string GetName()
+	//! Name shown in the spawn selection.
+	string GetDisplayName()
 	{
 		return m_sName;
 	}

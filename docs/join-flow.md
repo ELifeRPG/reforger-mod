@@ -344,7 +344,7 @@ is not used.
 - Prefab `Prefabs/Spawning/ELIFE_RespawnPoint.et`, property `m_sName` (for example `Hospital`).
 - It registers on the server in play mode only. It is removed when deleted.
 - Death respawn picks one at random. It is not the nearest to the death position.
-- The DevWorld has one, `Hospital`, in `DevWorld_Layers/spawnpoints.layer`.
+- The DevWorld has one, the entity `RESPAWN_Hospital` in `addons/ELifeRPG_Dev/Worlds/DevWorld/DevWorld_Layers/spawnpoints.layer`. Its `m_sName` is not set yet.
 
 ### Spawn points and modes
 
@@ -364,6 +364,7 @@ is not used.
 - Mode `SELECT_PER_RESTART`: the same as above for now. The player will pick a point once per server
   restart.
 - No point of the mode: WARNING, then a random position.
+- Test gap: the self-tests run in edit mode, where points never register. They only cover the disc sampling and the "no points" cases. Mode filtering and the radius search are checked by hand in play mode.
 
 Open:
 
