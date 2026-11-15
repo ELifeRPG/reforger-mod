@@ -1,6 +1,17 @@
 SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Base.et" {
  ID "520EC961A090BBD5"
  components {
+  SCR_CharacterInventoryStorageComponent "{520EA1D2DB118DAC}" {
+   Attributes ItemAttributeCollection "{52BAC70D641B89B1}" {
+    CustomAttributes {
+     PreviewRenderAttributes "{52BAC70D6147CC7C}" {
+      CameraDistanceToItem 3
+      CameraOffset -0.06 0.08 0
+      AspectRatio 0.48
+     }
+    }
+   }
+  }
   SCR_CharacterFactionAffiliationComponent "{520EC961FB0A2E90}" {
    "faction affiliation" "LIFE"
   }
@@ -12,18 +23,12 @@ SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_
     m_Image "{43EA535E240F0B17}UI/Textures/EditorPreviews/Characters/BLUFOR/US_Army/Character_US_AR.edds"
     m_sFaction "US"
     m_aAuthoredLabels + {
-     34
+     TRAIT_SUPPRESSIVE
     }
     m_aAutoLabels {
-     122 43
+     SIZE_M ROLE_MACHINEGUNNER
     }
    }
-  }
-  SCR_GadgetManagerComponent "{520EA1D2DB118DF3}" {
-  }
-  CharacterGrenadeSlotComponent "{520EA1D2F659CE6E}" {
-  }
-  CharacterWeaponSlotComponent "{520EA1D2F659CFAB}" {
   }
   SCR_CharacterIdentityComponent "{5584CBC63E092DBC}" {
    Identity Identity "{5584CBC6363C648B}" {
@@ -38,11 +43,19 @@ SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_
     LoadoutSlotInfo Hat {
      Prefab ""
     }
+    LoadoutSlotInfo Jacket {
+     Prefab "{EB0D74A43F74B522}Prefabs/Characters/Uniforms/Jacket_Denim_01/Jacket_Denim_01_strippedShirt.et"
+    }
+    LoadoutSlotInfo Pants {
+     Prefab "{5A8C9A020BD7ABA6}Prefabs/Characters/Uniforms/Pants_Trousers_01/Pants_Trousers_01_DarkGrey.et"
+    }
+    SCR_FeetLoadoutSlotInfo Boots {
+     Prefab "{C7923961D7235D70}Prefabs/Characters/Footwear/CombatBoots_Soviet_01.et"
+    }
     LoadoutSlotInfo Back {
-     Prefab ""
+     Prefab "{443304F1EC50BC27}Prefabs/Items/Equipment/Backpacks/Backpack_Veshmeshok_Black.et"
     }
     LoadoutSlotInfo Vest {
-     Prefab "{02DF51DB063ABD36}Prefabs/Characters/Vests/Vest_ALICE/Vest_ALICE_firstaid.et"
     }
    }
   }
@@ -51,7 +64,7 @@ SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_
     ItemsInitConfigurationItem "{5978862C986654F1}" {
      TargetStorage "Prefabs/Characters/Uniforms/Pants_US_BDU.et"
      PrefabsToSpawn {
-      "{A81F501D3EF6F38E}Prefabs/Items/Medicine/FieldDressing_US_01.et"
+      "{A81F501D3EF6F38E}Prefabs/Items/Medicine/FieldDressing_01/FieldDressing_US_01.et"
      }
     }
     ItemsInitConfigurationItem "{54A49B42D138207E}" {
@@ -74,14 +87,14 @@ SCR_ChimeraCharacter : "{836E7E39AAC5888B}Prefabs/Characters/Factions/BLUFOR/US_
     }
     ItemsInitConfigurationItem "{56607B916E51CA58}" {
      PrefabsToSpawn {
-      "{61D4F80E49BF9B12}Prefabs/Items/Equipment/Compass/Compass_SY183.et" "{13772C903CB5E4F7}Prefabs/Items/Equipment/Maps/PaperMap_01_folded.et" "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et"
+      "{61D4F80E49BF9B12}Prefabs/Items/Equipment/Compass/Compass_SY183.et" "{13772C903CB5E4F7}Prefabs/Items/Equipment/Maps/Map_Paper_01/PaperMap_01_folded.et" "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et"
      }
     }
     ItemsInitConfigurationItem "{5978862C986654F9}" {
      TargetStorage "Prefabs/Characters/Vests/Vest_ALICE/Vest_ALICE_suspenders_2.et"
      TargetPurpose 64
      PrefabsToSpawn {
-      "{3A421547BC29F679}Prefabs/Items/Equipment/Flashlights/Flashlight_MX991.et"
+      "{3A421547BC29F679}Prefabs/Items/Equipment/Flashlights/Flashlight_MX991/Flashlight_MX991.et"
      }
     }
    }

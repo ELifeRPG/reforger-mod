@@ -1,51 +1,76 @@
-ButtonWidgetClass "{15351AE6B0358A54}" {
- Name "CardButton"
+SizeLayoutWidgetClass "{7002A3362AC2DF08}" {
+ Name "CharacterCardSize"
  "Ignore Cursor" 0
- Slot LayoutSlot "{6F8A8BA0BB774EC6}" {
-  HorizontalAlign 1
-  Padding 0 0 12 12
+ Slot LayoutSlot "{0CE4F32901F1A267}" {
+  VerticalAlign 1
+  Padding 4 0 4 0
  }
- Color 1 1 1 1
- style blank
- components {
-  SCR_ButtonTextComponent "{1D5E008805ECB781}" {
-   m_BackgroundDefault 0 0 0 0.6
-   m_BackgroundHovered 0 0 0 0.9
-  }
- }
+ AllowWidthOverride 1
+ WidthOverride 260
+ AllowHeightOverride 1
+ HeightOverride 540
  {
-  OverlayWidgetClass "{13415CD2329C6FC3}" {
-   Name "CardOverlay"
-   "Ignore Cursor" 1
-   Slot ButtonWidgetSlot "{C39C161E43BECED4}" {
+  ButtonWidgetClass "{39419D01F7D8B7A3}" {
+   Name "CardButton"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{2F2AE9A73DB7DECA}" {
     HorizontalAlign 3
     VerticalAlign 3
-    Padding 12 12 12 12
+   }
+   Color 1 1 1 1
+   style blank
+   components {
+    SCR_ButtonTextComponent "{7ADADB502FC76624}" {
+     m_BackgroundDefault 0 0 0 0.6
+     m_BackgroundHovered 0 0 0 0.9
+    }
    }
    {
-    VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
-     Name "CardBody"
+    OverlayWidgetClass "{53D6338E6E520654}" {
+     Name "CardOverlay"
      "Ignore Cursor" 1
-     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+     Clipping True
+     Slot ButtonWidgetSlot "{92886A7065F39DB4}" {
       HorizontalAlign 3
       VerticalAlign 3
      }
      {
-      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+      ScaleWidgetClass "{2C8D5165B63E0536}" {
+       Name "CardBackgroundScale"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{A3C9B51B91C185FC}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       "Scale Mode" "Scale to fill"
+       {
+        ImageWidgetClass "{6848CDFB91DEC316}" {
+         Name "CardBackground"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{C05A208911A050A1}" {
+         }
+         Color 1 1 1 1
+         Texture "{E188A17B88D252DB}UI/Textures/MissionLoadingScreens/LoadingScreenSurvival.edds"
+         Size 1920 1080
+        }
+       }
+      }
+      SizeLayoutWidgetClass "{C16E5C56707C04EF}" {
        Name "PreviewSize"
        "Ignore Cursor" 1
-       Slot LayoutSlot "{FF820A48100B70E7}" {
+       Slot OverlayWidgetSlot "{89717FB826BB517C}" {
         HorizontalAlign 3
+        VerticalAlign 3
        }
        AllowWidthOverride 1
-       WidthOverride 160
+       WidthOverride 260
        AllowHeightOverride 1
-       HeightOverride 160
+       HeightOverride 540
        {
         ItemPreviewWidgetClass "{552068601B16C353}" {
          Name "Preview"
          "Ignore Cursor" 1
-         Slot AlignableSlot "{3A18467C5F282CEA}" {
+         Slot AlignableSlot "{A747C1B55F96B4CF}" {
           HorizontalAlign 3
           VerticalAlign 3
          }
@@ -57,28 +82,103 @@ ButtonWidgetClass "{15351AE6B0358A54}" {
         }
        }
       }
-      TextWidgetClass "{C90A058802B62F38}" {
+      SizeLayoutWidgetClass "{36CAC96F36B585CA}" {
+       Name "ShadeTopSize"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{21C95E01D0636155}" {
+        HorizontalAlign 3
+        VerticalAlign 0
+       }
+       AllowHeightOverride 1
+       HeightOverride 190
+       {
+        ImageWidgetClass "{50830F36CA873678}" {
+         Name "ShadeTop"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{3C99F33611589654}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 0.85
+         Texture "{6FCF7C9AAAA8FA03}UI/Textures/Menus/Join/SpawnCardShade.edds"
+        }
+       }
+      }
+      SizeLayoutWidgetClass "{6BA62A1459A06C8A}" {
+       Name "ShadeBottomSize"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{A2B9A7B7E34B7969}" {
+        HorizontalAlign 3
+        VerticalAlign 2
+       }
+       AllowHeightOverride 1
+       HeightOverride 190
+       {
+        ImageWidgetClass "{B1203DF6788C4097}" {
+         Name "ShadeBottom"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{B632813FACEC2D53}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 0.85
+         Texture "{6FCF7C9AAAA8FA03}UI/Textures/Menus/Join/SpawnCardShade.edds"
+        }
+       }
+      }
+      TextWidgetClass "{843F29B36207B3B1}" {
        Name "CardName"
        "Ignore Cursor" 1
-       Slot LayoutSlot "{CAACC60A6C69A186}" {
-        HorizontalAlign 3
-        Padding 0 8 0 0
+       Slot OverlayWidgetSlot "{49A221635095583A}" {
+        HorizontalAlign 1
+        VerticalAlign 0
+        Padding 0 32 0 0
        }
        Text ""
-       "Font Size" 20
+       "Font Size" 22
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      SizeLayoutWidgetClass "{B7ECE697FB27603A}" {
+       Name "CardPlus"
+       "Ignore Cursor" 1
+       "Is Visible" 0
+       Slot OverlayWidgetSlot "{1F49FE68B910A6DC}" {
+        HorizontalAlign 1
+        VerticalAlign 1
+       }
+       AllowWidthOverride 1
+       WidthOverride 96
+       AllowHeightOverride 1
+       HeightOverride 96
+       {
+        ImageWidgetClass "{86DD85A2A61DA490}" {
+         Name "CardPlusIcon"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{B7487659C35C0294}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 1
+         Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+         Image "plus"
+         Size 96 96
+        }
+       }
+      }
+      PanelWidgetClass "{DC4C13FF894C7C1C}" {
+       Name "CardSelected"
+       "Ignore Cursor" 1
+       "Is Visible" 0
+       Slot OverlayWidgetSlot "{BCA3BB0F1EEB02A8}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 1 0.597 0.198 1
+       style outline_2px
       }
      }
-    }
-    PanelWidgetClass "{4BABA3A0CB85D212}" {
-     Name "CardSelected"
-     "Ignore Cursor" 1
-     "Is Visible" 0
-     Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
-      HorizontalAlign 3
-      VerticalAlign 3
-     }
-     Color 1 0.597 0.198 1
-     style outline_2px
     }
    }
   }
