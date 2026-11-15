@@ -2,10 +2,36 @@ ELIFE_RespawnPoint RESPAWN_Hospital : "{652A9F832614A8CA}Prefabs/Spawning/ELIFE_
  coords 316.687 1.286 260.415
  m_sName "Hospital St. Philipe"
 }
-ELIFE_SpawnPoint Test1 : "{C59AAC5F160A9968}Prefabs/Spawning/ELIFE_SpawnPoint.et" {
- coords 254.998 0 242.684
- m_sName "Test1"
- m_sImage "{96A553E9F0E57986}UI/Textures/DLC/RallyDLCShowcase.edds"
+$grp ELIFE_SpawnPoint : "{C59AAC5F160A9968}Prefabs/Spawning/ELIFE_SpawnPoint.et" {
+ SPAWN_RANDOM1 {
+  coords 254.998 0 242.684
+  m_sName "Test1"
+  m_sImage "{96A553E9F0E57986}UI/Textures/DLC/RallyDLCShowcase.edds"
+ }
+ SPAWN_SELECT1 {
+  coords 256.905 0 250.975
+  m_eSpawnMode SELECT_PER_RESTART
+  m_sName "Test1"
+  m_sImage "{96A553E9F0E57986}UI/Textures/DLC/RallyDLCShowcase.edds"
+ }
+ SPAWN_SELECT2 {
+  coords 253.963 0 170.45
+  m_eSpawnMode SELECT_PER_RESTART
+  m_sName "Weit weg"
+  m_sImage "{FB84DD112A84AB32}UI/Textures/LoadingScreen/PlaceholderScenery_UI.edds"
+ }
+ SPAWN_SELECT3 {
+  coords 310.836 1.286 258.426
+  m_eSpawnMode SELECT_PER_RESTART
+  m_sName "Krankenhaus"
+  m_sImage "{2F3118CAB9FF61A6}UI/Textures/MainMenu/CareerProfile/UI_CareerBG_1.edds"
+ }
+ SPAWN_SELECT4 {
+  coords 298.615 0 248.982
+  m_eSpawnMode SELECT_PER_RESTART
+  m_sName "Krankenhaus"
+  m_sImage "{5E7237DD1FF03D65}UI/Textures/MissionLoadingScreens/CAH_LeMoule_UI.edds"
+ }
 }
 SCR_DestructibleBuildingEntity : "{EF7848FA0FF4B76B}Prefabs/Structures/Military/Houses/HospitalMilitary_E_01/HospitalMilitary_01_base.et" {
  coords 312.425 -0.25 260.425
