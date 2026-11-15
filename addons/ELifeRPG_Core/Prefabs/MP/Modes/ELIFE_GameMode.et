@@ -2,9 +2,7 @@ ELIFE_GameMode : "{0F307326459A1395}Prefabs/MP/Modes/GameMode_Base.et" {
  ID "597F1CE401B0CCF5"
  components {
   ELIFE_JoinSessionManagerComponent "{FEE5C10F7DF66519}" {
-   m_aAppearancePrefabs {
-    "{9FA4749AF6C55D96}Prefabs/Characters/Factions/LIFE/Character_LIFE.et" "{EA69140AA60696EA}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_01.et" "{CBDECCF09B61ACF1}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_02.et" "{1151F8EF4E43F547}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_03.et" "{495046C5DFE1BDD2}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_04.et" "{7FD4A5B13943B9E4}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_05.et" "{13AAAE204BC5DB96}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_06.et" "{A42DBEE1E564B2D8}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_07.et" "{54CBA88FC2B7CDA4}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_08.et" "{B48D9F586F09259E}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_09.et" "{373D351D2D370889}Prefabs/Characters/Factions/LIFE/Character_LIFE_Face_10.et"
-   }
+   m_sAppearanceConfig "{25C2C1EA81DD8212}Configs/Characters/ELIFE_Appearances.conf"
    m_vMenuCameraPosition 8 25 5
    m_vMenuCameraAngles 0 -30 0
   }

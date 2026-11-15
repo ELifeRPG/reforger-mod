@@ -44,18 +44,18 @@ class ELIFE_JoinSelfTests
 		Test_SpawnPoint_DiscRadiusZero();
 		Test_SpawnPoint_NoneRegistered();
 		Test_RespawnPoint_NoneRegistered();
+		Test_SpawnPoint_GetAllNone();
+		Test_SpawnSelect_Transitions();
+		Test_SpawnSelect_PayloadRoundTrip();
+		Test_SpawnSelect_PageCount();
+		Test_Appearance_IsValid();
 
 		ELIFE_JoinSessionManagerComponent mgr = ELIFE_JoinSessionManagerComponent.GetInstance();
 		if (mgr)
 		{
-			// Create tests need one valid appearance; a world with none configured gets a temporary one, restored at the end.
-			array<ResourceName> savedAppearance = mgr.m_aAppearancePrefabs;
-			if (mgr.GetAppearanceCount() == 0)
-			{
-				array<ResourceName> tempAppearance = new array<ResourceName>();
-				tempAppearance.Insert("{9FA4749AF6C55D96}Prefabs/Characters/Factions/LIFE/Character_LIFE.et");
-				mgr.m_aAppearancePrefabs = tempAppearance;
-			}
+			// Create tests need a valid skin tone and head: an in-memory config replaces the world's one, restored at the end.
+			ELIFE_AppearanceConfig savedAppearanceConfig = mgr.GetAppearanceConfig();
+			mgr.SetAppearanceConfigForTests(MakeAppearanceConfig());
 
 			Test_AcceptResponse_RejectsStaleToken();
 			Test_SetState_RefusesIllegalMove();
@@ -108,7 +108,8 @@ class ELIFE_JoinSelfTests
 			Test_Select_IgnoredInCreating();
 			Test_Select_KnownIdLoads();
 			Test_Create_ShortNameStaysCreating();
-			Test_Create_AppearanceOutOfRangeRefused();
+			Test_Create_InvalidAppearanceRefused();
+			Test_Create_ValidAppearanceStored();
 			Test_Create_SecondRequestIgnoredInFlight();
 			Test_Create_SuccessSelectsNewCharacter();
 			Test_Create_ErrorShowsCreateAgain();
@@ -118,19 +119,19 @@ class ELIFE_JoinSelfTests
 			Test_EntityLost_InGameToSpawning();
 			Test_EntityLost_IgnoredInSelecting();
 			Test_SpawnFailed_ThreeTimesRejects();
-			Test_Appearance_OutOfRangeIsDefault();
+			Test_CharacterPrefab_Default();
 			Test_ConfirmedCharacter_UnconfirmedStatesEmpty();
 			Test_ConfirmedCharacter_ConfirmedStatesGiveId();
 			Test_ConfirmedCharacter_NoSessionEmpty();
-
 			Test_SpawnSelect_ConfirmedCharacterId();
 			Test_SpawnSelect_Mode1GoesSpawning();
 			Test_SpawnSelect_Mode2NoPointsGoesSpawning();
 			Test_SpawnSelect_WrongStateIgnored();
 			Test_SpawnSelect_InFlightIgnored();
 			Test_SpawnSelect_IdleKick();
+
 			mgr.ClearTestSessions();
-			mgr.m_aAppearancePrefabs = savedAppearance;
+			mgr.SetAppearanceConfigForTests(savedAppearanceConfig);
 		}
 		else
 		{
@@ -745,6 +746,127 @@ class ELIFE_JoinSelfTests
 	protected static void Test_RespawnPoint_NoneRegistered()
 	{
 		Check(ELIFE_RespawnPoint.GetRandom() == null, "respawn point: GetRandom is null when none registered", "expected null");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Edit mode registers nothing, so GetAll gives 0 and an empty list for the per-restart mode.
+	protected static void Test_SpawnPoint_GetAllNone()
+	{
+		array<ELIFE_SpawnPoint> list = new array<ELIFE_SpawnPoint>();
+		int count = ELIFE_SpawnPoint.GetAll(ELIFE_ESpawnMode.SELECT_PER_RESTART, list);
+
+		Check(count == 0 && list.Count() == 0, "spawn point: GetAll per restart is empty when none registered", string.Format("count=%1 list=%2", count, list.Count()));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawn screen paging: 6 points per page. 0 points is no page, 6 is one, 7 spills to a second, 13 to a third.
+	protected static void Test_SpawnSelect_PageCount()
+	{
+		Check(ELIFE_JoinPaging.PageCount(0) == 0
+			&& ELIFE_JoinPaging.PageCount(1) == 1
+			&& ELIFE_JoinPaging.PageCount(6) == 1
+			&& ELIFE_JoinPaging.PageCount(7) == 2
+			&& ELIFE_JoinPaging.PageCount(12) == 2
+			&& ELIFE_JoinPaging.PageCount(13) == 3,
+			"spawn screen: PageCount 0/1/6/7/12/13 is 0/1/1/2/2/3",
+			string.Format("got %1/%2/%3/%4/%5/%6", ELIFE_JoinPaging.PageCount(0), ELIFE_JoinPaging.PageCount(1),
+				ELIFE_JoinPaging.PageCount(6), ELIFE_JoinPaging.PageCount(7), ELIFE_JoinPaging.PageCount(12),
+				ELIFE_JoinPaging.PageCount(13)));
+
+		Check(ELIFE_JoinPaging.PageStart(0) == 0 && ELIFE_JoinPaging.PageStart(1) == 6,
+			"spawn screen: PageStart(0)=0, PageStart(1)=6",
+			string.Format("got %1/%2", ELIFE_JoinPaging.PageStart(0), ELIFE_JoinPaging.PageStart(1)));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Appearance: IsValid refuses a null config, skin or head out of range, and a tone without heads; accepts an in-range pair.
+	protected static void Test_Appearance_IsValid()
+	{
+		ResourceName body = "{0023F898C0FF18AA}Prefabs/Characters/Basebody/CharacterBasebody.et";
+
+		ELIFE_AppearanceConfig cfg = new ELIFE_AppearanceConfig();
+		cfg.m_aSkinTones = new array<ref ELIFE_SkinTone>();
+
+		ELIFE_SkinTone white = new ELIFE_SkinTone();
+		white.m_sBody = body;
+		white.m_aHeads = new array<ResourceName>();
+		white.m_aHeads.Insert("{EAF055495BA85CA1}Prefabs/Characters/Heads/Head_White_02.et");
+		white.m_aHeads.Insert("{D7C470712EC4D596}Prefabs/Characters/Heads/Head_White_05.et");
+		cfg.m_aSkinTones.Insert(white);
+
+		ELIFE_SkinTone black = new ELIFE_SkinTone();
+		black.m_sBody = body;
+		black.m_aHeads = new array<ResourceName>();
+		cfg.m_aSkinTones.Insert(black);
+
+		Check(!ELIFE_AppearanceConfig.IsValid(null, 0, 0), "appearance: null config is invalid", "expected false");
+		Check(!ELIFE_AppearanceConfig.IsValid(cfg, 2, 0) && !ELIFE_AppearanceConfig.IsValid(cfg, -1, 0),
+			"appearance: skin out of range is invalid", "expected false");
+		Check(!ELIFE_AppearanceConfig.IsValid(cfg, 0, 2) && !ELIFE_AppearanceConfig.IsValid(cfg, 0, -1),
+			"appearance: head out of range is invalid", "expected false");
+		Check(!ELIFE_AppearanceConfig.IsValid(cfg, 1, 0),
+			"appearance: tone without heads is invalid", "expected false");
+		Check(ELIFE_AppearanceConfig.IsValid(cfg, 0, 1),
+			"appearance: in-range skin and head is valid", "expected true");
+
+		ELIFE_AppearanceConfig noBody = new ELIFE_AppearanceConfig();
+		noBody.m_aSkinTones = new array<ref ELIFE_SkinTone>();
+		ELIFE_SkinTone bodyless = new ELIFE_SkinTone();
+		bodyless.m_sBody = "";
+		bodyless.m_aHeads = new array<ResourceName>();
+		bodyless.m_aHeads.Insert("{EAF055495BA85CA1}Prefabs/Characters/Heads/Head_White_02.et");
+		noBody.m_aSkinTones.Insert(bodyless);
+		Check(!ELIFE_AppearanceConfig.IsValid(noBody, 0, 0),
+			"appearance: tone with heads but empty body is invalid", "expected false");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawn selection: LOADING_CHARACTER goes to SELECTING_SPAWN; SELECTING_SPAWN goes to SPAWNING or REJECTED (or ENDED), not back to SELECTING.
+	protected static void Test_SpawnSelect_Transitions()
+	{
+		Check(ELIFE_JoinSession.IsTransitionAllowed(ELIFE_EJoinState.LOADING_CHARACTER, ELIFE_EJoinState.SELECTING_SPAWN),
+			"transition LOADING_CHARACTER->SELECTING_SPAWN allowed", "expected true");
+		Check(ELIFE_JoinSession.IsTransitionAllowed(ELIFE_EJoinState.SELECTING_SPAWN, ELIFE_EJoinState.SPAWNING),
+			"transition SELECTING_SPAWN->SPAWNING allowed", "expected true");
+		Check(ELIFE_JoinSession.IsTransitionAllowed(ELIFE_EJoinState.SELECTING_SPAWN, ELIFE_EJoinState.REJECTED),
+			"transition SELECTING_SPAWN->REJECTED allowed", "expected true");
+		Check(ELIFE_JoinSession.IsTransitionAllowed(ELIFE_EJoinState.SELECTING_SPAWN, ELIFE_EJoinState.ENDED),
+			"transition SELECTING_SPAWN->ENDED allowed", "expected true");
+		Check(!ELIFE_JoinSession.IsTransitionAllowed(ELIFE_EJoinState.SELECTING_SPAWN, ELIFE_EJoinState.SELECTING),
+			"transition SELECTING_SPAWN->SELECTING blocked", "expected false");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawn selection payload: two points, the character name and an error survive Pack, AsString and ExpandFromRAW.
+	protected static void Test_SpawnSelect_PayloadRoundTrip()
+	{
+		ELIFE_JoinSpawnSelectPayload src = new ELIFE_JoinSpawnSelectPayload();
+		src.characterName = "Anna Smith";
+		src.error = "#ELIFE-Join_SpawnPointUnavailable";
+
+		ELIFE_JoinSpawnPointEntry first = new ELIFE_JoinSpawnPointEntry();
+		first.index = 0;
+		first.name = "Harbour";
+		first.image = "{0123456789ABCDEF}UI/Textures/Spawn/harbour.edds";
+		src.points.Insert(first);
+
+		ELIFE_JoinSpawnPointEntry second = new ELIFE_JoinSpawnPointEntry();
+		second.index = 1;
+		second.name = "Airfield";
+		second.image = "";
+		src.points.Insert(second);
+
+		src.Pack();
+		string json = src.AsString();
+
+		ELIFE_JoinSpawnSelectPayload dst = new ELIFE_JoinSpawnSelectPayload();
+		dst.ExpandFromRAW(json);
+
+		bool ok = dst.characterName == "Anna Smith" && dst.error == "#ELIFE-Join_SpawnPointUnavailable" && dst.points.Count() == 2;
+		if (ok)
+			ok = dst.points[0].index == 0 && dst.points[0].name == "Harbour" && dst.points[0].image == first.image
+				&& dst.points[1].index == 1 && dst.points[1].name == "Airfield" && dst.points[1].image == "";
+		Check(ok, "spawn select payload round-trip", string.Format("json=%1", json));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1668,7 +1790,7 @@ class ELIFE_JoinSelfTests
 		ELIFE_JoinSession s = MakeSession(-243, "t-create-short", ELIFE_EJoinState.CREATING, 100000);
 		mgr.InsertSessionForTests(s);
 
-		mgr.HandleRequestCreate(-243, "a", "b", 0);
+		mgr.HandleRequestCreate(-243, "a", "b", 0, 0);
 
 		Check(s.m_eState == ELIFE_EJoinState.CREATING && s.m_eTestLastScreen == ELIFE_EJoinScreen.CREATING && !s.m_bRequestInFlight
 			&& s.m_sTestLastPayload.Contains("#ELIFE-Join_NameTooShort"),
@@ -1676,10 +1798,10 @@ class ELIFE_JoinSelfTests
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! An index equal to the count is out of range: refused with AppearanceInvalid, nothing in flight.
-	protected static void Test_Create_AppearanceOutOfRangeRefused()
+	//! A skin tone or head outside the config (the first tone has 2 heads, the second none): refused with AppearanceInvalid, nothing in flight.
+	protected static void Test_Create_InvalidAppearanceRefused()
 	{
-		ELIFE_JoinSessionManagerComponent mgr = RequireManager("create: appearance out of range");
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("create: invalid appearance");
 		if (!mgr)
 			return;
 
@@ -1687,10 +1809,49 @@ class ELIFE_JoinSelfTests
 		ELIFE_JoinSession s = MakeSession(-244, "t-create-appearance", ELIFE_EJoinState.CREATING, 100000);
 		mgr.InsertSessionForTests(s);
 
-		mgr.HandleRequestCreate(-244, "Anna", "Smith", mgr.GetAppearanceCount());
+		mgr.HandleRequestCreate(-244, "Anna", "Smith", 0, 2);
+		bool headRefused = s.m_eState == ELIFE_EJoinState.CREATING && !s.m_bRequestInFlight && s.m_sTestLastPayload.Contains("#ELIFE-Join_AppearanceInvalid");
 
-		Check(s.m_eState == ELIFE_EJoinState.CREATING && !s.m_bRequestInFlight && s.m_sTestLastPayload.Contains("#ELIFE-Join_AppearanceInvalid"),
-			"create: out-of-range appearance refused", string.Format("state=%1 inflight=%2 payload=%3", s.m_eState, s.m_bRequestInFlight, s.m_sTestLastPayload));
+		mgr.ClearSessionsForTests();
+		s = MakeSession(-244, "t-create-appearance", ELIFE_EJoinState.CREATING, 100000);
+		mgr.InsertSessionForTests(s);
+		mgr.HandleRequestCreate(-244, "Anna", "Smith", 1, 0);
+		bool toneRefused = s.m_eState == ELIFE_EJoinState.CREATING && !s.m_bRequestInFlight && s.m_sTestLastPayload.Contains("#ELIFE-Join_AppearanceInvalid");
+
+		Check(headRefused && toneRefused, "create: out-of-range skin or head refused",
+			string.Format("headRefused=%1 toneRefused=%2 payload=%3", headRefused, toneRefused, s.m_sTestLastPayload));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A valid skin and head go on to the backend request; the success stores them for the new character and selects it.
+	protected static void Test_Create_ValidAppearanceStored()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("create: valid appearance stored");
+		if (!mgr)
+			return;
+
+		mgr.ClearSessionsForTests();
+		mgr.SetNoSendForTests(true);
+		ELIFE_JoinSession s = MakeSession(-248, "t-create-appearance-ok", ELIFE_EJoinState.CREATING, 100000);
+		mgr.InsertSessionForTests(s);
+
+		// Skin 2 (not the default 0) and head 0, so a missing map key cannot pass as the stored value.
+		mgr.HandleRequestCreate(-248, "Anna", "Smith", 2, 0);
+		bool inFlight = s.m_bRequestInFlight && s.m_eState == ELIFE_EJoinState.CREATING;
+
+		ELIFE_JoinRequestContext ctx = mgr.RequestContextForTests(-248);
+		ELIFE_CharacterSummary summary = new ELIFE_CharacterSummary();
+		summary.characterId = "c-app";
+		summary.name = "Anna Smith";
+		if (ctx)
+			mgr.OnCreateCharacterResult(ctx, ELIFE_EApiStatusCode.SUCCESS, summary);
+
+		bool stored = s.m_mSkinByCharacter.Contains("c-app") && s.m_mSkinByCharacter.Get("c-app") == 2
+			&& s.m_mHeadByCharacter.Contains("c-app") && s.m_mHeadByCharacter.Get("c-app") == 0;
+
+		Check(inFlight && ctx != null && s.m_eState == ELIFE_EJoinState.LOADING_CHARACTER && s.m_iSkinIndex == 2 && s.m_iHeadIndex == 0 && stored,
+			"create: valid skin and head stored with the new character",
+			string.Format("inflight=%1 ctx=%2 state=%3 skin=%4 head=%5 stored=%6", inFlight, ctx != null, s.m_eState, s.m_iSkinIndex, s.m_iHeadIndex, stored));
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1706,11 +1867,11 @@ class ELIFE_JoinSelfTests
 		ELIFE_JoinSession s = MakeSession(-245, "t-create-twice", ELIFE_EJoinState.CREATING, 100000);
 		mgr.InsertSessionForTests(s);
 
-		mgr.HandleRequestCreate(-245, "Anna", "Smith", 0);
+		mgr.HandleRequestCreate(-245, "Anna", "Smith", 0, 0);
 		bool firstInFlight = s.m_bRequestInFlight;
 		int tokenAfterFirst = s.m_iRequestToken;
 
-		mgr.HandleRequestCreate(-245, "Ben", "Jones", 0);
+		mgr.HandleRequestCreate(-245, "Ben", "Jones", 0, 0);
 
 		Check(firstInFlight && s.m_iRequestToken == tokenAfterFirst && s.m_eState == ELIFE_EJoinState.CREATING,
 			"create: second request ignored while in flight", string.Format("inflight=%1 token=%2 before=%3", firstInFlight, s.m_iRequestToken, tokenAfterFirst));
@@ -1976,15 +2137,175 @@ class ELIFE_JoinSelfTests
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! An appearance index out of range gives the index 0 prefab.
-	protected static void Test_Appearance_OutOfRangeIsDefault()
+	//! The confirmed-character accessor gives the id in SELECTING_SPAWN: the character is backend-confirmed before the spawn point is picked.
+	protected static void Test_SpawnSelect_ConfirmedCharacterId()
 	{
-		ELIFE_JoinSessionManagerComponent mgr = RequireManager("appearance: out of range is index 0");
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: confirmed id");
 		if (!mgr)
 			return;
 
-		Check(mgr.GetAppearancePrefab(99) == mgr.GetAppearancePrefab(0) && mgr.GetAppearancePrefab(0) != "",
-			"appearance: out of range gives index 0", string.Format("p99=%1 p0=%2", mgr.GetAppearancePrefab(99), mgr.GetAppearancePrefab(0)));
+		mgr.ClearSessionsForTests();
+		string id = ConfirmedIdInState(mgr, -310, ELIFE_EJoinState.SELECTING_SPAWN);
+		Check(id == "c-1", "spawn select: SELECTING_SPAWN gives the confirmed id", string.Format("id=%1", id));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Mode RANDOM_FIRST_SPAWN: no selection, the character spawns at once. The spawn is suppressed for the negative test id.
+	protected static void Test_SpawnSelect_Mode1GoesSpawning()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: mode 1 goes spawning");
+		if (!mgr)
+			return;
+
+		mgr.ClearSessionsForTests();
+		mgr.SetClockOverrideForTests(100000);
+		ELIFE_ESpawnMode savedMode = mgr.GetSpawnMode();
+		mgr.SetSpawnModeForTests(ELIFE_ESpawnMode.RANDOM_FIRST_SPAWN);
+
+		ELIFE_JoinSession s = MakeSession(-320, "t-spawnsel-1", ELIFE_EJoinState.LOADING_CHARACTER, 100000);
+		s.m_sSelectedCharacterId = "c-1";
+		s.m_sSelectedCharacterName = "Anna Smith";
+		mgr.InsertSessionForTests(s);
+
+		mgr.BeginSpawnOrSelection(s);
+
+		mgr.SetSpawnModeForTests(savedMode);
+		Check(s.m_eState == ELIFE_EJoinState.SPAWNING, "spawn select: mode 1 goes to SPAWNING",
+			string.Format("state=%1", s.m_eState));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Mode SELECT_PER_RESTART with no registered point: no selection, straight to SPAWNING. Skipped when the world already has such points.
+	protected static void Test_SpawnSelect_Mode2NoPointsGoesSpawning()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: mode 2 no points");
+		if (!mgr)
+			return;
+
+		array<ELIFE_SpawnPoint> probe = new array<ELIFE_SpawnPoint>();
+		if (ELIFE_SpawnPoint.GetAll(ELIFE_ESpawnMode.SELECT_PER_RESTART, probe) > 0)
+		{
+			Print("ELIFE_SelfTest | SKIP spawn select: mode 2 no points (the world has per-restart spawn points)", LogLevel.NORMAL);
+			return;
+		}
+
+		mgr.ClearSessionsForTests();
+		mgr.SetClockOverrideForTests(100000);
+		ELIFE_ESpawnMode savedMode = mgr.GetSpawnMode();
+		mgr.SetSpawnModeForTests(ELIFE_ESpawnMode.SELECT_PER_RESTART);
+
+		ELIFE_JoinSession s = MakeSession(-321, "t-spawnsel-2", ELIFE_EJoinState.LOADING_CHARACTER, 100000);
+		s.m_sSelectedCharacterId = "c-1";
+		s.m_sSelectedCharacterName = "Anna Smith";
+		mgr.InsertSessionForTests(s);
+
+		mgr.BeginSpawnOrSelection(s);
+
+		mgr.SetSpawnModeForTests(savedMode);
+		Check(s.m_eState == ELIFE_EJoinState.SPAWNING && s.m_aSpawnChoices.Count() == 0, "spawn select: mode 2 without points goes to SPAWNING",
+			string.Format("state=%1 choices=%2", s.m_eState, s.m_aSpawnChoices.Count()));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A pick outside SELECTING_SPAWN is ignored: the state, the snapshot and the chosen point stay as they were.
+	protected static void Test_SpawnSelect_WrongStateIgnored()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: wrong state ignored");
+		if (!mgr)
+			return;
+
+		mgr.ClearSessionsForTests();
+		mgr.SetClockOverrideForTests(100000);
+		ELIFE_JoinSession s = MakeSession(-323, "t-spawnsel-4", ELIFE_EJoinState.SELECTING, 100000);
+		mgr.InsertSessionForTests(s);
+
+		mgr.HandleRequestSpawnPoint(-323, 0);
+
+		Check(s.m_eState == ELIFE_EJoinState.SELECTING && s.m_ChosenSpawnPoint == null && s.m_aSpawnChoices.Count() == 0,
+			"spawn select: pick in SELECTING ignored", string.Format("state=%1", s.m_eState));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A pick while a request is in flight is ignored: the state stays SELECTING_SPAWN and no point is chosen.
+	protected static void Test_SpawnSelect_InFlightIgnored()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: in flight ignored");
+		if (!mgr)
+			return;
+
+		mgr.ClearSessionsForTests();
+		mgr.SetClockOverrideForTests(100000);
+		ELIFE_JoinSession s = MakeSession(-330, "t-spawnsel-8", ELIFE_EJoinState.SELECTING_SPAWN, 100000);
+		s.m_bRequestInFlight = true;
+		mgr.InsertSessionForTests(s);
+
+		mgr.HandleRequestSpawnPoint(-330, 0);
+
+		Check(s.m_eState == ELIFE_EJoinState.SELECTING_SPAWN && s.m_ChosenSpawnPoint == null,
+			"spawn select: pick while in flight ignored", string.Format("state=%1 chosen=%2", s.m_eState, s.m_ChosenSpawnPoint));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Idle on SELECTING_SPAWN past the limit is kicked, as in SELECTING.
+	protected static void Test_SpawnSelect_IdleKick()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("spawn select: idle kick");
+		if (!mgr)
+			return;
+
+		mgr.ClearSessionsForTests();
+		int now = 1000000;
+		mgr.SetClockOverrideForTests(now);
+		int idleMs = Math.Round(mgr.m_fIdleTimeoutSeconds * 1000);
+
+		ELIFE_JoinSession idle = MakeSession(-327, "t-spawnsel-idle", ELIFE_EJoinState.SELECTING_SPAWN, now - idleMs - 1000);
+		mgr.InsertSessionForTests(idle);
+
+		mgr.Tick();
+
+		Check(idle.m_bTestKickRequested, "spawn select: SELECTING_SPAWN idle past the limit kicked", "no idle kick");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every character uses the configured character prefab, never an empty name.
+	protected static void Test_CharacterPrefab_Default()
+	{
+		ELIFE_JoinSessionManagerComponent mgr = RequireManager("character prefab: default");
+		if (!mgr)
+			return;
+
+		Check(mgr.GetCharacterPrefab() != "", "character prefab: never empty", string.Format("prefab=%1", mgr.GetCharacterPrefab()));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! In-memory appearance config for the create tests: tone 0 has two heads, tone 1 has none (so it is invalid).
+	protected static ELIFE_AppearanceConfig MakeAppearanceConfig()
+	{
+		ResourceName body = "{0023F898C0FF18AA}Prefabs/Characters/Basebody/CharacterBasebody.et";
+
+		ELIFE_AppearanceConfig cfg = new ELIFE_AppearanceConfig();
+		cfg.m_aSkinTones = new array<ref ELIFE_SkinTone>();
+
+		ELIFE_SkinTone white = new ELIFE_SkinTone();
+		white.m_sBody = body;
+		white.m_aHeads = new array<ResourceName>();
+		white.m_aHeads.Insert("{EAF055495BA85CA1}Prefabs/Characters/Heads/Head_White_02.et");
+		white.m_aHeads.Insert("{D7C470712EC4D596}Prefabs/Characters/Heads/Head_White_05.et");
+		cfg.m_aSkinTones.Insert(white);
+
+		ELIFE_SkinTone black = new ELIFE_SkinTone();
+		black.m_sBody = body;
+		black.m_aHeads = new array<ResourceName>();
+		cfg.m_aSkinTones.Insert(black);
+
+		// Tone 2 has one head, so a non-zero skin index is checked by the create test.
+		ELIFE_SkinTone asian = new ELIFE_SkinTone();
+		asian.m_sBody = body;
+		asian.m_aHeads = new array<ResourceName>();
+		asian.m_aHeads.Insert("{D7C470712EC4D596}Prefabs/Characters/Heads/Head_White_05.et");
+		cfg.m_aSkinTones.Insert(asian);
+
+		return cfg;
 	}
 
 	//------------------------------------------------------------------------------------------------

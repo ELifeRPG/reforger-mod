@@ -41,8 +41,11 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	[Attribute("", UIWidgets.EditBox, desc: "Whitelist check URL; empty when not configured")]
 	string m_sWhitelistUrl;
 
-	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Appearance prefabs offered on the create screen; index 0 is the default", "et")]
-	ref array<ResourceName> m_aAppearancePrefabs;
+	[Attribute("", UIWidgets.ResourceNamePicker, desc: "Appearance config (skin tones and heads) offered on the create screen", "conf")]
+	ResourceName m_sAppearanceConfig;
+
+	[Attribute("{9FA4749AF6C55D96}Prefabs/Characters/Factions/LIFE/Character_LIFE.et", UIWidgets.ResourceNamePicker, desc: "Character prefab spawned for every character", "et")]
+	ResourceName m_sCharacterPrefab;
 
 	[Attribute("0 0 0", UIWidgets.EditBox, desc: "Menu camera position")]
 	vector m_vMenuCameraPosition;
@@ -60,6 +63,9 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	protected ref array<ref ELIFE_JoinRequestContext> m_aFireAndForget = new array<ref ELIFE_JoinRequestContext>();
 	//! Holds the name filter requests alive until the platform answers; a late answer is dropped when its request is no longer current.
 	protected ref array<ref ELIFE_JoinNameFilterRequest> m_aNameFilters = new array<ref ELIFE_JoinNameFilterRequest>();
+	//! Loaded once from m_sAppearanceConfig on first use (see GetAppearanceConfig). Static data, so it is cached for the whole game.
+	protected ref ELIFE_AppearanceConfig m_AppearanceConfig;
+	protected bool m_bAppearanceConfigLoaded;
 
 #ifdef WORKBENCH
 	protected bool m_bClockOverride;
@@ -264,8 +270,8 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Client asked to create a character. Checks the name and appearance, then the profanity filter, then the backend create.
-	void HandleRequestCreate(int playerId, string firstName, string lastName, int appearanceIndex)
+	//! Client asked to create a character. Checks the name and the skin tone and head, then the profanity filter, then the backend create.
+	void HandleRequestCreate(int playerId, string firstName, string lastName, int skinIndex, int headIndex)
 	{
 		ELIFE_JoinSession s = AcceptRpc(playerId, "RpcAsk_RequestCreate", ELIFE_EJoinState.CREATING);
 		if (!s)
@@ -279,25 +285,24 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		if (appearanceIndex < 0 || appearanceIndex >= GetAppearanceCount())
+		// A missing config makes every pair invalid, so no character is created without one.
+		if (!ELIFE_AppearanceConfig.IsValid(GetAppearanceConfig(), skinIndex, headIndex))
 		{
 			PushCreate(s, "#ELIFE-Join_AppearanceInvalid", firstName, lastName);
 			return;
 		}
 
-#ifdef WORKBENCH
-		// Self-tests only: leave the request in flight without filtering or calling the backend.
-		if (m_bTestNoSend)
-		{
-			BeginRequest(s);
-			return;
-		}
-#endif
-
 		ELIFE_JoinRequestContext ctx = BeginRequest(s);
 		ctx.m_sFirstName = firstName;
 		ctx.m_sLastName = lastName;
-		ctx.m_iAppearanceIndex = appearanceIndex;
+		ctx.m_iSkinIndex = skinIndex;
+		ctx.m_iHeadIndex = headIndex;
+
+#ifdef WORKBENCH
+		// Self-tests only: leave the request in flight without filtering or calling the backend.
+		if (m_bTestNoSend)
+			return;
+#endif
 
 		ELIFE_JoinNameFilterRequest filter = new ELIFE_JoinNameFilterRequest(this);
 		filter.m_Context = ctx;
@@ -420,26 +425,31 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	int GetAppearanceCount()
+	//! Skin tones and heads from m_sAppearanceConfig, loaded once and cached. Server and client both have the manager, so the client create screen reads it here.
+	//! Null when the path is empty or the resource is missing or not an ELIFE_AppearanceConfig (WARNING, once).
+	ELIFE_AppearanceConfig GetAppearanceConfig()
 	{
-		if (!m_aAppearancePrefabs)
-			return 0;
+		if (!m_bAppearanceConfigLoaded)
+		{
+			m_bAppearanceConfigLoaded = true;
+			if (!m_sAppearanceConfig.IsEmpty())
+				m_AppearanceConfig = ELIFE_AppearanceConfig.Load(m_sAppearanceConfig);
 
-		return m_aAppearancePrefabs.Count();
+			if (!m_AppearanceConfig)
+				Print(string.Format("ELIFE_Join | appearance config missing or invalid [%1], no skin tone or head is valid", m_sAppearanceConfig), LogLevel.WARNING);
+		}
+
+		return m_AppearanceConfig;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Out-of-range index gives index 0; an empty list gives the CIV prefab.
-	ResourceName GetAppearancePrefab(int index)
+	//! Prefab of every character of the join flow (m_sCharacterPrefab). Empty attribute falls back to Character_LIFE.et (CIV_PREFAB).
+	ResourceName GetCharacterPrefab()
 	{
-		int count = GetAppearanceCount();
-		if (count == 0)
+		if (m_sCharacterPrefab.IsEmpty())
 			return CIV_PREFAB;
 
-		if (index < 0 || index >= count)
-			index = 0;
-
-		return m_aAppearancePrefabs[index];
+		return m_sCharacterPrefab;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -457,10 +467,15 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		if (!s)
 			return false;
 
-		prefab = GetAppearancePrefab(s.m_iSelectedAppearance);
+		prefab = GetCharacterPrefab();
 
 		if (s.m_vLastDeathPos != vector.Zero)
 			return ELIFE_SpawnLocator.FindRespawnPosition(pos, angles, s.Describe());
+
+		// A point picked on the spawn selection is used by every attempt of this join, retries included.
+		// A point deleted since the pick falls through to the random pick below.
+		if (s.m_ChosenSpawnPoint && IsRegisteredSpawnPoint(s.m_ChosenSpawnPoint))
+			return ELIFE_SpawnLocator.FindPositionAtPoint(s.m_ChosenSpawnPoint, pos, angles, s.Describe());
 
 		// TODO: use the saved backend position when available
 		return ELIFE_SpawnLocator.FindJoinPosition(m_eSpawnMode, pos, angles, s.Describe());
@@ -470,13 +485,49 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	//! Authority only: the spawn process runs the custom spawn preparation here. Gear and state come from the prefab for now.
 	override bool PreparePlayerEntity_S(SCR_SpawnRequestComponent requestComponent, SCR_SpawnHandlerComponent handlerComponent, SCR_SpawnData data, IEntity entity)
 	{
+		// Earliest server point with the spawned character entity: identity is set before the player gets it (OnPlayerSpawned_S comes later).
+		ApplyAppearance_S(requestComponent, entity);
+
 		// TODO: apply gear/state from the backend once a load endpoint exists; prefab default loadout is used today
 		return super.PreparePlayerEntity_S(requestComponent, handlerComponent, data, entity);
-		// A point picked on the spawn selection is used by every attempt of this join, retries included.
-		// A point deleted since the pick falls through to the random pick below.
-		if (s.m_ChosenSpawnPoint && IsRegisteredSpawnPoint(s.m_ChosenSpawnPoint))
-			return ELIFE_SpawnLocator.FindPositionAtPoint(s.m_ChosenSpawnPoint, pos, angles, s.Describe());
+	}
 
+	//------------------------------------------------------------------------------------------------
+	//! Authority only, from PreparePlayerEntity_S: sets the body and head of the session's skin tone and head on the spawned character (spec 3).
+	//! Only for a session in SPAWNING. A missing identity component, a config without the chosen pair, or a missing identity keeps the prefab's own identity and logs a WARNING.
+	protected void ApplyAppearance_S(SCR_SpawnRequestComponent requestComponent, IEntity entity)
+	{
+		if (!requestComponent || !entity)
+			return;
+
+		ELIFE_JoinSession s = GetSession(requestComponent.GetPlayerId());
+		if (!s || s.m_eState != ELIFE_EJoinState.SPAWNING)
+			return;
+
+		SCR_CharacterIdentityComponent identityComponent = SCR_CharacterIdentityComponent.Cast(entity.FindComponent(SCR_CharacterIdentityComponent));
+		ELIFE_AppearanceConfig cfg = GetAppearanceConfig();
+		if (!identityComponent || !ELIFE_AppearanceConfig.IsValid(cfg, s.m_iSkinIndex, s.m_iHeadIndex))
+		{
+			Print(string.Format("ELIFE_Join | %1 appearance not applied (identity component=%2 skin=%3 head=%4), prefab identity kept", s.Describe(), identityComponent != null, s.m_iSkinIndex, s.m_iHeadIndex), LogLevel.WARNING);
+			return;
+		}
+
+		ELIFE_SkinTone tone = cfg.m_aSkinTones[s.m_iSkinIndex];
+		Identity identity = identityComponent.GetIdentity();
+		VisualIdentity visual = null;
+		if (identity)
+			visual = identity.GetVisualIdentity();
+
+		if (!visual)
+		{
+			Print(string.Format("ELIFE_Join | %1 appearance not applied (no visual identity), prefab identity kept", s.Describe()), LogLevel.WARNING);
+			return;
+		}
+
+		visual.SetHead(tone.m_aHeads[s.m_iHeadIndex]);
+		visual.SetBody(tone.m_sBody);
+		identityComponent.SetIdentity(identity);
+		identityComponent.CommitChanges();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -493,6 +544,7 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		s.m_vLastDeathPos = vector.Zero;
 		s.m_vLastKnownPos = vector.Zero;
 		s.m_iSpawnAttempts = 0;
+		s.m_ChosenSpawnPoint = null;
 		Push(s, ELIFE_EJoinScreen.IN_GAME, null);
 
 		// TODO: periodic save of position/gear/state (no endpoint yet)
@@ -544,7 +596,6 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		{
 			Reject(s, ELIFE_EJoinScreen.ERROR, MakeErrorPayload("#ELIFE-Join_ErrorBackend"), "no spawn logic");
 			return;
-		s.m_ChosenSpawnPoint = null;
 		}
 
 		spawnLogic.SpawnLoadedCharacter_S(playerId);
@@ -861,7 +912,9 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		entry.id = summary.characterId;
 		entry.name = summary.name;
 		s.m_aCharacters.Insert(entry);
-		s.m_mAppearanceByCharacter.Set(summary.characterId, ctx.m_iAppearanceIndex);
+		// TODO: backend storage of {skinIndex, headIndex} per character; for now they are remembered for this session only
+		s.m_mSkinByCharacter.Set(summary.characterId, ctx.m_iSkinIndex);
+		s.m_mHeadByCharacter.Set(summary.characterId, ctx.m_iHeadIndex);
 
 		SelectCharacter(s, summary.characterId);
 	}
@@ -907,59 +960,6 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		// TODO: skip when the API returns a saved position (once per restart)
 		if (!SetState(s, ELIFE_EJoinState.SELECTING_SPAWN, "spawn selection"))
 			return;
-
-		ELIFE_JoinSpawnLogic spawnLogic = ELIFE_JoinSpawnLogic.GetInstance();
-		if (!spawnLogic)
-		{
-			Reject(s, ELIFE_EJoinScreen.ERROR, MakeErrorPayload("#ELIFE-Join_ErrorBackend"), "no spawn logic");
-			return;
-		}
-
-		spawnLogic.SpawnLoadedCharacter_S(s.m_iPlayerId);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Puts the chosen character into LOADING_CHARACTER and asks the backend to select it. Used by create success and by HandleRequestSelect.
-	protected void SelectCharacter(ELIFE_JoinSession s, string characterId)
-	{
-		// TODO: this should load and lock the character (position, gear, state); today it only starts the Core session, which supersedes any other
-		if (!SetState(s, ELIFE_EJoinState.LOADING_CHARACTER, "character chosen"))
-			return;
-
-		s.m_sSelectedCharacterId = characterId;
-		s.m_sSelectedCharacterName = s.FindCharacterName(characterId);
-		s.m_iSelectedAppearance = 0;
-		if (s.m_mAppearanceByCharacter.Contains(characterId))
-			s.m_iSelectedAppearance = s.m_mAppearanceByCharacter.Get(characterId);
-
-		s.m_iSpawnAttempts = 0;
-		Push(s, ELIFE_EJoinScreen.LOADING, null);
-
-#ifdef WORKBENCH
-		// Self-tests only: leave the request in flight without calling the backend.
-		if (m_bTestNoSend)
-		{
-			BeginRequest(s);
-			return;
-		}
-#endif
-
-		ELIFE_Api api = ELIFE_Api.GetInstance();
-		if (!api)
-		{
-			SetState(s, ELIFE_EJoinState.SELECTING, "no backend");
-			PushSelect(s, "#ELIFE-Join_SelectFailed");
-			return;
-		}
-
-		ELIFE_JoinRequestContext ctx = BeginRequest(s);
-		ELIFE_CharacterSelectedRequest body = new ELIFE_CharacterSelectedRequest();
-		body.gameIdentityId = s.m_sIdentityId;
-		body.characterId = characterId;
-		// TODO: remove request debug logging after the create-character GUID bug is fixed
-		Print(string.Format("ELIFE_Join | DEBUG %1 request=CharacterSelected gameIdentityId=[%2] len=%3", s.Describe(), body.gameIdentityId, body.gameIdentityId.Length()), LogLevel.NORMAL);
-		ctx.m_Callback = api.CharacterSelected(body, ctx, "OnCharacterSelected");
-	}
 
 		// The idle limit counts from the moment the selection is shown.
 		s.m_iLastActivityMs = NowMs();
@@ -1043,6 +1043,63 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		if (s.m_iPlayerId < 0)
 			return;
 #endif
+
+		ELIFE_JoinSpawnLogic spawnLogic = ELIFE_JoinSpawnLogic.GetInstance();
+		if (!spawnLogic)
+		{
+			Reject(s, ELIFE_EJoinScreen.ERROR, MakeErrorPayload("#ELIFE-Join_ErrorBackend"), "no spawn logic");
+			return;
+		}
+
+		spawnLogic.SpawnLoadedCharacter_S(s.m_iPlayerId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Puts the chosen character into LOADING_CHARACTER and asks the backend to select it. Used by create success and by HandleRequestSelect.
+	protected void SelectCharacter(ELIFE_JoinSession s, string characterId)
+	{
+		// TODO: this should load and lock the character (position, gear, state); today it only starts the Core session, which supersedes any other
+		if (!SetState(s, ELIFE_EJoinState.LOADING_CHARACTER, "character chosen"))
+			return;
+
+		s.m_sSelectedCharacterId = characterId;
+		s.m_sSelectedCharacterName = s.FindCharacterName(characterId);
+		s.m_iSkinIndex = 0;
+		s.m_iHeadIndex = 0;
+		if (s.m_mSkinByCharacter.Contains(characterId))
+			s.m_iSkinIndex = s.m_mSkinByCharacter.Get(characterId);
+
+		if (s.m_mHeadByCharacter.Contains(characterId))
+			s.m_iHeadIndex = s.m_mHeadByCharacter.Get(characterId);
+
+		s.m_iSpawnAttempts = 0;
+		Push(s, ELIFE_EJoinScreen.LOADING, null);
+
+#ifdef WORKBENCH
+		// Self-tests only: leave the request in flight without calling the backend.
+		if (m_bTestNoSend)
+		{
+			BeginRequest(s);
+			return;
+		}
+#endif
+
+		ELIFE_Api api = ELIFE_Api.GetInstance();
+		if (!api)
+		{
+			SetState(s, ELIFE_EJoinState.SELECTING, "no backend");
+			PushSelect(s, "#ELIFE-Join_SelectFailed");
+			return;
+		}
+
+		ELIFE_JoinRequestContext ctx = BeginRequest(s);
+		ELIFE_CharacterSelectedRequest body = new ELIFE_CharacterSelectedRequest();
+		body.gameIdentityId = s.m_sIdentityId;
+		body.characterId = characterId;
+		// TODO: remove request debug logging after the create-character GUID bug is fixed
+		Print(string.Format("ELIFE_Join | DEBUG %1 request=CharacterSelected gameIdentityId=[%2] len=%3", s.Describe(), body.gameIdentityId, body.gameIdentityId.Length()), LogLevel.NORMAL);
+		ctx.m_Callback = api.CharacterSelected(body, ctx, "OnCharacterSelected");
+	}
 
 	//------------------------------------------------------------------------------------------------
 	//! The platform's answer for a name check. Only a request that is still current goes on: a rejected name gets an error, a clean one goes to the backend create.
@@ -1441,7 +1498,6 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		payload.error = error;
 		payload.firstName = firstName;
 		payload.lastName = lastName;
-		payload.appearanceCount = GetAppearanceCount();
 		Push(s, ELIFE_EJoinScreen.CREATING, payload);
 	}
 
@@ -1629,10 +1685,25 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Self-tests only. Sets the join spawn mode; tests read GetSpawnMode first and restore it.
+	void SetSpawnModeForTests(ELIFE_ESpawnMode mode)
+	{
+		m_eSpawnMode = mode;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Self-tests only. Simulates a missing backend client (ELIFE_Api) without touching the real one.
 	void SetApiMissingForTests(bool missing)
 	{
 		m_bTestApiMissing = missing;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Self-tests only. Uses an in-memory appearance config instead of m_sAppearanceConfig; null makes every pair invalid.
+	void SetAppearanceConfigForTests(ELIFE_AppearanceConfig cfg)
+	{
+		m_AppearanceConfig = cfg;
+		m_bAppearanceConfigLoaded = true;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1680,10 +1751,3 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 #endif
 }
-	//------------------------------------------------------------------------------------------------
-	//! Self-tests only. Sets the join spawn mode; tests read GetSpawnMode first and restore it.
-	void SetSpawnModeForTests(ELIFE_ESpawnMode mode)
-	{
-		m_eSpawnMode = mode;
-	}
-

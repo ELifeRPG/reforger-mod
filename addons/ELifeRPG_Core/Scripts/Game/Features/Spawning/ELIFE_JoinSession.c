@@ -21,8 +21,18 @@ class ELIFE_JoinSession
 	// Selection
 	string m_sSelectedCharacterId;
 	string m_sSelectedCharacterName;
-	int m_iSelectedAppearance;
-	ref map<string, int> m_mAppearanceByCharacter;
+	//! Skin tone and head index (ELIFE_AppearanceConfig) chosen on the create screen for the selected character. 0 and 0 by default.
+	int m_iSkinIndex;
+	int m_iHeadIndex;
+	//! Choices of the characters created this session, by character id. TODO: backend storage of {skinIndex, headIndex} per character.
+	ref map<string, int> m_mSkinByCharacter;
+	ref map<string, int> m_mHeadByCharacter;
+
+	// Spawn point selection (mode SELECT_PER_RESTART)
+	//! Snapshot of the spawn points offered on the selection screen, in payload order. Index in a pick refers to this array.
+	ref array<ELIFE_SpawnPoint> m_aSpawnChoices;
+	//! Point chosen by a valid pick. Every spawn attempt of this join uses it (retries keep it). Cleared in OnSpawned.
+	ELIFE_SpawnPoint m_ChosenSpawnPoint;
 
 	// Requests and timing
 	bool m_bRequestInFlight;
@@ -69,7 +79,11 @@ class ELIFE_JoinSession
 		m_iUnlinkedRetries = 0;
 		m_iUnlinkedRetryAtMs = 0;
 		m_aCharacters = new array<ref ELIFE_JoinCharacterEntry>;
-		m_mAppearanceByCharacter = new map<string, int>;
+		m_iSkinIndex = 0;
+		m_iHeadIndex = 0;
+		m_mSkinByCharacter = new map<string, int>;
+		m_mHeadByCharacter = new map<string, int>;
+		m_aSpawnChoices = new array<ELIFE_SpawnPoint>;
 	}
 
 	//------------------------------------------------------------------------------------------------

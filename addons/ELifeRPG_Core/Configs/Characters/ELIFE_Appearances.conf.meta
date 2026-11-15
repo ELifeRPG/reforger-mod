@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{25C2C1EA81DD8212}Configs/Characters/ELIFE_Appearances.conf"
+ Configurations {
+  CONFResourceClass PC {
+  }
+  CONFResourceClass XBOX_ONE : PC {
+  }
+  CONFResourceClass XBOX_SERIES : PC {
+  }
+  CONFResourceClass PS4 : PC {
+  }
+  CONFResourceClass HEADLESS : PC {
+  }
+ }
+}

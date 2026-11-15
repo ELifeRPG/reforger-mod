@@ -14,10 +14,11 @@ class ELIFE_JoinRequestContext
 	int m_iDeadlineMs;
 	//! The callback that carries this request. Not ref: ELIFE_BaseRestCallback keeps itself alive until it fires.
 	ELIFE_BaseRestCallback m_Callback;
-	//! Create only: the names and appearance the player typed, kept so an error screen can echo them back.
+	//! Create only: the names and appearance the player chose, kept so an error screen can echo them back and success can store them.
 	string m_sFirstName;
 	string m_sLastName;
-	int m_iAppearanceIndex;
+	int m_iSkinIndex;
+	int m_iHeadIndex;
 	protected ELIFE_JoinSessionManagerComponent m_Manager;
 
 	//------------------------------------------------------------------------------------------------

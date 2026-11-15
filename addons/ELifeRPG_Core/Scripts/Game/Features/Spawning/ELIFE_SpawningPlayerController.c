@@ -30,9 +30,9 @@ modded class ELIFE_PlayerController
 
 	//------------------------------------------------------------------------------------------------
 	//! Client asks the server to create a character.
-	void ELIFE_RequestCreate(string firstName, string lastName, int appearanceIndex)
+	void ELIFE_RequestCreate(string firstName, string lastName, int skinIndex, int headIndex)
 	{
-		Rpc(RpcAsk_RequestCreate, firstName, lastName, appearanceIndex);
+		Rpc(RpcAsk_RequestCreate, firstName, lastName, skinIndex, headIndex);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -130,14 +130,14 @@ modded class ELIFE_PlayerController
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
-	protected void RpcAsk_RequestCreate(string firstName, string lastName, int appearanceIndex)
+	protected void RpcAsk_RequestCreate(string firstName, string lastName, int skinIndex, int headIndex)
 	{
 		if (!IsJoinStringWithinCap(firstName, "RpcAsk_RequestCreate") || !IsJoinStringWithinCap(lastName, "RpcAsk_RequestCreate"))
 			return;
 
 		ELIFE_JoinSessionManagerComponent manager = ELIFE_JoinSessionManagerComponent.GetInstance();
 		if (manager)
-			manager.HandleRequestCreate(GetPlayerId(), firstName, lastName, appearanceIndex);
+			manager.HandleRequestCreate(GetPlayerId(), firstName, lastName, skinIndex, headIndex);
 	}
 
 	//------------------------------------------------------------------------------------------------

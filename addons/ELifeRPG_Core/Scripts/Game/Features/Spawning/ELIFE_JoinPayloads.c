@@ -68,7 +68,6 @@ class ELIFE_JoinCreatePayload : JsonApiStruct
 	string error;
 	string firstName;
 	string lastName;
-	int appearanceCount;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_JoinCreatePayload()
@@ -77,7 +76,6 @@ class ELIFE_JoinCreatePayload : JsonApiStruct
 		RegV("error");
 		RegV("firstName");
 		RegV("lastName");
-		RegV("appearanceCount");
 	}
 }
 

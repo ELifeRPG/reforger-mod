@@ -36,6 +36,8 @@ OverlayWidgetClass {
    }
    AllowWidthOverride 1
    WidthOverride 760
+   AllowMaxDesiredWidth 1
+   MaxDesiredWidth 760
    {
     VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
      Name "CreateCard"
@@ -80,15 +82,141 @@ OverlayWidgetClass {
         }
        }
       }
-      ButtonWidgetClass "{986A3A4068B720D7}" : "{C9DF0E6590F6C388}UI/layouts/WidgetLibrary/SpinBox/WLib_SpinBox.layout" {
-       Name "Appearance"
-       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
-        HorizontalAlign 3
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "SkinToneLabel"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 1
         Padding 0 0 0 12
        }
-       components {
-        SCR_SpinBoxComponent "{5472C6CBC0640458}" {
-         m_sLabel "#ELIFE-Join_Face"
+       Text "#ELIFE-Join_SkinTone"
+       "Font Size" 24
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "SkinToneRow"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 0 0 12
+       }
+      }
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "SkinToneName"
+       "Ignore Cursor" 1
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 4 0 0
+       }
+       Text ""
+       "Font Size" 18
+      }
+      TextWidgetClass "{C90A058802B62F38}" {
+       Name "HeadLabel"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{FF820A48100B70E7}" {
+        HorizontalAlign 1
+        Padding 0 0 0 12
+       }
+       Text "#ELIFE-Join_Head"
+       "Font Size" 24
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      SizeLayoutWidgetClass "{585329F372FF13D6}" {
+       Name "HeadArea"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{2FAF16A0DDF766FD}" {
+        HorizontalAlign 1
+        Padding 0 0 0 12
+       }
+       AllowWidthOverride 1
+       WidthOverride 504
+       AllowMaxDesiredWidth 1
+       MaxDesiredWidth 504
+       {
+        OverlayWidgetClass "{53D6338E6E520654}" {
+         Name "HeadAreaClip"
+         "Ignore Cursor" 0
+         Clipping True
+         Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         {
+          VerticalLayoutWidgetClass "{B92C279BAFA165F4}" {
+           Name "HeadRow"
+           "Ignore Cursor" 0
+           Slot OverlayWidgetSlot "{E83519A06DA9A5A4}" {
+            HorizontalAlign 1
+            VerticalAlign 1
+           }
+          }
+         }
+        }
+       }
+      }
+      HorizontalLayoutWidgetClass "{C2517CA0F5BB44C4}" {
+       Name "HeadPager"
+       "Ignore Cursor" 0
+       "Is Visible" 0
+       Slot LayoutSlot "{CF5AA03689F2D75E}" {
+        HorizontalAlign 1
+        Padding 0 0 0 12
+       }
+       {
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "HeadPrevSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{04EE7DB53BE2DB8D}" {
+          VerticalAlign 1
+         }
+         AllowWidthOverride 1
+         WidthOverride 44
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{2626B1009E873D1B}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "HeadPrev"
+           Slot OverlayWidgetSlot "{FFEC7FA5CC2A2C12}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
+        }
+        TextWidgetClass "{C90A058802B62F38}" {
+         Name "HeadPageLabel"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{CF78942E3B6A1927}" {
+          VerticalAlign 1
+          Padding 12 0 12 0
+         }
+         Text ""
+         "Font Size" 20
+        }
+        SizeLayoutWidgetClass "{585329F372FF13D6}" {
+         Name "HeadNextSize"
+         "Ignore Cursor" 0
+         Slot LayoutSlot "{52D0771F7D1A8EA9}" {
+          VerticalAlign 1
+         }
+         AllowWidthOverride 1
+         WidthOverride 44
+         AllowHeightOverride 1
+         HeightOverride 44
+         {
+          ButtonWidgetClass "{56D1349135054424}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+           Name "HeadNext"
+           Slot OverlayWidgetSlot "{B4A29EBC222E5C2A}" {
+            HorizontalAlign 3
+            VerticalAlign 3
+           }
+          }
+         }
         }
        }
       }
@@ -130,7 +258,7 @@ OverlayWidgetClass {
        Name "CreateButtons"
        "Ignore Cursor" 0
        Slot LayoutSlot "{BA6368A7CFF1CE0F}" {
-        HorizontalAlign 3
+        HorizontalAlign 1
         Padding 0 16 0 0
        }
        {

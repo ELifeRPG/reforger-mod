@@ -206,6 +206,10 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 		if (m_LinkScreen)
 			m_LinkScreen.SetVisible(false);
 
+		//! Hiding the create screen deletes its full-body preview character.
+		if (m_CreateScreen)
+			m_CreateScreen.SetVisible(false);
+
 		InputManager inputManager = GetGame().GetInputManager();
 		if (inputManager)
 		{
@@ -284,6 +288,13 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 			m_LinkScreen.GetOnLeave().Insert(OnLinkLeaveClicked);
 		}
 
+		Widget spawnSelectRoot = CreateStretched(LAYOUT_SPAWN_SELECT, m_wContent);
+		if (spawnSelectRoot)
+		{
+			m_SpawnSelectScreen = new ELIFE_JoinSpawnSelectScreen();
+			m_SpawnSelectScreen.Bind(spawnSelectRoot);
+		}
+
 		m_bBuilt = true;
 		ShowSelectCreateVisible(false);
 	}
@@ -320,13 +331,6 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 
 		switch (screen)
 		{
-		Widget spawnSelectRoot = CreateStretched(LAYOUT_SPAWN_SELECT, m_wContent);
-		if (spawnSelectRoot)
-		{
-			m_SpawnSelectScreen = new ELIFE_JoinSpawnSelectScreen();
-			m_SpawnSelectScreen.Bind(spawnSelectRoot);
-		}
-
 			case ELIFE_EJoinScreen.CONNECTING:
 			{
 				ShowLoading("#ELIFE-Join_Connecting");
@@ -354,6 +358,12 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 			case ELIFE_EJoinScreen.LINKING:
 			{
 				ShowLink(payloadJson);
+				return;
+			}
+
+			case ELIFE_EJoinScreen.SPAWN_SELECT:
+			{
+				ShowSpawnSelect(payloadJson);
 				return;
 			}
 
@@ -392,12 +402,6 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	{
 		return screen == ELIFE_EJoinScreen.ERROR || screen == ELIFE_EJoinScreen.BANNED || screen == ELIFE_EJoinScreen.NOT_WHITELISTED;
 	}
-
-			case ELIFE_EJoinScreen.SPAWN_SELECT:
-			{
-				ShowSpawnSelect(payloadJson);
-				return;
-			}
 
 	//------------------------------------------------------------------------------------------------
 	//! Vanilla's respawn system shows its own loading placeholder over the join menu until the player spawns; hide it so this menu is the only thing shown.
@@ -445,6 +449,23 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Spawn point choice after the character is confirmed (spawn mode SELECT_PER_RESTART). Not a rejection.
+	protected void ShowSpawnSelect(string payloadJson)
+	{
+		HideLoading();
+		ShowSelectCreateVisible(false);
+
+		ELIFE_JoinSpawnSelectPayload payload = new ELIFE_JoinSpawnSelectPayload();
+		payload.ExpandFromRAW(payloadJson);
+
+		if (m_SpawnSelectScreen)
+		{
+			m_SpawnSelectScreen.SetVisible(true);
+			m_SpawnSelectScreen.Show(payload, GetController());
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The link screen is not a rejection, so it never arms the client fallback (ApplyScreen) and the idle kick is server-side only.
 	protected void ShowLink(string payloadJson)
 	{
@@ -479,23 +500,6 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	{
 		if (!m_wJoinRoot)
 			return;
-
-	//------------------------------------------------------------------------------------------------
-	//! Spawn point choice after the character is confirmed (spawn mode SELECT_PER_RESTART). Not a rejection.
-	protected void ShowSpawnSelect(string payloadJson)
-	{
-		HideLoading();
-		ShowSelectCreateVisible(false);
-
-		ELIFE_JoinSpawnSelectPayload payload = new ELIFE_JoinSpawnSelectPayload();
-		payload.ExpandFromRAW(payloadJson);
-
-		if (m_SpawnSelectScreen)
-		{
-			m_SpawnSelectScreen.SetVisible(true);
-			m_SpawnSelectScreen.Show(payload, GetController());
-		}
-	}
 
 		Print(string.Format("ELIFE_Join | DEBUG %1 root children of m_wJoinRoot:", where), LogLevel.NORMAL);
 		Widget child = m_wJoinRoot.GetChildren();
@@ -593,6 +597,9 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 
 		if (m_LinkScreen)
 			m_LinkScreen.SetVisible(visible);
+
+		if (m_SpawnSelectScreen)
+			m_SpawnSelectScreen.SetVisible(visible);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -629,9 +636,6 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	protected void ShowBanned(string payloadJson)
 	{
-
-		if (m_SpawnSelectScreen)
-			m_SpawnSelectScreen.SetVisible(visible);
 		ELIFE_JoinBanPayload payload = new ELIFE_JoinBanPayload();
 		payload.ExpandFromRAW(payloadJson);
 

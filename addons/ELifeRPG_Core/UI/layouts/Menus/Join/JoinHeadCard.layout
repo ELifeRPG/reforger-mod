@@ -1,0 +1,115 @@
+SizeLayoutWidgetClass "{7002A3362AC2DF08}" {
+ Name "HeadCardSize"
+ "Ignore Cursor" 0
+ Slot LayoutSlot "{0CE4F32901F1A267}" {
+  VerticalAlign 1
+  Padding 4 4 4 4
+ }
+ AllowWidthOverride 1
+ WidthOverride 160
+ AllowMaxDesiredWidth 1
+ MaxDesiredWidth 160
+ AllowHeightOverride 1
+ HeightOverride 180
+ {
+  ButtonWidgetClass "{39419D01F7D8B7A3}" {
+   Name "HeadCard"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{2F2AE9A73DB7DECA}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   Color 1 1 1 1
+   style blank
+   components {
+    SCR_ButtonTextComponent "{7ADADB502FC76624}" {
+     m_BackgroundDefault 0 0 0 0.6
+     m_BackgroundHovered 0 0 0 0.9
+    }
+   }
+   {
+    OverlayWidgetClass "{53D6338E6E520654}" {
+     Name "HeadCardOverlay"
+     "Ignore Cursor" 1
+     Clipping True
+     Slot ButtonWidgetSlot "{92886A7065F39DB4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      FrameWidgetClass "{59A4ACCC3FDDA51F}" {
+       Name "HeadPreviewFrame"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{89717FB826BB517C}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       {
+        ItemPreviewWidgetClass "{552068601B16C353}" {
+         Name "HeadPreview"
+         "Ignore Cursor" 1
+         Slot FrameWidgetSlot "{59A4ACCD222F13E5}" {
+         }
+         "Use Engine Scale" 0
+         Color 1 1 1 1
+         "Use clear color" 1
+         "Clear Color" 0 0 0 0
+         "Blend mode" Blend
+        }
+       }
+      }
+      PanelWidgetClass "{DC4C13FF894C7C1C}" {
+       Name "Border"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{BCA3BB0F1EEB02A8}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 1 1 1 0.25
+       style outline_2px
+      }
+      PanelWidgetClass "{DC4C13FF894C7C1C}" {
+       Name "Selected"
+       "Ignore Cursor" 1
+       "Is Visible" 0
+       Slot OverlayWidgetSlot "{BCA3BB0F1EEB02A8}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 1 0.597 0.198 1
+       style outline_2px
+      }
+      SizeLayoutWidgetClass "{B7ECE697FB27603A}" {
+       Name "Check"
+       "Ignore Cursor" 1
+       "Is Visible" 0
+       Slot OverlayWidgetSlot "{1F49FE68B910A6DC}" {
+        HorizontalAlign 2
+        VerticalAlign 0
+        Padding 0 6 6 0
+       }
+       AllowWidthOverride 1
+       WidthOverride 32
+       AllowHeightOverride 1
+       HeightOverride 32
+       {
+        ImageWidgetClass "{86DD85A2A61DA490}" {
+         Name "CheckIcon"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{B7487659C35C0294}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 0.597 0.198 1
+         Texture "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset"
+         Image "check"
+         Size 32 32
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
