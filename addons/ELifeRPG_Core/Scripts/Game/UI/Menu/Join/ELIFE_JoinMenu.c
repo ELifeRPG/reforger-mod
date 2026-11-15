@@ -182,6 +182,9 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 		{
 			inputManager.AddActionListener("MenuBack", EActionTrigger.DOWN, OnSwallowAction);
 			inputManager.AddActionListener("MenuOpen", EActionTrigger.DOWN, OnSwallowAction);
+			inputManager.AddActionListener("ELIFE_JoinFocusNext", EActionTrigger.DOWN, OnJoinFocusNext);
+			inputManager.AddActionListener("ELIFE_JoinFocusPrev", EActionTrigger.DOWN, OnJoinFocusPrev);
+			inputManager.AddActionListener("ELIFE_JoinFocusPrevR", EActionTrigger.DOWN, OnJoinFocusPrev);
 #ifdef WORKBENCH
 			inputManager.AddActionListener("MenuBackWB", EActionTrigger.DOWN, OnSwallowAction);
 			inputManager.AddActionListener("MenuOpenWB", EActionTrigger.DOWN, OnSwallowAction);
@@ -215,6 +218,9 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 		{
 			inputManager.RemoveActionListener("MenuBack", EActionTrigger.DOWN, OnSwallowAction);
 			inputManager.RemoveActionListener("MenuOpen", EActionTrigger.DOWN, OnSwallowAction);
+			inputManager.RemoveActionListener("ELIFE_JoinFocusNext", EActionTrigger.DOWN, OnJoinFocusNext);
+			inputManager.RemoveActionListener("ELIFE_JoinFocusPrev", EActionTrigger.DOWN, OnJoinFocusPrev);
+			inputManager.RemoveActionListener("ELIFE_JoinFocusPrevR", EActionTrigger.DOWN, OnJoinFocusPrev);
 #ifdef WORKBENCH
 			inputManager.RemoveActionListener("MenuBackWB", EActionTrigger.DOWN, OnSwallowAction);
 			inputManager.RemoveActionListener("MenuOpenWB", EActionTrigger.DOWN, OnSwallowAction);
@@ -238,6 +244,32 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	//! Swallowed while open, so Escape neither closes the menu nor opens the pause menu.
 	protected void OnSwallowAction()
 	{
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Tab moves to the next create control. Ctrl+Tab also fires Tab, so while Ctrl is held this press is left to OnJoinFocusPrev.
+	protected void OnJoinFocusNext()
+	{
+		InputManager inputManager = GetGame().GetInputManager();
+		if (inputManager && inputManager.IsActionActive("ELIFE_JoinCtrlHeld"))
+			return;
+
+		FocusCreate(1);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Ctrl+Tab moves to the previous create control.
+	protected void OnJoinFocusPrev()
+	{
+		FocusCreate(-1);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Only the create screen has a Tab order. The screen ignores the key while hidden or busy.
+	protected void FocusCreate(int dir)
+	{
+		if (m_CreateScreen)
+			m_CreateScreen.MoveFocus(dir);
 	}
 
 	//------------------------------------------------------------------------------------------------
