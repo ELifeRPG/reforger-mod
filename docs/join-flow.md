@@ -8,7 +8,9 @@ Code paths are relative to `addons/ELifeRPG_Core/`.
 
 Related: [Account linking](account-linking.md) (backend side of linking),
 [Backend API client](backend-api.md) (client conventions, read before writing a call),
-[Design](superpowers/specs/2026-10-30-join-flow-design.md).
+[Design](superpowers/specs/2026-10-30-join-flow-design.md),
+[Spawn points](superpowers/specs/2026-11-14-spawn-points-design.md),
+[Spawn selection](superpowers/specs/2026-11-15-spawn-selection-design.md).
 
 ## 1. Overview
 
@@ -38,7 +40,10 @@ SESSION_PENDING          CONNECTING screen, PlayerConnected, 15 s timeout
  CREATING ── create ok ───────────────────────► LOADING_CHARACTER
  SELECTING ── Play ───────────────────────────► LOADING_CHARACTER
  LOADING_CHARACTER ── error or timeout ───────► SELECTING
- LOADING_CHARACTER ── select ok ──────────────► SPAWNING (DoSpawn_S, LIFE)
+ LOADING_CHARACTER ── select ok ──────────────► SELECTING_SPAWN (mode 2 with points, SPAWN_SELECT screen)
+  LOADING_CHARACTER ── select ok, otherwise ─────────► SPAWNING (DoSpawn_S, LIFE)
+  SELECTING_SPAWN ── pick ─────────────────────────► SPAWNING (at the picked point)
+  SELECTING_SPAWN ── bad pick ─────────────────────► stays, SPAWN_SELECT with an error
  SPAWNING ── 3 failed attempts ───────────────► REJECTED
  SPAWNING ── OnPlayerSpawned_S ───────────────► IN_GAME
  IN_GAME ── entity lost ──────────────────────► SPAWNING (respawn after 5 s, random respawn point)
@@ -58,7 +63,8 @@ refused and logged as a WARNING.
 | `LINKING` | `SESSION_PENDING`, `REJECTED`, `CREATING`, `SELECTING` |
 | `CREATING` | `SELECTING`, `LOADING_CHARACTER`, `REJECTED` |
 | `SELECTING` | `CREATING`, `LOADING_CHARACTER`, `REJECTED` |
-| `LOADING_CHARACTER` | `SPAWNING`, `SELECTING`, `REJECTED` |
+| `LOADING_CHARACTER` | `SPAWNING`, `SELECTING`, `SELECTING_SPAWN`, `REJECTED` |
+| `SELECTING_SPAWN` | `SPAWNING`, `REJECTED` |
 | `SPAWNING` | `IN_GAME`, `SPAWNING`, `REJECTED` |
 | `IN_GAME` | `SPAWNING` |
 | `REJECTED` | `ENDED` only |
@@ -252,23 +258,32 @@ URL that fits is 666 bytes (version 20). A longer URL draws no QR code and logs 
 
 ### Screens
 
-- **SELECTING:** one card per character, 3 per row. A `+` card opens create. One click highlights a
-  card. A second click within 400 ms, or Play, sends the request. Previews always show appearance 0.
-- **CREATING:** first name, last name, appearance spinner with a live preview, and Create.
-  Back is shown only when the player has a character.
+- **SELECTING:** one tall card per character, in one centred row, six per page; same look as the spawn selection
+  (3D preview filling the card, top and bottom shade, name in capitals). The last card is `+`, which opens create;
+  it counts toward paging. The pager shows only with more than six cards. One click highlights a card. A second
+  click within 400 ms, or Play, sends the request. Previews show the character prefab as it is, with its own head (no appearance applied).
+- **CREATING:** first name, last name, skin tone swatches, head cards, a full-body preview of the chosen pair, and
+  Create. Back is shown only when the player has a character. Tab and Ctrl+Tab move between the controls (see
+  [Appearance](#appearance)).
+- **SPAWN_SELECT:** the spawn point screen, after the character is confirmed in mode 2 (see
+  [Spawn selection](#spawn-selection-mode-2)). Cards in one centred row, six per page. A card shows its image (when
+  set and loaded, else a dark card) and its name in capitals. The pager shows only with more than six points:
+  `<`, `n / m`, `>`. One click highlights a card. A second click on it within 400 ms, or Spawn, sends the pick.
+  Spawn is enabled only with a highlighted card and while the screen is not busy. Paging keeps the highlight.
+  There is no Back button.
 
 ### Create (`RpcAsk_RequestCreate`)
 
 In this order:
 
 1. Name check (`ELIFE_CharacterNameValidator.Validate`). Error: stays CREATING with the key.
-2. Appearance index in range. Otherwise `#ELIFE-Join_AppearanceInvalid`.
+2. Skin tone and head in range (`ELIFE_AppearanceConfig.IsValid`). Otherwise `#ELIFE-Join_AppearanceInvalid`.
 3. Platform profanity filter on the full name (`ELIFE_ProfanityFilter`, asynchronous). A change
    means `#ELIFE-Join_NameNotAllowed`. If the platform cannot filter, the name passes, as in vanilla chat.
 4. `CreateCharacter(gameIdentityId, name)`. Error or timeout: `#ELIFE-Join_CreateFailed`, with the
    typed names echoed back.
-5. Success: the character is added, its appearance is remembered, and the character is selected
-   (see below).
+5. Success: the character is added, its skin tone and head are remembered for this session, and the character is
+   selected (see below).
 
 Name rules:
 
@@ -291,21 +306,52 @@ caps typing at 20 characters and refuses a longer name before sending. The serve
 2. LOADING_CHARACTER, LOADING screen, `CharacterSelected(gameIdentityId, characterId)`.
 3. Success: SPAWNING. Error or 15 s timeout: SELECTING with `#ELIFE-Join_SelectFailed`.
 
-Appearance is remembered only for characters created in this session. After a reconnect, every
-character uses appearance 0.
+Skin tone and head are remembered only for characters created in this session. After a reconnect, every
+character uses skin 0, head 0.
+
+### Appearance
+
+Skin tone and head are chosen on the create screen. The choices come from a config file that the server owner sets
+in Workbench.
+
+- **Config:** `m_sAppearanceConfig` on `ELIFE_JoinSessionManagerComponent` (set in `ELIFE_GameMode.et` to
+  `Configs/Characters/ELIFE_Appearances.conf`). It is `ELIFE_AppearanceConfig` with a list of `ELIFE_SkinTone`.
+  Each tone has a localised name, a swatch colour, a body prefab and a list of head prefabs.
+- **Tones:** White, Black and Asian. The names are localised (`#ELIFE-Appearance_SkinWhite` and so on). The owner
+  fills the heads of each tone in the config. A tone with no heads, or with no body, is not valid: it is not
+  offered on the create screen and it is refused by the server.
+- **Request:** `RpcAsk_RequestCreate(firstName, lastName, skinIndex, headIndex)`. Both indexes are positions in the
+  config. The server checks them with `IsValid` (see Create above).
+- **Create screen:** a row of skin tone swatches, then a row of head cards for the chosen tone (each card shows the
+  head prefab). The heads are paged, 3 per page (one row of 3), with a `<` / `>` pager under the cards when the tone has
+  more than 3 heads; the label reads `page / pages`, and `<` and `>` are off at the ends and while busy. Only the
+  visible page has cards and characters. Changing the tone selects head 0 on page 1. Paging keeps the selected head. The big preview is a local full-body character with the body and
+  head of the chosen pair. It is not replicated, and it is deleted when the choice changes and when the screen hides.
+- **Tab order:** `ELIFE_JoinFocusNext` (Tab), and `ELIFE_JoinFocusPrev` (left Ctrl+Tab) and `ELIFE_JoinFocusPrevR`
+  (right Ctrl+Tab), all in `MenuContext` in `Configs/System/chimeraInputCommon.conf`. Tab moves to the next control,
+  Ctrl+Tab to the previous one, and both wrap. The order is First name, Last name, the swatches, the visible head cards, the head pager (when shown and enabled), Back
+  (when visible) and Create. Hidden and disabled controls are skipped. Ctrl+Tab also sends Tab, so the Tab handler
+  ignores the press while either Ctrl key is held (`ELIFE_JoinCtrlHeld`).
+- **Spawn:** the prefab is `m_sCharacterPrefab`. In `PreparePlayerEntity_S` (the earliest server point with the spawned
+  entity), `ApplyAppearance_S` sets the body and head through `SCR_CharacterIdentityComponent`. If the config is
+  missing or the pair is not valid, the prefab keeps its own identity and a WARNING is logged.
+- **TODO:** the backend does not store `{skinIndex, headIndex}` per character yet. Until it does, the choice lasts
+  for the session only.
 
 ## 6. Spawning
 
 ### First spawn
 
-After a successful select or create, `ELIFE_JoinSpawnLogic.DoSpawn_S` runs:
+After a successful select or create, and (mode 2 with points) the spawn pick, `ELIFE_JoinSpawnLogic.DoSpawn_S` runs:
 
 1. No session: dropped (WARNING).
 2. Faction and loadout: `RequestFaction` for `LIFE`, then `RequestLoadout` for `"LIFE Player"` on the
    player's components. A refusal or a missing piece counts as a spawn failure.
-3. Prefab: the appearance prefab for the chosen index. Index 0 is the default. An empty list falls
-   back to `Character_LIFE.et`.
-4. Position (`ELIFE_SpawnLocator.FindJoinPosition`, mode `m_eSpawnMode` of the session manager):
+3. Prefab: `m_sCharacterPrefab` (default `Character_LIFE.et`). The chosen skin tone and head are applied to it when
+   the entity exists (see [Appearance](#appearance)).
+4. Position. A point picked on the spawn selection is used first (see [Spawn selection](#spawn-selection-mode-2)):
+   a clear spot within its radius, the same for every attempt of the join. Otherwise
+   `ELIFE_SpawnLocator.FindJoinPosition`, mode `m_eSpawnMode` of the session manager:
    - One random `ELIFE_SpawnPoint` of that mode (`ELIFE_SpawnPoint.GetRandom(mode)`).
    - A clear spot within the point's `m_iRadius` is used. If there is none, the point's origin is used
      (WARNING).
@@ -323,11 +369,11 @@ is not used.
 
 ### Outcome
 
-- `OnPlayerSpawned_S` goes to `OnSpawned`: SPAWNING to IN_GAME, death spot cleared, IN_GAME screen
+- `OnPlayerSpawned_S` goes to `OnSpawned`: SPAWNING to IN_GAME, death spot cleared, chosen spawn point cleared, IN_GAME screen
   (the menu closes).
 - `OnPlayerSpawnFailed_S` goes to `OnSpawnFailed`: attempts go up by one. At
   `m_iMaxSpawnAttempts` (3), REJECTED with ERROR `#ELIFE-Join_SpawnFailed`. Otherwise the same
-  session retries in 1 s.
+  session retries in 1 s, with the same chosen point (if any).
 
 ### Death and respawn
 
@@ -335,7 +381,7 @@ is not used.
 - The death position is the live entity origin. If there is no live entity, it is the last position
   the tick cached while IN_GAME.
 - The respawn is due after `m_fRespawnDelaySeconds` (5). The 1 s tick triggers it, so it can be a
-  little late. No menu is shown; the same character and appearance are used.
+  little late. No menu is shown; the same character and appearance (skin and head) are used.
 - Position (`FindRespawnPosition`): a random `ELIFE_RespawnPoint`, then a clear spot within 5 m of it.
   No registered point, or no clear spot: WARNING, then random.
 
@@ -355,21 +401,38 @@ is not used.
 | Attribute | Default | Purpose |
 |---|---|---|
 | `m_eSpawnMode` | `RANDOM_FIRST_SPAWN` | Mode this point belongs to. |
-| `m_sName` | empty | Name in the spawn selection screen (not built yet). |
-| `m_sImage` | empty | Image in the spawn selection screen (not built yet). |
+| `m_sName` | empty | Name on the spawn selection card, shown in capitals. |
+| `m_sImage` | empty | Image on the spawn selection card. `.edds` only. Empty: dark card. |
 | `m_iRadius` | 5 | Radius in metres. The player spawns at a clear spot within it. |
 
 - The session manager has `m_eSpawnMode`. Only points with the same mode are used for joins.
 - Mode `RANDOM_FIRST_SPAWN`: a random point of this mode.
-- Mode `SELECT_PER_RESTART`: the same as above for now. The player will pick a point once per server
-  restart.
-- No point of the mode: WARNING, then a random position.
-- Test gap: the self-tests run in edit mode, where points never register. They only cover the disc sampling and the "no points" cases. Mode filtering and the radius search are checked by hand in play mode.
+- Mode `SELECT_PER_RESTART`: after the character is confirmed, the player picks one point of this mode on the
+  spawn selection screen (below). For now every join shows it.
+- No point of the mode: WARNING, then a random position. In mode `SELECT_PER_RESTART` with no point, there is no
+  selection screen.
+- Test gap: the self-tests run in edit mode, where points never register, so they cover the disc sampling,
+  empty lists and the transitions. The radius search and the visuals are checked by hand in play mode.
+
+### Spawn selection (mode 2)
+
+- Runs in `SELECT_PER_RESTART` after `CharacterSelected` succeeds, when at least one point of the mode is
+  registered. The session goes to `SELECTING_SPAWN`. Otherwise there is no screen, and the join spawns as before.
+- The snapshot of points (`ELIFE_SpawnPoint.GetAll`) is kept on the session, in payload order. A pick is an index
+  into that snapshot.
+- Valid pick (index in range, point still registered): it becomes `m_ChosenSpawnPoint` and the join goes to
+  `SPAWNING`. Every attempt of the join uses it, retries included. It is cleared in `OnSpawned`.
+- Bad pick (index out of range, or the point was deleted since the snapshot): the list is refreshed and the screen
+  comes back with `#ELIFE-Join_SpawnPointUnavailable`. If no point is left, the join spawns at a random position
+  (WARNING).
+- No Back. Leaving is a disconnect.
+- Idle on this screen counts as idle: kicked after `m_fIdleTimeoutSeconds`.
 
 Open:
 
 - TODO: use the saved API position on join. Until then, every join is a first spawn.
-- TODO: the spawn selection screen for `SELECT_PER_RESTART`. Until then, it picks a random point.
+- TODO: skip the spawn selection when the API returns a saved position (once per restart). Until then, every
+  join in mode 2 shows it.
 
 ### Gear and state
 
@@ -381,7 +444,7 @@ backend yet. TODOs are listed in section 12.
 `ELIFE_CharacterIdentity.GetCharacterId(playerId)` returns the character id the backend confirmed.
 
 - Server only. A client gets `""`.
-- Only in SPAWNING and IN_GAME. In LOADING_CHARACTER it is `""`, and after a failed select (back in
+- Only in SELECTING_SPAWN, SPAWNING and IN_GAME. In LOADING_CHARACTER it is `""`, and after a failed select (back in
   SELECTING) it is `""`, even though the id is still stored.
 - Any other state, or no session: `""`. Callers must treat `""` as "no character".
 
@@ -397,7 +460,7 @@ this stands in until characters are used elsewhere.
 | Leave on link screen | `AckClosed` in LINKING, then kick | Untracked |
 | Leave during a recheck | Kick at once | Untracked |
 | 120 s in REJECTED with no `AckClosed` | Kick | Untracked |
-| Idle 300 s in CREATING, SELECTING or LINKING | Kick (`idle`) | Untracked |
+| Idle 300 s in CREATING, SELECTING, LINKING or SELECTING_SPAWN | Kick (`idle`) | Untracked |
 | Duplicate identity | Other session kicked and removed. This session waits for the tracked disconnect. | Tracked |
 | Restart with same player id | Old session removed | Tracked |
 
@@ -427,6 +490,7 @@ this stands in until characters are used elsewhere.
 | `CREATING` | Create screen up. |
 | `SELECTING` | Select screen up. |
 | `LOADING_CHARACTER` | Waiting for `CharacterSelected`. |
+| `SELECTING_SPAWN` | Spawn selection screen up (mode 2 with points). Waits for a pick. |
 | `SPAWNING` | Spawn requested. Also the death-to-respawn wait. |
 | `IN_GAME` | Character in the world. |
 | `ENDED` | Session gone. Nothing is sent to the client. |
@@ -438,8 +502,9 @@ this stands in until characters are used elsewhere.
 | `CONNECTING` | Start of connect, and while it waits | `{}` |
 | `LINKING` | Link screen needed | `{url, code, hint}` (`ELIFE_JoinLinkPayload`) |
 | `SELECTING` | Character screen with characters. Also after Back from create, or a failed select | `{characters: [{id, name}], error}` |
-| `CREATING` | Character screen without characters, `+` card, create or timeout errors | `{canGoBack, error, firstName, lastName, appearanceCount}` |
+| `CREATING` | Character screen without characters, `+` card, create or timeout errors | `{canGoBack, error, firstName, lastName}` (the client reads the appearance config itself) |
 | `LOADING` | Character chosen | `{}` |
+| `SPAWN_SELECT` | Mode 2 with points, after the character is confirmed. Also after a bad pick, with an error | `{characterName, points: [{index, name, image}], error}` (`ELIFE_JoinSpawnSelectPayload`). `error` is a key or `""`. |
 | `ERROR` | Connect failed, spawn failed, backend problem | `{messageKey}` |
 | `BANNED` | `blocked` | `{reason, until, appealUrl}` (all empty today) |
 | `NOT_WHITELISTED` | `not_whitelisted` | `{url}` |
@@ -447,7 +512,7 @@ this stands in until characters are used elsewhere.
 
 The client shows ERROR, BANNED and NOT_WHITELISTED as a dialog. On the ERROR screen, a key without
 the `ELIFE-Join_` prefix shows the generic backend error. On the create and select screens, such a
-key shows nothing.
+key shows nothing. The spawn selection screen shows only `ELIFE-Join_` keys, with or without a leading `#`.
 
 ### Client to server RPCs (`RpcAsk_*`)
 
@@ -455,8 +520,9 @@ All are reliable, server-side, in `Spawning/ELIFE_SpawningPlayerController.c`.
 
 | RPC | Accepted in | Notes |
 |---|---|---|
-| `RpcAsk_RequestCreate(firstName, lastName, appearanceIndex)` | CREATING | Strings over 64 chars are dropped (WARNING). |
+| `RpcAsk_RequestCreate(firstName, lastName, skinIndex, headIndex)` | CREATING | Strings over 64 chars are dropped (WARNING). Skin and head are checked in Create, step 2. |
 | `RpcAsk_RequestSelect(characterId)` | SELECTING | Id must be in the session's list. |
+| `RpcAsk_RequestSpawnPoint(index)` | SELECTING_SPAWN | Index into the offered list. Out of range or a deleted point: the screen comes back with `#ELIFE-Join_SpawnPointUnavailable`. |
 | `RpcAsk_RequestOpenCreate()` | SELECTING | `+` card. |
 | `RpcAsk_RequestBackToSelect()` | CREATING | Needs at least one character. |
 | `RpcAsk_RequestRecheck()` | LINKING | Not in flight. 30 s cooldown. |
@@ -485,12 +551,12 @@ conventions are in [Backend API client](backend-api.md).
 ### Component attributes
 
 On `ELIFE_JoinSessionManagerComponent`. Defaults are from the `[Attribute]` declarations.
-`ELIFE_GameMode.et` overrides the last three rows.
+The last column shows what `ELIFE_GameMode.et` sets.
 
 | Attribute | Code default | Set in `ELIFE_GameMode.et` | Meaning |
 |---|---|---|---|
 | `m_fBackendTimeoutSeconds` | 15 | no | Each backend request, and the wait for the backend client. |
-| `m_fIdleTimeoutSeconds` | 300 | no | Idle kick in CREATING, SELECTING, LINKING. |
+| `m_fIdleTimeoutSeconds` | 300 | no | Idle kick in CREATING, SELECTING, LINKING, SELECTING_SPAWN. |
 | `m_fRejectedKickSeconds` | 120 | no | REJECTED before kick. |
 | `m_fRespawnDelaySeconds` | 5 | no | Death to respawn. |
 | `m_fRecheckCooldownSeconds` | 30 | no | Cooldown for Check again. The client mirrors it. |
@@ -499,8 +565,9 @@ On `ELIFE_JoinSessionManagerComponent`. Defaults are from the `[Attribute]` decl
 | `m_iUnlinkedMaxRetries` | 3 | no | Automatic retries for `unlinked`. |
 | `m_fUnlinkedRetryDelaySeconds` | 5 | no | First retry delay. Doubles. |
 | `m_sWhitelistUrl` | `""` | no | Link on the NOT_WHITELISTED screen. |
-| `m_aAppearancePrefabs` | empty; `Character_LIFE.et` is used when empty | 11 prefabs: `Character_LIFE.et` and `Character_LIFE_Face_01.et` to `Character_LIFE_Face_10.et` | Create-screen appearances. Index 0 is the default. |
-| `m_vMenuCameraPosition` | `0 0 0` | `8 25 5` | Declared and set, but no code reads it yet (TODO, `JoinMenu.c:235`). |
+| `m_sAppearanceConfig` | `""` (no tones, so no create choice is valid) | `Configs/Characters/ELIFE_Appearances.conf` | Skin tones, bodies and heads for the create screen. See [Appearance](#appearance). |
+| `m_sCharacterPrefab` | `Prefabs/Characters/Factions/LIFE/Character_LIFE.et` | not set | Prefab spawned for every character. The appearance is applied to it. |
+| `m_vMenuCameraPosition` | `0 0 0` | `8 25 5` | Declared and set, but no code reads it yet (TODO, `JoinMenu.c:240`). |
 | `m_vMenuCameraAngles` | `0 0 0` | `0 -30 0` | Same as above. |
 
 Other settings in `ELIFE_GameMode.et`:
@@ -525,6 +592,8 @@ Other settings in `ELIFE_GameMode.et`:
 | Create name cap (client) | 20 | `ELIFE_JoinCreateScreen.NAME_MAX` |
 | RPC string cap | 64 | `JOIN_STRING_MAX` |
 | Double-click window | 400 ms | `ELIFE_JoinSelectScreen` |
+| Spawn card double-click window | 400 ms | `ELIFE_JoinSpawnSelectScreen.DOUBLE_CLICK_MS` |
+| Spawn cards per page | 6 | `ELIFE_JoinSpawnSelectScreen.CARDS_PER_PAGE` |
 | Link overlay auto-hide | 60 s | `LINK_REVEAL_MS` |
 | "Copied" label | 2 s | `COPIED_SHOW_MS` |
 | Client leave after reject | 125 s, leave delay 0.5 s | `ELIFE_JoinMenu` |
@@ -545,10 +614,10 @@ ELIFE_Join | session=<id> identity=<gameIdentityId> player=<playerId> <message>
 ## 10. Setup checklist for a world
 
 - [ ] Game mode is `Prefabs/MP/Modes/ELIFE_GameMode.et`. It has the session manager, `ELIFE_JoinSpawnLogic`, the
-      appearance list, and `PlayerControllerPrefab` set to `ELIFE_PlayerController.et`.
+      appearance config (`m_sAppearanceConfig`), and `PlayerControllerPrefab` set to `ELIFE_PlayerController.et`.
 - [ ] Backend: `ELifeRPG.json` with `serverUrl` for the Bridge. See [Backend API client](backend-api.md).
 - [ ] At least one `ELIFE_SpawnPoint` (`Prefabs/Spawning/ELIFE_SpawnPoint.et`) whose mode matches
-      `m_eSpawnMode`. Without one, the join spawn uses a random position and logs a WARNING.
+      `m_eSpawnMode`. Without one, the join spawn uses a random position and logs a WARNING. In mode `SELECT_PER_RESTART`, each point is a choice on the spawn selection: give it an `m_sName`, and optionally an `.edds` `m_sImage`.
 - [ ] One `ELIFE_RespawnPoint` (`Prefabs/Spawning/ELIFE_RespawnPoint.et`) with `m_sName` set. Without one,
       respawn uses a random position and logs a WARNING.
 - [ ] Loadout manager `Prefabs/MP/Managers/Loadouts/ELIFE_LoadoutManager.et` in the world. Its loadout is
@@ -585,6 +654,14 @@ ELIFE_SelfTest | DONE pass=N fail=M
   the backend-client wait and its deadline, recheck, skip, Leave and the link-screen states, create,
   select, the name filter, spawn failures, entity lost, confirmed character, request timeouts,
   idle kick, rejected kick, and clock wrap.
+- Spawn point and spawn selection tests. Pure: spawn point disc and `GetAll` with none registered, the transitions
+  into and out of `SELECTING_SPAWN`, the spawn selection payload round trip, and `PageCount`/`PageStart`. Manager
+  (play mode): confirmed id in `SELECTING_SPAWN`, mode 1 and mode 2 without points go to `SPAWNING`, a pick in the
+  wrong state is ignored, a pick while a request is in flight is ignored, and the idle kick.
+- Checked by hand in play mode (owner), not by the self-tests: the spawn selection screen with a point (`SPAWN_SELECT`),
+  a valid pick, a bad pick with its error, and that the spawn uses the chosen point. The self-tests run in edit mode
+  without a game world, so they cannot spawn a `ELIFE_SpawnPoint`. Visuals, double click, pager and error row are also
+  checked by hand.
 - Test hooks: `SetClockOverrideForTests`, `SetNoSendForTests` and `SetApiMissingForTests`, so the
   tests run without a real backend call.
 - Pass means `fail=0`.
@@ -619,32 +696,34 @@ Every `TODO` under `Features/Spawning` and `UI/Menu/Join`. Both folders are unde
 
 | File:line | TODO |
 |---|---|
-| `ELIFE_JoinSpawnLogic.c:53`, `:66`, `:131`, `:138`, `:192` | **DIAG spawn logs**, temporary. Remove once the first-spawn failure is fixed. The DIAG prints are at `:54`, `:67`, `:136`, `:142`, `:193`. |
+| `ELIFE_JoinSpawnLogic.c:53`, `:66`, `:137`, `:144`, `:198` | **DIAG spawn logs**, temporary. Remove once the first-spawn failure is fixed. The DIAG prints are at `:54`, `:67`, `:142`, `:148`, `:199`. |
 | `ELIFE_JoinRequestContext.c:89` | Generated `ELIFE_PlayerConnectedResponse.status` is an int enum. The status is parsed from the string body instead. Fix the generated type. |
-| `ELIFE_JoinSessionManagerComponent.c:129` | Save position, gear and state before a restart releases an in-game character. |
-| `ELIFE_JoinSessionManagerComponent.c:209` | Save position, gear and state on disconnect. |
-| `ELIFE_JoinSessionManagerComponent.c:451` | Use the saved backend position. |
-| `ELIFE_JoinSessionManagerComponent.c:462` | Apply gear and state from the backend. The prefab default loadout is used today. |
-| `ELIFE_JoinSessionManagerComponent.c:482` | Periodic save of position, gear and state. |
-| `ELIFE_JoinSessionManagerComponent.c:563` | Gear on death: lose items or use a default loadout, and save it. |
-| `ELIFE_JoinSessionManagerComponent.c:715` | Ban reason, time left and appeal URL. The connect reply has no ban fields. |
-| `ELIFE_JoinSessionManagerComponent.c:838` | Map backend validation errors (ProblemDetails) once the callback exposes them. |
-| `ELIFE_JoinSessionManagerComponent.c:862` | A distinct "in use" message once the backend reports it. |
-| `ELIFE_JoinSessionManagerComponent.c:887` | Load and lock the character (position, gear, state). Today `CharacterSelected` only starts the Core session, which replaces any other. |
-| `ELIFE_JoinSessionManagerComponent.c:921`, `:955`, `:1223`, `:1243`, `:1272` | Remove the `DEBUG` request logging once the create-character GUID bug is fixed. |
-| `ELIFE_JoinSessionManagerComponent.c:1351` | Remove the link code debug log. |
+| `ELIFE_SpawnLocator.c:55` | SELECT_PER_RESTART points are offered on every join until the API returns a saved position (see `BeginSpawnOrSelection`). |
+| `ELIFE_JoinSessionManagerComponent.c:132` | Save position, gear and state before a restart releases an in-game character. |
+| `ELIFE_JoinSessionManagerComponent.c:213` | Save position, gear and state on disconnect. |
+| `ELIFE_JoinSessionManagerComponent.c:469` | Use the saved backend position. |
+| `ELIFE_JoinSessionManagerComponent.c:477` | Apply gear and state from the backend. The prefab default loadout is used today. |
+| `ELIFE_JoinSessionManagerComponent.c:498` | Periodic save of position, gear and state. |
+| `ELIFE_JoinSessionManagerComponent.c:579` | Gear on death: lose items or use a default loadout, and save it. |
+| `ELIFE_JoinSessionManagerComponent.c:731` | Ban reason, time left and appeal URL. The connect reply has no ban fields. |
+| `ELIFE_JoinSessionManagerComponent.c:854` | Map backend validation errors (ProblemDetails) once the callback exposes them. |
+| `ELIFE_JoinSessionManagerComponent.c:878` | A distinct "in use" message once the backend reports it. |
+| `ELIFE_JoinSessionManagerComponent.c:906` | Skip the spawn selection when the API returns a saved position (once per restart). Until then, every join in mode 2 shows it. |
+| `ELIFE_JoinSessionManagerComponent.c:1001` | Load and lock the character (position, gear, state). Today `CharacterSelected` only starts the Core session, which replaces any other. |
+| `ELIFE_JoinSessionManagerComponent.c:1035`, `:1069`, `:1337`, `:1357`, `:1386` | Remove the `DEBUG` request logging once the create-character GUID bug is fixed. |
+| `ELIFE_JoinSessionManagerComponent.c:1465` | Remove the link code debug log. |
 
 **UI/Menu/Join**
 
 | File:line | TODO |
 |---|---|
-| `ELIFE_JoinMenu.c:29`, `:31`, `:259`, `:267`, `:408`, `:426`, `:458`, `:497`, `:520`, `:531` | Remove the widget debug dumps once the join UI visibility bug is fixed. |
-| `ELIFE_JoinMenu.c:235` | Local menu camera needs Workbench verification. The attributes exist but nothing reads them. |
-| `ELIFE_JoinSelectScreen.c:167` | Per-character appearance or portrait from the backend. Previews show appearance 0 today. |
-| `ELIFE_JoinLinkScreen.c:232` | Remove the link code debug log (also at `:237`). |
+| `ELIFE_JoinMenu.c:30`, `:32`, `:264`, `:272`, `:426`, `:444`, `:493`, `:532`, `:555`, `:566` | Remove the widget debug dumps once the join UI visibility bug is fixed. |
+| `ELIFE_JoinMenu.c:240` | Local menu camera needs Workbench verification. The attributes exist but nothing reads them. |
+| `ELIFE_JoinSelectScreen.c:236` | Per-character appearance or portrait from the backend. Previews show the character prefab as it is (its own head) today. |
+| `ELIFE_JoinLinkScreen.c:239` | Remove the link code debug log. |
 
 ### Other known gaps
 
-- Appearance is kept only for characters created in this session (section 5).
+- Skin tone and head are kept only for characters created in this session (section 5, [Appearance](#appearance)).
 - Ban screen has no reason, end time or appeal link (TODO, `:715`).
 - Gear and position are not loaded or saved (TODOs above).
