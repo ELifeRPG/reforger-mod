@@ -1706,6 +1706,46 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{04C0011F8476C944}" {
+   Id "ELIFE-Appearance_SkinWhite"
+   Target_en_us "White"
+   Target_de_de "Weiß"
+   Modified 1794748356
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{3E6C47ADC816F913}" {
+   Id "ELIFE-Appearance_SkinBlack"
+   Target_en_us "Black"
+   Target_de_de "Schwarz"
+   Modified 1794748356
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{D6EFEC4FE973B183}" {
+   Id "ELIFE-Appearance_SkinAsian"
+   Target_en_us "Asian"
+   Target_de_de "Asiatisch"
+   Modified 1794748356
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{6B23FCA90D36DE5B}" {
+   Id "ELIFE-Join_SkinTone"
+   Target_en_us "Skin tone"
+   Target_de_de "Hautfarbe"
+   Modified 1794748356
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{5BA64C1FBE9D51C9}" {
+   Id "ELIFE-Join_Head"
+   Target_en_us "Head"
+   Target_de_de "Kopf"
+   Modified 1794748356
+   Author "Nico"
+   LastChanged "Nico"
+  }
   CustomStringTableItem "{166F72C4AE7F17A9}" {
    Id "ELIFE-Join_Appearance"
    Target_en_us "Appearance"
@@ -1938,11 +1978,35 @@ StringTable {
    Author "Nico"
    LastChanged "Nico"
   }
+  CustomStringTableItem "{A34064C4BDDF1CF1}" {
+   Id "ELIFE-Join_Spawn"
+   Target_en_us "Spawn"
+   Target_de_de "Spawnen"
+   Modified 1794683962
+   Author "Nico"
+   LastChanged "Nico"
+  }
   CustomStringTableItem "{7E2EF6E5EAD1B805}" {
    Id "ELIFE-Join_SpawnFailed"
    Target_en_us "Could not spawn"
    Target_de_de "Spawnen fehlgeschlagen"
    Modified 1793443467
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{1A30D05767ED6AE3}" {
+   Id "ELIFE-Join_SpawnPointUnavailable"
+   Target_en_us "This spawn point is no longer available."
+   Target_de_de "Dieser Spawnpunkt ist nicht mehr verfügbar."
+   Modified 1794683962
+   Author "Nico"
+   LastChanged "Nico"
+  }
+  CustomStringTableItem "{8B8D702C65D93D91}" {
+   Id "ELIFE-Join_SpawnSelectTitle"
+   Target_en_us "Choose your spawn point"
+   Target_de_de "Wähle deinen Spawnpunkt"
+   Modified 1794683962
    Author "Nico"
    LastChanged "Nico"
   }
