@@ -21,6 +21,8 @@ A tree is a list of nodes. Each node has:
 
 - `m_Line`: what the NPC says on arrival (an `ELIFE_DialogueLine` subclass). Leave it empty where the NPC
   already speaks, for example the greeting or the result of an action.
+  If the NPC greets (`ELIFE_NpcComponent.GreetsOnVisit`), the conversation stays hidden until the greeting is
+  heard, at most 2 s, so the line doesn't appear after the rest. Only lines heard since the player pressed talk count.
 - `m_Details`: the specifics under the line (an `ELIFE_DialogueDetails` subclass).
 - `m_aReplies`: the player's replies. Each has a text and an `m_Action` (an `ELIFE_DialogueAction` subclass).
   `m_sRepliesOf` borrows another node's replies instead, for example after answering a question.
@@ -99,6 +101,18 @@ Pushed off a seat or a bed, he gets up and takes it again; after two tries he pi
 breaks without him being moved, he picks again at random (seat or bed). Other characters pass through anyone sitting
 or lying, so pushes are rare. While he lies on a bed he sleeps (`ELIFE_NpcComponent.IsSleeping`, replicated): the
 talk action is hidden and he says nothing.
+
+A walk that hasn't arrived after 90 s counts as stuck, and he picks again. While walking he opens closed doors up to
+2 m ahead of him (1.5 m in any direction) fully, so a door that swings towards him is open before he reaches it.
+Vanilla AI only opens a door once it stands at it, and gets stuck behind the moving leaf. Doors he opened he closes
+again once he is 2.5 m away (or at once when he stops to sit, lie or pause), unless somebody, him included while
+resting, is within 1.5 m of the door. When he dies or goes away, his doors close at once.
+
+If he hasn't moved for 2 s and someone is in front of him (two NPCs in a doorway, say), he gives way: he steps 2 m
+back and waits until the other is 2 m clear of him and of the spot where he got stuck, at most 10 s, then walks on.
+Of two NPCs stuck facing each other only the first to notice gives way. The wait counts towards the 90 s. Still
+blocked after giving way twice on one walk, he picks another place (walking home, he just stops giving way).
+Back at his spot, if somebody stands on it, he waits beside it until it's free.
 
 The routine needs vanilla AI: an `SCR_AIWorld` with a Soldiers navmesh in the world. Without one he stays at his
 spot, closed. On small worlds, set `UseNavmeshStreaming 0` on the navmesh, or AI never walks. After placing new

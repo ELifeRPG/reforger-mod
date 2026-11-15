@@ -1,0 +1,44 @@
+$grp ELIFE_PrefabSpawn {
+ Spawn_Phone_Green {
+  coords 262 0.05 256
+  m_rnPrefab "{2DBBA09446619612}Prefabs/Items/Equipment/Phone/Phone_Green.et"
+ }
+ Spawn_Phone_Graphite {
+  coords 263 0.05 256
+  m_rnPrefab "{94424C1396CB705F}Prefabs/Items/Equipment/Phone/Phone_Graphite.et"
+ }
+ Spawn_Phone_White {
+  coords 264 0.05 256
+  m_rnPrefab "{93506C1D8CB5A5C5}Prefabs/Items/Equipment/Phone/Phone_White.et"
+ }
+ Spawn_Phone_Navy {
+  coords 265 0.05 256
+  m_rnPrefab "{C810CA79D892D069}Prefabs/Items/Equipment/Phone/Phone_Navy.et"
+ }
+ Spawn_Phone_Red {
+  coords 266 0.05 256
+  m_rnPrefab "{29631E8E4AF04BD7}Prefabs/Items/Equipment/Phone/Phone_Red.et"
+ }
+ Spawn_Phone_Silver {
+  coords 267 0.05 256
+  m_rnPrefab "{E8692A5A14D74B83}Prefabs/Items/Equipment/Phone/Phone_Silver.et"
+ }
+}
+$grp GenericEntity : "{4B8E888EFE59EE44}Prefabs/Items/Cash/Cash.et" {
+ Cash_1 {
+  components {
+   ELIFE_CashComponent "{E668C13FE22956C5}" {
+    m_iInitialAmount 200
+   }
+  }
+  coords 263 0.05 258
+ }
+ Cash_2 {
+  components {
+   ELIFE_CashComponent "{E668C13FE22956C5}" {
+    m_iInitialAmount 200
+   }
+  }
+  coords 264 0.05 258
+ }
+}

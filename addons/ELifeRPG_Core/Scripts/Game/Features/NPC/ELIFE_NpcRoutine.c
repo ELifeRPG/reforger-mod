@@ -5,6 +5,8 @@ enum ELIFE_ENpcRoutineState
 	ON_DUTY,
 	//! After a bad landing: a step back in front of the seat before walking in again.
 	BACKING_OFF,
+	//! Stuck facing someone (in a doorway, say): a step back, and he waits for them to pass.
+	GIVING_WAY,
 	TO_SEAT,
 	SITTING,
 	TO_BED,
@@ -68,11 +70,35 @@ class ELIFE_NpcRoutine
 	protected static const float GET_UP_TIMEOUT_S = 25;
 	protected static const float WANDER_RADIUS = 20;
 	//! A walk that takes longer than this has got stuck; he picks something else.
-	protected static const float WALK_TIMEOUT_S = 40;
+	protected static const float WALK_TIMEOUT_S = 90;
 	protected static const float PAUSE_MIN_S = 5;
 	protected static const float PAUSE_MAX_S = 15;
 	//! Back at his spot he is placed exactly on it if he stopped this close.
 	protected static const float HOME_SNAP_DISTANCE = 1;
+	//! Somebody else this close to his spot: he waits beside it instead of walking into them.
+	protected static const float HOME_CLEAR_RADIUS = 0.6;
+	//! Doors ahead are opened this early, so one swinging towards him is open before he gets there (vanilla AI opens
+	//! them at the door and gets hit by the leaf).
+	protected static const float DOOR_OPEN_RANGE = 2;
+	//! Doors this close are opened whichever way he is heading.
+	protected static const float DOOR_OPEN_NEAR = 1.5;
+	//! Doors he opened are closed again once he is this far away (more than the open range, so they don't flap).
+	protected static const float DOOR_CLOSE_RANGE = 2.5;
+	//! Nobody else may be this close to the door when it closes: the leaf swings through there.
+	protected static const float DOOR_CLEAR_RADIUS = 1.5;
+	//! Walking, he counts as stuck if he got no further than this in STUCK_S.
+	protected static const float STUCK_STEP = 0.3;
+	protected static const float STUCK_S = 2;
+	//! Stuck, he gives way to somebody in front of him this close.
+	protected static const float BLOCKER_RADIUS = 1.5;
+	protected static const float GIVE_WAY_DISTANCE = 2;
+	//! After this long he stops stepping back (the way back may be blocked too) and waits where he is.
+	protected static const float GIVE_WAY_BACK_S = 4;
+	//! He walks on once the other is this far from him and from where he got stuck, or after GIVE_WAY_MAX_S.
+	protected static const float GIVE_WAY_CLEAR = 2;
+	protected static const float GIVE_WAY_MAX_S = 10;
+	//! Still blocked after giving way this often on one walk, he goes somewhere else (walking home, he stops giving way).
+	protected static const int GIVE_WAY_TRIES = 2;
 
 	protected ELIFE_NpcComponent m_Npc;
 	protected IEntity m_Character;
@@ -90,6 +116,20 @@ class ELIFE_NpcRoutine
 	protected vector m_vTarget;
 	protected vector m_vLastPosition;
 	protected int m_iSitRetries;
+	protected vector m_vDoorCheckPosition;
+	protected ref array<IEntity> m_aNearbyDoors = {};
+	//! The doors he opened that are still to be closed.
+	protected ref array<IEntity> m_aOpenedDoors = {};
+	protected bool m_bCharacterNear;
+	protected vector m_vStuckPosition;
+	protected float m_fStuckSeconds;
+	//! Giving way: to whom, where he got stuck, and the walk he goes on with afterwards.
+	protected IEntity m_Blocker;
+	protected vector m_vGiveWayFrom;
+	protected ELIFE_ENpcRoutineState m_eResumeState;
+	protected vector m_vResumeTarget;
+	protected float m_fResumeSeconds;
+	protected int m_iGiveWays;
 
 	//------------------------------------------------------------------------------------------------
 	void ELIFE_NpcRoutine(notnull ELIFE_NpcComponent npc, vector home)
@@ -110,6 +150,7 @@ class ELIFE_NpcRoutine
 	void Dispose()
 	{
 		GetGame().GetCallqueue().Remove(Tick);
+		CloseOpenedDoors();
 
 		if (m_Waypoint)
 			SCR_EntityHelper.DeleteEntityAndChildren(m_Waypoint);
@@ -130,6 +171,9 @@ class ELIFE_NpcRoutine
 	//------------------------------------------------------------------------------------------------
 	bool IsReturning()
 	{
+		if (m_eState == ELIFE_ENpcRoutineState.GIVING_WAY)
+			return m_eResumeState == ELIFE_ENpcRoutineState.RETURNING;
+
 		return m_eState == ELIFE_ENpcRoutineState.RETURNING || m_eState == ELIFE_ENpcRoutineState.GETTING_UP;
 	}
 
@@ -319,16 +363,41 @@ class ELIFE_NpcRoutine
 		if (!controller || controller.IsDead())
 		{
 			GetGame().GetCallqueue().Remove(Tick);
+			CloseOpenedDoors();
 			return;
 		}
 
 		m_fStateSeconds += TICK_MS / 1000.0;
+
+		if (IsWalking())
+		{
+			OpenDoorsAhead();
+			//! Without a waypoint he stands on purpose (waiting for his spot).
+			if (m_eState != ELIFE_ENpcRoutineState.GIVING_WAY && m_Waypoint)
+				CheckBlocked();
+		}
+
+		CloseDoorsBehind();
+
+		//! Back on duty the tick only runs on until the doors behind him are closed.
+		if (m_eState == ELIFE_ENpcRoutineState.ON_DUTY)
+		{
+			if (m_aOpenedDoors.IsEmpty())
+				GetGame().GetCallqueue().Remove(Tick);
+
+			return;
+		}
 
 		switch (m_eState)
 		{
 			case ELIFE_ENpcRoutineState.BACKING_OFF:
 			{
 				TickBackingOff();
+				return;
+			}
+			case ELIFE_ENpcRoutineState.GIVING_WAY:
+			{
+				TickGivingWay();
 				return;
 			}
 			case ELIFE_ENpcRoutineState.TO_SEAT:
@@ -407,6 +476,279 @@ class ELIFE_NpcRoutine
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected bool IsWalking()
+	{
+		return m_eState == ELIFE_ENpcRoutineState.TO_SEAT || m_eState == ELIFE_ENpcRoutineState.TO_BED
+			|| m_eState == ELIFE_ENpcRoutineState.BACKING_OFF || m_eState == ELIFE_ENpcRoutineState.WANDERING
+			|| m_eState == ELIFE_ENpcRoutineState.RETURNING || m_eState == ELIFE_ENpcRoutineState.GIVING_WAY;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsGivingWay()
+	{
+		return m_eState == ELIFE_ENpcRoutineState.GIVING_WAY;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Stuck with somebody in front of him, he gives way, unless that is an NPC giving way to him already: of two
+	//! NPCs stuck in a doorway only the first to notice steps back.
+	protected void CheckBlocked()
+	{
+		vector position = m_Character.GetOrigin();
+		if (vector.Distance(position, m_vStuckPosition) > STUCK_STEP)
+		{
+			m_vStuckPosition = position;
+			m_fStuckSeconds = 0;
+			return;
+		}
+
+		m_fStuckSeconds += TICK_MS / 1000.0;
+		if (m_fStuckSeconds < STUCK_S)
+			return;
+
+		m_Blocker = null;
+		m_Character.GetWorld().QueryEntitiesBySphere(position, BLOCKER_RADIUS, CollectBlocker);
+		if (!m_Blocker)
+			return;
+
+		ELIFE_NpcComponent other = ELIFE_NpcComponent.Cast(m_Blocker.FindComponent(ELIFE_NpcComponent));
+		if (other && other.IsGivingWay())
+			return;
+
+		if (m_iGiveWays < GIVE_WAY_TRIES)
+		{
+			GiveWay();
+			return;
+		}
+
+		if (m_eState == ELIFE_ENpcRoutineState.TO_SEAT || m_eState == ELIFE_ENpcRoutineState.BACKING_OFF)
+			LookForRest(m_Seat);
+		else if (m_eState == ELIFE_ENpcRoutineState.TO_BED)
+			LookForRest(null, m_Bed);
+		else if (m_eState == ELIFE_ENpcRoutineState.WANDERING)
+			Pause();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A living character in front of him.
+	protected bool CollectBlocker(IEntity entity)
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
+		if (!character || character == m_Character)
+			return true;
+
+		CharacterControllerComponent controller = character.GetCharacterController();
+		if (!controller || controller.IsDead())
+			return true;
+
+		vector toCharacter = character.GetOrigin() - m_Character.GetOrigin();
+		if (vector.Dot(toCharacter, m_Character.GetTransformAxis(2)) <= 0)
+			return true;
+
+		m_Blocker = character;
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A step back, away from the blocker; the walk he was on is kept for afterwards.
+	protected void GiveWay()
+	{
+		m_eResumeState = m_eState;
+		m_vResumeTarget = m_vTarget;
+		m_fResumeSeconds = m_fStateSeconds;
+		m_vGiveWayFrom = m_Character.GetOrigin();
+		m_iGiveWays++;
+
+		vector away = m_vGiveWayFrom - m_Blocker.GetOrigin();
+		away[1] = 0;
+		away.Normalize();
+		WalkTo(m_vGiveWayFrom + away * GIVE_WAY_DISTANCE, ELIFE_ENpcRoutineState.GIVING_WAY);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void TickGivingWay()
+	{
+		bool clear = !m_Blocker;
+		if (!clear)
+		{
+			vector blockerPosition = m_Blocker.GetOrigin();
+			clear = vector.Distance(blockerPosition, m_vGiveWayFrom) > GIVE_WAY_CLEAR
+				&& vector.Distance(blockerPosition, m_Character.GetOrigin()) > GIVE_WAY_CLEAR;
+		}
+
+		if (clear || m_fStateSeconds > GIVE_WAY_MAX_S)
+		{
+			ResumeWalk();
+			return;
+		}
+
+		//! Without a waypoint he stands and waits.
+		if (m_Waypoint && (m_fStateSeconds > GIVE_WAY_BACK_S || HasArrived(m_vTarget)))
+			ReplaceWaypoint(null);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The walk from before giving way. Its timeout counts the wait too, so he can't give way forever.
+	protected void ResumeWalk()
+	{
+		float seconds = m_fResumeSeconds + m_fStateSeconds;
+		int giveWays = m_iGiveWays;
+		if (m_eResumeState == ELIFE_ENpcRoutineState.TO_SEAT)
+		{
+			if (m_Seat)
+				WalkToSeat();
+			else
+				LookForRest();
+		}
+		else if (m_eResumeState == ELIFE_ENpcRoutineState.TO_BED)
+		{
+			if (m_Bed)
+				WalkToBed();
+			else
+				LookForRest();
+		}
+		else
+		{
+			WalkTo(m_vResumeTarget, m_eResumeState);
+		}
+
+		if (m_eState == m_eResumeState)
+		{
+			m_fStateSeconds = seconds;
+			m_iGiveWays = giveWays;
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Opens closed doors on his floor ahead of him (or right next to him) fully, like vanilla's SCR_DoorOpenerEntity.
+	protected void OpenDoorsAhead()
+	{
+		vector position = m_Character.GetOrigin();
+		vector heading = position - m_vDoorCheckPosition;
+		heading[1] = 0;
+		m_vDoorCheckPosition = position;
+
+		m_aNearbyDoors.Clear();
+		m_Character.GetWorld().QueryEntitiesBySphere(position, DOOR_OPEN_RANGE, CollectDoor);
+		foreach (IEntity doorEntity : m_aNearbyDoors)
+		{
+			DoorComponent door = DoorComponent.Cast(doorEntity.FindComponent(DoorComponent));
+			if (Math.AbsFloat(door.GetNormalizedDoorState()) > 0.99 || door.IsOpening())
+				continue;
+
+			vector toDoor = doorEntity.GetOrigin() - position;
+			if (toDoor[1] < -1 || toDoor[1] > 2)
+				continue;
+
+			toDoor[1] = 0;
+			if (toDoor.Length() > DOOR_OPEN_NEAR && vector.Dot(toDoor, heading) <= 0)
+				continue;
+
+			//! Partly open, it opens further the way it already swings instead of through the doorway.
+			float side = 1;
+			if (door.GetNormalizedDoorState() < 0)
+				side = -1;
+
+			door.SetControlValue(side, RplId.Invalid());
+			if (!m_aOpenedDoors.Contains(doorEntity))
+				m_aOpenedDoors.Insert(doorEntity);
+		}
+
+		m_aNearbyDoors.Clear();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Closes the doors he opened once he is out of range and nobody else is in the way; ones somebody else closed
+	//! meanwhile are forgotten.
+	protected void CloseDoorsBehind()
+	{
+		vector position = m_Character.GetOrigin();
+		for (int i = m_aOpenedDoors.Count() - 1; i >= 0; i--)
+		{
+			IEntity doorEntity = m_aOpenedDoors[i];
+			DoorComponent door;
+			if (doorEntity)
+				door = DoorComponent.Cast(doorEntity.FindComponent(DoorComponent));
+
+			if (!door)
+			{
+				m_aOpenedDoors.Remove(i);
+				continue;
+			}
+
+			vector doorPosition = doorEntity.GetOrigin();
+			bool nearDoor = IsWalking() && vector.Distance(position, doorPosition) <= DOOR_CLOSE_RANGE;
+			if (nearDoor || door.IsOpening())
+				continue;
+
+			if (Math.AbsFloat(door.GetNormalizedDoorState()) < 0.01)
+			{
+				m_aOpenedDoors.Remove(i);
+				continue;
+			}
+
+			if (IsCharacterNear(doorPosition, DOOR_CLEAR_RADIUS))
+				continue;
+
+			door.SetControlValue(0, RplId.Invalid());
+			m_aOpenedDoors.Remove(i);
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsCharacterNear(vector position, float radius)
+	{
+		m_bCharacterNear = false;
+		m_Character.GetWorld().QueryEntitiesBySphere(position, radius, CheckCharacter);
+		return m_bCharacterNear;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Resting, he counts himself (he'd block a door's leaf); on duty he doesn't, or the tick would never stop.
+	protected bool CheckCharacter(IEntity entity)
+	{
+		ChimeraCharacter character = ChimeraCharacter.Cast(entity);
+		if (!character)
+			return true;
+
+		CharacterControllerComponent controller = character.GetCharacterController();
+		if (!controller || controller.IsDead())
+			return true;
+
+		if (entity == m_Character && (IsWalking() || m_eState == ELIFE_ENpcRoutineState.ON_DUTY))
+			return true;
+
+		m_bCharacterNear = true;
+		return false;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! At once, whoever is in the way: he is dead or going away.
+	protected void CloseOpenedDoors()
+	{
+		foreach (IEntity doorEntity : m_aOpenedDoors)
+		{
+			DoorComponent door;
+			if (doorEntity)
+				door = DoorComponent.Cast(doorEntity.FindComponent(DoorComponent));
+
+			if (door)
+				door.SetControlValue(0, RplId.Invalid());
+		}
+
+		m_aOpenedDoors.Clear();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool CollectDoor(IEntity entity)
+	{
+		if (entity.FindComponent(DoorComponent))
+			m_aNearbyDoors.Insert(entity);
+
+		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected void TickToSeat()
 	{
 		if (!m_Seat || m_fStateSeconds > WALK_TIMEOUT_S)
@@ -419,10 +761,17 @@ class ELIFE_NpcRoutine
 		if (distance > SIT_FROM_DISTANCE && !HasArrived(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST)))
 			return;
 
-		//! Stopped too far out: once more.
+		//! Stopped too far out (someone in the way, say): once more, then another place.
 		if (distance > SIT_FROM_MAX_DISTANCE)
 		{
-			WalkTo(ELIFE_Seats.GetApproachPoint(m_Seat, -SEAT_WAYPOINT_PAST), ELIFE_ENpcRoutineState.TO_SEAT);
+			if (m_iSitRetries >= SIT_RETRIES)
+			{
+				LookForRest(m_Seat);
+				return;
+			}
+
+			m_iSitRetries++;
+			WalkToSeat();
 			return;
 		}
 
@@ -607,8 +956,18 @@ class ELIFE_NpcRoutine
 		if (distance > ARRIVED_DISTANCE && !HasArrived(m_vHome))
 		{
 			if (m_fStateSeconds > WALK_TIMEOUT_S)
+			{
+				int giveWays = m_iGiveWays;
 				WalkTo(m_vHome, ELIFE_ENpcRoutineState.RETURNING);
+				m_iGiveWays = giveWays;
+			}
 
+			return;
+		}
+
+		if (IsCharacterNear(m_vHome, HOME_CLEAR_RADIUS))
+		{
+			ReplaceWaypoint(null);
 			return;
 		}
 
@@ -627,7 +986,9 @@ class ELIFE_NpcRoutine
 		transform[3] = m_vHome;
 		character.Teleport(transform);
 
-		GetGame().GetCallqueue().Remove(Tick);
+		if (m_aOpenedDoors.IsEmpty())
+			GetGame().GetCallqueue().Remove(Tick);
+
 		SetState(ELIFE_ENpcRoutineState.ON_DUTY);
 		m_Npc.OnBackOnDuty();
 	}
@@ -730,6 +1091,12 @@ class ELIFE_NpcRoutine
 	{
 		m_eState = state;
 		m_fStateSeconds = 0;
+		m_vStuckPosition = m_Character.GetOrigin();
+		m_vDoorCheckPosition = m_vStuckPosition;
+		m_fStuckSeconds = 0;
+		if (state != ELIFE_ENpcRoutineState.GIVING_WAY)
+			m_iGiveWays = 0;
+
 		Print(string.Format("%1 | %2: %3", ClassName(), m_Character, typename.EnumToString(ELIFE_ENpcRoutineState, state)), LogLevel.VERBOSE);
 	}
 }

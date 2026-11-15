@@ -72,6 +72,11 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	//! Another menu on top (a form) has the input until Resume().
 	protected bool m_bSuspended;
 	protected bool m_bIsClosing;
+	//! Texts just made visible stay transparent until laid out, else they flash at the screen's top left.
+	protected ref array<Widget> m_aRevealing = {};
+	protected int m_iRevealUpdates;
+	//! Hidden until the NPC's first line arrives, so it doesn't show up after the rest.
+	protected bool m_bHoldingForLine;
 
 	//! Input is polled; keys held when this menu gains focus press nothing.
 	protected bool m_bKeysActive;
@@ -114,6 +119,14 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 
 		s_Open.SetSubtitle(text);
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A line of the speaker's that this machine skipped (cooldown): a conversation waiting for it shows without it.
+	static void OnSpeakerSkipped(IEntity speaker)
+	{
+		if (s_Open && speaker && s_Open.m_Controller && s_Open.m_Controller.GetSpeaker() == speaker)
+			s_Open.ReleaseHold();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -220,6 +233,32 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 		//! A line said just before the conversation opened may still be on the HUD.
 		ELIFE_NpcSubtitles.Clear();
 		Refresh();
+		ReleaseHold();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Keeps the whole conversation hidden until a line arrives or timeoutMs passes.
+	void HoldForLine(int timeoutMs)
+	{
+		if (m_bIsClosing || m_sSubtitle != "")
+			return;
+
+		m_bHoldingForLine = true;
+		GetRootWidget().SetOpacity(0);
+		GetGame().GetCallqueue().CallLater(ReleaseHold, timeoutMs);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Shown together with the line, which ShowText keeps back until it is laid out.
+	protected void ReleaseHold()
+	{
+		GetGame().GetCallqueue().Remove(ReleaseHold);
+		if (!m_bHoldingForLine)
+			return;
+
+		m_bHoldingForLine = false;
+		m_aRevealing.Insert(GetRootWidget());
+		m_iRevealUpdates = 2;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -327,10 +366,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 			m_wSpeaker.SetText(m_sShownSpeakerName);
 
 		if (m_wSubtitle)
-		{
-			m_wSubtitle.SetText(m_sSubtitle);
-			m_wSubtitle.SetVisible(m_sSubtitle != "");
-		}
+			ShowText(m_wSubtitle, m_sSubtitle);
 
 		if (m_wDetails)
 		{
@@ -345,8 +381,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 				details += WidgetManager.Translate(m_sNotice);
 			}
 
-			m_wDetails.SetText(details);
-			m_wDetails.SetVisible(details != "");
+			ShowText(m_wDetails, details);
 		}
 
 		float inkAlpha = 1;
@@ -370,6 +405,21 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected void ShowText(notnull RichTextWidget widget, string text)
+	{
+		widget.SetText(text);
+		bool shown = text != "";
+		if (shown && !widget.IsVisible())
+		{
+			widget.SetOpacity(0);
+			m_aRevealing.Insert(widget);
+			m_iRevealUpdates = 2;
+		}
+
+		widget.SetVisible(shown);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	void SelectReply(int index)
 	{
 		if (index >= 0 && index < m_aReplyFills.Count() && index != m_iSelected)
@@ -382,7 +432,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	void ChooseReply(int index)
 	{
-		if (m_bWaiting || m_bSuspended || m_bIsClosing || index < 0 || index >= m_aReplyFills.Count())
+		if (m_bWaiting || m_bSuspended || m_bIsClosing || m_bHoldingForLine || index < 0 || index >= m_aReplyFills.Count())
 			return;
 
 		ELIFE_DialogueReply reply = m_aReplies[index];
@@ -394,6 +444,20 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	override void OnMenuUpdate(float tDelta)
 	{
 		super.OnMenuUpdate(tDelta);
+
+		if (m_iRevealUpdates > 0)
+			m_iRevealUpdates--;
+
+		if (m_iRevealUpdates == 0 && !m_aRevealing.IsEmpty())
+		{
+			foreach (Widget widget : m_aRevealing)
+			{
+				if (widget)
+					widget.SetOpacity(1);
+			}
+
+			m_aRevealing.Clear();
+		}
 
 		if (m_bIsClosing)
 			return;
@@ -484,6 +548,7 @@ class ELIFE_DialogueMenu : ChimeraMenuBase
 	override void OnMenuClose()
 	{
 		m_bIsClosing = true;
+		GetGame().GetCallqueue().Remove(ReleaseHold);
 		if (s_Open == this)
 			s_Open = null;
 

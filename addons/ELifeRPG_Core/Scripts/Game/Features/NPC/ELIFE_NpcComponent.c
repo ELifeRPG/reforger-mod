@@ -184,6 +184,14 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Client-side. True if he says a line when a visit starts; the conversation waits for it before it shows.
+	bool GreetsOnVisit()
+	{
+		ELIFE_NpcVoiceTable table = GetVoiceTable();
+		return table && !table.m_sGreetingLine.IsEmpty();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Server-only. The visit ended, however; reset what belongs to it.
 	protected void OnVisitEnd()
 	{
@@ -326,7 +334,7 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! Server-only. He says why, then the customer's client shows it.
 	protected void Refuse(notnull ELIFE_NpcCharacterComponent link, int reason)
 	{
-		SayLine(GetReasonLineName(reason));
+		SayLine(GetReasonLineName(reason), false);
 		link.SendGrant(GetRplId(), false, reason);
 	}
 
@@ -593,6 +601,13 @@ class ELIFE_NpcComponent : ScriptComponent
 	protected bool IsServing()
 	{
 		return !m_bClosed && IsAtSpot();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Stepped aside on his off-duty routine to let somebody pass.
+	bool IsGivingWay()
+	{
+		return m_Routine && m_Routine.IsGivingWay();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1038,8 +1053,9 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Server-only. By name from the voice table; empty says nothing.
-	void SayLine(string lineName)
+	//! Server-only. By name from the voice table; empty says nothing. toCustomer false: not part of the conversation
+	//! (a refusal to someone else), so it doesn't become its subtitle.
+	void SayLine(string lineName, bool toCustomer = true)
 	{
 		if (lineName.IsEmpty())
 			return;
@@ -1055,12 +1071,12 @@ class ELIFE_NpcComponent : ScriptComponent
 			return;
 		}
 
-		SayIndex(line);
+		SayIndex(line, toCustomer);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Server-only. The server picks the wording so everyone hears the same one.
-	protected void SayIndex(int line)
+	protected void SayIndex(int line, bool toCustomer = true)
 	{
 		ELIFE_NpcVoiceTable table = GetVoiceTable();
 		if (!table)
@@ -1083,10 +1099,10 @@ class ELIFE_NpcComponent : ScriptComponent
 			m_mLastVariant.Set(line, variant);
 		}
 
-		Rpc(RpcDo_Say, m_iVoice, line, variant);
+		Rpc(RpcDo_Say, m_iVoice, line, variant, toCustomer);
 
 		if (RplSession.Mode() != RplMode.Dedicated)
-			RpcDo_Say(m_iVoice, line, variant);
+			RpcDo_Say(m_iVoice, line, variant, toCustomer);
 
 		if (entry.m_iGesture != 0)
 		{
@@ -1116,7 +1132,7 @@ class ELIFE_NpcComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
-	protected void RpcDo_Say(int voiceId, int line, int variant)
+	protected void RpcDo_Say(int voiceId, int line, int variant, bool toCustomer)
 	{
 		//! Every line while serving is another chance to end an idle this client still shows.
 		if (m_iCustomerPlayerId != 0)
@@ -1132,6 +1148,9 @@ class ELIFE_NpcComponent : ScriptComponent
 			return;
 
 		bool speaking = m_hVoice != AudioHandle.Invalid && !voice.IsFinishedPlaying(m_hVoice);
+		//! A line for someone else never cuts off the one he is saying.
+		if (speaking && !toCustomer)
+			return;
 
 		//! The cooldown only starts when the line is heard, so a skipped one doesn't silence the next request.
 		if (entry.m_iRepeatCooldownMs > 0)
@@ -1139,7 +1158,12 @@ class ELIFE_NpcComponent : ScriptComponent
 			int now = System.GetTickCount();
 			int lastHeard = m_mLastHeardTick.Get(line);
 			if (speaking || (lastHeard != 0 && now - lastHeard < entry.m_iRepeatCooldownMs))
+			{
+				if (toCustomer)
+					ELIFE_DialogueMenu.OnSpeakerSkipped(GetOwner());
+
 				return;
+			}
 
 			m_mLastHeardTick.Set(line, now);
 		}
@@ -1154,17 +1178,23 @@ class ELIFE_NpcComponent : ScriptComponent
 
 		PlayLineSfx(entry.m_sSfx);
 
-		m_sLastSubtitle = table.GetSubtitle(voiceId, line, variant);
-		m_iLastLineTick = System.GetTickCount();
-		if (!ELIFE_DialogueMenu.OnSpeakerSaid(GetOwner(), m_sLastSubtitle))
-			ELIFE_NpcSubtitles.Show(GetOwner(), m_sDisplayName, m_sLastSubtitle, voice, m_hVoice);
+		string subtitle = table.GetSubtitle(voiceId, line, variant);
+		if (toCustomer)
+		{
+			m_sLastSubtitle = subtitle;
+			m_iLastLineTick = System.GetTickCount();
+			if (ELIFE_DialogueMenu.OnSpeakerSaid(GetOwner(), subtitle))
+				return;
+		}
+
+		ELIFE_NpcSubtitles.Show(GetOwner(), m_sDisplayName, subtitle, voice, m_hVoice);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Client-side. The subtitle of the line heard within the last maxAgeMs.
-	bool GetRecentSubtitle(int maxAgeMs, out string subtitle)
+	//! Client-side. The subtitle of the last line, if heard at or after tick.
+	bool GetSubtitleSince(int tick, out string subtitle)
 	{
-		if (m_iLastLineTick == 0 || System.GetTickCount() - m_iLastLineTick > maxAgeMs)
+		if (m_iLastLineTick == 0 || m_iLastLineTick < tick)
 			return false;
 
 		subtitle = m_sLastSubtitle;

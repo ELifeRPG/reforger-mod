@@ -13,6 +13,8 @@ class ELIFE_NpcCharacterComponent : ScriptComponent
 	//! Client-side: the visit the server granted last, and with whom.
 	protected RplId m_GrantedNpcId = RplId.Invalid();
 	protected int m_iGrantedVisitId;
+	//! Client-side: when this player last asked to talk.
+	protected int m_iOpenRequestTick;
 
 	//------------------------------------------------------------------------------------------------
 	//! Client-side. The id of the visit granted with this NPC, 0 if none.
@@ -29,8 +31,17 @@ class ELIFE_NpcCharacterComponent : ScriptComponent
 	void RequestOpen(notnull IEntity npc)
 	{
 		RplId npcId = GetNpcId(npc);
-		if (npcId.IsValid())
-			Rpc(RpcAsk_Open, npcId);
+		if (!npcId.IsValid())
+			return;
+
+		m_iOpenRequestTick = System.GetTickCount();
+		Rpc(RpcAsk_Open, npcId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	int GetOpenRequestTick()
+	{
+		return m_iOpenRequestTick;
 	}
 
 	//------------------------------------------------------------------------------------------------

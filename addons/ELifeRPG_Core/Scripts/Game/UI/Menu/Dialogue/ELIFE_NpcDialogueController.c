@@ -20,8 +20,8 @@ class ELIFE_NpcDialogueLine : ELIFE_DialogueLine
 //! Enough for an NPC that only talks; one with its own actions subclasses it.
 class ELIFE_NpcDialogueController : ELIFE_DialogueController
 {
-	//! The greeting can be heard just before the conversation opens; a line this recent is still shown.
-	protected static const int RECENT_LINE_MS = 5000;
+	//! A greeting can wait on a server lookup; after this the conversation shows without it.
+	protected static const int GREETING_WAIT_MS = 2000;
 
 	protected ELIFE_NpcComponent m_Npc;
 	protected ELIFE_NpcCharacterComponent m_Link;
@@ -94,9 +94,12 @@ class ELIFE_NpcDialogueController : ELIFE_DialogueController
 	{
 		super.OnStart(menu);
 
+		//! The greeting can be heard just before the conversation opens; an older line (the last goodbye) isn't his answer.
 		string subtitle;
-		if (m_Npc.GetRecentSubtitle(RECENT_LINE_MS, subtitle))
+		if (m_Link && m_Npc.GetSubtitleSince(m_Link.GetOpenRequestTick(), subtitle))
 			menu.SetSubtitle(subtitle);
+		else if (m_Npc.GreetsOnVisit())
+			menu.HoldForLine(GREETING_WAIT_MS);
 	}
 
 	//------------------------------------------------------------------------------------------------
