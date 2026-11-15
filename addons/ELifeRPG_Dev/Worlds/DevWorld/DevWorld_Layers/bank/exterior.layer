@@ -1,0 +1,35 @@
+GenericEntity BankBench : "{189D4F010C08D8F2}Prefabs/Props/Seating/BenchStreet_01_Seats.et" {
+ coords 260.15 0 271.53
+ angles 0 -180 0
+}
+GenericEntity BankHoursSign : "{2EBB732A5808CB65}Prefabs/Props/Signs/SignWall_01_65x45_Hours.et" {
+ coords 254.848 1.6 271.297
+ angles 0 -180 0
+ {
+  GenericEntity {
+   ID "B34025ABF06461BB"
+   components {
+    ELIFE_NpcHoursSignComponent "{5695042524977E52}" {
+     m_sSpotName "BankClerkSpot1"
+    }
+   }
+  }
+ }
+}
+GenericEntity BankATM_Outside : "{698A9C5A9D583450}Prefabs/Props/Commercial/ATM_01_Bank.et" {
+ coords 251.85 0 271.51
+ angles 0 -180 0
+}
+GenericEntity BankFacadeLettering : "{BB9189DE76E96F56}Prefabs/Props/Signs/FacadeLettering.et" {
+ components {
+  ELIFE_FacadeLetteringComponent "{C45165FC8F1D72ED}" {
+   m_sSpotName "BankClerkSpot1"
+   m_sGlyphSet "{76E2208B5F296314}Configs/Signs/GlyphSet_Serif.conf"
+   m_fLetterHeight 0.6
+   m_fMaxWidth 15
+   m_sMaterial "{01BF0E2DC7420695}Assets/Props/Signs/Letters/Data/Letter_Gold.emat"
+  }
+ }
+ coords 256 3.923 272.29
+ angles 0 -180 0
+}

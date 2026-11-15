@@ -1,0 +1,653 @@
+$grp GenericEntity : "{B3CF0487BB36323B}Prefabs/Props/Furniture/LampFluorescent/LampFluorescent_01.et" {
+ BankLight_HallStaffWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 252.271 3.5 276.948
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_HallCustomersWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 252.271 3.5 274.448
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_HallStaffEast {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 247.655 3.5 276.948
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_HallCustomersEast {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 247.655 3.5 274.448
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_RoomNW {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 264.507 3.5 276.032
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_BackEntrance {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 258.231 3.503 285.387
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_LobbyWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 262.829 3.503 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_LobbyCentre {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 258.231 3.503 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_LobbyEast {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 253.231 3.503 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_Vestibule {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 256 3.5 275.6
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_OfficeWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 260.2 3.5 275.6
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_BreakRoom {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 247.5 3.5 281
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpRoomNW {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 264.876 7.297 275.975
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpCorridorCentre {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 258.337 7.297 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpCorridorEast {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 253.719 7.297 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpCorridorWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 262.829 7.297 280.725
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpLanding {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 258.337 7.297 285.485
+  angles 0 90 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpRestRoom {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 260.198 7.297 275.55
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpNorthWest {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 253.042 7.297 275.165
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpNorthEast {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 249.201 7.297 275.337
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+ BankLight_UpRoomSE {
+  components {
+   MeshObject "{5872F0EB7FA40561}" {
+    Materials {
+     MaterialAssignClass "{6A3E1C52B7D04F19}" {
+      SourceMaterial "LampFluorescent_01_cover"
+      AssignedMaterial "{B4830363C6BEE7A6}Assets/Props/Furniture/LampFluorescent_01/Data/LampFluorescent_01_cover_lit.emat"
+     }
+    }
+   }
+  }
+  coords 247.5 7.297 281
+  angles 0 -180 0
+  {
+   LightEntity : "{37D194C189668A3C}Prefabs/Structures/BuildingParts/Lights/LightPrefabs/LightIndustrial_02_light_point_interior.et" {
+    components {
+     RplComponent "{585699AC653DD54C}" {
+      Enabled 0
+     }
+    }
+    coords 0 -0.15 0
+    Color 0.95 0.97 1 1
+    LV 13
+    ClipEV -10
+    Type Point
+    Radius 10
+    NearPlane 0.2
+    LensFlareType Disabled
+   }
+  }
+ }
+}

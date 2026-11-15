@@ -9,7 +9,7 @@ below the Workshop limits and lets the large, rarely changing art live apart fro
 | --- | --- | --- | --- |
 | `ELifeRPG_Items` | `14E46A965EE53285` | Art for general items and props: meshes, materials, textures and sounds | vanilla |
 | `ELifeRPG_NPC` | `97B65A48A10C989D` | DLC: the bank clerk (scripts, prefabs, configs, texts, voice) | vanilla + `ELifeRPG_Core` |
-| `ELifeRPG_Props` | `AF193338B10BF1C5` | DLC: placeable props built on Core scripts (benches with seats, opening-hours sign, ATMs) with their art and sounds | vanilla + `ELifeRPG_Core` |
+| `ELifeRPG_Props` | `AF193338B10BF1C5` | DLC: placeable props built on Core scripts (benches with seats, opening-hours sign, facade lettering, ATMs) with their art and sounds | vanilla + `ELifeRPG_Core` |
 | `ELifeRPG_Vehicles` | `4B054C78918EAA22` | Car key art, vehicle lock sounds | vanilla |
 | `ELifeRPG_Vegetation` | `12BC1DE093734B8A` | Fruit tree materials and polyplanes | vanilla |
 | `ELifeRPG_Core` | `66EB6BA548DD28C2` | **All** scripts, configs, UI, localization and prefabs | vanilla + all asset addons |

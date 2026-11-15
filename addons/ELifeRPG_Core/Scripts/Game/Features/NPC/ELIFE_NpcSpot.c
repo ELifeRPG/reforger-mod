@@ -156,6 +156,19 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 	//! The nearest spot within range whose NPC keeps opening hours, or null.
 	static ELIFE_NpcSpot FindNearestWithSchedule(vector position, float range)
 	{
+		return FindNearest(position, range, true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The nearest spot within range that has its own place name (m_sMapName), or null.
+	static ELIFE_NpcSpot FindNearestNamed(vector position, float range)
+	{
+		return FindNearest(position, range, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static ELIFE_NpcSpot FindNearest(vector position, float range, bool withSchedule)
+	{
 		ELIFE_NpcSpot nearest;
 		float nearestDistance = range * range;
 		foreach (ELIFE_NpcSpot spot : s_aSpots)
@@ -164,7 +177,13 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 				continue;
 
 			float distance = vector.DistanceSq(position, spot.GetOrigin());
-			if (distance > nearestDistance || !spot.GetSchedule())
+			if (distance > nearestDistance)
+				continue;
+
+			if (withSchedule && !spot.GetSchedule())
+				continue;
+
+			if (!withSchedule && spot.GetPlaceName().IsEmpty())
 				continue;
 
 			nearest = spot;

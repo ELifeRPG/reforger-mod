@@ -1,0 +1,5 @@
+MatPBRBasic : "{AD04B939A2C3F083}Assets/_BaseMaterials/Equipment_MatPBRBasic.emat" {
+ Color 0.745 0.397 0.068 1
+ RoughnessScale 0.35
+ MetalnessScale 1
+}

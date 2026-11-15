@@ -1,0 +1,50 @@
+$grp GenericEntity : "{20AFC1514925B919}Prefabs/Props/Commercial/ATM_01_Branch.et" {
+ BankATM_Branch1 {
+  coords 255.05 0.2 277.1
+  angles 0 90 0
+ }
+ BankATM_Branch2 {
+  coords 255.05 0.2 276
+  angles 0 90 0
+ }
+}
+$grp GenericEntity : "{728DD36004461456}Prefabs/Props/Furniture/Cupboard_01/Cupboard_01_B.et" {
+ BankCounter1 {
+  coords 251.43 0.2 275.86
+ }
+ BankCounter2 {
+  coords 249.93 0.2 275.86
+ }
+ BankCounter3 {
+  coords 248.43 0.2 275.86
+ }
+ BankCounter4 {
+  coords 246.93 0.2 275.86
+ }
+}
+$grp ELIFE_BankClerkSpot : "{9119837A261D7CC5}Prefabs/Characters/Banking/BankClerkSpot.et" {
+ BankClerkSpot1 {
+  coords 246.68 0.2 276.835
+  angles 0 -180 0
+  m_sMapName "Federal E-Life Bank"
+ }
+ BankClerkSpot2 {
+  coords 248.43 0.2 276.938
+  angles 0 -180 0
+  m_sMapName "Federal E-Life Bank"
+ }
+ BankClerkSpot3 {
+  coords 250.18 0.2 276.907
+  angles 0 -180 0
+  m_sMapName "Federal E-Life Bank"
+ }
+ BankClerkSpotHatch {
+  coords 258.3 0.2 274.8
+  angles 0 -90 0
+  m_sMapName "Federal E-Life Bank"
+ }
+}
+GenericEntity BankSafe : "{C3C7A8E9B6324130}Prefabs/Props/Furniture/Safe_01.et" {
+ coords 262.17 0.2 273.5
+ angles 0 -90 0
+}

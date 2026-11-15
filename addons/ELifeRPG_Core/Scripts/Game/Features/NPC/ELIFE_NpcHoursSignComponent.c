@@ -12,6 +12,9 @@ class ELIFE_NpcHoursSignComponent : ELIFE_WorldScreenComponent
 	[Attribute("#ELIFE-Sign_OpeningHours", UIWidgets.EditBox, "Heading, may be a string table key.", category: "Hours Sign")]
 	protected string m_sTitle;
 
+	[Attribute("", UIWidgets.EditBox, "Entity name of the NPC spot whose hours it shows, e.g. BankClerkSpot1. Empty: the spot it is placed under, else the nearest one with opening hours.", category: "Hours Sign")]
+	protected string m_sSpotName;
+
 	[Attribute("25", UIWidgets.EditBox, "Placed under no NPC spot, it shows the hours of the nearest one with opening hours within this many metres.", category: "Hours Sign")]
 	protected float m_fSpotRange;
 
@@ -98,7 +101,7 @@ class ELIFE_NpcHoursSignComponent : ELIFE_WorldScreenComponent
 				return true;
 
 			m_bWarnedNoSpot = true;
-			Print(string.Format("%1 | no NPC spot with opening hours within %2 m", ClassName(), m_fSpotRange), LogLevel.WARNING);
+			Print(string.Format("%1 | no NPC spot with opening hours (spot '%2', else within %3 m)", ClassName(), m_sSpotName, m_fSpotRange), LogLevel.WARNING);
 			return true;
 		}
 
@@ -169,10 +172,19 @@ class ELIFE_NpcHoursSignComponent : ELIFE_WorldScreenComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The spot this sign belongs to: one it is placed under (a parent, at any depth) if that has opening hours,
+	//! The spot this sign belongs to: the one named in m_sSpotName, else one it is placed under (a parent, at any depth) if that has opening hours,
 	//! else the nearest spot with opening hours within m_fSpotRange.
 	protected ELIFE_NpcSpot FindSpot()
 	{
+		if (!m_sSpotName.IsEmpty())
+		{
+			ELIFE_NpcSpot named = ELIFE_NpcSpot.Cast(GetOwner().GetWorld().FindEntityByName(m_sSpotName));
+			if (named && named.GetSchedule())
+				return named;
+
+			return null;
+		}
+
 		IEntity parent = GetOwner().GetParent();
 		while (parent)
 		{

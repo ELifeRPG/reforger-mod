@@ -124,11 +124,14 @@ seats or obstacles, re-bake the navmesh so he can reach them.
 hours of one NPC spot (its override first, else the NPC prefab's schedule) on the plate within 20 m, with a second
 hours line when the schedule has a second range.
 
+- By name: set "Spot Name" to the spot's entity name (e.g. `BankClerkSpot1`). Works across layers; the sign shows
+  nothing if that spot doesn't exist or has no opening hours.
 - Linked: place the sign under the spot in the World Editor (as its child, at any depth). It then always shows that
-  spot's hours and moves with it. Use this when several NPCs with different hours stand close together.
+  spot's hours and moves with it, but has to live in the spot's layer.
 - Unlinked: place it anywhere within 25 m of a spot with opening hours; it shows the nearest one.
 
-With neither, the plate stays blank. Change the heading or the range on the component.
+Use one of the first two when several NPCs with different hours stand close together. With none, the plate stays
+blank. Change the heading or the range on the component.
 Tick "Show name" to put the spot's `m_sMapName` in the heading instead (long names shrink to fit; without a name
 the heading stays).
 
@@ -140,6 +143,25 @@ back to the marker config's green) and grey while closed. Each client works
 the state out from the hours and the in-game clock, and refreshes it while the map is open. Logic in
 `ELIFE_NpcMapMarker.c` (Core); the marker type is added to the game mode's marker config,
 `Configs/Map/ELIFE_MapMarkerConfig.conf`, where the open and closed colours are set.
+
+## Facade lettering
+
+`Prefabs/Props/Signs/FacadeLettering.et` (`ELifeRPG_Props`). `ELIFE_FacadeLetteringComponent` (Core) spells a name
+in 3D capitals, e.g. the bank's name on its facade. Every client builds the letters itself (a dedicated server has
+none); they also appear in the World Editor, so the sign can be placed by eye, but are never saved into the layer.
+
+Place it with its origin on the wall at the baseline, its front (+Z) facing the street; the text is centred on it.
+The text is "Text" if set (may be a string table key), else the `m_sMapName` of the spot named in "Spot Name", else
+of a spot it is placed under, else of the nearest named spot within "Spot Range" (40 m).
+
+- "Glyph Set": the font, `Configs/Signs/GlyphSet_Serif.conf` (bank) or `GlyphSet_Sans.conf` (shops).
+- "Letter Height": capital height in metres. "Max Width": longer texts get smaller letters (0: no limit).
+- "Material": letter colour, e.g. `Assets/Props/Signs/Letters/Data/Letter_Gold.emat`; empty is dark metal.
+
+The fonts have A-Z, Ä, Ö, Ü, 0-9 and `& - . '`. Lowercase is capitalised, ß becomes SS, and any other character
+leaves a gap (with a warning in the log). A glyph set is an `ELIFE_GlyphSet` config: per character a mesh (cap
+height 1 m, facing +Z, origin at the baseline where reading starts, material slot `Letter`) and its advance in cap
+heights.
 
 ## Seats
 

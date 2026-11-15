@@ -1,0 +1,70 @@
+GenericEntity BankBreakSofa : "{59D408A3148997CD}Prefabs/Props/Seating/Sofa_02_green_Seats.et" {
+ coords 247.1 0.2 279.45
+}
+$grp GenericEntity : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seats.et" {
+ BankBreakChair1 {
+  coords 245.75 0.2 281.6
+  angles 0 90 0
+ }
+ BankBreakChair2 {
+  coords 249.3 0.2 282
+  angles 0 -90 0
+ }
+}
+$grp GenericEntity : "{A7D35C19E04B62F8}Prefabs/Props/Sleeping/Bed_01_Sleep.et" {
+ BankRestBed1 {
+  coords 261.85 4 273.9
+ }
+ BankRestBed2 {
+  coords 261.85 4 276.7
+ }
+}
+$grp GenericEntity : "{B01465C150833D28}Prefabs/Props/Seating/BenchOffice_01_Brown_Seats.et" {
+ BankSeat_Hall_BenchOffice_01_Base_1 {
+  coords 251.855 0.2 273.152
+ }
+ BankSeat_Hall_BenchOffice_01_Base_2 {
+  coords 249.046 0.2 273.152
+ }
+ BankSeat_Hall_BenchOffice_01_Base_3 {
+  coords 246.251 0.2 273.152
+ }
+ BankSeat_Lobby_BenchOffice_01_Brown_1 {
+  coords 262.144 0.2 279.333
+ }
+ BankSeat_Lobby_BenchOffice_01_Brown_2 {
+  coords 265.03 0.2 282.502
+  angles 0 -180 0
+ }
+ BankSeat_Lobby_BenchOffice_01_Brown_3 {
+  coords 254.56 0.2 282.502
+  angles 0 -180 0
+ }
+ BankSeat_Lobby_BenchOffice_01_Brown_4 {
+  coords 262.144 0.2 282.502
+  angles 0 -180 0
+ }
+ BankSeat_Lobby_BenchOffice_01_Brown_5 {
+  coords 251.06 0.2 282.502
+  angles 0 -180 0
+ }
+ BankSeat_UpCorr_BenchOffice_01_Base_1 {
+  coords 265.2 3.997 282.342
+  angles 0 -180 0
+ }
+ BankSeat_UpCorr_BenchOffice_01_Base_2 {
+  coords 252.163 3.997 279.322
+ }
+ BankSeat_UpCorr_BenchOffice_01_Base_3 {
+  coords 252.395 3.997 282.342
+  angles 0 -180 0
+ }
+ BankSeat_UpCorr_BenchOffice_01_Base_4 {
+  coords 261.992 3.997 282.342
+  angles 0 -180 0
+ }
+ BankSeat_UpCorr_BenchOffice_01_Base_5 {
+  coords 255.395 3.997 282.342
+  angles 0 -180 0
+ }
+}
