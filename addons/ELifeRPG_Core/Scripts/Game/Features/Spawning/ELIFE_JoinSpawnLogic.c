@@ -92,6 +92,12 @@ class ELIFE_JoinSpawnLogic : SCR_SpawnLogic
 	//! Spawns the player's loaded character. Called by the join session once the character is chosen; the body is Task 6.
 	void SpawnLoadedCharacter_S(int playerId)
 	{
+#ifdef WORKBENCH
+		// Self-tests use negative ids; they must not spawn a real character.
+		if (playerId < 0)
+			return;
+#endif
+
 		DoSpawn_S(playerId);
 	}
 

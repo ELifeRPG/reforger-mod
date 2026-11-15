@@ -123,6 +123,12 @@ class ELIFE_JoinSelfTests
 			Test_ConfirmedCharacter_ConfirmedStatesGiveId();
 			Test_ConfirmedCharacter_NoSessionEmpty();
 
+			Test_SpawnSelect_ConfirmedCharacterId();
+			Test_SpawnSelect_Mode1GoesSpawning();
+			Test_SpawnSelect_Mode2NoPointsGoesSpawning();
+			Test_SpawnSelect_WrongStateIgnored();
+			Test_SpawnSelect_InFlightIgnored();
+			Test_SpawnSelect_IdleKick();
 			mgr.ClearTestSessions();
 			mgr.m_aAppearancePrefabs = savedAppearance;
 		}

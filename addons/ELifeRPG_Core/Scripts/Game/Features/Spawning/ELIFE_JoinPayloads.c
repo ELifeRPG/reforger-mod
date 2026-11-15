@@ -27,6 +27,40 @@ class ELIFE_JoinSelectPayload : JsonApiStruct
 }
 
 //------------------------------------------------------------------------------------------------
+class ELIFE_JoinSpawnPointEntry : JsonApiStruct
+{
+	//! Position in the snapshot; the pick sends it back.
+	int index;
+	string name;
+	//! Image resource name (.edds), or "" for none.
+	string image;
+
+	//------------------------------------------------------------------------------------------------
+	void ELIFE_JoinSpawnPointEntry()
+	{
+		RegV("index");
+		RegV("name");
+		RegV("image");
+	}
+}
+
+//------------------------------------------------------------------------------------------------
+class ELIFE_JoinSpawnSelectPayload : JsonApiStruct
+{
+	string characterName;
+	ref array<ref ELIFE_JoinSpawnPointEntry> points = {};
+	string error;
+
+	//------------------------------------------------------------------------------------------------
+	void ELIFE_JoinSpawnSelectPayload()
+	{
+		RegV("characterName");
+		RegV("points");
+		RegV("error");
+	}
+}
+
+//------------------------------------------------------------------------------------------------
 class ELIFE_JoinCreatePayload : JsonApiStruct
 {
 	//! int, not bool: bools pack as 1 or 0 (docs/backend-api.md).

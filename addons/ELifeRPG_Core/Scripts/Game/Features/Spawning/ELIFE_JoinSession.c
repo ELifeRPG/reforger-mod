@@ -95,7 +95,9 @@ class ELIFE_JoinSession
 			case ELIFE_EJoinState.SELECTING:
 				return to == ELIFE_EJoinState.CREATING || to == ELIFE_EJoinState.LOADING_CHARACTER || to == ELIFE_EJoinState.REJECTED;
 			case ELIFE_EJoinState.LOADING_CHARACTER:
-				return to == ELIFE_EJoinState.SPAWNING || to == ELIFE_EJoinState.SELECTING || to == ELIFE_EJoinState.REJECTED;
+				return to == ELIFE_EJoinState.SPAWNING || to == ELIFE_EJoinState.SELECTING || to == ELIFE_EJoinState.REJECTED || to == ELIFE_EJoinState.SELECTING_SPAWN;
+			case ELIFE_EJoinState.SELECTING_SPAWN:
+				return to == ELIFE_EJoinState.SPAWNING || to == ELIFE_EJoinState.REJECTED;
 			case ELIFE_EJoinState.SPAWNING:
 				return to == ELIFE_EJoinState.IN_GAME || to == ELIFE_EJoinState.SPAWNING || to == ELIFE_EJoinState.REJECTED;
 			case ELIFE_EJoinState.IN_GAME:

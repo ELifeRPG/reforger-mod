@@ -43,6 +43,13 @@ modded class ELIFE_PlayerController
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Client asks the server to spawn at one of the spawn points it was offered (index into that list).
+	void ELIFE_RequestSpawnPoint(int index)
+	{
+		Rpc(RpcAsk_RequestSpawnPoint, index);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! Client asks the server to open the create screen.
 	void ELIFE_RequestOpenCreate()
 	{
@@ -143,6 +150,15 @@ modded class ELIFE_PlayerController
 		ELIFE_JoinSessionManagerComponent manager = ELIFE_JoinSessionManagerComponent.GetInstance();
 		if (manager)
 			manager.HandleRequestSelect(GetPlayerId(), characterId);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	[RplRpc(RplChannel.Reliable, RplRcver.Server)]
+	protected void RpcAsk_RequestSpawnPoint(int index)
+	{
+		ELIFE_JoinSessionManagerComponent manager = ELIFE_JoinSessionManagerComponent.GetInstance();
+		if (manager)
+			manager.HandleRequestSpawnPoint(GetPlayerId(), index);
 	}
 
 	//------------------------------------------------------------------------------------------------

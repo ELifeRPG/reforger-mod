@@ -8,6 +8,7 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	protected const ResourceName LAYOUT_SELECT = "{5FC75D4AF9E47587}UI/layouts/Menus/Join/JoinSelect.layout";
 	protected const ResourceName LAYOUT_CREATE = "{6992DAA289EE19DA}UI/layouts/Menus/Join/JoinCreate.layout";
 	protected const ResourceName LAYOUT_LINK = "{A2BDFD05AABB7733}UI/layouts/Menus/Join/JoinLink.layout";
+	protected const ResourceName LAYOUT_SPAWN_SELECT = "{FFB63F59FEB65695}UI/layouts/Menus/Join/JoinSpawnSelect.layout";
 
 	//! Presets in JOIN_DIALOGS_CONFIG.
 	protected const string DIALOG_TAG_ERROR = "ELIFE_JoinError";
@@ -33,6 +34,7 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	protected ref ELIFE_JoinSelectScreen m_SelectScreen;
 	protected ref ELIFE_JoinCreateScreen m_CreateScreen;
 	protected ref ELIFE_JoinLinkScreen m_LinkScreen;
+	protected ref ELIFE_JoinSpawnSelectScreen m_SpawnSelectScreen;
 
 	//! The open rejection dialog, if any. Vanilla owns the dialog; this is only a reference.
 	protected SCR_ConfigurableDialogUi m_Dialog;
@@ -156,6 +158,9 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 
 		if (m_LinkScreen)
 			m_LinkScreen.SetBusy(busy);
+
+		if (m_SpawnSelectScreen)
+			m_SpawnSelectScreen.SetBusy(busy);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -315,6 +320,13 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 
 		switch (screen)
 		{
+		Widget spawnSelectRoot = CreateStretched(LAYOUT_SPAWN_SELECT, m_wContent);
+		if (spawnSelectRoot)
+		{
+			m_SpawnSelectScreen = new ELIFE_JoinSpawnSelectScreen();
+			m_SpawnSelectScreen.Bind(spawnSelectRoot);
+		}
+
 			case ELIFE_EJoinScreen.CONNECTING:
 			{
 				ShowLoading("#ELIFE-Join_Connecting");
@@ -380,6 +392,12 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	{
 		return screen == ELIFE_EJoinScreen.ERROR || screen == ELIFE_EJoinScreen.BANNED || screen == ELIFE_EJoinScreen.NOT_WHITELISTED;
 	}
+
+			case ELIFE_EJoinScreen.SPAWN_SELECT:
+			{
+				ShowSpawnSelect(payloadJson);
+				return;
+			}
 
 	//------------------------------------------------------------------------------------------------
 	//! Vanilla's respawn system shows its own loading placeholder over the join menu until the player spawns; hide it so this menu is the only thing shown.
@@ -461,6 +479,23 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	{
 		if (!m_wJoinRoot)
 			return;
+
+	//------------------------------------------------------------------------------------------------
+	//! Spawn point choice after the character is confirmed (spawn mode SELECT_PER_RESTART). Not a rejection.
+	protected void ShowSpawnSelect(string payloadJson)
+	{
+		HideLoading();
+		ShowSelectCreateVisible(false);
+
+		ELIFE_JoinSpawnSelectPayload payload = new ELIFE_JoinSpawnSelectPayload();
+		payload.ExpandFromRAW(payloadJson);
+
+		if (m_SpawnSelectScreen)
+		{
+			m_SpawnSelectScreen.SetVisible(true);
+			m_SpawnSelectScreen.Show(payload, GetController());
+		}
+	}
 
 		Print(string.Format("ELIFE_Join | DEBUG %1 root children of m_wJoinRoot:", where), LogLevel.NORMAL);
 		Widget child = m_wJoinRoot.GetChildren();
@@ -594,6 +629,9 @@ class ELIFE_JoinMenu : ChimeraMenuBase
 	//------------------------------------------------------------------------------------------------
 	protected void ShowBanned(string payloadJson)
 	{
+
+		if (m_SpawnSelectScreen)
+			m_SpawnSelectScreen.SetVisible(visible);
 		ELIFE_JoinBanPayload payload = new ELIFE_JoinBanPayload();
 		payload.ExpandFromRAW(payloadJson);
 

@@ -22,7 +22,7 @@ class ELIFE_SpawnPoint : GenericEntity
 	[Attribute("", UIWidgets.EditBox, desc: "Name in the spawn selection")]
 	protected string m_sName;
 
-	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Image in the spawn selection", params: "edds imageset")]
+	[Attribute("", UIWidgets.ResourcePickerThumbnail, desc: "Image in the spawn selection", params: "edds")]
 	protected ResourceName m_sImage;
 
 	[Attribute("5", UIWidgets.EditBox, desc: "Radius the player spawns in, metres", params: "0 inf")]
@@ -96,6 +96,23 @@ class ELIFE_SpawnPoint : GenericEntity
 			return null;
 
 		return candidates[Math.RandomInt(0, candidates.Count())];
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Clears outPoints, then appends the registered points of `mode` in registration order. Returns the count.
+	static int GetAll(ELIFE_ESpawnMode mode, notnull array<ELIFE_SpawnPoint> outPoints)
+	{
+		outPoints.Clear();
+		if (!s_aPoints)
+			return 0;
+
+		foreach (ELIFE_SpawnPoint point : s_aPoints)
+		{
+			if (point.GetSpawnMode() == mode)
+				outPoints.Insert(point);
+		}
+
+		return outPoints.Count();
 	}
 
 	//------------------------------------------------------------------------------------------------

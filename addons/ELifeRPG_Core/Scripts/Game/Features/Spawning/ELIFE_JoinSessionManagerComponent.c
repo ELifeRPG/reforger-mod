@@ -103,7 +103,7 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! The character the player picked and the backend confirmed, or "" when none is confirmed. Server only; a client has no sessions.
-	//! Only SPAWNING and IN_GAME count. LOADING_CHARACTER is still waiting for CharacterSelected. A failed select goes back to SELECTING
+	//! Only SELECTING_SPAWN, SPAWNING and IN_GAME count. LOADING_CHARACTER is still waiting for CharacterSelected. A failed select goes back to SELECTING
 	//! and keeps m_sSelectedCharacterId, so the state, not the id, decides. REJECTED and the earlier states never confirm a character.
 	string GetConfirmedCharacterId(int playerId)
 	{
@@ -111,7 +111,7 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		if (!s)
 			return "";
 
-		if (s.m_eState != ELIFE_EJoinState.SPAWNING && s.m_eState != ELIFE_EJoinState.IN_GAME)
+		if (s.m_eState != ELIFE_EJoinState.SELECTING_SPAWN && s.m_eState != ELIFE_EJoinState.SPAWNING && s.m_eState != ELIFE_EJoinState.IN_GAME)
 			return "";
 
 		return s.m_sSelectedCharacterId;
@@ -472,6 +472,11 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	{
 		// TODO: apply gear/state from the backend once a load endpoint exists; prefab default loadout is used today
 		return super.PreparePlayerEntity_S(requestComponent, handlerComponent, data, entity);
+		// A point picked on the spawn selection is used by every attempt of this join, retries included.
+		// A point deleted since the pick falls through to the random pick below.
+		if (s.m_ChosenSpawnPoint && IsRegisteredSpawnPoint(s.m_ChosenSpawnPoint))
+			return ELIFE_SpawnLocator.FindPositionAtPoint(s.m_ChosenSpawnPoint, pos, angles, s.Describe());
+
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -539,6 +544,7 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		{
 			Reject(s, ELIFE_EJoinScreen.ERROR, MakeErrorPayload("#ELIFE-Join_ErrorBackend"), "no spawn logic");
 			return;
+		s.m_ChosenSpawnPoint = null;
 		}
 
 		spawnLogic.SpawnLoadedCharacter_S(playerId);
@@ -878,7 +884,28 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		if (!SetState(s, ELIFE_EJoinState.SPAWNING, "character selected"))
+		BeginSpawnOrSelection(s);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! After the character is confirmed: mode SELECT_PER_RESTART with registered points shows the spawn selection (SELECTING_SPAWN).
+	//! Any other case spawns at once, as before. Called with the session in LOADING_CHARACTER.
+	void BeginSpawnOrSelection(ELIFE_JoinSession s)
+	{
+		int count = 0;
+		if (m_eSpawnMode == ELIFE_ESpawnMode.SELECT_PER_RESTART)
+			count = ELIFE_SpawnPoint.GetAll(m_eSpawnMode, s.m_aSpawnChoices);
+		else
+			s.m_aSpawnChoices.Clear();
+
+		if (count == 0)
+		{
+			EnterSpawning(s, "character selected");
+			return;
+		}
+
+		// TODO: skip when the API returns a saved position (once per restart)
+		if (!SetState(s, ELIFE_EJoinState.SELECTING_SPAWN, "spawn selection"))
 			return;
 
 		ELIFE_JoinSpawnLogic spawnLogic = ELIFE_JoinSpawnLogic.GetInstance();
@@ -933,6 +960,89 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 		Print(string.Format("ELIFE_Join | DEBUG %1 request=CharacterSelected gameIdentityId=[%2] len=%3", s.Describe(), body.gameIdentityId, body.gameIdentityId.Length()), LogLevel.NORMAL);
 		ctx.m_Callback = api.CharacterSelected(body, ctx, "OnCharacterSelected");
 	}
+
+		// The idle limit counts from the moment the selection is shown.
+		s.m_iLastActivityMs = NowMs();
+		Push(s, ELIFE_EJoinScreen.SPAWN_SELECT, BuildSpawnSelectPayload(s, ""));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Client pick on the spawn selection. A valid pick that is still registered becomes the chosen point and the spawn starts.
+	//! Anything else (out of range, a point deleted since the snapshot) refreshes the list and shows the screen again with an error.
+	//! When no point of the mode is left, the join spawns at a random position, with a WARNING.
+	void HandleRequestSpawnPoint(int playerId, int index)
+	{
+		ELIFE_JoinSession s = AcceptRpc(playerId, "RpcAsk_RequestSpawnPoint", ELIFE_EJoinState.SELECTING_SPAWN);
+		if (!s)
+			return;
+
+		if (index >= 0 && index < s.m_aSpawnChoices.Count() && IsRegisteredSpawnPoint(s.m_aSpawnChoices[index]))
+		{
+			s.m_ChosenSpawnPoint = s.m_aSpawnChoices[index];
+			EnterSpawning(s, "spawn point picked");
+			return;
+		}
+
+		int count = ELIFE_SpawnPoint.GetAll(m_eSpawnMode, s.m_aSpawnChoices);
+		if (count == 0)
+		{
+			Print(string.Format("ELIFE_Join | %1 no spawn point left after a pick, using a random position", s.Describe()), LogLevel.WARNING);
+			s.m_ChosenSpawnPoint = null;
+			EnterSpawning(s, "no spawn point left");
+			return;
+		}
+
+		Push(s, ELIFE_EJoinScreen.SPAWN_SELECT, BuildSpawnSelectPayload(s, "#ELIFE-Join_SpawnPointUnavailable"));
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! True when `point` is set and still registered for the server's spawn mode, so a point deleted after the snapshot is refused.
+	protected bool IsRegisteredSpawnPoint(ELIFE_SpawnPoint point)
+	{
+		if (!point)
+			return false;
+
+		array<ELIFE_SpawnPoint> live = new array<ELIFE_SpawnPoint>();
+		ELIFE_SpawnPoint.GetAll(m_eSpawnMode, live);
+		return live.Find(point) >= 0;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Payload for the spawn selection: the character's name, the offered points (index = position in m_aSpawnChoices, null entries skipped) and an error key or "".
+	protected ELIFE_JoinSpawnSelectPayload BuildSpawnSelectPayload(ELIFE_JoinSession s, string error)
+	{
+		ELIFE_JoinSpawnSelectPayload payload = new ELIFE_JoinSpawnSelectPayload();
+		payload.characterName = s.m_sSelectedCharacterName;
+		payload.error = error;
+
+		for (int i = 0; i < s.m_aSpawnChoices.Count(); i++)
+		{
+			ELIFE_SpawnPoint point = s.m_aSpawnChoices[i];
+			if (!point)
+				continue;
+
+			ELIFE_JoinSpawnPointEntry entry = new ELIFE_JoinSpawnPointEntry();
+			entry.index = i;
+			entry.name = point.GetDisplayName();
+			entry.image = point.GetImage();
+			payload.points.Insert(entry);
+		}
+
+		return payload;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Moves to SPAWNING and asks the spawn logic to spawn the character. A missing spawn logic rejects the player.
+	protected void EnterSpawning(ELIFE_JoinSession s, string reason)
+	{
+		if (!SetState(s, ELIFE_EJoinState.SPAWNING, reason))
+			return;
+
+#ifdef WORKBENCH
+		// Self-test sessions use negative ids; they never reach the real spawn logic.
+		if (s.m_iPlayerId < 0)
+			return;
+#endif
 
 	//------------------------------------------------------------------------------------------------
 	//! The platform's answer for a name check. Only a request that is still current goes on: a rejected name gets an error, a clean one goes to the backend create.
@@ -1145,7 +1255,7 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 			return;
 		}
 
-		bool idleState = s.m_eState == ELIFE_EJoinState.CREATING || s.m_eState == ELIFE_EJoinState.SELECTING || s.m_eState == ELIFE_EJoinState.LINKING;
+		bool idleState = s.m_eState == ELIFE_EJoinState.CREATING || s.m_eState == ELIFE_EJoinState.SELECTING || s.m_eState == ELIFE_EJoinState.LINKING || s.m_eState == ELIFE_EJoinState.SELECTING_SPAWN;
 		if (idleState && now - s.m_iLastActivityMs > SecondsToMs(m_fIdleTimeoutSeconds))
 		{
 			KickAndEnd(s, "idle");
@@ -1570,3 +1680,10 @@ class ELIFE_JoinSessionManagerComponent : SCR_BaseGameModeComponent
 	}
 #endif
 }
+	//------------------------------------------------------------------------------------------------
+	//! Self-tests only. Sets the join spawn mode; tests read GetSpawnMode first and restore it.
+	void SetSpawnModeForTests(ELIFE_ESpawnMode mode)
+	{
+		m_eSpawnMode = mode;
+	}
+

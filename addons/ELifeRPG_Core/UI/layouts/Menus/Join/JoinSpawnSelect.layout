@@ -1,0 +1,162 @@
+OverlayWidgetClass {
+ Name "JoinSpawnSelect"
+ "Ignore Cursor" 0
+ {
+  VerticalLayoutWidgetClass "{DB7B2265C303CBD5}" {
+   Name "SpawnColumn"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{E88AB0D7AFE17BA1}" {
+    HorizontalAlign 1
+    VerticalAlign 1
+    Padding 24 24 24 24
+   }
+   {
+    TextWidgetClass "{E326875902EA9799}" {
+     Name "SpawnSelectTitle"
+     "Ignore Cursor" 0
+     Slot LayoutSlot "{9F52720180BFEF5A}" {
+      HorizontalAlign 1
+      Padding 0 0 0 16
+     }
+     Text ""
+     "Font Size" 32
+     FontProperties FontProperties "{046156ED68C9F36D}" {
+      Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+     }
+    }
+    HorizontalLayoutWidgetClass "{85FBF29E0896D222}" {
+     Name "SpawnCardRow"
+     "Ignore Cursor" 0
+     Slot LayoutSlot "{F2EAE687027F932D}" {
+      HorizontalAlign 1
+      Padding 0 0 0 16
+     }
+    }
+    HorizontalLayoutWidgetClass "{72A371EE930E90B1}" {
+     Name "SpawnPager"
+     "Ignore Cursor" 0
+     "Is Visible" 0
+     Slot LayoutSlot "{CF5AA03689F2D75E}" {
+      HorizontalAlign 1
+      Padding 0 0 0 12
+     }
+     {
+      SizeLayoutWidgetClass "{87A7BC55F687F5E9}" {
+       Name "SpawnPrevSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{04EE7DB53BE2DB8D}" {
+        VerticalAlign 1
+       }
+       AllowWidthOverride 1
+       WidthOverride 44
+       AllowHeightOverride 1
+       HeightOverride 44
+       {
+        ButtonWidgetClass "{34D87126A7E0B10A}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+         Name "SpawnPrev"
+         Slot OverlayWidgetSlot "{FFEC7FA5CC2A2C12}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+        }
+       }
+      }
+      TextWidgetClass "{8741902FAA5B635D}" {
+       Name "SpawnPageLabel"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{CF78942E3B6A1927}" {
+        VerticalAlign 1
+        Padding 12 0 12 0
+       }
+       Text ""
+       "Font Size" 20
+      }
+      SizeLayoutWidgetClass "{D8E7E5DB0D776FB2}" {
+       Name "SpawnNextSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{52D0771F7D1A8EA9}" {
+        VerticalAlign 1
+       }
+       AllowWidthOverride 1
+       WidthOverride 44
+       AllowHeightOverride 1
+       HeightOverride 44
+       {
+        ButtonWidgetClass "{33F5C46EE99978EE}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+         Name "SpawnNext"
+         Slot OverlayWidgetSlot "{B4A29EBC222E5C2A}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+        }
+       }
+      }
+     }
+    }
+    HorizontalLayoutWidgetClass "{3E7CAA60B0FCCD55}" {
+     Name "SpawnErrorRow"
+     "Ignore Cursor" 0
+     "Is Visible" 0
+     Slot LayoutSlot "{1F6C7F0FCA8B8EBE}" {
+      HorizontalAlign 1
+      Padding 0 0 0 12
+     }
+     Color 0.947 0.056 0.056 1
+     {
+      ImageWidgetClass "{32A228DEA6AEFF6B}" {
+       Name "SpawnErrorIcon"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{5045A3E0682AADCA}" {
+        VerticalAlign 1
+        Padding 0 0 8 0
+       }
+       "Inherit Color" 1
+       Texture "{D17288006833490F}UI/Textures/Icons/icons_wrapperUI-32.imageset"
+       Image "warning"
+       Size 32 32
+      }
+      TextWidgetClass "{1356B4BE002EF02D}" {
+       Name "SpawnError"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{D49B3B76177C2547}" {
+        VerticalAlign 1
+       }
+       "Inherit Color" 1
+       Text ""
+       "Font Size" 18
+      }
+     }
+    }
+    HorizontalLayoutWidgetClass "{88705BA491E9A132}" {
+     Name "SpawnButtons"
+     "Ignore Cursor" 0
+     Slot LayoutSlot "{854B6AF236451700}" {
+      HorizontalAlign 1
+     }
+     {
+      SizeLayoutWidgetClass "{5CAC1B03BAEFB233}" {
+       Name "ButtonSpawnSize"
+       "Ignore Cursor" 0
+       Slot LayoutSlot "{C173B63B4F803AF5}" {
+        HorizontalAlign 1
+       }
+       AllowWidthOverride 1
+       WidthOverride 220
+       AllowHeightOverride 1
+       HeightOverride 44
+       {
+        ButtonWidgetClass "{76B6280737754DBA}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
+         Name "ButtonSpawn"
+         Slot OverlayWidgetSlot "{242B68CE3640CCA6}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

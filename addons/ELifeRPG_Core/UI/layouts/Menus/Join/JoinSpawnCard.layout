@@ -1,0 +1,130 @@
+SizeLayoutWidgetClass "{7002A3362AC2DF08}" {
+ Name "SpawnCardSize"
+ "Ignore Cursor" 0
+ Slot LayoutSlot "{0CE4F32901F1A267}" {
+  VerticalAlign 1
+  Padding 4 0 4 0
+ }
+ AllowWidthOverride 1
+ WidthOverride 260
+ AllowHeightOverride 1
+ HeightOverride 540
+ {
+  ButtonWidgetClass "{39419D01F7D8B7A3}" {
+   Name "SpawnCard"
+   "Ignore Cursor" 0
+   Slot OverlayWidgetSlot "{2F2AE9A73DB7DECA}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   Color 1 1 1 1
+   style blank
+   components {
+    SCR_ButtonTextComponent "{7ADADB502FC76624}" {
+     m_BackgroundDefault 0 0 0 0.6
+     m_BackgroundHovered 0 0 0 0.9
+    }
+   }
+   {
+    OverlayWidgetClass "{53D6338E6E520654}" {
+     Name "SpawnCardOverlay"
+     "Ignore Cursor" 1
+     Clipping True
+     Slot ButtonWidgetSlot "{92886A7065F39DB4}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      ScaleWidgetClass "{43845DD91B938903}" {
+       Name "SpawnImageScale"
+       Slot OverlayWidgetSlot "{1312257A82EEC7E6}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       "Scale Mode" "Scale to fill"
+       {
+        ImageWidgetClass "{1A5EB60B7CA0A51C}" {
+         Name "SpawnImage"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{6122AED9ED46BB49}" {
+         }
+         Color 0.85 0.85 0.85 1
+         Size 1920 1080
+        }
+       }
+      }
+      SizeLayoutWidgetClass "{36CAC96F36B585CA}" {
+       Name "ShadeTopSize"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{21C95E01D0636155}" {
+        HorizontalAlign 3
+        VerticalAlign 0
+       }
+       AllowHeightOverride 1
+       HeightOverride 190
+       {
+        ImageWidgetClass "{50830F36CA873678}" {
+         Name "ShadeTop"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{3C99F33611589654}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 0.85
+         Texture "{6FCF7C9AAAA8FA03}UI/Textures/Menus/Join/SpawnCardShade.edds"
+        }
+       }
+      }
+      SizeLayoutWidgetClass "{6BA62A1459A06C8A}" {
+       Name "ShadeBottomSize"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{A2B9A7B7E34B7969}" {
+        HorizontalAlign 3
+        VerticalAlign 2
+       }
+       AllowHeightOverride 1
+       HeightOverride 190
+       {
+        ImageWidgetClass "{B1203DF6788C4097}" {
+         Name "ShadeBottom"
+         "Ignore Cursor" 1
+         Slot AlignableSlot "{B632813FACEC2D53}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         Color 1 1 1 0.85
+         Texture "{6FCF7C9AAAA8FA03}UI/Textures/Menus/Join/SpawnCardShade.edds"
+        }
+       }
+      }
+      TextWidgetClass "{843F29B36207B3B1}" {
+       Name "SpawnName"
+       "Ignore Cursor" 1
+       Slot OverlayWidgetSlot "{49A221635095583A}" {
+        HorizontalAlign 1
+        VerticalAlign 0
+        Padding 0 32 0 0
+       }
+       Text ""
+       "Font Size" 22
+       FontProperties FontProperties "{046156ED68C9F36D}" {
+        Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+       }
+      }
+      PanelWidgetClass "{DC4C13FF894C7C1C}" {
+       Name "SpawnSelected"
+       "Ignore Cursor" 1
+       "Is Visible" 0
+       Slot OverlayWidgetSlot "{BCA3BB0F1EEB02A8}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 1 0.597 0.198 1
+       style outline_2px
+      }
+     }
+    }
+   }
+  }
+ }
+}

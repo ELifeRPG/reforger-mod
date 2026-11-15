@@ -52,7 +52,7 @@ class ELIFE_SpawnLocator
 	//! `who` is the session prefix for the WARNING, e.g. ELIFE_JoinSession.Describe().
 	static bool FindJoinPosition(ELIFE_ESpawnMode mode, out vector pos, out vector angles, string who = "")
 	{
-		// TODO: SELECT_PER_RESTART shows the spawn selection screen on the first join after a server restart
+		// TODO: SELECT_PER_RESTART points are offered on every join until the API returns a saved position (see ELIFE_JoinSessionManagerComponent.BeginSpawnOrSelection)
 		ELIFE_SpawnPoint point = ELIFE_SpawnPoint.GetRandom(mode);
 		if (!point)
 		{
@@ -60,6 +60,14 @@ class ELIFE_SpawnLocator
 			return FindRandomPosition(pos, angles);
 		}
 
+		return FindPositionAtPoint(point, pos, angles, who);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Position at a given spawn point: a clear spot within its radius, or its origin with a WARNING when none is clear. Yaw is the point's. Always true.
+	//! `who` is the session prefix for the WARNING, e.g. ELIFE_JoinSession.Describe().
+	static bool FindPositionAtPoint(notnull ELIFE_SpawnPoint point, out vector pos, out vector angles, string who = "")
+	{
 		// FindPositionInRadius sets pos to the point's origin when it finds no clear spot.
 		if (!point.FindPositionInRadius(pos))
 			Print(string.Format("ELIFE_Join | %1 no clear spot at spawn point %2, using its origin", who, point.GetDisplayName()), LogLevel.WARNING);
