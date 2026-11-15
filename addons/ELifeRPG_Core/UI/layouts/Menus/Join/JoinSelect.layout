@@ -135,27 +135,6 @@ OverlayWidgetClass {
      }
      {
       SizeLayoutWidgetClass "{5CAC1B03BAEFB233}" {
-       Name "NewSize"
-       "Ignore Cursor" 0
-       Slot LayoutSlot "{C173B63B4F803AF5}" {
-        HorizontalAlign 1
-        Padding 0 0 12 0
-       }
-       AllowWidthOverride 1
-       WidthOverride 220
-       AllowHeightOverride 1
-       HeightOverride 44
-       {
-        ButtonWidgetClass "{C568DBA7CAF94C0B}" : "{75C912A1C89BE6C2}UI/layouts/WidgetLibrary/Buttons/WLib_ButtonText.layout" {
-         Name "ButtonNew"
-         Slot OverlayWidgetSlot "{242B68CE3640CCA6}" {
-          HorizontalAlign 3
-          VerticalAlign 3
-         }
-        }
-       }
-      }
-      SizeLayoutWidgetClass "{5CAC1B03BAEFB233}" {
        Name "PlaySize"
        "Ignore Cursor" 0
        Slot LayoutSlot "{C173B63B4F803AF5}" {

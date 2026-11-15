@@ -23,7 +23,6 @@ class ELIFE_JoinSelectScreen
 	protected SCR_ButtonTextComponent m_PrevButton;
 	protected SCR_ButtonTextComponent m_NextButton;
 	protected SCR_ButtonTextComponent m_PlayButton;
-	protected SCR_ButtonTextComponent m_NewButton;
 
 	protected ref array<ref ELIFE_JoinCardClick> m_aCards = {};
 	//! Every card of the list in order, the "+" card last. Paging shows a slice of it.
@@ -72,13 +71,6 @@ class ELIFE_JoinSelectScreen
 			m_PlayButton.SetText("#ELIFE-Join_Play");
 			m_PlayButton.m_OnClicked.Insert(OnPlayClicked);
 		}
-
-		m_NewButton = SCR_ButtonTextComponent.GetButtonText("ButtonNew", m_wRoot);
-		if (m_NewButton)
-		{
-			m_NewButton.SetText(NEW_CARD_KEY);
-			m_NewButton.m_OnClicked.Insert(OnNewClicked);
-		}
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -122,7 +114,7 @@ class ELIFE_JoinSelectScreen
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Disables Prev, Next, Play, New and the cards while a request is in flight. Set by ELIFE_JoinMenu.SetBusy.
+	//! Disables Prev, Next, Play and the cards while a request is in flight. Set by ELIFE_JoinMenu.SetBusy.
 	void SetBusy(bool busy)
 	{
 		m_bBusy = busy;
@@ -132,9 +124,6 @@ class ELIFE_JoinSelectScreen
 			if (card.m_Button)
 				card.m_Button.SetEnabled(!busy);
 		}
-
-		if (m_NewButton)
-			m_NewButton.SetEnabled(!busy);
 
 		RefreshPager();
 		RefreshPlay();
@@ -315,13 +304,7 @@ class ELIFE_JoinSelectScreen
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void OnNewClicked()
-	{
-		OpenCreate();
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! Asks the server to open the create screen. Same path as the "+" card.
+	//! Asks the server to open the create screen. Called by the "+" card.
 	protected void OpenCreate()
 	{
 		if (m_bBusy)
