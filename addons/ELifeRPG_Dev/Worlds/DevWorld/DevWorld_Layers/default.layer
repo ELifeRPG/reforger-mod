@@ -3,11 +3,30 @@ GenericWorldEntity world {
  boundMins -100 -4.396 -100
  boundMaxs 436.396 33.248 397.166
  blockSize 100 1500 100
- SkyPreset "{8E9BEF90CAA7CAEC}Terrains/Common/Sky/SkyBox/SkyColor_Default.emat"
+ SkyPreset "{621C7F2EC2763297}Terrains/Common/Sky/Atmosphere/Atmosphere.emat"
+ PlanetPreset {
+  "{7037BF6589EEFD5D}Terrains/Common/Sky/Planets/Sun_01.emat"
+  "{63C716F4064F5D43}Terrains/Common/Sky/Planets/Moon_01.emat"
+  "{C8DD10DC67D45E10}Terrains/Common/Sky/Planets/Stars_01.emat"
+ }
+ CloudsRenderer SkyVolCloudsRenderer
+ CloudsPreset "{D3683C927920C51D}Terrains/Common/Sky/Clouds/Clouds_Volumetric.emat"
+ OceanMaterial "{5BD82BC098CB7A2C}Terrains/Common/Water/Ocean/ocean.emat"
+ OceanSimulation "{00CE08A5614D5AB4}Terrains/Common/Water/Ocean/Simulation/oceanSimFlat.emat"
 }
 GenericTerrainEntity DevTerrain {
  coords 0 0 0
  LayerPreset "Terrain"
+}
+GenericWorldPPEffect : "{3AFFB0B0EC055284}Prefabs/World/DefaultWorld/GenericWorldPP_Default.et" {
+ coords 0.02 0 0.034
+}
+GenericWorldLightEntity : "{5B2B348D9520F7C7}Prefabs/World/DefaultWorld/Lighting_Default.et" {
+ coords -2.299 -2.18 -2.042
+ angles 0 0 0
+}
+GenericWorldFogEntity : "{78D9BBF0F423FEB4}Prefabs/World/DefaultWorld/FogHaze_Default.et" {
+ coords -0.321 -0.326 -0.213
 }
 SCR_CameraManager CameraManager {
  coords 0 0 0
@@ -18,6 +37,7 @@ ScriptedChatEntity ChatEntity : "{04386040F414F0D8}Prefabs/MP/Managers/Chat/ELIF
 TimeAndWeatherManagerEntity TimeAndWeatherManager : "{A3BAF78F6F03315B}Prefabs/World/Game/TimeAndWeatherManager.et" {
  coords 0 0 0
  WeatherStateMachine "{145430BBF1620448}Terrains/Common/WeatherPresets/StateMachine/WeatherStates.conf"
+ "Initial Day Time" 6.759
  "Internal variant transition" 0
  "Internal subvariant 0" 0
  "Internal subvariant 1" 0
@@ -64,6 +84,9 @@ Tree Tree_Apple : "{1C6F9AD2669C17F9}Prefabs/Vegetation/Tree/ResourceTree_Apple.
 }
 SCR_LoadoutManager LoadoutManager : "{318E93063CC0FC86}Prefabs/MP/Managers/Loadouts/ELIFE_LoadoutManager.et" {
  coords 0 0 0
+}
+GameEnvironmentProbeEntity : "{B6B6A21399C5571B}Prefabs/World/DefaultWorld/EnvProbe_Default.et" {
+ coords 253.524 2.081 241.092
 }
 Tree Tree_Plum : "{CEFEBF266E7040A9}Prefabs/Vegetation/Tree/ResourceTree_Plum.et" {
  coords 261 0 248
