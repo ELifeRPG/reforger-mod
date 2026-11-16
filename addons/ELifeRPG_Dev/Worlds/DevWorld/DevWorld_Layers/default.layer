@@ -33,14 +33,6 @@ ELIFE_GameMode ELIFE_GameMode : "{E9922930097C3FD4}Prefabs/MP/Modes/ELIFE_GameMo
  coords 0 0 0
 }
 $grp ELIFE_PrefabSpawn {
- Spawn_TestVehicle {
-  coords 248 0 256
-  m_rnPrefab "{693CF669B0D929B9}Prefabs/Vehicles/Wheeled/M151A2/TestVehicle.et"
- }
- Spawn_CarKey {
-  coords 262 0 254
-  m_rnPrefab "{89DCD5C00091FF04}Prefabs/Items/Keys/CarKey.et"
- }
  Spawn_Phone_Green {
   coords 262 0.05 256
   m_rnPrefab "{2DBBA09446619612}Prefabs/Items/Equipment/Phone/Phone_Green.et"

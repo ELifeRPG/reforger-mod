@@ -12,7 +12,7 @@ class ELIFE_VehicleLockComponent : SCR_BaseLockComponent
 	[Attribute("")]
 	string m_sDebugIdentifier;
 	
-    [Attribute("{89DCD5C00091FF04}Prefabs/Items/Keys/CarKey.et", UIWidgets.ResourceNamePicker, desc: "Vehicle key prefab")]
+    [Attribute("", UIWidgets.ResourceNamePicker, desc: "Vehicle key prefab")]
 	ResourceName m_KeyPrefab;
 	
     [Attribute("{5A15B897792C7099}Sounds/Vehicles/Vehicle_LockUnlock.acp", UIWidgets.ResourceNamePicker, desc: "Lock/Unlock sound project (acp)")]
@@ -42,7 +42,7 @@ class ELIFE_VehicleLockComponent : SCR_BaseLockComponent
 	}
 	
 	//------------------------------------------------------------------------------------------------
-	void SwitchLockedState(bool locked)
+	void SwitchLockedState(bool locked)asdasd
 	{
 		Rpc(RpcAsk_Authority_SwitchVehicleLockedState, locked);
 	}

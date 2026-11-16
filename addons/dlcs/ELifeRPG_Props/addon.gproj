@@ -1,0 +1,8 @@
+GameProject {
+ ID "ELifeRPG_Props"
+ GUID "AF193338B10BF1C5"
+ TITLE "ELifeRPG_Props"
+ Dependencies {
+  "66EB6BA548DD28C2"
+ }
+}

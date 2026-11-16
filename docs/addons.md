@@ -1,70 +1,101 @@
 # Addons and publishing
 
-ELifeRPG is published as several Workshop addons instead of one. This keeps every addon well
-below the Workshop limits and lets the large, rarely changing art live apart from the code.
+ELifeRPG is published as several Workshop addons instead of one. `ELifeRPG_Core` is the base
+framework. Content packages ("DLCs") ship a base setup of ready-made content on top of it. Server
+owners use them as they are or replace them with their own, without touching Core.
 
 ## Layout
 
-| Addon | GUID | Contains | Depends on |
-| --- | --- | --- | --- |
-| `ELifeRPG_Items` | `14E46A965EE53285` | Art for general items: food (apple, plum), phone mesh, materials, screen textures and UI sounds | vanilla |
-| `ELifeRPG_Vehicles` | `4B054C78918EAA22` | Car key art, vehicle lock sounds | vanilla |
-| `ELifeRPG_Vegetation` | `12BC1DE093734B8A` | Fruit tree materials and polyplanes | vanilla |
-| `ELifeRPG_Core` | `66EB6BA548DD28C2` | **All** scripts, configs, UI, localization and prefabs | vanilla + all asset addons |
-| `ELifeRPG` | `596AFBF40E2150FD` | Nothing. Meta-pack that pulls in the whole stack | all of the above |
-| `ELifeRPG_Dev` | `B23160BEBCAB2D32` | `DevWorld` and test layers. Published unlisted for internal servers | `ELifeRPG` |
+```
+ELifeRPG_Dev
+   │
+   ▼
+ELifeRPG ──► ELifeRPG_NPC
+   │    ├──► ELifeRPG_Items
+   │    ├──► ELifeRPG_Vehicles
+   │    ├──► ELifeRPG_Vegetation
+   │    └──► ELifeRPG_Props
+   ▼
+ELifeRPG_Core   ◄── every DLC depends on Core
+   │
+   └──► ELifeRPG_Assets, …   (base-content packages, art only)
+```
 
-Servers list a single mod, `ELifeRPG` (`596AFBF40E2150FD`). It's the GUID the original single
-addon had, so existing server configs keep working and get the new addons through dependencies.
+Arrows are dependencies.
 
-**Asset addons** are named after their topic (`ELifeRPG_Items`, `ELifeRPG_Weapons_Glock`, …) and hold
-only art. Every addon except `ELifeRPG`, `ELifeRPG_Core`, `ELifeRPG_Dev`, `ELifeRPG_Map_*` and
-`ELifeRPG_Patches_*` is an asset addon.
+| Addon | Folder | GUID | Contains | Depends on |
+| --- | --- | --- | --- | --- |
+| `ELifeRPG_Core` | `addons/` | `66EB6BA548DD28C2` | Base framework: generic systems (scripts, configs, UI, localization, prefabs), base content such as the phone, and the vanilla full-file overrides | vanilla + base-content packages |
+| `ELifeRPG_NPC` | `addons/dlcs/` | `97B65A48A10C989D` | DLC: NPCs and their content-specific logic (e.g. the bank clerk) | Core |
+| `ELifeRPG_Items` | `addons/dlcs/` | `14E46A965EE53285` | DLC: base setup for items (food: apple, plum) | Core |
+| `ELifeRPG_Vehicles` | `addons/dlcs/` | `4B054C78918EAA22` | DLC: base setup for vehicles (car key) | Core |
+| `ELifeRPG_Vegetation` | `addons/dlcs/` | `12BC1DE093734B8A` | DLC: base setup for vegetation (fruit trees) | Core |
+| `ELifeRPG_Props` | `addons/dlcs/` | `AF193338B10BF1C5` | DLC: seating and sleeping props (benches, chairs, later beds) | Core |
+| `ELifeRPG` | `addons/` | `596AFBF40E2150FD` | Sample world addon. Pulls in Core and all DLCs | Core + all DLCs |
+| `ELifeRPG_Dev` | `addons/` | `B23160BEBCAB2D32` | `DevWorld` and test layers. Published unlisted for internal servers | `ELifeRPG` |
 
-Coming later, following the same rules:
+Servers list a single mod: `ELifeRPG` (`596AFBF40E2150FD`) or their own implementation of it (see
+[Building your own server mod](#building-your-own-server-mod)). `596AFBF40E2150FD` is the GUID the
+original single addon had, so existing server configs keep working and get the other addons through
+dependencies.
 
-- `ELifeRPG_<Topic>`: one asset addon per new art topic (`ELifeRPG_Clothing`, `ELifeRPG_Buildings`, …).
-  Weapons split per family right away: `ELifeRPG_Weapons_Glock`, `ELifeRPG_Weapons_M4`.
-- `ELifeRPG_<Topic>_Common` / `ELifeRPG_Common`: shared art, see rule 4.
-- `ELifeRPG_Map_<Name>`: terrain and world. Depends on `ELifeRPG_Core`.
-- `ELifeRPG_Patches_<Mod>`: compatibility with one third-party mod. This is the only kind of addon
-  besides Core that may contain scripts, because it has to depend on that mod. It is not part of the
-  meta-pack. Servers add the ones they need.
+**Base-content packages** (`ELifeRPG_Assets`, …) hold the art of Core's base content, such as the
+phone's textures and model, apart from the code. Core depends on them, so they are always part of
+the stack. They sit in `addons/` next to `ELifeRPG`, not in `addons/dlcs/`. Every addon in `addons/` other
+than `ELifeRPG_Core`, `ELifeRPG` and `ELifeRPG_Dev` counts as one.
+
+### Building your own server mod
+
+`ELifeRPG` is only a sample. A server owner builds their own world addon the same way: it depends on
+`ELifeRPG_Core`, picks any of the DLCs and replaces the others with their own packages (own items,
+own vehicles, …). A third-party Workshop mod, e.g. a vehicle mod, is added as a further dependency
+of that world addon, which configures it.
 
 ## Rules
 
-1. **Dependencies only point one way:** asset addons ← `Core` ← `Map_*` / `Patches_*` ← `ELifeRPG` ← `Dev`.
-2. **Scripts, configs, UI, localization and prefabs go into `ELifeRPG_Core`.** Prefabs carry script
-   components and are referenced by the game mode and by scripts, so they have to live next to the code.
-3. **Raw art goes into the asset addon for its topic:** meshes (`.xob`, `.fbx`, `.txo`),
-   materials and textures (`.emat`, `.edds`), sounds (`.wav`, `.acp`).
-4. **Shared art goes into a Common addon:**
-   - Shared within one topic → `ELifeRPG_<Topic>_Common`, e.g. `ELifeRPG_Weapons_Common` for
-     attachments, magazines, materials or sounds used by several weapon families. The family addons
-     depend on it.
-   - Shared across topics → `ELifeRPG_Common`.
-   - An asset addon depends only on vanilla and on Common addons, never on a sibling family and never
-     on Core. Core depends on every asset addon, including the Common ones.
-   - Create a Common addon when the second addon needs the same file, not earlier, and move
-     the file there following rule 5.
+1. **Dependencies only point one way:** base-content packages ← `Core` ← DLCs ← `ELifeRPG` ← `Dev`.
+   A DLC depends on Core and never on another DLC. Nothing but `ELifeRPG` and `ELifeRPG_Dev`
+   depends on a DLC.
+2. **Core holds the generic systems.** Scripts, configs, UI, localization and prefabs that every
+   server needs, plus base content such as the phone. Core never references DLC content: a
+   `ResourceName` attribute that points at content defaults to `""` and is set in the DLC or the
+   world addon.
+3. **A DLC holds its content and everything specific to it:** prefabs, art, configs, UI,
+   localization and the scripts built on top of Core's systems. Removing a DLC must leave no
+   trace in Core or any other package, and Core must still compile.
+4. **Base-content packages hold art only:** meshes (`.xob`, `.fbx`, `.txo`), materials and
+   textures (`.emat`, `.edds`), sounds (`.wav`, `.acp`). They depend only on vanilla.
 5. **Keep the internal path when moving a file between addons**, and move its `.meta` with it.
    References are `{GUID}path`, and the GUID lives in the `.meta`. With the same path and the `.meta`
-   moved along, every reference still resolves.
+   moved along, every reference still resolves. Move files in Workbench where possible so the
+   `.meta` stays in sync.
 6. Vanilla full-file overrides (`Configs/System/chimeraMenus.conf`, `chimeraInputCommon.conf`) may
    exist in only one addon: `ELifeRPG_Core`.
 7. Source files (`.blend`, `.obj`, …) stay in the repo-level `assets/` folder and are never shipped.
 
-To check rules 1–5 (unresolved or wrong-direction references, duplicate GUIDs, logic in an asset
-addon, asset addons depending on anything but Common addons):
+To check rules 1–6, run:
 
 ```sh
 python3 tools/check_addons.py addons
 ```
 
+It reports, and exits with code 1 on:
+
+- references to an addon outside the referencing addon's dependencies (wrong direction)
+- references whose GUID is unknown but whose path exists in an addon (GUID mismatch)
+- duplicate GUIDs
+- dependencies against rule 1, and DLCs that don't depend on Core
+- logic (`.c`, `.et`, `.conf`, `.layout`, `.ent`, `.layer`) in a base-content package
+- vanilla full-file overrides outside Core
+
+It also warns, without failing, about `.meta` files whose stored path differs from the file's real
+path. It cannot detect references to files that were deleted, because those look the same as
+references to vanilla content.
+
 ## Size budget
 
 - The Workshop accepts up to **7 GB per addon** (raised from 5 GB in 1.2.1.189). Keep each addon
-  under ~3 GB. Split an asset topic by family before it gets there.
+  under ~3 GB. Split a DLC or base-content package before it gets there.
 - No per-file limit is documented, but big uploads tend to time out, so terrain gets its own addon.
 - Consoles have a total mod storage budget (PS5 25 GB, Xbox 50 GB) and download at about 3 MB/s.
   Keep the required stack small.
@@ -79,8 +110,8 @@ so players fetch next to nothing for addons whose content didn't change.
    `MINOR` = features and content; `PATCH` = fixes).
 2. Run `python3 tools/check_addons.py addons`.
 3. In Workbench, publish in dependency order, each addon with the version from `VERSION`:
-   `ELifeRPG_Common` → `ELifeRPG_*_Common` → other asset addons → `ELifeRPG_Core` → `ELifeRPG_Map_*` → `ELifeRPG` → `ELifeRPG_Dev`
-   (unlisted). A dependency has to exist on the Workshop before an addon that depends on it can be published.
+   base-content packages → `ELifeRPG_Core` → DLCs → `ELifeRPG` → `ELifeRPG_Dev` (unlisted).
+   A dependency has to exist on the Workshop before an addon that depends on it can be published.
 4. Tag the commit `vX.Y.Z`.
 
 Servers either leave mod versions unpinned (always the latest) or pin every ELifeRPG addon to the
@@ -88,6 +119,7 @@ same release number. The Workshop keeps only the last 50 versions of an addon.
 
 ## Working in Workbench
 
-Register every folder under `addons/` as an addon directory, then open the addon you work in:
-`ELifeRPG_Dev` to play the test world, or `ELifeRPG_Core` for scripts and prefabs. When you create
-new art, save it inside the matching asset addon so its `.meta` is created there.
+Register every addon folder under `addons/` and `addons/dlcs/` as an addon directory, then open the
+addon you work in: `ELifeRPG_Dev` to play the test world, `ELifeRPG_Core` for the generic systems,
+or the DLC whose content you change. Create new files inside the addon they belong to, so their
+`.meta` is created there.

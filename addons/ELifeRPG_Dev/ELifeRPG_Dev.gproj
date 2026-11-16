@@ -3,7 +3,7 @@ GameProject {
  GUID "B23160BEBCAB2D32"
  TITLE "ELifeRPG_Dev"
  Dependencies {
-  "58D0FB3206B6F859" "5614BBCCBB55ED1C" "596AFBF40E2150FD"
+   596AFBF40E2150FD
  }
  Configurations {
   GameProjectConfig PC {

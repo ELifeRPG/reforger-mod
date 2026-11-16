@@ -1,61 +1,113 @@
-"""Check the addon split: every {GUID} reference must resolve inside the
-referencing addon or one of its (transitive) dependencies, and asset addons
-must not contain scripts, prefabs, configs, layouts or worlds, and may only
-depend on vanilla and on *_Common addons.
+"""Check the addon split (see docs/addons.md and issue #18).
+
+Addon kinds:
+  core     ELifeRPG_Core: base framework. Depends on vanilla and base-content addons only.
+  base     ELifeRPG_Assets, ... in addons/: base content of Core, art only, depends on vanilla only.
+  dlc      every addon in addons/dlcs/: content plus its own scripts. Depends on Core, never on
+           another DLC, and nothing but top-level addons may depend on it.
+  top      ELifeRPG (sample world addon) and ELifeRPG_Dev.
+
+Checks:
+  - every {GUID} reference resolves inside the referencing addon or its (transitive) dependencies
+  - no duplicate GUIDs, no references whose GUID is unknown but whose path exists in an addon
+  - dependency direction per kind (see above)
+  - base-content addons hold no logic (scripts, prefabs, configs, layouts, worlds)
+  - vanilla full-file overrides exist only in ELifeRPG_Core
+Warnings (do not fail): .meta files whose Name path differs from the file's real path.
 
 Usage: python3 tools/check_addons.py addons   (exit code 1 on problems)
 """
 import re, sys, pathlib
-root = pathlib.Path(sys.argv[1])
-ref_re = re.compile(rb'\{([0-9A-F]{16})\}([A-Za-z0-9_./ -]+)')
+
+root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'addons')
+GUID = r'[0-9A-F]{16}'
+ref_re = re.compile(rb'\{(' + GUID.encode() + rb')\}([A-Za-z0-9_./ -]+)')
+LOGIC_SUFFIXES = ('.c', '.et', '.conf', '.layout', '.ent', '.layer')
+SKIP_SUFFIXES = ('.meta', '.rdb')
+VANILLA_OVERRIDES = ('Configs/System/chimeraMenus.conf', 'Configs/System/chimeraInputCommon.conf')
+TOP_NAMES = {'ELifeRPG', 'ELifeRPG_Dev'}
+
+problems = 0
+def problem(msg):
+    global problems
+    problems += 1
+    print(msg)
+
 addons = {}
-for gp in root.glob('*/*.gproj'):
-    t = gp.read_text()
-    guid = re.search(r'^ GUID "([0-9A-F]{16})"', t, re.M).group(1)
-    deps = re.findall(r'"([0-9A-F]{16})"', re.search(r'Dependencies \{(.*?)\}', t, re.S).group(1))
-    addons[guid] = dict(name=gp.parent.name, dir=gp.parent, deps=deps, owns={})
+gprojs = [(gp, 'dlc') for gp in root.glob('dlcs/*/*.gproj')] + [(gp, None) for gp in root.glob('*/*.gproj')]
+for gp, kind in gprojs:
+    t = gp.read_text(errors='ignore')
+    guid = re.search(r'^\s*GUID\s+"?(' + GUID + ')"?', t, re.M).group(1)
+    name = re.search(r'^\s*ID\s+"([^"]+)"', t, re.M).group(1)
+    dm = re.search(r'Dependencies\s*\{(.*?)\}', t, re.S)
+    deps = re.findall(GUID, dm.group(1)) if dm else []
+    if kind is None:
+        if name == 'ELifeRPG_Core': kind = 'core'
+        elif name in TOP_NAMES: kind = 'top'
+        else: kind = 'base'
+    if guid in addons: problem(f'DUP ADDON GUID {guid}: {addons[guid]["name"]} and {name}')
+    addons[guid] = dict(name=name, dir=gp.parent, kind=kind, deps=deps, owns={})
+
+def rel(p): return p.relative_to(root)
+
+# Resource ownership and stale .meta paths
+owner = {}
 for a in addons.values():
     for m in a['dir'].rglob('*.meta'):
-        mm = re.search(r'Name "\{([0-9A-F]{16})\}', m.read_text(errors='ignore'))
-        if mm: a['owns'][mm.group(1)] = m
-owner = {}
-bad = 0
-for g, a in addons.items():
-    for rg in a['owns']:
-        if rg in owner: print('DUP GUID', rg, owner[rg], a['name']); bad += 1
+        mm = re.search(r'Name "\{(' + GUID + r')\}([^"]*)"', m.read_text(errors='ignore'))
+        if not mm: continue
+        rg, path = mm.groups()
+        if rg in owner: problem(f'DUP GUID {rg}: {owner[rg]} and {a["name"]}')
         owner[rg] = a['name']
+        a['owns'][rg] = m
+        real = m.relative_to(a['dir']).as_posix()[:-len('.meta')]
+        if path != real: print(f'warning: STALE META PATH {rel(m)}: Name says {path}')
+
 def closure(g, seen=None):
-    seen = seen if seen is not None else set()
+    seen = set() if seen is None else seen
     if g in seen or g not in addons: return seen
     seen.add(g)
     for d in addons[g]['deps']: closure(d, seen)
     return seen
-LOGIC_ADDONS = {'ELifeRPG', 'ELifeRPG_Core', 'ELifeRPG_Dev'}
-LOGIC_SUFFIXES = ('.c', '.et', '.conf', '.layout', '.ent', '.layer')
-def is_asset(name):
-    return name not in LOGIC_ADDONS and not name.startswith(('ELifeRPG_Map_', 'ELifeRPG_Patches_'))
-def is_common(name):
-    return name == 'ELifeRPG_Common' or name.endswith('_Common')
+
+# Dependency direction per kind
+for g, a in addons.items():
+    for d in a['deps']:
+        if d not in addons: continue  # vanilla or third-party
+        dk, dn = addons[d]['kind'], addons[d]['name']
+        ok = {
+            'core': dk == 'base',
+            'base': False,
+            'dlc': dk in ('core', 'base'),
+            'top': True,
+        }[a['kind']]
+        if not ok: problem(f'WRONG DEPENDENCY {a["name"]} ({a["kind"]}) -> {dn} ({dk})')
+    if a['kind'] == 'dlc' and not any(addons.get(d, {}).get('kind') == 'core' for d in a['deps']):
+        problem(f'DLC {a["name"]} DOES NOT DEPEND ON ELifeRPG_Core')
+
+# Logic in base-content addons, vanilla overrides outside Core
+for a in addons.values():
+    if a['kind'] == 'base':
+        for f in a['dir'].rglob('*'):
+            if f.is_file() and f.suffix in LOGIC_SUFFIXES: problem(f'LOGIC IN BASE-CONTENT ADDON {rel(f)}')
+    if a['kind'] != 'core':
+        for o in VANILLA_OVERRIDES:
+            if (a['dir'] / o).exists(): problem(f'VANILLA OVERRIDE OUTSIDE CORE {rel(a["dir"] / o)}')
+
+# References
 for g, a in addons.items():
     visible = {addons[x]['name'] for x in closure(g)}
-    if is_asset(a['name']):
-        for f in a['dir'].rglob('*'):
-            if f.suffix in LOGIC_SUFFIXES: print('LOGIC IN ASSET ADDON', f); bad += 1
-        for d in a['deps']:
-            if d in addons and not is_common(addons[d]['name']):
-                print(f'ASSET ADDON {a["name"]} DEPENDS ON NON-COMMON {addons[d]["name"]}'); bad += 1
     for f in a['dir'].rglob('*'):
-        if not f.is_file() or f.suffix == '.meta': continue
+        if not f.is_file() or f.suffix in SKIP_SUFFIXES: continue
         for rg, path in set(ref_re.findall(f.read_bytes())):
-            rg = rg.decode()
+            rg, p = rg.decode(), path.decode().strip()
             o = owner.get(rg)
             if o and o not in visible:
-                print(f'WRONG DIRECTION {a["name"]}: {f.relative_to(root)} -> {o} {{{rg}}}{path.decode()}'); bad += 1
+                problem(f'WRONG DIRECTION {a["name"]}: {rel(f)} -> {o} {{{rg}}}{p}')
             elif not o:
-                # path exists in some ELIFE addon but guid unknown -> stale
-                p = path.decode().strip()
-                hits = [x['name'] for x in addons.values() if (x['dir']/p).exists()]
-                if hits: print(f'GUID MISMATCH {f.relative_to(root)} -> {{{rg}}}{p} (path in {hits})'); bad += 1
-print('addons:', {a['name']: len(a['owns']) for a in addons.values()})
-print('problems:', bad)
-sys.exit(1 if bad else 0)
+                hits = [x['name'] for x in addons.values() if p and (x['dir'] / p).exists()]
+                if hits: problem(f'GUID MISMATCH {rel(f)} -> {{{rg}}}{p} (path in {hits})')
+
+print('addons:', {f'{a["name"]} ({a["kind"]})': len(a['owns']) for a in addons.values()})
+print('problems:', problems)
+sys.exit(1 if problems else 0)

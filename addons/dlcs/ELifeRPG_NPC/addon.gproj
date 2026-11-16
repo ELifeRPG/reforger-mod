@@ -1,0 +1,8 @@
+GameProject {
+ ID "ELifeRPG_NPC"
+ GUID "97B65A48A10C989D"
+ TITLE "ELifeRPG_NPC"
+ Dependencies {
+  "66EB6BA548DD28C2"
+ }
+}
