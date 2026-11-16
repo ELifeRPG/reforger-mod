@@ -7,6 +7,7 @@ GenericWorldEntity world {
 }
 GenericTerrainEntity DevTerrain {
  coords 0 0 0
+ LayerPreset "Terrain"
 }
 SCR_CameraManager CameraManager {
  coords 0 0 0
