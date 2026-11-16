@@ -1,0 +1,166 @@
+GenericEntity : "{5EC6836A5694F691}Prefabs/Props/Military/Furniture/FurnitureMilitary_base.et" {
+ ID "5272E314F01B2DBE"
+ components {
+  ELIFE_PosePropComponent "{5202BB5E1886B771}" {
+   m_bBed 1
+   m_bOneOccupant 1
+  }
+  ControllersManagerComponent "{BC325CA28A97B73F}" {
+  }
+  SCR_BaseCompartmentManagerComponent "{4EE4D041515D5D17}" {
+   DoorInfoList {
+    CompartmentDoorInfo "{AD227ED8A9A112D5}" {
+     ContextName "bed_0"
+     EntryPositionInfo PointInfo "{39428E6ABD333843}" {
+      Offset 0 0 -0.81
+      Angles 0 180 0
+     }
+     ExitPositionInfo PointInfo "{394CF8BB54FA68AD}" {
+      Offset 0 0 -0.81
+      Angles 0 180 0
+     }
+     ExitTeleportPositionInfo PointInfo "{B0A6C201D61F7951}" {
+      Offset 0 0 -0.81
+      Angles 0 180 0
+     }
+     GetInTeleport 1
+     GetOutTeleport 1
+     FakeDoor 1
+    }
+    CompartmentDoorInfo "{EB4E5A4F61A663FF}" {
+     ContextName "bed_1"
+     EntryPositionInfo PointInfo "{2FB8380DE476FCE7}" {
+      Offset 0 0 0.81
+      Angles 0 0 0
+     }
+     ExitPositionInfo PointInfo "{DCB3EC831BA1145A}" {
+      Offset 0 0 0.81
+      Angles 0 0 0
+     }
+     ExitTeleportPositionInfo PointInfo "{3FFD45F395220D72}" {
+      Offset 0 0 0.81
+      Angles 0 0 0
+     }
+     GetInTeleport 1
+     GetOutTeleport 1
+     FakeDoor 1
+    }
+   }
+   CompartmentSlots {
+    CargoCompartmentSlot Bed_0 {
+     CompartmentAction SCR_GetInUserAction "{A3C4E2E7CA559B04}" {
+      ParentContextList {
+       "bed"
+      }
+      UIInfo SCR_ActionUIInfo "{38AE4A3478D15EA4}" {
+       Name "#ELIFE-Bed_LieDown"
+      }
+      Duration 0
+     }
+     GetOutAction ELIFE_StandUpAction "{A1C54F1B66BE5518}" {
+      ParentContextList {
+       "elife_seated"
+      }
+      UIInfo SCR_ActionUIInfo "{35ECDDF633D97550}" {
+       Name "#ELIFE-Bed_GetUp"
+      }
+      Duration 0
+     }
+     PassengerPositionInfo EntitySlotInfo "{0FF74518E5F92297}" {
+      Offset 0 0 -0.81
+      Angles 0 180 0
+     }
+     ForcedFreeLook 1
+     EjectUnconsciousAndDeadCharacters 0
+     SkipCharacterDoorAnimationsFromSeat 1
+     SeatType 1
+     DoorInfoList {
+      0
+     }
+     UIInfo UIInfo "{EE1C0079C9219D57}" {
+     }
+     CharacterHasCollision 0
+    }
+    CargoCompartmentSlot Bed_1 {
+     CompartmentAction SCR_GetInUserAction "{48579902879A07CA}" {
+      ParentContextList {
+       "bed"
+      }
+      UIInfo SCR_ActionUIInfo "{7CF2E8036C19E58E}" {
+       Name "#ELIFE-Bed_LieDown"
+      }
+      Duration 0
+     }
+     GetOutAction ELIFE_StandUpAction "{FCA056A91306B14D}" {
+      ParentContextList {
+       "elife_seated"
+      }
+      UIInfo SCR_ActionUIInfo "{A4A584FFD85B9314}" {
+       Name "#ELIFE-Bed_GetUp"
+      }
+      Duration 0
+     }
+     PassengerPositionInfo EntitySlotInfo "{BA1BACDB333DD785}" {
+      Offset 0 0 0.81
+      Angles 0 0 0
+     }
+     ForcedFreeLook 1
+     EjectUnconsciousAndDeadCharacters 0
+     SkipCharacterDoorAnimationsFromSeat 1
+     SeatType 2
+     DoorInfoList {
+      1
+     }
+     UIInfo UIInfo "{A1D024A69D8C45E1}" {
+     }
+     CharacterHasCollision 0
+    }
+   }
+  }
+  ActionsManagerComponent "{916E8FFCE530090B}" {
+   ActionContexts {
+    UserActionContext "{1EB546DB72902299}" {
+     ContextName "bed"
+     Position PointInfo "{C91EAFFC37CEED6E}" {
+      Offset 0 0.5 0
+     }
+     Radius 1.2
+    }
+    UserActionContext "{0828CDAD818CE606}" {
+     ContextName "elife_seated"
+     Position PointInfo "{B4452732219D347F}" {
+      Offset 0 0.6 0
+     }
+     Radius 1.5
+    }
+   }
+  }
+  CompartmentAnimationComponent "{95F345E97D365AF5}" {
+   AnimGraph "{BCB289F2891A4E60}anims/Poses/ELIFE_Pose.agr"
+   AnimInstance "{8F15DA4BC1F12A0E}anims/Poses/ELIFE_Pose_prop.asi"
+   AnimInjection AnimationAttachmentInfo "{0AC199B44F851061}" {
+    AnimGraph "{BCB289F2891A4E60}anims/Poses/ELIFE_Pose.agr"
+    AnimInstance "{B1CCA6BAD4F413D1}anims/Poses/ELIFE_Pose_player.asi"
+    BindingName "Vehicle"
+   }
+  }
+  SCR_VehicleCameraDataComponent "{FE161CD43E515794}" {
+   m_fBobScale 0
+   m_fShakeScale 0
+   m_fDist_Max 3
+   m_fDist_Min 2
+   m_fDist_Desired 2.5
+   m_fAngleThirdPerson 0
+   m_pCameraAlignData SCR_VehicleCameraAlignment "{C371489256690E19}" {
+   }
+   m_pPivot PointInfo "{8B7F444A8A47B8C4}" {
+    Offset 0 1 0
+   }
+  }
+  Hierarchy "{1D52BCF1F7E50E1F}" {
+  }
+  RplComponent "{5624A88DC2D9928D}" {
+   Enabled 1
+  }
+ }
+}

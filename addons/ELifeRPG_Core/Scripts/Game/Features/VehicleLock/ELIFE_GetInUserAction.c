@@ -15,6 +15,25 @@ modded class SCR_GetInUserAction : SCR_CompartmentUserAction
 	}
 	
 	//------------------------------------------------------------------------------------------------
+	//! ELIFE | Seats/beds: their own get-in (a seat turns the character in place first).
+	override void PerformAction(IEntity pOwnerEntity, IEntity pUserEntity)
+	{
+		BaseCompartmentSlot compartment = GetCompartmentSlot();
+		ChimeraCharacter character = ChimeraCharacter.Cast(pUserEntity);
+		ELIFE_PosePropComponent poseProp;
+		if (compartment)
+			poseProp = ELIFE_PosePropComponent.Get(compartment.GetOwner());
+
+		if (!poseProp || !character)
+		{
+			super.PerformAction(pOwnerEntity, pUserEntity);
+			return;
+		}
+
+		poseProp.GetIn(character, compartment, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	override bool CanBePerformedScript(IEntity user)
 	{
 		// ELIFE | Lock vehicle with VehicleLockComponent
@@ -30,6 +49,9 @@ modded class SCR_GetInUserAction : SCR_CompartmentUserAction
 		
 		SCR_ChimeraCharacter character = SCR_ChimeraCharacter.Cast(user);
 		if (!character)
+			return false;
+
+		if (SCR_ScriptedUserAction.IsUserPlayingBlockingAnimation(character))
 			return false;
 
 		CompartmentAccessComponent compartmentAccess = character.GetCompartmentAccessComponent();
@@ -49,7 +71,9 @@ modded class SCR_GetInUserAction : SCR_CompartmentUserAction
 			}
 		}
 		
-		if (compartment.GetOccupant())
+		// ELIFE | Seats/beds: also taken via the other side of a single bed; NPC reservations don't block players.
+		ELIFE_PosePropComponent poseProp = ELIFE_PosePropComponent.Get(owner);
+		if (compartment.GetOccupant() || m_CompartmentManager.IsGetInAndOutBlockedByDoorUser(GetRelevantDoorIndex(user)) || (poseProp && poseProp.IsTakenByOther(compartment, user, false)))
 		{
 			SetCannotPerformReason("#AR-UserAction_SeatOccupied");
 			return false;
@@ -62,8 +86,14 @@ modded class SCR_GetInUserAction : SCR_CompartmentUserAction
 			return false;
 		}
 		
-		// Make sure vehicle can be enter via provided door, if not, set reason.
-		if (!compartmentAccess.CanGetInVehicleViaDoor(owner, m_CompartmentManager, GetRelevantDoorIndex(user)))
+		if (!poseProp && compartment.IsReserved() && !compartment.IsReservedBy(user))
+		{
+			SetCannotPerformReason("#AR-Campaign_Action_CannotEnterVehicle-UC");
+			return false;
+		}
+
+		// ELIFE | Not for seats/beds: the furniture itself counts as obstruction there; IsEntryClear covers walls.
+		if (!poseProp && !compartmentAccess.CanGetInVehicleViaDoor(owner, m_CompartmentManager, GetRelevantDoorIndex(user)))
 		{
 			SetCannotPerformReason("#AR-UserAction_SeatObstructed");
 			return false;
@@ -86,16 +116,21 @@ modded class SCR_GetInUserAction : SCR_CompartmentUserAction
 			return false;
 		
 		ChimeraCharacter character = ChimeraCharacter.Cast(user);
-		if (character && character.IsInVehicle())
+		if (!character || character.IsInVehicle())
 			return false;
 		
 		CompartmentAccessComponent compartmentAccess = character.GetCompartmentAccessComponent();
 		if (!compartmentAccess)
 			return false;
 		
-		if (compartmentAccess.IsGettingIn() || compartmentAccess.IsGettingOut())
+		if (compartmentAccess.IsGettingIn() || compartmentAccess.IsGettingOut() || ELIFE_PosePropComponent.IsTurningToSit(user))
 			return false;
-		
+
+		// ELIFE | Seats/beds: not behind a wall, and a single bed offers lying down on the side the user stands.
+		ELIFE_PosePropComponent poseProp = ELIFE_PosePropComponent.Get(compartment.GetOwner());
+		if (poseProp && !poseProp.ShowsGetIn(compartment, user))
+			return false;
+
 		return true;
 	}	
 };

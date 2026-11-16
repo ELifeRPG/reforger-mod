@@ -2570,14 +2570,6 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
-  CustomStringTableItem "{234310FDC31CC8A8}" {
-   Id "ELIFE-Seat_Taken"
-   Target_en_us "Seat taken"
-   Target_de_de "Platz besetzt"
-   Modified 1794352389
-   Author "Robin"
-   LastChanged "Robin"
-  }
   CustomStringTableItem "{E0C702992BDA19DC}" {
    Id "ELIFE-Sign_OpeningHours"
    Target_en_us "Opening hours"
@@ -2630,14 +2622,6 @@ StringTable {
    Id "ELIFE-Bed_GetUp"
    Target_en_us "Get up"
    Target_de_de "Aufstehen"
-   Modified 1794460000
-   Author "Robin"
-   LastChanged "Robin"
-  }
-  CustomStringTableItem "{C47E91A3B5D2F0A8}" {
-   Id "ELIFE-Bed_Taken"
-   Target_en_us "Bed taken"
-   Target_de_de "Bett belegt"
    Modified 1794460000
    Author "Robin"
    LastChanged "Robin"

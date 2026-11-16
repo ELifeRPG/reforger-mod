@@ -1,0 +1,28 @@
+AnimSrcGraph {
+ AnimSetTemplate "{5F8E7776D446E320}anims/Poses/ELIFE_Pose.ast"
+ ControlTemplate AnimSrcGCT "{58F3132077C905C8}" {
+  Variables {
+   AnimSrcGCTVarInt SeatPositionType {
+    DefaultValue 0
+    MinValue 0
+    MaxValue 15
+   }
+   AnimSrcGCTVarBool Trigger01 {
+   }
+  }
+  Commands {
+   AnimSrcGCTCmd CMD_Vehicle_GetIn {
+   }
+   AnimSrcGCTCmd CMD_Vehicle_GetOut {
+   }
+   AnimSrcGCTCmd CMD_Vehicle_FinishActionQueue {
+   }
+  }
+ }
+ Debug AnimSrcGD "{B8FEA9E9327585DE}" {
+ }
+ GraphFilesResourceNames {
+  "{1205FF05B550147F}anims/Poses/ELIFE_Pose.agf"
+ }
+ DefaultRunNode "MasterControl"
+}

@@ -1,7 +1,7 @@
-GenericEntity BankBreakSofa : "{59D408A3148997CD}Prefabs/Props/Seating/Sofa_02_green_Seats.et" {
+GenericEntity BankBreakSofa : "{BD74E024F375A541}Prefabs/Props/Furniture/Sofa_02/Sofa_02_green.et" {
  coords 247.1 0.2 279.45
 }
-$grp GenericEntity : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seats.et" {
+$grp GenericEntity : "{BD02400CAB005CE8}Prefabs/Props/Furniture/Chair_01/Chair_01_blue.et" {
  BankBreakChair1 {
   coords 245.75 0.2 281.6
   angles 0 90 0
@@ -11,7 +11,7 @@ $grp GenericEntity : "{9870184F4C9AB2FA}Prefabs/Props/Seating/Chair_01_blue_Seat
   angles 0 -90 0
  }
 }
-$grp GenericEntity : "{A7D35C19E04B62F8}Prefabs/Props/Sleeping/Bed_01_Sleep.et" {
+$grp GenericEntity : "{0164749D6EAA4518}Prefabs/Props/Furniture/Bed_01.et" {
  BankRestBed1 {
   coords 261.85 4 273.9
  }
@@ -19,7 +19,7 @@ $grp GenericEntity : "{A7D35C19E04B62F8}Prefabs/Props/Sleeping/Bed_01_Sleep.et" 
   coords 261.85 4 276.7
  }
 }
-$grp GenericEntity : "{B01465C150833D28}Prefabs/Props/Seating/BenchOffice_01_Brown_Seats.et" {
+$grp GenericEntity : "{E4A70CC501E12507}Prefabs/Props/Furniture/BenchOffice_01/BenchOffice_01_Brown.et" {
  BankSeat_Hall_BenchOffice_01_Base_1 {
   coords 251.855 0.2 273.152
  }

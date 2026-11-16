@@ -723,7 +723,8 @@ class ELIFE_NpcComponent : ScriptComponent
 		}
 
 		SCR_CharacterControllerComponent controller = GetController();
-		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering() || !IsAtSpot())
+		//! Still in a seat/bed slot (getting up on the way back): not yet.
+		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering() || ELIFE_Poses.GetPoseSlot(GetOwner()) || !IsAtSpot())
 			return;
 
 		if (!controller.CanPlayLoiterAnimation(ELoiteringType.LOITERING))

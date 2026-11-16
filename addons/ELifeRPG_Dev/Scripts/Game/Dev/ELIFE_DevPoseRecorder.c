@@ -1,7 +1,8 @@
 //------------------------------------------------------------------------------------------------
 //! Dev only: writes every bone's model-space matrix of a character to $profile:elife_pose_<name>.txt, 30 times a
 //! second for a while, so animations can be read off exactly. One line per bone and frame:
-//! "<frame> <seconds> <bone> <m0> <m1> <m2> <m3>" (four vectors, the rows of the matrix).
+//! "<frame> <seconds> <bone> <m0> <m1> <m2> <m3>" (four vectors, the rows of the matrix); bone "__world" is the
+//! entity's world transform.
 class ELIFE_DevPoseRecorder
 {
 	protected static const int INTERVAL_MS = 33;
@@ -68,6 +69,9 @@ class ELIFE_DevPoseRecorder
 
 		float seconds = (System.GetTickCount() - m_iStartTick) / 1000.0;
 		vector mat[4];
+		// root motion moves the entity itself (loiters), bones are relative to it
+		m_Entity.GetWorldTransform(mat);
+		m_File.WriteLine(string.Format("%1 %2 __world %3 %4 %5 %6", m_iFrame, seconds, mat[0], mat[1], mat[2], mat[3]));
 		foreach (string bone : m_aBones)
 		{
 			if (!anim.GetBoneMatrix(anim.GetBoneIndex(bone), mat))

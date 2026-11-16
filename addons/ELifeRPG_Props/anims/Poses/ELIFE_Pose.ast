@@ -1,0 +1,17 @@
+AnimSetTemplateSource {
+ Groups {
+  AnimSetTemplateSource_AnimationGroup "{5AA8901AD5CBD62C}" {
+   Name "Rest"
+   Animations {
+    "In"
+    "Loop"
+    "Out"
+   }
+   Columns {
+    "LieLeft"
+    "LieRight"
+    "Sit"
+   }
+  }
+ }
+}

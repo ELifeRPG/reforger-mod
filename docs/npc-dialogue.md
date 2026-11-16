@@ -97,9 +97,8 @@ While closed, `ELIFE_NpcRoutine` (server) puts the NPC in his own AI group. He w
 20 m of his spot, picking one at random with nearer places more likely and beds a little more likely than seats
 (breaks are when NPCs sleep). If nothing is free, he wanders within 20 m and keeps checking. He never despawns. At
 opening time he gets up (from a bed, after the get-up has played), walks back, snaps onto his spot and serves again.
-Pushed off a seat or a bed, he gets up and takes it again; after two tries he picks another place. If the pose
-breaks without him being moved, he picks again at random (seat or bed). Other characters pass through anyone sitting
-or lying, so pushes are rare. While he lies on a bed he sleeps (`ELIFE_NpcComponent.IsSleeping`, replicated): the
+Nobody can push him off a seat or bed; if he ends up out of it anyway (ejected), he picks another place. While he
+lies on a bed he sleeps (`ELIFE_NpcComponent.IsSleeping`, replicated): the
 talk action is hidden and he says nothing.
 
 A walk that hasn't arrived after 90 s counts as stuck, and he picks again. While walking he opens closed doors up to
@@ -163,66 +162,40 @@ leaves a gap (with a warning in the log). A glyph set is an `ELIFE_GlyphSet` con
 height 1 m, facing +Z, origin at the baseline where reading starts, material slot `Letter`) and its advance in cap
 heights.
 
-## Seats
+## Seats and beds
 
-Players get a "Sit" action on each free seat, shown only from within 1 m in front of it. A taken seat shows it
-greyed out. Off-duty NPCs use the same seats (see above). Logic is in `ELifeRPG_Core`
-(`Scripts/Game/Features/Seats`), seating props in `ELifeRPG_Props` (`BenchStreet_01_Seats.et` is the example).
+Seats and beds are compartment slots, like vehicle seats: nobody can push a character out of one. Players get "Sit"
+or "Lie down" from within 0.9 m of a free slot's entry point. They first turn in place to the slot's facing, then
+get in, and the sit-down or lie-down clip plays. "Get up" or jump plays the stand-up clip, then they get out where they
+are. While seated or lying they keep the normal action menu and gadgets, and first person follows the upper body under
+free look. Dead or unconscious, they drop out of the slot where they are. Off-duty NPCs use the same props (see
+above).
 
-To make a new seating prop:
+- Logic in `ELifeRPG_Core` (`Scripts/Game/Features/Poses`): `ELIFE_PosePropComponent` marks a prop as a seat or bed
+  (`m_bBed`; `m_bOneOccupant` for a single bed with a slot per side), runs the turn and get-in, and lists free slots
+  for NPCs (`FindFree`, `Reserve`, `GetIn`). `ELIFE_PoseStandUp` is the stand-up and `ELIFE_StandUpAction` the get-out
+  action. `ELIFE_PoseCollision` turns the occupant's collision off in the slot and puts a local box around the
+  body in the idle. `ELIFE_PoseCamera`, `ELIFE_PoseInteraction` and `ELIFE_PoseAIGroup` adjust vanilla behaviour for
+  seats and beds. `ELIFE_Poses` has the character helpers (`GetPoseSlot`).
+- Clips: `ELifeRPG_Props/anims/Poses/ELIFE_Pose.agr` (sit and stand-up from `anims/Poses`, the lie clips from
+  `anims/Beds`). The slot's `SeatType` picks them: 0 sit, 1 lie on the left side, 2 lie on the right side.
+- Props: `ELifeRPG_Props/Prefabs/Props/{Civilian,Furniture,Military,Services}` override the vanilla prefabs at the
+  same path and GUID, so every vanilla chair, bench, sofa and bed of these models gets them, colour variants included.
 
-1. Inherit the vanilla prop and add `ELIFE_SeatPropComponent` (tracks who sits where and replicates it). The seat
-   points' smart action only exists on the server, so this component also publishes each seat's point and sit
-   position for clients; without it, other players get no sit action.
-2. Add one child per seat from `Prefabs/Props/Seating/ELIFE_SeatPoint.et` (Core). Place it on the floor in front of the
-   seat with its -Z axis towards the prop, like the bench's (0.65 m out). On its `SCR_AISmartActionSentinelComponent`,
-   keep the `ELIFE_Seat` tag and add `ELIFE_Seat_<n>` (0, 1, …). The number is needed because runtime child order
-   doesn't follow the prefab. The seat point carries a `Hierarchy` component, so it moves with the prop.
-   Keep seats at least 0.75 m apart (the character's collision capsule), or sitters push each other off them.
-   The sitting height comes from the animation, not the seat point. To match a seat to the pose, scale the prop
-   (`scale` on the prefab root); the seat points scale with it.
-3. On the prop's `ActionsManagerComponent`, add one `UserActionContext` per seat, at the seat, and one
-   `ELIFE_SitUserAction` per seat with that context and `m_iSmartActionId` = the seat's `<n>`.
-4. Restart Workbench if the prefab is new, then re-bake the navmesh where you place it.
+To make a new seat or bed, override the vanilla prefab (same path) and copy the setup from a similar one
+(`Chair_01_base.et` for one seat, `BedDouble_01.et` for two slots):
 
-## Beds
-
-Players get "Lie down" beside either long side of a bed, within 0.5 m of the start spot. They turn to it, sit down,
-turn half round and lie down along the bed. The lie-down and the get-up can't be cut short. Once lying, "Get up" or
-jump gets up. One character per bed (per side on double beds); a taken bed shows the action greyed out. From the turn until he lies still, no
-other seat or bed is offered (`ELIFE_Poses.SetStarting`).
-
-- Logic in `ELifeRPG_Core` (`Scripts/Game/Features/Beds`): `ELIFE_BedComponent` tracks who lies on the bed (server)
-  and plays the pose where the character is owned; `LieDown` and `GetUp` also work for NPCs, called on the server.
-  `ELIFE_LieUserAction` is the action.
-- The beds in `ELifeRPG_Props` (`Prefabs/Props/Sleeping`), one per vanilla bed: `Bed_01_Sleep`, `Bed_02_Sleep`,
-  `BedMedical_01_Sleep`, `BunkBed_01_Sleep` and `BunkBed_01_Double_Sleep` (lower bunk), the military cots
-  `CotMilitary_US_01_Sleep` and `CotMilitary_USSR_01_Sleep`, and the double beds `BedDouble_01_Sleep` and
-  `BedDouble_02_Sleep` (one sleeper per side, each on his half). The animations are in `anims/Beds`.
-
-To make a bed: inherit the vanilla prop, add `ELIFE_BedComponent` and set its graph (`.agr`), animation set (`.asi`)
-and lie-down length. Set the start distance from the bed's centre line to where the lie-down starts: half the bed's
-width plus 0.40 m (the clips end with the hips 0.96 m behind the start). Tick `m_bLengthAlongX` if the bed's long side
-runs along X, `m_bHeadAtPositiveEnd` if the head end is +Z (+X along X; default -Z), and `m_bSleeperPerSide` for
-a double bed. Add a `UserActionContext` over the bed and an
-`ELIFE_LieUserAction` with it, like `Bed_01_Sleep.et`. A double bed gets one context and action per half, where the
-body will lie, with the action's `m_iSpot` set (0 for the half at -X, 1 for the other), like the sofa's seats
-(`BedDouble_01_Sleep.et`): each half has its own state and is only offered from its side. The clips are made for `Bed_01` (mattress 0.51 m high): if a
-bed's mattress sits higher or lower, scale the prefab like the seats.
-
-## Shared by seats and beds
-
-`ELifeRPG_Core/Scripts/Game/Features/Poses`: `ELIFE_PosePropComponent` is the base of `ELIFE_SeatPropComponent` and
-`ELIFE_BedComponent`. It tracks who holds which numbered spot (a seat number; for a bed 0, or 0 and 1 on a double bed, one per long side), frees spots whose
-holder left the pose and replicates the taken ones and their holders. Other characters pass through a holder in the
-pose (applied on every machine): the pose only moves the body, so the collision capsule stays where the pose started.
-A player pushed more than 0.15 m off his place gets up anyway (checked on his own machine, `GetPoseError`/`EndPose`);
-NPCs take the place again through their routine. `ELIFE_Poses` has the character helpers (controller, "in the pose
-on", owned here, free to start a pose, finish a stuck pose).
-
-A new kind of pose prop extends the base and overrides `GetPoseError` (without it pushes are never noticed). Override
-`IsInPose` only if the pose isn't on the prop itself (seats: on the seat point), and `EndPose`, `OnTaken`/`OnFreed`
-where needed.
+1. `ELIFE_PosePropComponent`, with `m_bBed` on beds.
+2. `SCR_BaseCompartmentManagerComponent` with one `CargoCompartmentSlot` per place: `SCR_GetInUserAction` as
+   compartment action, `ELIFE_StandUpAction` as get-out action, `PassengerPositionInfo` at the place,
+   `ForcedFreeLook 1`, `SkipCharacterDoorAnimationsFromSeat 1`, `EjectUnconsciousAndDeadCharacters 0` and the
+   `SeatType`. Each slot gets a door (`FakeDoor 1`, `GetInTeleport 1`, `GetOutTeleport 1`) with an entry point in
+   front of the place, facing it. The engine's animated get-in blocks every later get-out.
+3. `ActionsManagerComponent`: one `UserActionContext` per slot (the door's `ContextName`) and `elife_seated`.
+4. `CompartmentAnimationComponent` with `ELIFE_Pose.agr`, `ELIFE_Pose_prop.asi` and the `ELIFE_Pose_player.asi`
+   injection on binding `Vehicle`, and `SCR_VehicleCameraDataComponent`.
+5. Don't scale the prop: the occupant is its hierarchy child and takes its scale. Restart Workbench for a new
+   prefab and re-bake the navmesh where you place it.
 
 ## Bank clerk (`ELifeRPG_NPC`)
 
