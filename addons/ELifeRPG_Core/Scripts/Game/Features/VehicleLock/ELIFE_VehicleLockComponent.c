@@ -42,7 +42,7 @@ class ELIFE_VehicleLockComponent : SCR_BaseLockComponent
 	}
 	
 	//------------------------------------------------------------------------------------------------
-	void SwitchLockedState(bool locked)asdasd
+	void SwitchLockedState(bool locked)
 	{
 		Rpc(RpcAsk_Authority_SwitchVehicleLockedState, locked);
 	}
