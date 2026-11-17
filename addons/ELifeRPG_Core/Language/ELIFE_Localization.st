@@ -2514,6 +2514,118 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{0C8D6203654BDF19}" {
+   Id "ELIFE-Paper_Date"
+   Target_en_us "Date"
+   Target_de_de "Datum"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6B63F18375A7A2E7}" {
+   Id "ELIFE-Paper_Time"
+   Target_en_us "Time"
+   Target_de_de "Uhrzeit"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CA3B7B3D22877AEE}" {
+   Id "ELIFE-Paper_Retain"
+   Target_en_us "PLEASE RETAIN FOR YOUR RECORDS"
+   Target_de_de "BITTE FÜR IHRE UNTERLAGEN AUFBEWAHREN"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2882AB064159E14E}" {
+   Id "ELIFE-Paper_ThankYou"
+   Target_en_us "THANK YOU"
+   Target_de_de "VIELEN DANK"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5F359B53B81685BD}" {
+   Id "ELIFE-Paper_CustomerCopy"
+   Target_en_us "* * *  CUSTOMER COPY  * * *"
+   Target_de_de "* * *  KUNDENBELEG  * * *"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A593C5A3796C627B}" {
+   Id "ELIFE-Paper_CustomerServices"
+   Target_en_us "CUSTOMER SERVICES"
+   Target_de_de "KUNDENSERVICE"
+   Modified 1794963000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AE15402D92C15513}" {
+   Id "ELIFE-Paper_Salutation"
+   Target_en_us "Dear Customer,"
+   Target_de_de "Sehr geehrte Kundin, sehr geehrter Kunde,"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F72A762E1A14A123}" {
+   Id "ELIFE-Paper_Intro_Transfer"
+   Target_en_us "As requested at our counter, we have carried out the following transfer from your account."
+   Target_de_de "Wie am Schalter gewünscht, haben wir die folgende Überweisung von Ihrem Konto ausgeführt."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6043DFDEA88740A2}" {
+   Id "ELIFE-Paper_Intro_Account"
+   Target_en_us "Thank you for opening an account with us. Your account is ready for use from today; its details are listed below."
+   Target_de_de "Vielen Dank für die Eröffnung Ihres Kontos bei uns. Ihr Konto ist ab heute nutzbar; die Angaben finden Sie unten."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2696522D458C8C8D}" {
+   Id "ELIFE-Paper_Keep"
+   Target_en_us "Please keep this letter in a safe place. If anything is incorrect, visit your branch as soon as possible."
+   Target_de_de "Bitte bewahren Sie dieses Schreiben sorgfältig auf. Sollte etwas nicht stimmen, wenden Sie sich bitte umgehend an Ihre Filiale."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{13E52BC080D9D293}" {
+   Id "ELIFE-Paper_Closing"
+   Target_en_us "Yours sincerely,"
+   Target_de_de "Mit freundlichen Grüßen"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{65BB0F106414B285}" {
+   Id "ELIFE-Paper_Signature"
+   Target_en_us "Customer Services"
+   Target_de_de "Ihr Kundenservice"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DF89A3C4DA160982}" {
+   Id "ELIFE-Paper_Footer"
+   Target_en_us "This letter serves as proof of the details shown above."
+   Target_de_de "Dieses Schreiben dient als Nachweis der oben genannten Angaben."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0717C34EB66A8242}" {
+   Id "ELIFE-Paper_FooterMachine"
+   Target_en_us "Produced by machine, valid with the stamp."
+   Target_de_de "Maschinell erstellt, gültig mit Stempel."
+   Modified 1795021000
+   Author "Robin"
+   LastChanged "Robin"
+  }
   CustomStringTableItem "{8177853B7170FD8A}" {
    Id "ELIFE-Npc_Busy"
    Target_en_us "They are serving someone else. Please wait a moment."

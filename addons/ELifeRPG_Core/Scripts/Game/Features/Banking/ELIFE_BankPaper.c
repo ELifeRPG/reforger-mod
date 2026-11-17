@@ -64,12 +64,33 @@ class ELIFE_BankPaper : JsonApiStruct
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! issuedAt split into its "DD.MM.YYYY" and "HH:MM" parts.
+	void SplitIssuedAt(out string date, out string time)
+	{
+		date = issuedAt;
+		time = "";
+		int space = issuedAt.IndexOf(" ");
+		if (space <= 0)
+			return;
+
+		date = issuedAt.Substring(0, space);
+		time = issuedAt.Substring(space + 1, issuedAt.Length() - space - 1);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	protected static string Pad2(int value)
 	{
 		if (value < 10)
 			return "0" + value.ToString();
 
 		return value.ToString();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Papers handed over at the counter: a stamped letter. The rest come out of a machine as a printed slip.
+	static bool IsFromClerk(int paperKind)
+	{
+		return paperKind == ELIFE_EBankPaperKind.TRANSFER_RECEIPT || paperKind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -97,7 +118,8 @@ class ELIFE_BankPaperComponentClass : ScriptComponentClass
 //! A receipt or account papers from the bank, as an item. The server writes it once when issuing it.
 class ELIFE_BankPaperComponent : ScriptComponent
 {
-	protected static const ResourceName PAPER_PREFAB = "{3E5B1C9A7D24F860}Prefabs/Items/Banking/BankPaper.et";
+	protected static const ResourceName RECEIPT_PREFAB = "{3E5B1C9A7D24F860}Prefabs/Items/Banking/BankPaper.et";
+	protected static const ResourceName LETTER_PREFAB = "{BF35C432AA315D23}Prefabs/Items/Banking/BankLetter.et";
 
 	[RplProp()]
 	protected string m_sPaper;
@@ -115,7 +137,11 @@ class ELIFE_BankPaperComponent : ScriptComponent
 		if (!Replication.IsServer())
 			return null;
 
-		Resource resource = Resource.Load(PAPER_PREFAB);
+		ResourceName prefab = RECEIPT_PREFAB;
+		if (ELIFE_BankPaper.IsFromClerk(paper.kind))
+			prefab = LETTER_PREFAB;
+
+		Resource resource = Resource.Load(prefab);
 		if (!resource.IsValid())
 		{
 			Print("ELIFE_BankPaperComponent | paper prefab missing", LogLevel.ERROR);
@@ -206,6 +232,9 @@ class ELIFE_BankPaperInventoryItemComponent : ELIFE_CashInventoryItemComponent
 //! Per-instance name and summary from the paper's contents. Prefab UIInfo is shared — never SetName on it.
 class ELIFE_BankPaperInventoryUIInfo : SCR_InventoryUIInfo
 {
+	//! U+00A0.
+	protected static const string NO_BREAK_SPACE = " ";
+
 	//------------------------------------------------------------------------------------------------
 	override string GetInventoryItemName(InventoryItemComponent item)
 	{
@@ -217,23 +246,28 @@ class ELIFE_BankPaperInventoryUIInfo : SCR_InventoryUIInfo
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! The main figure and the date; the paper view (Inspect) shows the rest.
+	//! The amount and the day, short enough for the narrow tooltip; the paper view (Inspect) shows the rest.
 	override string GetInventoryItemDescription(InventoryItemComponent item)
 	{
 		ELIFE_BankPaper paper = GetPaper(item);
 		if (!paper)
 			return super.GetInventoryItemDescription(item);
 
-		string text = paper.bankName;
-		if (paper.kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS)
-			text += "\n" + ELIFE_PhoneBankingService.GroupIban(paper.accountNumber);
-		else if (paper.amount != "")
-			text += "\n" + paper.amount;
+		string text;
+		if (paper.kind != ELIFE_EBankPaperKind.ACCOUNT_PAPERS && paper.amount != "")
+		{
+			// No-break spaces: the tooltip wrapped "1.00 Ŧ" before the symbol.
+			string amount = paper.amount;
+			amount.Replace(" ", NO_BREAK_SPACE);
+			text = amount + "\n";
+		}
 
-		if (paper.issuedAt != "")
-			text += "\n" + paper.issuedAt;
+		string date, time;
+		paper.SplitIssuedAt(date, time);
+		if (date != "")
+			text += date + "\n";
 
-		return text + "\n\n" + WidgetManager.Translate("#ELIFE-Item_BankPaper_InspectHint");
+		return text + WidgetManager.Translate("#ELIFE-Item_BankPaper_InspectHint");
 	}
 
 	//------------------------------------------------------------------------------------------------

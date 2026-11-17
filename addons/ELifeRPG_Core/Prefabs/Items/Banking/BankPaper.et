@@ -62,7 +62,7 @@ GenericEntity : "{C95E11C60810F432}Prefabs/Items/Core/Item_Base.et" {
     CustomAttributes {
      PreviewRenderAttributes "{B462A4C077B2A240}" {
       CameraOrbitAngles 0 180 0
-      CameraDistanceToItem 0.2
+      CameraDistanceToItem 0.25
       CameraOffset 0 0 0
       ItemRenderRotation 90 0 0
       IsDynamicObject 0
@@ -77,7 +77,7 @@ GenericEntity : "{C95E11C60810F432}Prefabs/Items/Core/Item_Base.et" {
    }
   }
   MeshObject "{ABE9CB763FC480BE}" {
-   Object "{1BF8C5BE3DEEC82C}Assets/Items/Identity/Belongings_Personal/Papers_Personal.xob"
+   Object "{322E9ADF56FEB1AB}Assets/Items/BankPaper/Receipt.xob"
   }
   RigidBody "{5C58DF2341F32681}" {
    LinearDamping 0.5
@@ -88,5 +88,4 @@ GenericEntity : "{C95E11C60810F432}Prefabs/Items/Core/Item_Base.et" {
   }
  }
  coords 0 0 0
- scale 0.6
 }

@@ -1,8 +1,12 @@
 //------------------------------------------------------------------------------------------------
 //! A bank paper read on screen: the paper itself over the inventory, shown by Inspect and closed by it again.
+//! Each looks like its 3D model: papers from the counter are a stamped letter, ATM papers a printed slip.
 class ELIFE_BankPaperView
 {
-	protected static const ResourceName LAYOUT = "{9B47E2D51C08A36F}UI/layouts/Menus/Banking/BankPaper.layout";
+	protected static const ResourceName LETTER_LAYOUT = "{9B47E2D51C08A36F}UI/layouts/Menus/Banking/BankPaper.layout";
+	protected static const ResourceName RECEIPT_LAYOUT = "{1EF52AF412A322A1}UI/layouts/Menus/Banking/BankReceipt.layout";
+	protected static const ResourceName ROW_LAYOUT = "{97B173CC6F40EB02}UI/layouts/Menus/Banking/BankReceiptRow.layout";
+	protected static const ResourceName EMBLEM_TEXTURE = "{EE73F489EC2A3F82}UI/Textures/Banking/ELIFE_PaperEmblem.edds";
 	//! The cashier's stamp on papers from the counter.
 	protected static const ResourceName STAMP_TEXTURE = "{F4F8F8ED8AB56052}UI/Textures/Banking/ELIFE_PaperStamp.edds";
 
@@ -12,7 +16,12 @@ class ELIFE_BankPaperView
 	//! Null if the layout couldn't be made.
 	static ELIFE_BankPaperView Create(notnull Widget parent, notnull ELIFE_BankPaper paper)
 	{
-		Widget root = GetGame().GetWorkspace().CreateWidgets(LAYOUT, parent);
+		bool letter = ELIFE_BankPaper.IsFromClerk(paper.kind);
+		ResourceName layout = RECEIPT_LAYOUT;
+		if (letter)
+			layout = LETTER_LAYOUT;
+
+		Widget root = GetGame().GetWorkspace().CreateWidgets(layout, parent);
 		if (!root)
 			return null;
 
@@ -26,7 +35,11 @@ class ELIFE_BankPaperView
 
 		ELIFE_BankPaperView view = new ELIFE_BankPaperView();
 		view.m_wRoot = root;
-		view.Fill(paper);
+		if (letter)
+			view.FillLetter(paper);
+		else
+			view.FillReceipt(paper);
+
 		return view;
 	}
 
@@ -40,129 +53,164 @@ class ELIFE_BankPaperView
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void Fill(notnull ELIFE_BankPaper paper)
+	//! An A4 letter like its 3D model: letterhead, date, subject, a short letter around the details, the cashier's stamp.
+	protected void FillLetter(notnull ELIFE_BankPaper paper)
 	{
-		SetText("Title", ELIFE_BankPaper.GetTitle(paper.kind));
+		ShowImage("Emblem", EMBLEM_TEXTURE);
 		SetText("BankName", paper.bankName);
-		SetText("Body", GetBody(paper));
+		string date, time;
+		paper.SplitIssuedAt(date, time);
+		SetText("Date", date);
+		SetText("Title", ELIFE_BankPaper.GetTitle(paper.kind));
 
-		string footer;
-		if (paper.bookingRef != "")
-			footer = ELIFE_DialogueDetails.FormatLine("#ELIFE-Paper_Reference", paper.bookingRef);
-
-		if (paper.issuedAt != "")
+		Widget rows = m_wRoot.FindAnyWidget("Rows");
+		if (paper.kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS)
 		{
-			if (footer != "")
-				footer += "\n";
-			footer += paper.issuedAt;
+			SetText("Intro", "#ELIFE-Paper_Intro_Account");
+			AddRow(rows, "#ELIFE-Clerk_Transfer_Number", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber), false, false);
+			AddRow(rows, "#ELIFE-Clerk_Label_BookingFee", paper.feeTerms, false, false);
+		}
+		else
+		{
+			SetText("Intro", "#ELIFE-Paper_Intro_Transfer");
+			AddTransferRows(rows, paper, false);
+			AddRow(rows, "#ELIFE-Clerk_Transfer_Amount", paper.amount, false, false);
+			AddRow(rows, "#ELIFE-Clerk_Label_Fee", paper.fee, false, false);
 		}
 
-		SetText("Footer", footer);
+		AddRow(m_wRoot.FindAnyWidget("Details"), "#ELIFE-Paper_Reference", paper.bookingRef, false, false);
 		SetText("Hint", "#ELIFE-Paper_Hint");
-		ShowStamp(IsFromClerk(paper.kind));
+		ShowImage("Stamp", STAMP_TEXTURE);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Only papers handed over at the counter carry the cashier's stamp; a machine has nobody to stamp them.
-	protected static bool IsFromClerk(int kind)
+	//! Printed like the slip: capitals, one label and value per row, the amount on its own.
+	protected void FillReceipt(notnull ELIFE_BankPaper paper)
 	{
-		return kind == ELIFE_EBankPaperKind.TRANSFER_RECEIPT || kind == ELIFE_EBankPaperKind.ACCOUNT_PAPERS;
+		ShowImage("Emblem", EMBLEM_TEXTURE);
+		SetText("Title", Caps(WidgetManager.Translate(ELIFE_BankPaper.GetTitle(paper.kind))));
+		SetText("BankName", Caps(paper.bankName));
+
+		Widget rows = m_wRoot.FindAnyWidget("Rows");
+		if (paper.kind == ELIFE_EBankPaperKind.TRANSFER_RECEIPT)
+			AddTransferRows(rows, paper, true);
+		else
+			AddRow(rows, "#ELIFE-Paper_Account", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber), true, false);
+
+		SetText("AmountLabel", Caps(WidgetManager.Translate("#ELIFE-Clerk_Transfer_Amount")));
+		SetText("AmountValue", paper.amount);
+		AddRow(m_wRoot.FindAnyWidget("Charges"), "#ELIFE-Clerk_Label_Fee", paper.fee, true, false);
+
+		string date, time;
+		paper.SplitIssuedAt(date, time);
+		Widget details = m_wRoot.FindAnyWidget("Details");
+		AddRow(details, "#ELIFE-Paper_Date", date, true, false);
+		AddRow(details, "#ELIFE-Paper_Time", time, true, false);
+		// Its own line: the booking id is too long to share one with its label on the narrow slip.
+		AddRow(details, "#ELIFE-Paper_Reference", paper.bookingRef, true, true);
+
+		SetText("Hint", "#ELIFE-Paper_Hint");
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static void AddTransferRows(Widget list, notnull ELIFE_BankPaper paper, bool caps)
+	{
+		AddRow(list, "#ELIFE-Paper_From", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber), caps, false);
+		AddRow(list, "#ELIFE-Clerk_Transfer_To", ELIFE_PhoneBankingService.GroupIban(paper.targetNumber), caps, false);
+		// Under the number, unlabelled, so a long bank name doesn't push the number off the paper.
+		string bank = paper.targetBankName;
+		if (caps)
+			bank = Caps(bank);
+
+		AddRow(list, "", bank, caps, false);
+		if (paper.purpose == "")
+			return;
+
+		string purpose = WidgetManager.Translate(paper.purpose);
+		if (caps)
+			purpose = Caps(purpose);
+
+		AddRow(list, "#ELIFE-Clerk_Label_Purpose", purpose, caps, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! A label and value row; skipped when there's no value. An empty labelKey leaves the label blank.
+	//! ownLine puts the value on the line under its label.
+	protected static void AddRow(Widget list, string labelKey, string value, bool caps, bool ownLine)
+	{
+		if (!list || value == "")
+			return;
+
+		string label;
+		if (labelKey != "")
+			label = WidgetManager.Translate(labelKey);
+
+		if (caps)
+			label = Caps(label);
+
+		if (!ownLine)
+		{
+			CreateRow(list, label, value);
+			return;
+		}
+
+		CreateRow(list, label, "");
+		CreateRow(list, "", value);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected static void CreateRow(notnull Widget list, string label, string value)
+	{
+		Widget row = GetGame().GetWorkspace().CreateWidgets(ROW_LAYOUT, list);
+		if (!row)
+			return;
+
+		LayoutSlot.SetHorizontalAlign(row, LayoutHorizontalAlign.Stretch);
+		TextWidget labelText = TextWidget.Cast(row.FindAnyWidget("Label"));
+		if (labelText)
+			labelText.SetText(label);
+
+		TextWidget valueText = TextWidget.Cast(row.FindAnyWidget("Value"));
+		if (valueText)
+			valueText.SetText(value);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Receipt capitals. The umlauts are fixed by hand in case ToUpper only maps ASCII.
+	protected static string Caps(string text)
+	{
+		string caps = text;
+		caps.ToUpper();
+		caps.Replace("ä", "Ä");
+		caps.Replace("ö", "Ö");
+		caps.Replace("ü", "Ü");
+		return caps;
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! Hidden if the texture can't be loaded, so it never shows as a white square.
-	protected void ShowStamp(bool stamped)
+	protected void ShowImage(string name, ResourceName texture)
 	{
-		ImageWidget stamp = ImageWidget.Cast(m_wRoot.FindAnyWidget("Stamp"));
-		if (!stamp)
+		ImageWidget image = ImageWidget.Cast(m_wRoot.FindAnyWidget(name));
+		if (!image)
 			return;
 
-		if (!stamped)
-		{
-			stamp.SetVisible(false);
-			return;
-		}
-
-		bool loaded = stamp.LoadImageTexture(0, STAMP_TEXTURE);
+		bool loaded = image.LoadImageTexture(0, texture);
 		if (loaded)
-			stamp.SetImage(0);
+			image.SetImage(0);
 
-		stamp.SetVisible(loaded);
-	}
-
-	//------------------------------------------------------------------------------------------------
-	//! One "Label: value" per line, only the fields the paper has.
-	protected static string GetBody(notnull ELIFE_BankPaper paper)
-	{
-		array<string> lines = {};
-		switch (paper.kind)
-		{
-			case ELIFE_EBankPaperKind.TRANSFER_RECEIPT:
-			{
-				AddLine(lines, "#ELIFE-Paper_From", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber));
-				string target = ELIFE_PhoneBankingService.GroupIban(paper.targetNumber);
-				if (paper.targetBankName != "")
-					target += " (" + paper.targetBankName + ")";
-
-				AddLine(lines, "#ELIFE-Clerk_Transfer_To", target);
-				AddLine(lines, "#ELIFE-Clerk_Transfer_Amount", paper.amount);
-				AddLine(lines, "#ELIFE-Clerk_Label_Fee", paper.fee);
-				if (paper.purpose != "")
-					AddLine(lines, "#ELIFE-Clerk_Label_Purpose", WidgetManager.Translate(paper.purpose));
-
-				break;
-			}
-			case ELIFE_EBankPaperKind.ACCOUNT_PAPERS:
-			{
-				AddLine(lines, "#ELIFE-Clerk_Transfer_Number", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber));
-				AddLine(lines, "#ELIFE-Clerk_Label_BookingFee", paper.feeTerms);
-				break;
-			}
-			case ELIFE_EBankPaperKind.ATM_WITHDRAWAL:
-			case ELIFE_EBankPaperKind.ATM_DEPOSIT:
-			{
-				AddLine(lines, "#ELIFE-Paper_Account", ELIFE_PhoneBankingService.GroupIban(paper.accountNumber));
-				AddLine(lines, "#ELIFE-Clerk_Transfer_Amount", paper.amount);
-				AddLine(lines, "#ELIFE-Clerk_Label_Fee", paper.fee);
-				break;
-			}
-		}
-
-		string text;
-		foreach (int i, string line : lines)
-		{
-			if (i > 0)
-				text += "\n";
-			text += line;
-		}
-
-		return text;
-	}
-
-	//------------------------------------------------------------------------------------------------
-	protected static void AddLine(notnull array<string> lines, string labelKey, string value)
-	{
-		if (value != "")
-			lines.Insert(ELIFE_DialogueDetails.FormatLine(labelKey, value));
+		image.SetVisible(loaded);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	protected void SetText(string name, string text)
 	{
 		TextWidget widget = TextWidget.Cast(m_wRoot.FindAnyWidget(name));
-		if (widget)
-		{
-			widget.SetText(text);
-			widget.SetVisible(text != "");
+		if (!widget)
 			return;
-		}
 
-		RichTextWidget rich = RichTextWidget.Cast(m_wRoot.FindAnyWidget(name));
-		if (rich)
-		{
-			rich.SetText(text);
-			rich.SetVisible(text != "");
-		}
+		widget.SetText(text);
+		widget.SetVisible(text != "");
 	}
 }
 
