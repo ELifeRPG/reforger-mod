@@ -79,8 +79,11 @@ class ELIFE_NpcComponent : ScriptComponent
 	protected static const int HANDS_UP_EXIT_MS = 4000;
 	//! A pose that isn't playing this long after it was started never started.
 	protected static const int HANDS_UP_START_MS = 1000;
-	//! The anim graph variable that picks the frightened pose's variant (-1 lowers it, -2 drops it at once).
-	protected static const string HANDS_UP_VARIABLE = "Gestures";
+	//! Between two idle clips he plays vanilla's idle for a random time in this range.
+	protected static const int IDLE_PAUSE_MIN_MS = 10000;
+	protected static const int IDLE_PAUSE_MAX_MS = 25000;
+	//! The variable of our custom pose graphs (frightened pose, idle clips) that picks the variant; -1 plays the out clip.
+	protected static const string POSE_VARIABLE = "Gestures";
 
 	[Attribute("2.5", UIWidgets.Slider, "How far from him a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
@@ -114,6 +117,18 @@ class ELIFE_NpcComponent : ScriptComponent
 
 	[Attribute(desc: "Values of the graph's Gestures variable, one per pose variant; each NPC picks one at random when he spawns")]
 	protected ref array<int> m_aThreatenedPoses;
+
+	[Attribute("", UIWidgets.ResourceNamePicker, "Anim graph (.agr) of his idle clips, played now and then as a custom loiter between vanilla's idle. Empty: vanilla's idle only.", "agr")]
+	protected ResourceName m_sIdleGraph;
+
+	[Attribute("", UIWidgets.ResourceNamePicker, "Anim instance (.asi) for m_sIdleGraph", "asi")]
+	protected ResourceName m_sIdleGraphInstance;
+
+	[Attribute(desc: "Values of the idle graph's Gestures variable, one per clip; picked at random, never the same twice in a row")]
+	protected ref array<int> m_aIdlePoses;
+
+	[Attribute("6000", UIWidgets.EditBox, "Length of an idle clip in ms; then it's detached (the clips carry no Gesture_End event)", "1000 60000 100")]
+	protected int m_iIdleClipMs;
 
 	[Attribute(desc: "Optional opening hours. Without them he is always open; with them he leaves his spot when closed (ELIFE_NpcRoutine). A spot can override them.")]
 	protected ref ELIFE_NpcSchedule m_Schedule;
@@ -157,6 +172,9 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! Server-side: his frightened pose (a custom loiter) plays, from its start until it's detached.
 	protected bool m_bHandsUp;
 	protected int m_iHandsUpStartTick;
+	//! Server-side: an idle clip (custom loiter from m_sIdleGraph) plays; the last one's Gestures value, -1 none yet.
+	protected bool m_bIdleClip;
+	protected int m_iLastIdlePose = -1;
 	//! Server-side: the Gestures value of his pose variant; -1 is none.
 	protected int m_iHandsUpPose = -1;
 
@@ -1031,7 +1049,7 @@ class ELIFE_NpcComponent : ScriptComponent
 
 		//! No command: the variable alone picks the variant, -1 plays the out clip.
 		SCR_LoiterCustomAnimData data = SCR_LoiterCustomAnimData.CreateInstance(commandName: string.Empty, graphName: m_sThreatenedGraph,
-			graphInstanceName: m_sThreatenedGraphInstance, controlVariableValue: m_iHandsUpPose, controlVariableName: HANDS_UP_VARIABLE,
+			graphInstanceName: m_sThreatenedGraphInstance, controlVariableValue: m_iHandsUpPose, controlVariableName: POSE_VARIABLE,
 			allowEnvironmentalExit: false);
 		vector noTarget[4];
 		controller.StartLoitering(null, ELoiteringType.CUSTOM, false, false, false, noTarget, false, data);
@@ -1060,8 +1078,8 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! Server-only, HANDS_UP_EXIT_MS after StopIdle lowered his hands.
 	protected void FinishHandsUp()
 	{
-		Rpc(RpcDo_FinishHandsUp);
-		DetachHandsUp();
+		Rpc(RpcDo_DetachPose);
+		DetachPose();
 		m_bHandsUp = false;
 		m_bIdleExiting = false;
 
@@ -1094,16 +1112,16 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Clients. Vanilla's finish broadcast doesn't detach the pose's graph there.
+	//! Clients. Vanilla's finish broadcast doesn't detach a custom pose's graph (frightened pose, idle clip) there.
 	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
-	protected void RpcDo_FinishHandsUp()
+	protected void RpcDo_DetachPose()
 	{
-		DetachHandsUp();
+		DetachPose();
 	}
 
 	//------------------------------------------------------------------------------------------------
 	//! On this machine.
-	protected void DetachHandsUp()
+	protected void DetachPose()
 	{
 		SCR_CharacterControllerComponent controller = GetController();
 		if (!controller)
@@ -1269,6 +1287,7 @@ class ELIFE_NpcComponent : ScriptComponent
 
 	//------------------------------------------------------------------------------------------------
 	//! Vanilla's standing loiter (the "Wait" emote), started by the server so every client sees it. Only while nobody is served.
+	//! With idle clips, one of them interrupts it after a random time.
 	protected void StartIdle()
 	{
 		//! After a short visit the last idle may still be on its way out.
@@ -1283,6 +1302,12 @@ class ELIFE_NpcComponent : ScriptComponent
 		if (!controller || m_iCustomerPlayerId != 0 || m_bThreatened || controller.IsLoitering() || ELIFE_Poses.GetPoseSlot(GetOwner()) || !IsAtSpot())
 			return;
 
+		if (HasIdleClips())
+		{
+			GetGame().GetCallqueue().Remove(PlayIdleClip);
+			GetGame().GetCallqueue().CallLater(PlayIdleClip, Math.RandomIntInclusive(IDLE_PAUSE_MIN_MS, IDLE_PAUSE_MAX_MS));
+		}
+
 		if (!controller.CanPlayLoiterAnimation(ELoiteringType.LOITERING))
 		{
 			Print(string.Format("%1 | the idle animation can't start", ClassName()), LogLevel.WARNING);
@@ -1295,13 +1320,102 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	protected bool HasIdleClips()
+	{
+		return !m_sIdleGraph.IsEmpty() && m_aIdlePoses && !m_aIdlePoses.IsEmpty();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, a while into vanilla's idle: it exits, then one idle clip plays, picked at random, never the last one
+	//! again. Started by the server, so it replicates like any loiter.
+	protected void PlayIdleClip()
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller || m_bIdleClip || m_iCustomerPlayerId != 0 || m_bThreatened || ELIFE_Poses.GetPoseSlot(GetOwner()) || !IsAtSpot())
+			return;
+
+		//! Vanilla's idle first plays its exit.
+		if (m_bIdleExiting || controller.IsLoitering())
+		{
+			ExitIdle(controller);
+			GetGame().GetCallqueue().CallLater(PlayIdleClip, IDLE_START_DELAY_MS);
+			return;
+		}
+
+		//! Busy with something else this moment (a gesture, a step): next time.
+		if (!controller.CanPlayLoiterAnimation(ELoiteringType.CUSTOM))
+		{
+			GetGame().GetCallqueue().CallLater(PlayIdleClip, IDLE_START_DELAY_MS);
+			return;
+		}
+
+		int pose = m_aIdlePoses[Math.RandomInt(0, m_aIdlePoses.Count())];
+		if (pose == m_iLastIdlePose && m_aIdlePoses.Count() > 1)
+			pose = m_aIdlePoses[(m_aIdlePoses.Find(pose) + Math.RandomInt(1, m_aIdlePoses.Count())) % m_aIdlePoses.Count()];
+
+		SCR_LoiterCustomAnimData data = SCR_LoiterCustomAnimData.CreateInstance(commandName: string.Empty, graphName: m_sIdleGraph,
+			graphInstanceName: m_sIdleGraphInstance, controlVariableValue: pose, controlVariableName: POSE_VARIABLE,
+			allowEnvironmentalExit: false);
+		vector noTarget[4];
+		controller.StartLoitering(null, ELoiteringType.CUSTOM, false, false, false, noTarget, false, data);
+		m_bIdleClip = true;
+		m_iLastIdlePose = pose;
+		GetGame().GetCallqueue().CallLater(EndIdleClip, m_iIdleClipMs);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, once the clip played (it ends on the standing pose it started from): detached, back to vanilla's idle.
+	protected void EndIdleClip()
+	{
+		if (!m_bIdleClip)
+			return;
+
+		m_bIdleClip = false;
+		Rpc(RpcDo_DetachPose);
+		DetachPose();
+		GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! The fast stop can leave the idle pose stuck, which blocks turning, so a running idle gets the normal exit.
 	protected void StopIdle()
 	{
 		GetGame().GetCallqueue().Remove(StartIdle);
-
+		GetGame().GetCallqueue().Remove(PlayIdleClip);
 		SCR_CharacterControllerComponent controller = GetController();
-		if (!controller || m_bIdleExiting)
+		//! A clip has no exit animation: it's dropped at once and blends out.
+		if (m_bIdleClip)
+		{
+			GetGame().GetCallqueue().Remove(EndIdleClip);
+			m_bIdleClip = false;
+			Rpc(RpcDo_DetachPose);
+			//! Checked before detaching: not loitering yet means the start is still pending, with nothing to detach.
+			if (controller && !controller.IsLoitering())
+				CancelPendingLoiter(controller);
+			else
+				DetachPose();
+
+			return;
+		}
+
+		if (controller)
+			ExitIdle(controller);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. A start that is still pending has no animation yet, so cancelling it can't leave a pose behind.
+	protected void CancelPendingLoiter(notnull SCR_CharacterControllerComponent controller)
+	{
+		SCR_ScriptedCharacterInputContext input = controller.GetScrInputContext();
+		if (input && input.m_iLoiteringType >= 0)
+			controller.StopLoitering(true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only: vanilla's idle (or the frightened pose) plays its exit; a pending start is cancelled.
+	protected void ExitIdle(notnull SCR_CharacterControllerComponent controller)
+	{
+		if (m_bIdleExiting)
 			return;
 
 		if (controller.IsLoitering())
@@ -1321,10 +1435,7 @@ class ELIFE_NpcComponent : ScriptComponent
 			return;
 		}
 
-		//! A start that is still pending has no animation yet, so cancelling it can't leave a pose behind.
-		SCR_ScriptedCharacterInputContext input = controller.GetScrInputContext();
-		if (input && input.m_iLoiteringType >= 0)
-			controller.StopLoitering(true);
+		CancelPendingLoiter(controller);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1853,6 +1964,8 @@ class ELIFE_NpcComponent : ScriptComponent
 		GetGame().GetCallqueue().Remove(CheckThreat);
 		GetGame().GetCallqueue().Remove(ReactAsBystander);
 		GetGame().GetCallqueue().Remove(FinishHandsUp);
+		GetGame().GetCallqueue().Remove(PlayIdleClip);
+		GetGame().GetCallqueue().Remove(EndIdleClip);
 	}
 
 	//------------------------------------------------------------------------------------------------

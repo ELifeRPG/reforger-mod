@@ -1,0 +1,21 @@
+AnimSrcGraph {
+ AnimSetTemplate "{771FCE0B72F51AB6}anims/Idles/ELIFE_Idle.ast"
+ ControlTemplate AnimSrcGCT "{E4063D2559241032}" {
+  Variables {
+   AnimSrcGCTVarInt Gestures {
+    DefaultValue -1
+    MinValue -2
+    MaxValue 1000
+   }
+  }
+  Commands {
+   AnimSrcGCTCmd CMD_Gestures {
+   }
+  }
+ }
+ Debug AnimSrcGD "{9E49E0295B099CCB}" {
+ }
+ GraphFilesResourceNames {
+  "{9FF55979480283D0}anims/Idles/ELIFE_Idle.agf"
+ }
+}

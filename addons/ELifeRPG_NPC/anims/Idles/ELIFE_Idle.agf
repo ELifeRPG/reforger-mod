@@ -1,0 +1,128 @@
+AnimSrcGraphFile {
+ Sheets {
+  AnimSrcGraphSheet ELIFE_Idle {
+   Nodes {
+    AnimSrcNodeStateMachine MasterControl {
+     Tags {
+     }
+     EditorPos 0 0
+     states {
+      AnimSrcNodeState Arms {
+       EditorPos 0 1
+       Child "ArmsG"
+       StartCondition "Gestures == 800"
+       IsExit 1
+      }
+      AnimSrcNodeState Clasp {
+       EditorPos 3 1
+       Child "ClaspG"
+       StartCondition "Gestures == 801"
+       IsExit 1
+      }
+      AnimSrcNodeState Look {
+       EditorPos 6 1
+       Child "LookG"
+       StartCondition "Gestures == 802"
+       IsExit 1
+      }
+      AnimSrcNodeState Neck {
+       EditorPos 9 1
+       Child "NeckG"
+       StartCondition "Gestures == 803"
+       IsExit 1
+      }
+      AnimSrcNodeState Scratch {
+       EditorPos 12 1
+       Child "ScratchG"
+       StartCondition "Gestures == 804"
+       IsExit 1
+      }
+      AnimSrcNodeState Stretch {
+       EditorPos 15 1
+       Child "StretchG"
+       StartCondition "Gestures == 805"
+       IsExit 1
+      }
+      AnimSrcNodeState Watch {
+       EditorPos 18 1
+       Child "WatchG"
+       StartCondition "Gestures == 806"
+       IsExit 1
+      }
+      AnimSrcNodeState Weight {
+       EditorPos 21 1
+       Child "WeightG"
+       StartCondition "Gestures == 807"
+       IsExit 1
+      }
+     }
+    }
+    AnimSrcNodeGroupSelect ArmsG {
+     EditorPos 0 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Arms"
+    }
+    AnimSrcNodeGroupSelect ClaspG {
+     EditorPos 3 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Clasp"
+    }
+    AnimSrcNodeGroupSelect LookG {
+     EditorPos 6 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Look"
+    }
+    AnimSrcNodeGroupSelect NeckG {
+     EditorPos 9 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Neck"
+    }
+    AnimSrcNodeGroupSelect ScratchG {
+     EditorPos 12 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Scratch"
+    }
+    AnimSrcNodeGroupSelect StretchG {
+     EditorPos 15 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Stretch"
+    }
+    AnimSrcNodeGroupSelect WatchG {
+     EditorPos 18 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Watch"
+    }
+    AnimSrcNodeGroupSelect WeightG {
+     EditorPos 21 3
+     Child "IdleSTM"
+     Group "Idle"
+     Column "Weight"
+    }
+    AnimSrcNodeStateMachine IdleSTM {
+     EditorPos 10.5 6
+     states {
+      AnimSrcNodeState Play {
+       EditorPos 10.5 7
+       Child "IdlePlaySrc"
+       StartCondition "true"
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+     }
+    }
+    AnimSrcNodeSource IdlePlaySrc {
+     EditorPos 10.5 9
+     Source "Idle.Play"
+     Looptype "No Loop"
+    }
+   }
+  }
+ }
+}

@@ -117,6 +117,17 @@ The routine needs vanilla AI: an `SCR_AIWorld` with a Soldiers navmesh in the wo
 spot, closed. On small worlds, set `UseNavmeshStreaming 0` on the navmesh, or AI never walks. After placing new
 seats or obstacles, re-bake the navmesh so he can reach them.
 
+## Idle clips
+
+With `m_sIdleGraph`/`m_sIdleGraphInstance` and `m_aIdlePoses` set on `ELIFE_NpcComponent`, an NPC at his spot idles
+with vanilla's idle and, after a random 10–25 s of it, one of our own clips: vanilla's idle plays its exit, then a
+clip picked at random (never the same twice in a row; a custom loiter, `Gestures` = the clip's value), which the NPC
+detaches after `m_iIdleClipMs` (the clips carry no `Gesture_End` event), then vanilla's idle starts again. Anything that stops his idle (a customer,
+a fright, going off duty) drops the clip at once; it blends out. Every clip starts and ends on the same standing pose,
+feet locked to the floor. The bank clerk uses `ELifeRPG_NPC/anims/Idles/` (8 clips made with kimodo,
+`kimodo/reforger/build_idles.py` and `build_idle_export.py`: Arms, Clasp, Look, Neck (unused, looked bad), Scratch, Stretch, Watch,
+Weight = 800-807, 6 s each).
+
 ## Threatened (robbery)
 
 The server checks every 0.25 s whether a player points a weapon at an NPC (`ELIFE_NpcThreat`): weapon raised (no

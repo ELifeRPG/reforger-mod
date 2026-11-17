@@ -1,0 +1,29 @@
+AnimSetInstanceSource {
+ Template "{771FCE0B72F51AB6}anims/Idles/ELIFE_Idle.ast"
+ Lines {
+  AnimSetInstanceSource_Line "Idle.Arms.Play" {
+   Resource "{BD400953261CCED5}anims/Idles/ELIFE_Idle_Arms.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Clasp.Play" {
+   Resource "{3DC36D32502EC083}anims/Idles/ELIFE_Idle_Clasp.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Look.Play" {
+   Resource "{FC52499D07BC8D8E}anims/Idles/ELIFE_Idle_Look.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Neck.Play" {
+   Resource "{264790678EC17723}anims/Idles/ELIFE_Idle_Neck.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Scratch.Play" {
+   Resource "{48361847E6DB5D82}anims/Idles/ELIFE_Idle_Scratch.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Stretch.Play" {
+   Resource "{30528E6ABE0213E7}anims/Idles/ELIFE_Idle_Stretch.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Watch.Play" {
+   Resource "{30CCA04819B15416}anims/Idles/ELIFE_Idle_Watch.anm"
+  }
+  AnimSetInstanceSource_Line "Idle.Weight.Play" {
+   Resource "{1CB1702793A24A5A}anims/Idles/ELIFE_Idle_Weight.anm"
+  }
+ }
+}
