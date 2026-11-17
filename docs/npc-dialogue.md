@@ -45,7 +45,7 @@ the NPC and nothing else.
 | `ELIFE_NpcComponent` | Serves one customer at a time: grant or refuse, visits, AFK and range release, idle, facing the customer, gestures, voice and line SFX. Subclass per NPC kind. |
 | `ELIFE_NpcCharacterComponent` | On the player character (`Character_LIFE.et`). Carries open, close, say and generic requests (`kind, a, b, text`) to the server, and grants and messages back. |
 | `ELIFE_NpcVoiceTable` | A `.conf` per NPC kind: optional voices, lines with variant count, askable flag, gesture, SFX and repeat cooldown, plus the greeting, goodbye, busy and unavailable lines. |
-| `ELIFE_NpcSpot` | Spawns the NPC (the world doesn't replicate placed characters) with its prefab and one voice. Optional `m_Variation` (`ELIFE_NpcSpotVariation`) picks look and voice from the position, for an NPC kind placed in many locations. |
+| `ELIFE_NpcSpot` | Spawns the NPC (the world doesn't replicate placed characters) with its prefab and one voice. Optional `m_Variation` (`ELIFE_NpcSpotVariation`) picks look and voice from the position, for an NPC kind placed in many locations. NPCs can be killed (`m_bInvulnerable` on their `ELIFE_NpcComponent` makes one unhurtable); a killed NPC's body is removed after `respawnDelay` and a new one spawns another `respawnDelay` later. |
 | `ELIFE_NpcLookList`, `Configs/NPC/ELIFE_NpcLooks_Civilian.conf` | Every vanilla civilian head with its matching body (11 looks, by name). A variation swaps head and body at spawn and keeps the prefab's clothing; `m_aLookNames` limits it to a subset, so two NPC kinds can use separate sets and never look alike. |
 | `ELIFE_NpcTalkAction` | The "talk" action on the NPC prefab. |
 | `ELIFE_NpcDialogueController`, `ELIFE_NpcDialogueLine` | A conversation that only talks: no script needed for a plain NPC. |
@@ -116,6 +116,31 @@ Back at his spot, if somebody stands on it, he waits beside it until it's free.
 The routine needs vanilla AI: an `SCR_AIWorld` with a Soldiers navmesh in the world. Without one he stays at his
 spot, closed. On small worlds, set `UseNavmeshStreaming 0` on the navmesh, or AI never walks. After placing new
 seats or obstacles, re-bake the navmesh so he can reach them.
+
+## Threatened (robbery)
+
+The server checks every 0.25 s whether a player points a weapon at an NPC (`ELIFE_NpcThreat`): weapon raised (no
+need to aim down sights), not a grenade, within 20 m, the barrel's line passing within 0.6 m of his chest, and no
+wall in between. The NPC aimed at is frightened at once and says his voice table's `m_sThreatenedLine` as his hands go up, and again every 10–18 s while still aimed at. Every
+NPC within 15 m of him is frightened too, each after a random 0.5–2.5 s and silently, so they don't react in step
+or talk over each other. A frightened NPC (replicated `IsThreatened`) ends any visit, turns away waiting customers,
+hides his talk action, stops his idle and faces the gunman. He calms down 5 s after the last weapon is gone, turns
+back to his spot and serves again; opening and closing time wait until then. Off duty his routine holds him
+(`ELIFE_NpcRoutine` state HOLDING): walking, he stops where he is with AI off; sitting, lying or asleep, he gets up
+first. Calm again and his hands down, the routine goes on (a seat or bed again, or back to his spot at opening time).
+Only while turning to sit he can't react yet. He raises his hands at once (a bystander after his own random 0–0.6 s): a custom loiter from the anim graph
+`m_sThreatenedGraph`/`m_sThreatenedGraphInstance`, variant picked at spawn from `m_aThreatenedPoses` (values of the
+graph's `Gestures` variable). Calm again, he lowers them (`Gestures` -1 plays the out clip) and the NPC detaches the
+graph 4 s later (`ELIFE_NpcLoiterCommand.c`), since Workbench-exported clips can't carry vanilla's `Gesture_End`
+event; then he turns back to his spot. While the pose plays it turns him towards the gunman (90°/s, replicated `GetPoseYaw`), as the heading doesn't reach a loitering character. Aimed at with his hands already up (a bystander first), he says his line right away. The bank clerk uses `ELifeRPG_NPC/anims/HandsUp/`
+(4 variants made with kimodo, `kimodo/reforger/cut_hands_up.py` and `build_hands_up.py`: Cower, CowerLow, High,
+Nervous = 700-703, feet locked to the floor). Gunfire frightens them too (`ELIFE_NpcGunfire.c`, server): any shot,
+players' or AI's, within 30 m of the shooter, and anyone hit by a bullet within 15 m (a kill is a hit). Every NPC in
+range reacts like a bystander and stays frightened at least 10 s after the last shot. 0.3 s after the shot, once its
+hit or kill is known, the nearest NPC still alive and not hit in the last 3 s says the voice table's `m_sStartledLine`,
+at most one such line every 8 s across all NPCs. A dying NPC's line is cut off.
+`m_bCanBeThreatened` on `ELIFE_NpcComponent` turns it off, and the server hook
+`OnThreatenedChanged` lets a kind of NPC react to it. A dead NPC stops all his timers; his spot removes the body.
 
 ## Opening-hours sign
 

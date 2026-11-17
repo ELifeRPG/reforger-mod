@@ -13,7 +13,9 @@ enum ELIFE_ENpcRoutineState
 	GETTING_UP,
 	WANDERING,
 	PAUSING,
-	RETURNING
+	RETURNING,
+	//! Frightened (ELIFE_NpcComponent): he stands where he is, AI off, and the NPC component turns and poses him.
+	HOLDING
 }
 
 //------------------------------------------------------------------------------------------------
@@ -104,6 +106,8 @@ class ELIFE_NpcRoutine
 	protected vector m_vRestEntry;
 	//! Getting up to go back on duty, not to pick another place.
 	protected bool m_bUpForDuty;
+	//! Frightened while sitting or lying: once up, he holds (Hold) instead of walking on.
+	protected bool m_bHoldWhenUp;
 	protected ELIFE_ENpcRoutineState m_eState = ELIFE_ENpcRoutineState.ON_DUTY;
 	protected float m_fStateSeconds;
 	protected float m_fPauseSeconds;
@@ -191,6 +195,61 @@ class ELIFE_NpcRoutine
 		GetGame().GetCallqueue().Remove(Tick);
 		GetGame().GetCallqueue().CallLater(Tick, TICK_MS, true);
 		return true;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! False while he can't stop yet (turning to sit; it ends in the slot, and the next check asks again).
+	bool CanHold()
+	{
+		return IsOnDuty() || !ELIFE_PosePropComponent.IsTurningToSit(m_Character);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	bool IsHolding()
+	{
+		return m_eState == ELIFE_ENpcRoutineState.HOLDING;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Frightened: he stops where he is; sitting or lying, he gets up first (TickGettingUp then holds him).
+	void Hold()
+	{
+		if (IsOnDuty() || IsHolding())
+			return;
+
+		if (IsInRest())
+		{
+			if (m_eState != ELIFE_ENpcRoutineState.GETTING_UP)
+				GetUp(false);
+
+			m_bUpForDuty = false;
+			m_bHoldWhenUp = true;
+			return;
+		}
+
+		StopToHold();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Calm again: he looks for a seat or bed again; at opening time the schedule sends him back.
+	void Resume()
+	{
+		m_bHoldWhenUp = false;
+		if (!IsHolding())
+			return;
+
+		SetAIActive(true);
+		LookForRest();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void StopToHold()
+	{
+		m_bHoldWhenUp = false;
+		ReleaseRest();
+		ReplaceWaypoint(null);
+		SetAIActive(false);
+		SetState(ELIFE_ENpcRoutineState.HOLDING);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -854,6 +913,12 @@ class ELIFE_NpcRoutine
 			if (m_fStateSeconds >= GET_UP_RETRY_S)
 				GetUp(m_bUpForDuty);
 
+			return;
+		}
+
+		if (m_bHoldWhenUp)
+		{
+			StopToHold();
 			return;
 		}
 

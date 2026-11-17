@@ -20,7 +20,7 @@ enum ELIFE_ENpcReason
 //------------------------------------------------------------------------------------------------
 //! The generic core of a service NPC (see docs/npc-dialogue.md). The server owns him; customers reach him through
 //! ELIFE_NpcCharacterComponent on their own character. A kind of NPC subclasses this and overrides the hooks:
-//! IsReady/Prepare, CheckCustomer, OnVisitStart/OnVisitEnd, OnRequest (server) and OnMessage/OnGranted (client).
+//! IsReady/Prepare, CheckCustomer, OnVisitStart/OnVisitEnd, OnThreatenedChanged, OnRequest (server) and OnMessage/OnGranted (client).
 class ELIFE_NpcComponent : ScriptComponent
 {
 	protected static const int TICK_INTERVAL_MS = 1000;
@@ -48,6 +48,39 @@ class ELIFE_NpcComponent : ScriptComponent
 	protected static const int ASKED_LINE_COOLDOWN_MS = 500;
 	//! How often the server compares the in-game clock with his opening hours.
 	protected static const int SCHEDULE_CHECK_MS = 5000;
+	//! How often the server checks for a weapon pointed at him or at an NPC near him.
+	protected static const int THREAT_CHECK_MS = 250;
+	//! He calms down this long after the last weapon pointed at him or a neighbour.
+	protected static const int THREAT_CALM_MS = 5000;
+	//! A weapon pointed at an NPC this close frightens him too.
+	protected static const float BYSTANDER_RANGE = 15;
+	//! A neighbour's fright reaches him a little later, at his own moment, so NPCs don't react in step.
+	protected static const int BYSTANDER_DELAY_MIN_MS = 500;
+	protected static const int BYSTANDER_DELAY_MAX_MS = 2500;
+	//! A bystander raises his hands after his own random moment up to this; the one aimed at at once.
+	protected static const int HANDS_UP_DELAY_MAX_MS = 600;
+	//! Gunfire frightens NPCs within this of a shot (from the shooter), and within GUNFIRE_HIT_RANGE of whoever is hit.
+	static const float GUNFIRE_SHOT_RANGE = 30;
+	static const float GUNFIRE_HIT_RANGE = 15;
+	//! After gunfire he stays frightened at least this long.
+	protected static const int GUNFIRE_CALM_MS = 10000;
+	//! One NPC at most says his startled line per this time, so lines don't pile up in a firefight.
+	protected static const int STARTLED_LINE_COOLDOWN_MS = 8000;
+	//! Who says it is picked this long after the shot, once a hit (or kill) it caused is known: never the one hit.
+	protected static const int STARTLED_LINE_DELAY_MS = 300;
+	//! An NPC hit this recently doesn't say it.
+	protected static const int HIT_SILENCE_MS = 3000;
+	//! Still aimed at, he says his threatened line again after a random time in this range.
+	protected static const int THREAT_LINE_REPEAT_MIN_MS = 10000;
+	protected static const int THREAT_LINE_REPEAT_MAX_MS = 18000;
+	//! While the pose turns him, the gunman's direction is sent again once it moved this far (degrees).
+	protected static const float POSE_YAW_RESEND_DEG = 3;
+	//! The frightened pose's out clip ends within this; then it's detached (our clips carry no Gesture_End event).
+	protected static const int HANDS_UP_EXIT_MS = 4000;
+	//! A pose that isn't playing this long after it was started never started.
+	protected static const int HANDS_UP_START_MS = 1000;
+	//! The anim graph variable that picks the frightened pose's variant (-1 lowers it, -2 drops it at once).
+	protected static const string HANDS_UP_VARIABLE = "Gestures";
 
 	[Attribute("2.5", UIWidgets.Slider, "How far from him a customer can stand, in metres", "0.5 10 0.1")]
 	protected float m_fUseRange;
@@ -67,6 +100,21 @@ class ELIFE_NpcComponent : ScriptComponent
 	[Attribute("0 0 0", UIWidgets.ColorPicker, "Map icon and label colour while open, sRGB (black: the marker config's default). Closed is always grey.")]
 	protected vector m_vMapColor;
 
+	[Attribute("0", UIWidgets.CheckBox, "He can't be hurt. Off: he can be killed; his spot removes the body and spawns a new one (ELIFE_NpcSpot).")]
+	protected bool m_bInvulnerable;
+
+	[Attribute("1", UIWidgets.CheckBox, "A weapon pointed at him, or at an NPC near him, frightens him: he stops serving and faces the gunman; aimed at, he says the voice table's threatened line. Only at his spot.")]
+	protected bool m_bCanBeThreatened;
+
+	[Attribute("", UIWidgets.ResourceNamePicker, "Anim graph (.agr) of his frightened pose (hands up), played as a custom loiter. Empty: he only faces the gunman.", "agr")]
+	protected ResourceName m_sThreatenedGraph;
+
+	[Attribute("", UIWidgets.ResourceNamePicker, "Anim instance (.asi) for m_sThreatenedGraph", "asi")]
+	protected ResourceName m_sThreatenedGraphInstance;
+
+	[Attribute(desc: "Values of the graph's Gestures variable, one per pose variant; each NPC picks one at random when he spawns")]
+	protected ref array<int> m_aThreatenedPoses;
+
 	[Attribute(desc: "Optional opening hours. Without them he is always open; with them he leaves his spot when closed (ELIFE_NpcRoutine). A spot can override them.")]
 	protected ref ELIFE_NpcSchedule m_Schedule;
 
@@ -78,6 +126,39 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! Off duty, lying on a bed: no talk action, no lines.
 	[RplProp()]
 	protected bool m_bSleeping;
+	//! Frightened by a weapon (see CheckThreat): no talk action, no visits.
+	[RplProp()]
+	protected bool m_bThreatened;
+	//! Replicated: the way his frightened pose turns him (towards the gunman), in degrees; see GetPoseYaw.
+	[RplProp()]
+	protected float m_fPoseYaw;
+
+	//! Server-side: every NPC, so one can tell whether a weapon points at a neighbour.
+	protected static ref array<ELIFE_NpcComponent> s_aNpcs = {};
+	//! Server-side: when any NPC last said his startled line; 0 is never.
+	protected static int s_iLastStartledLineTick;
+	//! Server-side: a startled line waits for its speaker to be picked (SayPendingStartledLine), near this.
+	protected static bool s_bStartledLinePending;
+	protected static vector s_vStartledLinePosition;
+	protected static float s_fStartledLineRange;
+	//! Server-side: when a bullet last hit him; 0 is never.
+	protected int m_iLastHitTick;
+	//! Server-side: who frightens him; when a weapon last pointed at him (0 never), and when anything last frightened him.
+	protected IEntity m_Threat;
+	protected int m_iLastAimedAtTick;
+	protected int m_iLastThreatTick;
+	//! Server-side: his hands don't go up before this.
+	protected int m_iHandsUpNotBeforeTick;
+	//! Server-side: when he may say his threatened line again (0: at once); he was aimed at, so he says it with his hands going up.
+	protected int m_iNextThreatLineTick;
+	protected bool m_bThreatLineDue;
+	//! Server-side: a neighbour's fright will reach him (ReactAsBystander).
+	protected bool m_bBystanderPending;
+	//! Server-side: his frightened pose (a custom loiter) plays, from its start until it's detached.
+	protected bool m_bHandsUp;
+	protected int m_iHandsUpStartTick;
+	//! Server-side: the Gestures value of his pose variant; -1 is none.
+	protected int m_iHandsUpPose = -1;
 
 	//! Server-side: off duty he walks around with AI; created when he first leaves his spot.
 	protected ref ELIFE_NpcRoutine m_Routine;
@@ -135,7 +216,8 @@ class ELIFE_NpcComponent : ScriptComponent
 		super.OnPostInit(owner);
 
 		//! The damage manager initialises after this component; disabled in the next frame.
-		GetGame().GetCallqueue().CallLater(DisableDamage, 0);
+		if (m_bInvulnerable)
+			GetGame().GetCallqueue().CallLater(DisableDamage, 0);
 
 		if (Replication.IsServer() && GetGame().InPlayMode())
 		{
@@ -144,6 +226,16 @@ class ELIFE_NpcComponent : ScriptComponent
 			m_vHomePosition = owner.GetOrigin();
 			GetGame().GetCallqueue().CallLater(StartIdle, IDLE_START_DELAY_MS);
 			GetGame().GetCallqueue().CallLater(CheckSchedule, SCHEDULE_CHECK_MS, true);
+			s_aNpcs.Insert(this);
+			if (m_aThreatenedPoses && !m_aThreatenedPoses.IsEmpty())
+				m_iHandsUpPose = m_aThreatenedPoses[Math.RandomInt(0, m_aThreatenedPoses.Count())];
+
+			SCR_CharacterControllerComponent controller = SCR_CharacterControllerComponent.Cast(owner.FindComponent(SCR_CharacterControllerComponent));
+			if (controller)
+				controller.GetOnPlayerDeathWithParam().Insert(OnDied);
+
+			if (m_bCanBeThreatened)
+				GetGame().GetCallqueue().CallLater(CheckThreat, THREAT_CHECK_MS, true);
 		}
 	}
 
@@ -263,6 +355,13 @@ class ELIFE_NpcComponent : ScriptComponent
 		if (m_bSleeping)
 		{
 			link.SendGrant(GetRplId(), false, ELIFE_ENpcReason.CLOSED);
+			return;
+		}
+
+		//! Frightened, likewise; no line, he has said his.
+		if (m_bThreatened)
+		{
+			link.SendGrant(GetRplId(), false, ELIFE_ENpcReason.UNAVAILABLE);
 			return;
 		}
 
@@ -475,6 +574,11 @@ class ELIFE_NpcComponent : ScriptComponent
 		if (!controller || controller.IsDead())
 			return false;
 
+		//! Dead or knocked down, he can't serve anyone.
+		SCR_CharacterControllerComponent own = GetController();
+		if (!own || own.IsDead() || own.IsUnconscious())
+			return false;
+
 		return vector.Distance(character.GetOrigin(), GetOwner().GetOrigin()) <= m_fUseRange;
 	}
 
@@ -541,7 +645,7 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! He can't be hurt, so he never goes down and can't be carried or searched either.
+	//! m_bInvulnerable: he can't be hurt, so he never goes down and can't be carried or searched either.
 	protected void DisableDamage()
 	{
 		IEntity owner = GetOwner();
@@ -590,6 +694,457 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	// Threatened
+	//------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------
+	//! Replicated: a weapon pointed at him or at an NPC near him frightened him; he calms down THREAT_CALM_MS after it's gone.
+	bool IsThreatened()
+	{
+		return m_bThreatened;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Every machine, from his frightened pose's command each frame (ELIFE_NpcLoiterCommand.c): the yaw it turns
+	//! him to. False while he isn't frightened.
+	bool GetPoseYaw(out float yaw)
+	{
+		yaw = m_fPoseYaw;
+		return m_bThreatened;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The one who pointed a weapon at him in the last check, else null.
+	IEntity GetAimedAtBy()
+	{
+		if (System.GetTickCount() - m_iLastAimedAtTick >= THREAT_CHECK_MS * 2)
+			return null;
+
+		return m_Threat;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. He got frightened, or calmed down again; any visit is already released.
+	protected void OnThreatenedChanged(bool threatened)
+	{
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, every THREAT_CHECK_MS. Aimed at, he is frightened at once and speaks; a neighbour's fright
+	//! reaches him after a moment, and he stays quiet so lines don't overlap.
+	protected void CheckThreat()
+	{
+		int now = System.GetTickCount();
+		IEntity threat;
+		bool aimedAt;
+		if (CanBeThreatened())
+		{
+			threat = ELIFE_NpcThreat.FindAimingAt(GetOwner());
+			aimedAt = threat != null;
+			if (aimedAt)
+				m_iLastAimedAtTick = now;
+			else
+				threat = FindThreatNearby();
+		}
+
+		if (!threat)
+		{
+			if (m_bThreatened && now - m_iLastThreatTick >= THREAT_CALM_MS)
+				SetThreatened(false);
+
+			return;
+		}
+
+		m_Threat = threat;
+		//! Gunfire may have set it ahead (Startle).
+		if (now - m_iLastThreatTick > 0)
+			m_iLastThreatTick = now;
+		if (aimedAt)
+		{
+			SetThreatened(true);
+			m_iHandsUpNotBeforeTick = 0;
+			m_bThreatLineDue = true;
+			//! Hands already up (a bystander first) or no pose: nothing to wait for.
+			if (m_bHandsUp || m_iHandsUpPose < 0 || m_sThreatenedGraph.IsEmpty())
+				SayThreatenedLine();
+		}
+		else if (!m_bThreatened && !m_bBystanderPending)
+		{
+			m_bBystanderPending = true;
+			GetGame().GetCallqueue().CallLater(ReactAsBystander, Math.RandomIntInclusive(BYSTANDER_DELAY_MIN_MS, BYSTANDER_DELAY_MAX_MS));
+		}
+
+		if (m_bThreatened)
+			m_LookAt = threat;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Unless the gunman lowered his weapon meanwhile.
+	protected void ReactAsBystander()
+	{
+		m_bBystanderPending = false;
+		//! He may have gone off duty meanwhile.
+		if (m_Threat && CanBeThreatened() && System.GetTickCount() - m_iLastThreatTick < THREAT_CHECK_MS * 2)
+			SetThreatened(true);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. A gunshot (source: the shooter, at position) or a hit (source: the shooter, else the one hit, at
+	//! his position): every NPC within range is frightened like a bystander, and a moment later the nearest one who
+	//! wasn't hit says his startled line.
+	static void OnGunfire(IEntity source, vector position, float range, IEntity hit = null)
+	{
+		if (!source)
+			return;
+
+		foreach (ELIFE_NpcComponent npc : s_aNpcs)
+		{
+			if (!npc)
+				continue;
+
+			if (npc.GetOwner() == hit)
+				npc.MarkHit();
+
+			if (vector.DistanceSq(position, npc.GetOwner().GetOrigin()) <= range * range)
+				npc.Startle(source);
+		}
+
+		int now = System.GetTickCount();
+		if (s_bStartledLinePending || (s_iLastStartledLineTick != 0 && now - s_iLastStartledLineTick < STARTLED_LINE_COOLDOWN_MS))
+			return;
+
+		s_bStartledLinePending = true;
+		s_vStartledLinePosition = position;
+		s_fStartledLineRange = range;
+		GetGame().GetCallqueue().CallLater(SayPendingStartledLine, STARTLED_LINE_DELAY_MS);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The shot's hit or kill is known by now; the one hit, or dead, stays out of it.
+	protected static void SayPendingStartledLine()
+	{
+		s_bStartledLinePending = false;
+		ELIFE_NpcComponent nearest;
+		float nearestSq = s_fStartledLineRange * s_fStartledLineRange;
+		foreach (ELIFE_NpcComponent npc : s_aNpcs)
+		{
+			if (!npc || !npc.CanSayStartledLine())
+				continue;
+
+			float distanceSq = vector.DistanceSq(s_vStartledLinePosition, npc.GetOwner().GetOrigin());
+			if (distanceSq <= nearestSq)
+			{
+				nearest = npc;
+				nearestSq = distanceSq;
+			}
+		}
+
+		if (!nearest)
+			return;
+
+		s_iLastStartledLineTick = System.GetTickCount();
+		nearest.SayStartledLine();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from OnGunfire.
+	void MarkHit()
+	{
+		m_iLastHitTick = System.GetTickCount();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Alive, at his spot and not hit just now.
+	bool CanSayStartledLine()
+	{
+		if (m_iLastHitTick != 0 && System.GetTickCount() - m_iLastHitTick < HIT_SILENCE_MS)
+			return false;
+
+		return m_bCanBeThreatened && CanBeThreatened();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from OnGunfire.
+	void Startle(notnull IEntity source)
+	{
+		//! Hit by nobody known: nobody to face.
+		if (!m_bCanBeThreatened || source == GetOwner() || !CanBeThreatened())
+			return;
+
+		m_Threat = source;
+		//! CheckThreat calms him THREAT_CALM_MS after this, so GUNFIRE_CALM_MS after the shot.
+		m_iLastThreatTick = System.GetTickCount() + GUNFIRE_CALM_MS - THREAT_CALM_MS;
+		if (m_bThreatened)
+		{
+			if (!m_bHandsUp)
+				m_LookAt = source;
+
+			return;
+		}
+
+		if (!m_bBystanderPending)
+		{
+			m_bBystanderPending = true;
+			GetGame().GetCallqueue().CallLater(ReactAsBystander, Math.RandomIntInclusive(BYSTANDER_DELAY_MIN_MS, BYSTANDER_DELAY_MAX_MS));
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only.
+	void SayStartledLine()
+	{
+		ELIFE_NpcVoiceTable table = GetVoiceTable();
+		if (table)
+			SayLine(table.m_sStartledLine, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, while aimed at: at once, then again every THREAT_LINE_REPEAT_MIN_MS to _MAX_MS.
+	protected void SayThreatenedLine()
+	{
+		int now = System.GetTickCount();
+		if (m_iNextThreatLineTick != 0 && m_iNextThreatLineTick - now > 0)
+			return;
+
+		m_iNextThreatLineTick = now + Math.RandomIntInclusive(THREAT_LINE_REPEAT_MIN_MS, THREAT_LINE_REPEAT_MAX_MS);
+		ELIFE_NpcVoiceTable table = GetVoiceTable();
+		if (table)
+			SayLine(table.m_sThreatenedLine, false);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Alive and conscious. Off duty his routine holds him (ELIFE_NpcRoutine.Hold), getting him up first
+	//! if he sits, lies or sleeps; only while he turns to sit he can't react yet.
+	protected bool CanBeThreatened()
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller || controller.IsDead() || controller.IsUnconscious())
+			return false;
+
+		return IsAtSpot() || m_Routine.CanHold();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Off duty he can't be posed or turned until his routine holds him (up, AI off).
+	protected bool IsHeldStill()
+	{
+		return !m_Routine || m_Routine.IsOnDuty() || m_Routine.IsHolding();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Calm again: at his spot he turns home and idles; off duty his routine goes on.
+	protected void EndFrightAttention()
+	{
+		if (m_Routine && !m_Routine.IsOnDuty())
+		{
+			GetGame().GetCallqueue().Remove(UpdateAttention);
+			m_LookAt = null;
+			m_Routine.Resume();
+			return;
+		}
+
+		StopAttention();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Whoever points a weapon at an NPC within BYSTANDER_RANGE, else null.
+	protected IEntity FindThreatNearby()
+	{
+		vector origin = GetOwner().GetOrigin();
+		foreach (ELIFE_NpcComponent other : s_aNpcs)
+		{
+			if (!other || other == this)
+				continue;
+
+			IEntity threat = other.GetAimedAtBy();
+			if (threat && vector.DistanceSq(origin, other.GetOwner().GetOrigin()) <= BYSTANDER_RANGE * BYSTANDER_RANGE)
+				return threat;
+		}
+
+		return null;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Frightened he drops the visit and his idle and faces the gunman; calm again he turns home.
+	protected void SetThreatened(bool threatened)
+	{
+		if (m_bThreatened == threatened)
+			return;
+
+		m_bThreatened = threatened;
+		Replication.BumpMe();
+		if (threatened)
+		{
+			Print(string.Format("%1 | frightened by a weapon", ClassName()), LogLevel.NORMAL);
+			m_iHandsUpNotBeforeTick = System.GetTickCount() + Math.RandomIntInclusive(0, HANDS_UP_DELAY_MAX_MS);
+			DismissWaiting();
+			if (m_iCustomerPlayerId != 0)
+				Release("frightened by a weapon");
+
+			//! Off duty he stops walking, or gets up first.
+			if (m_Routine && !m_Routine.IsOnDuty())
+				m_Routine.Hold();
+
+			//! Release turned him home; he faces the gunman instead.
+			GetGame().GetCallqueue().Remove(TurnHome);
+			GetGame().GetCallqueue().Remove(TurnHomeStep);
+			GetGame().GetCallqueue().Remove(UpdateAttention);
+			GetGame().GetCallqueue().Remove(PlayGesture);
+			m_iFaceCustomerUntilTick = 0;
+			m_LookAt = m_Threat;
+			StopIdle();
+			GetGame().GetCallqueue().CallLater(UpdateAttention, ATTENTION_TICK_MS, true);
+		}
+		else
+		{
+			Print(string.Format("%1 | calm again", ClassName()), LogLevel.NORMAL);
+			m_Threat = null;
+			m_iNextThreatLineTick = 0;
+			m_bThreatLineDue = false;
+			//! He lowers his hands first; FinishHandsUp turns him home after.
+			if (m_bHandsUp)
+				StopIdle();
+			else
+				EndFrightAttention();
+
+			//! Opening or closing time passed while he was frightened.
+			GetGame().GetCallqueue().CallLater(CheckSchedule, IDLE_START_DELAY_MS);
+		}
+
+		OnThreatenedChanged(threatened);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from the attention tick once he faces the gunman: his frightened pose, after his idle is gone.
+	//! Started by the server, so it replicates like any loiter.
+	protected void StartHandsUp()
+	{
+		if (m_bHandsUp || m_iHandsUpPose < 0 || m_sThreatenedGraph.IsEmpty() || m_bIdleExiting || !IsHeldStill())
+			return;
+
+		if (m_iHandsUpNotBeforeTick - System.GetTickCount() > 0)
+			return;
+
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller || controller.IsLoitering() || !controller.CanPlayLoiterAnimation(ELoiteringType.CUSTOM))
+			return;
+
+		//! No command: the variable alone picks the variant, -1 plays the out clip.
+		SCR_LoiterCustomAnimData data = SCR_LoiterCustomAnimData.CreateInstance(commandName: string.Empty, graphName: m_sThreatenedGraph,
+			graphInstanceName: m_sThreatenedGraphInstance, controlVariableValue: m_iHandsUpPose, controlVariableName: HANDS_UP_VARIABLE,
+			allowEnvironmentalExit: false);
+		vector noTarget[4];
+		controller.StartLoitering(null, ELoiteringType.CUSTOM, false, false, false, noTarget, false, data);
+		m_bHandsUp = true;
+		if (m_LookAt)
+			SetPoseYaw(YawTo(m_LookAt.GetOrigin() - GetOwner().GetOrigin()), true);
+		m_iHandsUpStartTick = System.GetTickCount();
+		if (m_bThreatLineDue)
+			SayThreatenedLine();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Sent to the clients once it moved POSE_YAW_RESEND_DEG, to save traffic.
+	protected void SetPoseYaw(float yaw, bool force = false)
+	{
+		float change = yaw - m_fPoseYaw;
+		change -= 360 * Math.Round(change / 360);
+		if (!force && Math.AbsFloat(change) < POSE_YAW_RESEND_DEG)
+			return;
+
+		m_fPoseYaw = yaw;
+		Replication.BumpMe();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, HANDS_UP_EXIT_MS after StopIdle lowered his hands.
+	protected void FinishHandsUp()
+	{
+		Rpc(RpcDo_FinishHandsUp);
+		DetachHandsUp();
+		m_bHandsUp = false;
+		m_bIdleExiting = false;
+
+		//! Frightened again meanwhile, the attention tick raises them again; serving, it keeps him facing the customer.
+		if (!m_bThreatened && m_iCustomerPlayerId == 0)
+			EndFrightAttention();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only, from the attention tick while the pose is up and not on its way down. It may have ended another
+	//! way (knocked down, replaced, never started); calm again he lowers his hands.
+	protected void CheckHandsUp()
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		bool posing = controller && controller.IsLoitering();
+		if (!posing && System.GetTickCount() - m_iHandsUpStartTick < HANDS_UP_START_MS)
+			return;
+
+		if (!posing)
+		{
+			m_bHandsUp = false;
+			if (!m_bThreatened && m_iCustomerPlayerId == 0)
+				EndFrightAttention();
+
+			return;
+		}
+
+		if (!m_bThreatened)
+			StopIdle();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Clients. Vanilla's finish broadcast doesn't detach the pose's graph there.
+	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
+	protected void RpcDo_FinishHandsUp()
+	{
+		DetachHandsUp();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! On this machine.
+	protected void DetachHandsUp()
+	{
+		SCR_CharacterControllerComponent controller = GetController();
+		if (!controller)
+			return;
+
+		SCR_CharacterCommandLoiter loiter = SCR_CharacterCommandLoiter.Cast(controller.GetAnimationComponent().GetCommandScripted());
+		if (loiter)
+			loiter.ELIFE_DetachAndFinish();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. Customers still waiting for him (see Prepare) are turned away without a line.
+	protected void DismissWaiting()
+	{
+		foreach (int playerId : m_aWaitingPlayerIds)
+		{
+			ELIFE_NpcCharacterComponent link = GetLink(playerId);
+			if (link)
+				link.SendGrant(GetRplId(), false, ELIFE_ENpcReason.UNAVAILABLE);
+		}
+
+		m_aWaitingPlayerIds.Clear();
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. A dead NPC stops serving and all his timers; his spot removes the body.
+	protected void OnDied(SCR_CharacterControllerComponent controller, IEntity killerEntity, notnull Instigator killer)
+	{
+		//! A dead man doesn't finish his sentence.
+		Rpc(RpcDo_StopVoice);
+		if (RplSession.Mode() != RplMode.Dedicated)
+			RpcDo_StopVoice();
+
+		DismissWaiting();
+		if (m_iCustomerPlayerId != 0)
+			Release("he died");
+
+		StopTimers();
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! "08:00", or empty if unknown.
 	string GetOpensAtText()
 	{
@@ -622,7 +1177,8 @@ class ELIFE_NpcComponent : ScriptComponent
 	//! back and opens once he is at his spot.
 	protected void CheckSchedule()
 	{
-		if (!m_Schedule)
+		//! Opening or closing waits until he is calm and his hands are down (the periodic check comes again).
+		if (!m_Schedule || m_bThreatened || m_bHandsUp)
 			return;
 
 		int minute = ELIFE_NpcSchedule.GetCurrentMinute();
@@ -643,7 +1199,7 @@ class ELIFE_NpcComponent : ScriptComponent
 
 		SetClosed(true);
 
-		if (m_iCustomerPlayerId == 0 && IsAtSpot() && !m_bStaysAtSpot)
+		if (m_iCustomerPlayerId == 0 && !m_bThreatened && IsAtSpot() && !m_bStaysAtSpot)
 			GoOffDuty();
 	}
 
@@ -724,7 +1280,7 @@ class ELIFE_NpcComponent : ScriptComponent
 
 		SCR_CharacterControllerComponent controller = GetController();
 		//! Still in a seat/bed slot (getting up on the way back): not yet.
-		if (!controller || m_iCustomerPlayerId != 0 || controller.IsLoitering() || ELIFE_Poses.GetPoseSlot(GetOwner()) || !IsAtSpot())
+		if (!controller || m_iCustomerPlayerId != 0 || m_bThreatened || controller.IsLoitering() || ELIFE_Poses.GetPoseSlot(GetOwner()) || !IsAtSpot())
 			return;
 
 		if (!controller.CanPlayLoiterAnimation(ELoiteringType.LOITERING))
@@ -757,7 +1313,11 @@ class ELIFE_NpcComponent : ScriptComponent
 			m_bIdleExiting = true;
 			controller.StopLoitering(false);
 			Rpc(RpcDo_StopIdle);
-			GetGame().GetCallqueue().CallLater(FinishIdleExit, IDLE_EXIT_TIMEOUT_MS);
+			if (m_bHandsUp)
+				GetGame().GetCallqueue().CallLater(FinishHandsUp, HANDS_UP_EXIT_MS);
+			else
+				GetGame().GetCallqueue().CallLater(FinishIdleExit, IDLE_EXIT_TIMEOUT_MS);
+
 			return;
 		}
 
@@ -995,10 +1555,28 @@ class ELIFE_NpcComponent : ScriptComponent
 			return;
 
 		//! An idle that was still starting when he was served isn't loitering yet, so StopIdle missed it.
-		if (m_iCustomerPlayerId != 0)
+		if (m_iCustomerPlayerId != 0 || (m_bThreatened && !m_bHandsUp))
 			StopIdle();
 
-		TurnTowards(YawTo(m_LookAt.GetOrigin() - GetOwner().GetOrigin()));
+		//! Off duty, still getting up or stopping: nothing turns him yet.
+		if (!IsHeldStill())
+			return;
+
+		float yaw = YawTo(m_LookAt.GetOrigin() - GetOwner().GetOrigin());
+		//! The pose turns him itself (GetPoseYaw); the heading doesn't reach a loitering character.
+		if (m_bHandsUp)
+		{
+			SetPoseYaw(yaw);
+			if (!m_bIdleExiting)
+				CheckHandsUp();
+
+			return;
+		}
+
+		TurnTowards(yaw);
+		//! At once; the pose turns him the rest of the way (GetPoseYaw).
+		if (m_bThreatened)
+			StartHandsUp();
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -1132,6 +1710,21 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Clients. Cuts off the line he is saying.
+	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
+	protected void RpcDo_StopVoice()
+	{
+		if (m_hVoice == AudioHandle.Invalid)
+			return;
+
+		SCR_CommunicationSoundComponent voice = SCR_CommunicationSoundComponent.Cast(GetOwner().FindComponent(SCR_CommunicationSoundComponent));
+		if (voice)
+			voice.Terminate(m_hVoice);
+
+		m_hVoice = AudioHandle.Invalid;
+	}
+
+	//------------------------------------------------------------------------------------------------
 	[RplRpc(RplChannel.Reliable, RplRcver.Broadcast)]
 	protected void RpcDo_Say(int voiceId, int line, int variant, bool toCustomer)
 	{
@@ -1245,21 +1838,47 @@ class ELIFE_NpcComponent : ScriptComponent
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! Server-side timers.
+	protected void StopTimers()
+	{
+		GetGame().GetCallqueue().Remove(Tick);
+		GetGame().GetCallqueue().Remove(StartIdle);
+		GetGame().GetCallqueue().Remove(FinishIdleExit);
+		GetGame().GetCallqueue().Remove(UpdateAttention);
+		GetGame().GetCallqueue().Remove(TurnHome);
+		GetGame().GetCallqueue().Remove(TurnHomeStep);
+		GetGame().GetCallqueue().Remove(PlayGesture);
+		GetGame().GetCallqueue().Remove(SayPendingAskedLine);
+		GetGame().GetCallqueue().Remove(CheckSchedule);
+		GetGame().GetCallqueue().Remove(CheckThreat);
+		GetGame().GetCallqueue().Remove(ReactAsBystander);
+		GetGame().GetCallqueue().Remove(FinishHandsUp);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-side: a pending startled line belongs to no NPC; cleared with the last one (a world change).
+	protected static void ClearStartledLine()
+	{
+		if (s_aNpcs && s_aNpcs.IsEmpty() && GetGame() && GetGame().GetCallqueue())
+		{
+			GetGame().GetCallqueue().Remove(SayPendingStartledLine);
+			s_bStartledLinePending = false;
+		}
+	}
+
+	//------------------------------------------------------------------------------------------------
 	void ~ELIFE_NpcComponent()
 	{
 		if (GetGame() && GetGame().GetCallqueue())
 		{
-			GetGame().GetCallqueue().Remove(Tick);
+			StopTimers();
 			GetGame().GetCallqueue().Remove(DisableDamage);
-			GetGame().GetCallqueue().Remove(StartIdle);
-			GetGame().GetCallqueue().Remove(FinishIdleExit);
 			GetGame().GetCallqueue().Remove(StopProxyIdle);
-			GetGame().GetCallqueue().Remove(UpdateAttention);
-			GetGame().GetCallqueue().Remove(TurnHome);
-			GetGame().GetCallqueue().Remove(TurnHomeStep);
-			GetGame().GetCallqueue().Remove(PlayGesture);
-			GetGame().GetCallqueue().Remove(SayPendingAskedLine);
-			GetGame().GetCallqueue().Remove(CheckSchedule);
 		}
+
+		if (s_aNpcs)
+			s_aNpcs.RemoveItem(this);
+
+		ClearStartledLine();
 	}
 }

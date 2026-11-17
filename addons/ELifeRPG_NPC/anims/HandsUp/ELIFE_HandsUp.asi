@@ -1,0 +1,41 @@
+AnimSetInstanceSource {
+ Template "{816652D24286E75B}anims/HandsUp/ELIFE_HandsUp.ast"
+ Lines {
+  AnimSetInstanceSource_Line "HandsUp.Cower.In" {
+   Resource "{8F996F710DBC03B0}anims/HandsUp/ELIFE_HandsUp_Cower_In.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.Cower.Loop" {
+   Resource "{ACB9C5A486EFE711}anims/HandsUp/ELIFE_HandsUp_Cower_Loop.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.Cower.Out" {
+   Resource "{F7817464579195C7}anims/HandsUp/ELIFE_HandsUp_Cower_Out.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.CowerLow.In" {
+   Resource "{84731DD522E9BFC2}anims/HandsUp/ELIFE_HandsUp_CowerLow_In.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.CowerLow.Loop" {
+   Resource "{E90AB824A5F67839}anims/HandsUp/ELIFE_HandsUp_CowerLow_Loop.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.CowerLow.Out" {
+   Resource "{48843EFDE49665CC}anims/HandsUp/ELIFE_HandsUp_CowerLow_Out.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.High.In" {
+   Resource "{CDB7E246566F5249}anims/HandsUp/ELIFE_HandsUp_High_In.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.High.Loop" {
+   Resource "{F7FD36309DFE779C}anims/HandsUp/ELIFE_HandsUp_High_Loop.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.High.Out" {
+   Resource "{86E882FD3D7820CE}anims/HandsUp/ELIFE_HandsUp_High_Out.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.Nervous.In" {
+   Resource "{C50CE34F03245E61}anims/HandsUp/ELIFE_HandsUp_Nervous_In.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.Nervous.Loop" {
+   Resource "{8CD435F980A32D6F}anims/HandsUp/ELIFE_HandsUp_Nervous_Loop.anm"
+  }
+  AnimSetInstanceSource_Line "HandsUp.Nervous.Out" {
+   Resource "{AF8F47226AF1D170}anims/HandsUp/ELIFE_HandsUp_Nervous_Out.anm"
+  }
+ }
+}

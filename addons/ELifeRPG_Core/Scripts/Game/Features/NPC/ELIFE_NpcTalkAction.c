@@ -39,16 +39,16 @@ class ELIFE_NpcTalkAction : ScriptedUserAction
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Not while he sleeps.
+	//! Not while he sleeps or is frightened.
 	override bool CanBeShownScript(IEntity user)
 	{
-		return m_Npc && !m_Npc.IsSleeping() && m_Npc.IsUsableBy(user);
+		return m_Npc && !m_Npc.IsSleeping() && !m_Npc.IsThreatened() && m_Npc.IsUsableBy(user);
 	}
 
 	//------------------------------------------------------------------------------------------------
 	override bool CanBePerformedScript(IEntity user)
 	{
-		return m_Npc && !m_Npc.IsSleeping() && m_Npc.IsUsableBy(user);
+		return m_Npc && !m_Npc.IsSleeping() && !m_Npc.IsThreatened() && m_Npc.IsUsableBy(user);
 	}
 
 	//------------------------------------------------------------------------------------------------

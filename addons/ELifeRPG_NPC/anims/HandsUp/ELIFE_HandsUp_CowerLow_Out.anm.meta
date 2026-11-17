@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{48843EFDE49665CC}anims/HandsUp/ELIFE_HandsUp_CowerLow_Out.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "cower2_02_out.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

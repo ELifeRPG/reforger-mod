@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{C50CE34F03245E61}anims/HandsUp/ELIFE_HandsUp_Nervous_In.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "nervous_01_in.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

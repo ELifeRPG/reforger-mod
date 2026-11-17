@@ -19,6 +19,11 @@ SCR_ChimeraCharacter : "{626874113CAE4387}Prefabs/Characters/Factions/CIV/Busine
    }
   }
   ELIFE_BankClerkComponent "{B80E89F5C2D29465}" {
+   m_sThreatenedGraph "{47953CE010A44A43}anims/HandsUp/ELIFE_HandsUp.agr"
+   m_sThreatenedGraphInstance "{C00422885D0DE31F}anims/HandsUp/ELIFE_HandsUp.asi"
+   m_aThreatenedPoses {
+    700 701 702 703
+   }
    m_sVoiceTable "{E277C14920362724}Configs/Banking/ELIFE_ClerkVoices.conf"
    m_sDialogueConfig "{570E8AA28E1B73D5}Configs/Banking/ELIFE_ClerkDialogue.conf"
    m_sDisplayName "#ELIFE-Clerk_Title"

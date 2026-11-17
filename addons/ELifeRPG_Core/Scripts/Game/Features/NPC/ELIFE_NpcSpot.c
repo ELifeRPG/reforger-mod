@@ -61,6 +61,9 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 	{
 		if (s_aSpots)
 			s_aSpots.RemoveItem(this);
+
+		if (GetGame() && GetGame().GetCallqueue())
+			GetGame().GetCallqueue().Remove(RemoveBody);
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -271,10 +274,29 @@ class ELIFE_NpcSpot : ELIFE_PrefabSpawn
 			return;
 		}
 
+		SCR_CharacterControllerComponent controller = SCR_CharacterControllerComponent.Cast(newEnt.FindComponent(SCR_CharacterControllerComponent));
+		if (controller)
+			controller.GetOnPlayerDeathWithParam().Insert(OnNpcDied);
+
 		ApplyLook(newEnt);
 		npc.SetVoice(GetVoiceIndex(npc.GetVoiceCount()));
 		npc.SetSchedule(m_ScheduleOverride);
 		OnNpcSpawned(npc);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! Server-only. The NPC died: his body lies there for respawnDelay,
+	//! then goes; once it's gone, the base spawner brings a new one after another respawnDelay.
+	protected void OnNpcDied(SCR_CharacterControllerComponent controller, IEntity killerEntity, notnull Instigator killer)
+	{
+		GetGame().GetCallqueue().CallLater(RemoveBody, respawnDelay * 1000, false, controller.GetOwner());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected void RemoveBody(IEntity body)
+	{
+		if (body)
+			SCR_EntityHelper.DeleteEntityAndChildren(body);
 	}
 
 	//------------------------------------------------------------------------------------------------

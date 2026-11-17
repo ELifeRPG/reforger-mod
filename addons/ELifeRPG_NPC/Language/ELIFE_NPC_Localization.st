@@ -1650,5 +1650,101 @@ StringTable {
    Author "Robin"
    LastChanged "Robin"
   }
+  CustomStringTableItem "{FA72CA2AE18DA326}" {
+   Id "ELIFE-ClerkVO_PUCK_SCARED"
+   Target_en_us "Okay, okay! Please, don't shoot!"
+   Target_de_de "Okay, okay! Bitte, nicht schießen!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{419A8FD51A55D242}" {
+   Id "ELIFE-ClerkVO_PUCK_SCARED_2"
+   Target_en_us "Easy, easy! Take whatever you want, just don't hurt anyone!"
+   Target_de_de "Ganz ruhig! Nehmen Sie, was Sie wollen, aber tun Sie niemandem etwas!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6F63AFD8A117ACA8}" {
+   Id "ELIFE-ClerkVO_LEWIS_SCARED"
+   Target_en_us "Good heavens! Please, put that away, I'll do as you say!"
+   Target_de_de "Um Himmels willen! Bitte nehmen Sie das weg, ich tue, was Sie sagen!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8A51CE529F38CED1}" {
+   Id "ELIFE-ClerkVO_LEWIS_SCARED_2"
+   Target_en_us "Please, don't shoot! I won't try anything, I promise!"
+   Target_de_de "Bitte nicht schießen! Ich versuche nichts, versprochen!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DA1C1B6D9344A28A}" {
+   Id "ELIFE-ClerkVO_MICHAEL_SCARED"
+   Target_en_us "Whoa, whoa! Don't shoot, man! I'm not doing anything!"
+   Target_de_de "Whoa, whoa! Nicht schießen! Ich mach doch gar nichts!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{04220D26B28707C5}" {
+   Id "ELIFE-ClerkVO_MICHAEL_SCARED_2"
+   Target_en_us "Alright, alright! Stay calm, nobody needs to get hurt!"
+   Target_de_de "Schon gut, schon gut! Bleiben Sie ruhig, keiner muss verletzt werden!"
+   Modified 1794867212
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9BC68CCC62CB736D}" {
+   Id "ELIFE-ClerkVO_PUCK_STARTLED"
+   Target_en_us "Oh my God! Somebody help!"
+   Target_de_de "Oh mein Gott! Hilfe!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E719A1A021734BFE}" {
+   Id "ELIFE-ClerkVO_PUCK_STARTLED_2"
+   Target_en_us "Oh no, oh no! Please stop shooting!"
+   Target_de_de "Oh nein, oh nein! Bitte hören Sie auf zu schießen!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F3D45DE56A1A7B07}" {
+   Id "ELIFE-ClerkVO_LEWIS_STARTLED"
+   Target_en_us "Good Lord! Everyone, get down!"
+   Target_de_de "Großer Gott! Alle runter!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A2966217AA33E6D7}" {
+   Id "ELIFE-ClerkVO_LEWIS_STARTLED_2"
+   Target_en_us "Stop! Please, stop shooting!"
+   Target_de_de "Aufhören! Bitte hören Sie auf zu schießen!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C2F392B3A5B7E2FC}" {
+   Id "ELIFE-ClerkVO_MICHAEL_STARTLED"
+   Target_en_us "Holy hell! Get down, get down!"
+   Target_de_de "Verdammt! Runter, runter!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1F502C013A1E522E}" {
+   Id "ELIFE-ClerkVO_MICHAEL_STARTLED_2"
+   Target_en_us "Jesus! Stop shooting, man!"
+   Target_de_de "Mein Gott! Hören Sie auf zu schießen!"
+   Modified 1794869817
+   Author "Robin"
+   LastChanged "Robin"
+  }
  }
 }

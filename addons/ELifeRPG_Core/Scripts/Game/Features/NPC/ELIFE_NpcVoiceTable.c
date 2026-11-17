@@ -52,6 +52,12 @@ class ELIFE_NpcVoiceTable
 	[Attribute("", UIWidgets.EditBox, "Said to someone who asks while he is closed (ELIFE_NpcSchedule); empty is none")]
 	string m_sClosedLine;
 
+	[Attribute("", UIWidgets.EditBox, "Said when a weapon pointed at him or at an NPC near him frightens him; empty is none")]
+	string m_sThreatenedLine;
+
+	[Attribute("", UIWidgets.EditBox, "Said by one nearby NPC when shots are fired or someone is hit near them; empty is none")]
+	string m_sStartledLine;
+
 	[Attribute()]
 	ref array<ref ELIFE_NpcVoiceLine> m_aLines;
 
