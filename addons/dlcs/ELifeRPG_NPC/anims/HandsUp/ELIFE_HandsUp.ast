@@ -1,0 +1,18 @@
+AnimSetTemplateSource {
+ Groups {
+  AnimSetTemplateSource_AnimationGroup "{2B4B149E1E90F564}" {
+   Name "HandsUp"
+   Animations {
+    "In"
+    "Loop"
+    "Out"
+   }
+   Columns {
+    "Cower"
+    "CowerLow"
+    "High"
+    "Nervous"
+   }
+  }
+ }
+}

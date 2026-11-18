@@ -1,0 +1,111 @@
+FrameWidgetClass {
+ Name "DialogueRoot"
+ "Ignore Cursor" 0
+ {
+  SizeLayoutWidgetClass "{FBF28F260CA2C092}" {
+   Name "PanelSize"
+   Slot FrameWidgetSlot "{441FC6A7ACEB717C}" {
+    Anchor 0.5 1 0.5 1
+    PositionX 0
+    OffsetLeft 0
+    PositionY -48
+    OffsetTop -48
+    Alignment 0.5 1
+    SizeToContent 1
+   }
+   AllowWidthOverride 1
+   WidthOverride 1100
+   {
+    OverlayWidgetClass "{F27D24B0406AFF82}" {
+     Name "Panel"
+     Slot AlignableSlot "{93061BA00E611CA7}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      ImageWidgetClass "{9EABCACBDD033580}" {
+       Name "PanelFill"
+       Slot OverlayWidgetSlot "{6D24A407BAA5912F}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 0.016 0.02 0.027 0.82
+      }
+      VerticalLayoutWidgetClass "{CDF4C62C962FCCEB}" {
+       Name "PanelContent"
+       Slot OverlayWidgetSlot "{8D83FDA4C3A11975}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+        Padding 36 24 36 24
+       }
+       "Fill Origin" Top
+       {
+        TextWidgetClass "{75AF78513BFFEF63}" {
+         Name "Speaker"
+         Slot LayoutSlot "{9EA46902BE5A6366}" {
+          HorizontalAlign 0
+          Padding 0 0 0 6
+         }
+         Color 0.886 0.741 0.42 1
+         Text "Bank clerk"
+         "Font Size" 24
+         "Min Font Size" 24
+         "Horizontal Alignment" Left
+         FontProperties FontProperties "{4BB4D6A189ACAE09}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+        RichTextWidgetClass "{1F468336F3D2009C}" {
+         Name "Subtitle"
+         Slot LayoutSlot "{FA3D6F0B869259AF}" {
+          HorizontalAlign 3
+         }
+         Clipping False
+         Text ""
+         "Font Size" 30
+         "Min Font Size" 30
+         "Line Spacing" 34
+         FontProperties FontProperties "{870C5BE0A017CBF5}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        RichTextWidgetClass "{CE6E46F179524001}" {
+         Name "Details"
+         Slot LayoutSlot "{168F7E7803C35376}" {
+          HorizontalAlign 3
+          Padding 0 10 0 0
+         }
+         Color 0.78 0.8 0.82 1
+         Clipping False
+         Text ""
+         "Font Size" 24
+         "Min Font Size" 24
+         "Line Spacing" 30
+         FontProperties FontProperties "{C5F44AD7D5D30D98}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+        ImageWidgetClass "{2CE6FB76835B767B}" {
+         Name "Rule"
+         Slot LayoutSlot "{471FBDB2E9FB6EC2}" {
+          HorizontalAlign 3
+          Padding 0 16 0 8
+         }
+         Color 1 1 1 0.2
+         Size 4 2
+        }
+        VerticalLayoutWidgetClass "{EBA100A758B726C2}" {
+         Name "Replies"
+         Slot LayoutSlot "{174E897F5D80AC9F}" {
+          HorizontalAlign 3
+         }
+         "Fill Origin" Top
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

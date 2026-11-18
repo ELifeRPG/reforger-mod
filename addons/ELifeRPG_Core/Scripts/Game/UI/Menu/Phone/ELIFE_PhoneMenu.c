@@ -8,11 +8,13 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 	protected bool m_bHolsterOnClose = true;
 	protected bool m_bIsClosing;
 
+	//! Frames the map handoff waits for this menu to close, about a second.
+	protected static const int MAP_OPEN_TRIES = 60;
+	protected static int s_iMapOpenTries;
+
 	//! Previous-frame key state, for press edges.
 	protected ref array<bool> m_aDigitHeld = {false, false, false, false, false, false, false, false, false, false};
 	protected bool m_bBackHeld;
-	protected ref array<int> m_aDigitKeys = {KeyCode.KC_0, KeyCode.KC_1, KeyCode.KC_2, KeyCode.KC_3, KeyCode.KC_4, KeyCode.KC_5, KeyCode.KC_6, KeyCode.KC_7, KeyCode.KC_8, KeyCode.KC_9};
-	protected ref array<int> m_aNumpadKeys = {KeyCode.KC_NUMPAD0, KeyCode.KC_NUMPAD1, KeyCode.KC_NUMPAD2, KeyCode.KC_NUMPAD3, KeyCode.KC_NUMPAD4, KeyCode.KC_NUMPAD5, KeyCode.KC_NUMPAD6, KeyCode.KC_NUMPAD7, KeyCode.KC_NUMPAD8, KeyCode.KC_NUMPAD9};
 	protected bool m_bPinKeysActive;
 
 	//------------------------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Keyboard PIN entry, polled instead of using input actions.
+	//! Keyboard PIN entry, polled through MenuContext input actions.
 	override void OnMenuUpdate(float tDelta)
 	{
 		super.OnMenuUpdate(tDelta);
@@ -63,7 +65,7 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 			m_aDigitHeld[digit] = down;
 		}
 
-		bool backDown = Debug.KeyState(KeyCode.KC_BACK) != 0;
+		bool backDown = IsActionDown("ELIFE_KeyClear");
 		if (typing && backDown && !m_bBackHeld)
 			controller.OnPinBackspace();
 
@@ -74,7 +76,14 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 	//! Top-row or numpad digit.
 	protected bool IsDigitDown(int digit)
 	{
-		return Debug.KeyState(m_aDigitKeys[digit]) != 0 || Debug.KeyState(m_aNumpadKeys[digit]) != 0;
+		return IsActionDown("ELIFE_KeyDigit" + digit.ToString());
+	}
+
+	//------------------------------------------------------------------------------------------------
+	protected bool IsActionDown(string action)
+	{
+		InputManager inputManager = GetGame().GetInputManager();
+		return inputManager && inputManager.GetActionValue(action) > 0;
 	}
 
 	//------------------------------------------------------------------------------------------------
@@ -126,16 +135,28 @@ class ELIFE_PhoneMenu : ChimeraMenuBase
 		m_bIsClosing = true;
 		Close();
 
-		//! Close() is deferred, so open the map a tick later or it stacks on the phone menu.
-		GetGame().GetCallqueue().CallLater(OpenMapMenuDeferred, 0, false);
+		//! Close() is deferred; static because this menu may be destroyed before the queued call runs.
+		s_iMapOpenTries = 0;
+		GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
+		GetGame().GetCallqueue().CallLater(OpenMapWhenPhoneClosed, 0, true);
 	}
 
 	//------------------------------------------------------------------------------------------------
-	protected void OpenMapMenuDeferred()
+	protected static void OpenMapWhenPhoneClosed()
 	{
 		MenuManager menuManager = GetGame().GetMenuManager();
-		if (menuManager)
+		s_iMapOpenTries++;
+		if (!menuManager || s_iMapOpenTries > MAP_OPEN_TRIES)
+		{
+			GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
+			return;
+		}
+
+		if (!menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMapMenu) && !menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMenu))
 			menuManager.OpenMenu(ChimeraMenuPreset.ELIFE_PhoneMapMenu);
+
+		if (menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMapMenu))
+			GetGame().GetCallqueue().Remove(OpenMapWhenPhoneClosed);
 	}
 
 	//------------------------------------------------------------------------------------------------

@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{F7FD36309DFE779C}anims/HandsUp/ELIFE_HandsUp_High_Loop.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "high_03_loop.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

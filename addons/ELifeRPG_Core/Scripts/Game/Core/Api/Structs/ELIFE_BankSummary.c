@@ -3,14 +3,14 @@ class ELIFE_BankSummary : JsonApiStruct
 {
 	string bankId;
 	string name;
-	float transactionFeeBase;
-	float transactionFeeMultiplier;
+	string code;
+	string feeTermsStr;
 
 	void ELIFE_BankSummary()
 	{
 		RegV("bankId");
 		RegV("name");
-		RegV("transactionFeeBase");
-		RegV("transactionFeeMultiplier");
+		RegV("code");
+		RegV("feeTermsStr");
 	}
 }

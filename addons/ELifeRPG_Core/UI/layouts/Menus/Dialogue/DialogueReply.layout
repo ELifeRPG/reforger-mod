@@ -1,0 +1,78 @@
+ButtonWidgetClass {
+ Name "Reply"
+ Slot LayoutSlot "{79E2953371EBD455}" {
+  HorizontalAlign 3
+ }
+ Color 1 1 1 0
+ style blank
+ "no focus" 1
+ {
+  OverlayWidgetClass "{28A8972E51C39DC4}" {
+   Name "ReplyContent"
+   Slot ButtonWidgetSlot "{D819EF43287D6361}" {
+    HorizontalAlign 3
+    VerticalAlign 3
+   }
+   {
+    ImageWidgetClass "{687F341572C793F4}" {
+     Name "Fill"
+     Slot OverlayWidgetSlot "{1800590C28426395}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 1 1 1 0
+    }
+    HorizontalLayoutWidgetClass "{7EB0BA7C946A7CD5}" {
+     Name "ReplyLine"
+     Slot OverlayWidgetSlot "{B5F079D7C3810C61}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+      Padding 12 6 12 6
+     }
+     {
+      SizeLayoutWidgetClass "{38ED1AF734EA48F3}" {
+       Name "NumberSize"
+       Slot LayoutSlot "{9511B356E129927E}" {
+        VerticalAlign 0
+       }
+       AllowWidthOverride 1
+       WidthOverride 40
+       {
+        TextWidgetClass "{82787AA92BD2B5C1}" {
+         Name "Number"
+         Slot AlignableSlot "{52C0DB2BCBA1A308}" {
+          HorizontalAlign 0
+          VerticalAlign 0
+         }
+         Color 0.886 0.741 0.42 1
+         Text "1."
+         "Font Size" 26
+         "Min Font Size" 26
+         "Horizontal Alignment" Left
+         FontProperties FontProperties "{199AC6242AC09D2C}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+       }
+      }
+      RichTextWidgetClass "{B66A6767A6A16A2D}" {
+       Name "Text"
+       Slot LayoutSlot "{0338895787BB306E}" {
+        VerticalAlign 0
+        SizeMode Fill
+       }
+       Clipping False
+       Text ""
+       "Font Size" 26
+       "Min Font Size" 26
+       "Line Spacing" 30
+       FontProperties FontProperties "{99CA1052F65E1079}" {
+        Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

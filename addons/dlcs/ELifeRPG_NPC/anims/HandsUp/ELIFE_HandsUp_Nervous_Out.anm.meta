@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{AF8F47226AF1D170}anims/HandsUp/ELIFE_HandsUp_Nervous_Out.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "nervous_01_out.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

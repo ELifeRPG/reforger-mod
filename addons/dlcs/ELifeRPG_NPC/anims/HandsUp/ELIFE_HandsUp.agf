@@ -1,0 +1,128 @@
+AnimSrcGraphFile {
+ Sheets {
+  AnimSrcGraphSheet ELIFE_HandsUp {
+   Nodes {
+    AnimSrcNodeStateMachine MasterControl {
+     Tags {
+     }
+     EditorPos 0 0
+     states {
+      AnimSrcNodeState Cower {
+       EditorPos 0 1
+       Child "CowerG"
+       StartCondition "Gestures == 700"
+       IsExit 1
+      }
+      AnimSrcNodeState CowerLow {
+       EditorPos 3 1
+       Child "CowerLowG"
+       StartCondition "Gestures == 701"
+       IsExit 1
+      }
+      AnimSrcNodeState High {
+       EditorPos 6 1
+       Child "HighG"
+       StartCondition "Gestures == 702"
+       IsExit 1
+      }
+      AnimSrcNodeState Nervous {
+       EditorPos 9 1
+       Child "NervousG"
+       StartCondition "Gestures == 703"
+       IsExit 1
+      }
+     }
+    }
+    AnimSrcNodeGroupSelect CowerG {
+     EditorPos 0 3
+     Child "GestureSequenceSTM"
+     Group "HandsUp"
+     Column "Cower"
+    }
+    AnimSrcNodeGroupSelect CowerLowG {
+     EditorPos 3 3
+     Child "GestureSequenceSTM"
+     Group "HandsUp"
+     Column "CowerLow"
+    }
+    AnimSrcNodeGroupSelect HighG {
+     EditorPos 6 3
+     Child "GestureSequenceSTM"
+     Group "HandsUp"
+     Column "High"
+    }
+    AnimSrcNodeGroupSelect NervousG {
+     EditorPos 9 3
+     Child "GestureSequenceSTM"
+     Group "HandsUp"
+     Column "Nervous"
+    }
+    AnimSrcNodeStateMachine GestureSequenceSTM {
+     EditorPos 4.5 6
+     states {
+      AnimSrcNodeState In {
+       Tags {
+       }
+       EditorPos 2 7
+       Child "GestureInSrc"
+       StartCondition "true"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState Loop {
+       EditorPos 4.5 8
+       Child "GestureLoopSrc"
+       StartCondition "false"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState Out {
+       EditorPos 7 7
+       Child "GestureOutSrc"
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+     }
+     transitions {
+      AnimSrcNodeTransition "{59E6DB37B96605F9}" {
+       FromState "In"
+       ToState "Loop"
+       Duration "0.2"
+       Condition "RemainingTimeLess(0.1)"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{A9F0121CC6FA95AC}" {
+       FromState "Loop"
+       ToState "Out"
+       Duration "0.5"
+       Condition "Gestures == -1"
+       Reentering "Blendout Only"
+      }
+      AnimSrcNodeTransition "{089900758167916A}" {
+       FromState "In"
+       ToState "Out"
+       Duration "0.5"
+       StartTime "1-GetLowerTime()"
+       Condition "Gestures == -1"
+       PostEval 1
+       Reentering "Blendout Only"
+      }
+     }
+    }
+    AnimSrcNodeSource GestureInSrc {
+     EditorPos 2 9
+     Source "HandsUp.In"
+     Looptype "No Loop"
+    }
+    AnimSrcNodeSource GestureLoopSrc {
+     EditorPos 4.5 10
+     Source "HandsUp.Loop"
+     Looptype Loop
+    }
+    AnimSrcNodeSource GestureOutSrc {
+     EditorPos 7 9
+     Source "HandsUp.Out"
+     Looptype "No Loop"
+    }
+   }
+  }
+ }
+}

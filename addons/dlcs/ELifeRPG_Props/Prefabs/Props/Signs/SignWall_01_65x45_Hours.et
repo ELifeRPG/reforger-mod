@@ -1,0 +1,32 @@
+GenericEntity : "{C362AD706044FA62}Prefabs/Structures/BuildingParts/Signs/SignWall/SignWall_01_65x45_Base.et" {
+ {
+  GenericEntity Hours {
+   ID "B34025ABF06461BB"
+   components {
+    MeshObject "{C28CA851C0A2BC0C}" {
+     Object "{2BCB7B93AECC6E05}Assets/Structures/BuildingsParts/Signs/SignWall_01/SignWall_01_65x45.xob"
+     Materials {
+      MaterialAssignClass "{6DC1A2A86CDA337A}" {
+       SourceMaterial "SignWall_01_65x45"
+       AssignedMaterial "{B159F75E93E260DF}Assets/Props/Signs/Data/ELIFE_HoursSign_Live.emat"
+      }
+      MaterialAssignClass "{CD7DB4148CAD93C4}" {
+       SourceMaterial "SignWall_01_65x45_MLOD"
+       AssignedMaterial "{B159F75E93E260DF}Assets/Props/Signs/Data/ELIFE_HoursSign_Live.emat"
+      }
+     }
+    }
+    Hierarchy "{C5927FF318D505B8}" {
+    }
+    ELIFE_NpcHoursSignComponent "{5695042524977E52}" {
+     m_sCanvasLayout "{ED875B427A1B86C6}UI/layouts/Menus/WorldScreen/NpcHoursSignCanvas.layout"
+     m_sContentLayout "{AC3B5615B0AD7706}UI/layouts/Menus/WorldScreen/NpcHoursSign.layout"
+     m_iCanvasWidth 1024
+     m_iCanvasHeight 704
+     m_fActivationRange 20
+    }
+   }
+   coords 0 0 0.003
+  }
+ }
+}

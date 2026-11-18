@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{30528E6ABE0213E7}anims/Idles/ELIFE_Idle_Stretch.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "stretch_00.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

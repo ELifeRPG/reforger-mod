@@ -6,6 +6,8 @@ class ELIFE_ProblemDetails : JsonApiStruct
 	int status;
 	string detail;
 	string instance;
+	string code;
+	bool retryable;
 
 	void ELIFE_ProblemDetails()
 	{
@@ -14,5 +16,7 @@ class ELIFE_ProblemDetails : JsonApiStruct
 		RegV("status");
 		RegV("detail");
 		RegV("instance");
+		RegV("code");
+		RegV("retryable");
 	}
 }

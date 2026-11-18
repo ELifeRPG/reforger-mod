@@ -1,0 +1,35 @@
+HorizontalLayoutWidgetClass {
+ Name "ReceiptRow"
+ {
+  TextWidgetClass "{54241AA9B3B6FFAF}" {
+   Name "Label"
+   Slot LayoutSlot "{162B19DABCD88DBD}" {
+    VerticalAlign 0
+    Padding 0 0 18 0
+   }
+   Color 0.137 0.137 0.157 1
+   Text ""
+   "Font Size" 21
+   "Min Font Size" 21
+   "Horizontal Alignment" Left
+   FontProperties FontProperties "{77990C4D28218AE5}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+  TextWidgetClass "{FF3EBF0F2EF6E433}" {
+   Name "Value"
+   Slot LayoutSlot "{BF4E0863DAF1B935}" {
+    VerticalAlign 0
+    SizeMode Fill
+   }
+   Color 0.137 0.137 0.157 1
+   Text ""
+   "Font Size" 21
+   "Min Font Size" 21
+   "Horizontal Alignment" Right
+   FontProperties FontProperties "{CC94297CDEDBDB9F}" {
+    Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+   }
+  }
+ }
+}

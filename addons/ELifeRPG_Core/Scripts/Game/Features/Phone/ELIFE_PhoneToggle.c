@@ -31,6 +31,17 @@ class ELIFE_PhoneToggle
 		if (!character)
 			return;
 
+		//! A world screen owns the cursor while it's in use.
+		if (ELIFE_WorldScreenMenu.GetOpen())
+			return;
+
+		ELIFE_MapMenuUI mapMenu = ELIFE_MapMenuUI.GetOpen();
+		if (mapMenu)
+		{
+			mapMenu.CloseForPhoneKey();
+			return;
+		}
+
 		MenuManager menuManager = GetGame().GetMenuManager();
 		if (menuManager && menuManager.FindMenuByPreset(ChimeraMenuPreset.ELIFE_PhoneMenu))
 		{
@@ -214,6 +225,7 @@ modded class SCR_PlayerController
 		if (m_bIsLocalPlayerController && !m_bELIFEPhoneToggleRegistered)
 		{
 			ELIFE_PhoneToggle.Register();
+			ELIFE_PhoneMapKey.Register();
 			m_bELIFEPhoneToggleRegistered = true;
 		}
 	}

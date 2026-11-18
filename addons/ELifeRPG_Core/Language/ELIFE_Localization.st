@@ -90,22 +90,6 @@ StringTable {
    Author "Nico"
    LastChanged "Nico"
   }
-  CustomStringTableItem "{599ECC80BC741B13}" {
-   Id "ELIFE-Item_CarKey_Description"
-   Target_en_us "Key for your car"
-   Target_de_de "Toller Schlüssel für dein tolles Auto"
-   Modified 1503579818
-   Author "Nico"
-   LastChanged "Nico"
-  }
-  CustomStringTableItem "{599ECC8085CF8774}" {
-   Id "ELIFE-Item_CarKey_Name"
-   Target_en_us "Car Key"
-   Target_de_de "Autoschlüssel"
-   Modified 1503579802
-   Author "Nico"
-   LastChanged "Nico"
-  }
   CustomStringTableItem "{E9081882C354A19B}" {
    Id "ELIFE-Hint_Phone_Missing"
    Target_en_us "You do not have a phone."
@@ -1607,6 +1591,1158 @@ StringTable {
    Target_en_us "This phone has been suspended and can't be used until it's restored."
    Target_de_de "Dieses Handy wurde gesperrt und kann erst wieder benutzt werden, wenn die Sperre aufgehoben ist."
    Modified 1793034546
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5577C1D963C021B5}" {
+   Id "ELIFE-Item_Cash_Name"
+   Target_en_us "Cash"
+   Target_de_de "Bargeld"
+   Modified 1793208823
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6F5A74E6354B7685}" {
+   Id "ELIFE-Item_Cash_Description"
+   Target_en_us "A stack of tolar banknotes."
+   Target_de_de "Ein Stapel Tolar-Scheine."
+   Modified 1793208823
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BCD623B4CE81A210}" {
+   Id "ELIFE-Item_Cash_NameAmount"
+   Target_en_us "Cash (%1)"
+   Target_de_de "Bargeld (%1)"
+   Modified 1793208823
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A4A3D509DA6C1E68}" {
+   Id "ELIFE-Cash_Move_Confirm"
+   Target_en_us "Move"
+   Target_de_de "Bewegen"
+   Modified 1793272295
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2A968D8E038CDEF3}" {
+   Id "ELIFE-Cash_Move_Title"
+   Target_en_us "Move cash"
+   Target_de_de "Bargeld bewegen"
+   Modified 1793272295
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2AC3154EC268F9F5}" {
+   Id "ELIFE-Cash_Move_Message"
+   Target_en_us "This stack holds %1. How many tolars do you want to move?"
+   Target_de_de "Dieser Stapel enthält %1. Wie viele Tolar möchtest du bewegen?"
+   Modified 1793272295
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8F27F8CB1E2A5B21}" {
+   Id "ELIFE-Cash_Move_Cancel"
+   Target_en_us "Cancel"
+   Target_de_de "Abbrechen"
+   Modified 1793272295
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{365DA27937BC9F1B}" {
+   Id "ELIFE-Cash_Move_Placeholder"
+   Target_en_us "Amount in tolars"
+   Target_de_de "Betrag in Tolar"
+   Modified 1793272295
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{79C666AFC5CD1062}" {
+   Id "ELIFE-Item_WorkBoots_Name"
+   Target_en_us "Work Boots"
+   Target_de_de "Arbeitsstiefel"
+   Modified 1793276503
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{12565441AFAAAFD5}" {
+   Id "ELIFE-Item_WorkBoots_Description"
+   Target_en_us "Sturdy brown leather work boots."
+   Target_de_de "Robuste braune Arbeitsstiefel aus Leder."
+   Modified 1793276503
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C33594D52725C42C}" {
+   Id "ELIFE-ATM_Use"
+   Target_en_us "Use ATM"
+   Target_de_de "Geldautomat benutzen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F998068C8CDF6EA9}" {
+   Id "ELIFE-ATM_InUse"
+   Target_en_us "In use"
+   Target_de_de "Wird benutzt"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E15626303634D44F}" {
+   Id "ELIFE-ATM_Ready"
+   Target_en_us "Ready"
+   Target_de_de "Bereit"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CDF890A474712B8C}" {
+   Id "ELIFE-ATM_Idle_Withdraw"
+   Target_en_us "Cash withdrawals"
+   Target_de_de "Bargeld abheben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9C3763DA798633FA}" {
+   Id "ELIFE-ATM_Idle_Branch"
+   Target_en_us "Withdrawals and deposits"
+   Target_de_de "Ein- und Auszahlungen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6B0E7D4595D8BE53}" {
+   Id "ELIFE-ATM_Counting"
+   Target_en_us "Counting your cash"
+   Target_de_de "Dein Bargeld wird gezählt"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{83197C95FB562CAE}" {
+   Id "ELIFE-ATM_Counted"
+   Target_en_us "Cash counted"
+   Target_de_de "Gezähltes Bargeld"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BE56FF18B0E56755}" {
+   Id "ELIFE-ATM_Confirm_Receive"
+   Target_en_us "You receive"
+   Target_de_de "Du erhältst"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5D331609CFBC24A9}" {
+   Id "ELIFE-ATM_Step_Amount"
+   Target_en_us "Amount"
+   Target_de_de "Betrag"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{071DE2E7B37B3E05}" {
+   Id "ELIFE-ATM_Step_Confirm"
+   Target_en_us "Confirm"
+   Target_de_de "Bestätigen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{245CCA9406D08071}" {
+   Id "ELIFE-ATM_Step_Done"
+   Target_en_us "Done"
+   Target_de_de "Fertig"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6E41AD06DDD109CC}" {
+   Id "ELIFE-ATM_Limit"
+   Target_en_us "Limit"
+   Target_de_de "Limit"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E9A336E219C6DA76}" {
+   Id "ELIFE-ATM_Action_Cancel"
+   Target_en_us "Cancel"
+   Target_de_de "Abbrechen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5F6ADDBF4099150E}" {
+   Id "ELIFE-ATM_Loading"
+   Target_en_us "Loading your account."
+   Target_de_de "Konto wird geladen."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{061E42EA082A678A}" {
+   Id "ELIFE-ATM_NoAccount"
+   Target_en_us "No bank account found for this character. Open an account, then try again."
+   Target_de_de "Für diesen Charakter wurde kein Bankkonto gefunden. Eröffne ein Konto und versuche es dann erneut."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5EA4BA6E79894953}" {
+   Id "ELIFE-ATM_LoadFailed"
+   Target_en_us "Your account couldn't be loaded. Try again, or come back later."
+   Target_de_de "Dein Konto konnte nicht geladen werden. Versuche es erneut oder komm später wieder."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B5FF7298A7802534}" {
+   Id "ELIFE-ATM_Balance"
+   Target_en_us "Balance"
+   Target_de_de "Kontostand"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0B1659EBB0C1F3BB}" {
+   Id "ELIFE-ATM_Action_Withdraw"
+   Target_en_us "Withdraw"
+   Target_de_de "Abheben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1937C12FD6CD5DCE}" {
+   Id "ELIFE-ATM_Action_Transactions"
+   Target_en_us "Transactions"
+   Target_de_de "Umsätze"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{83361EE6AFCE04F1}" {
+   Id "ELIFE-ATM_Action_Exit"
+   Target_en_us "Exit"
+   Target_de_de "Beenden"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7C74DFA5DA9A3A65}" {
+   Id "ELIFE-ATM_Action_Newer"
+   Target_en_us "Newer"
+   Target_de_de "Neuere"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{27B84438018E8572}" {
+   Id "ELIFE-ATM_Action_Older"
+   Target_en_us "Older"
+   Target_de_de "Ältere"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9FC4B7C60A4A499B}" {
+   Id "ELIFE-ATM_Action_Back"
+   Target_en_us "Back"
+   Target_de_de "Zurück"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A00D230FD2F6D0CE}" {
+   Id "ELIFE-ATM_Action_OtherAmount"
+   Target_en_us "Other amount"
+   Target_de_de "Anderer Betrag"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2CA5C4E7C7F80C07}" {
+   Id "ELIFE-ATM_Action_ChangeAmount"
+   Target_en_us "Change amount"
+   Target_de_de "Betrag ändern"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{96A08A927C205E4E}" {
+   Id "ELIFE-ATM_Action_Confirm"
+   Target_en_us "Confirm"
+   Target_de_de "Bestätigen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8AD01A993DA1B1EC}" {
+   Id "ELIFE-ATM_Action_Done"
+   Target_en_us "Done"
+   Target_de_de "Fertig"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D95CC8779F92B6DE}" {
+   Id "ELIFE-ATM_Action_TryAgain"
+   Target_en_us "Try again"
+   Target_de_de "Erneut versuchen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9ACDFA02FEE642A1}" {
+   Id "ELIFE-ATM_Tx_Empty"
+   Target_en_us "No transactions yet."
+   Target_de_de "Noch keine Umsätze."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7533B65D3FBE6AC3}" {
+   Id "ELIFE-ATM_Tx_Fee"
+   Target_en_us "Fee %1"
+   Target_de_de "Gebühr %1"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5C}" {
+   Id "ELIFE-ATM_Tx_Page"
+   Target_en_us "Transactions · %1/%2"
+   Target_de_de "Umsätze · %1/%2"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5D}" {
+   Id "ELIFE-ATM_Accounts_Title"
+   Target_en_us "Choose an account"
+   Target_de_de "Konto auswählen"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5E}" {
+   Id "ELIFE-ATM_Action_SwitchAccount"
+   Target_en_us "Switch account"
+   Target_de_de "Konto wechseln"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5F}" {
+   Id "ELIFE-ATM_Action_Previous"
+   Target_en_us "Previous"
+   Target_de_de "Zurück"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F60}" {
+   Id "ELIFE-ATM_Action_Next"
+   Target_en_us "Next"
+   Target_de_de "Weiter"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AE2AA262933CD741}" {
+   Id "ELIFE-ATM_Withdraw_Title"
+   Target_en_us "Choose an amount"
+   Target_de_de "Betrag wählen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BC1D39E9D5C004D5}" {
+   Id "ELIFE-ATM_Other_Title"
+   Target_en_us "Enter an amount"
+   Target_de_de "Betrag eingeben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{16F9DCCDDC15DBA1}" {
+   Id "ELIFE-ATM_Other_Hint"
+   Target_en_us "Whole tolars, up to %1"
+   Target_de_de "Ganze Tolar, bis zu %1"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A51CB8EC8A98055E}" {
+   Id "ELIFE-ATM_Fee"
+   Target_en_us "Fee"
+   Target_de_de "Gebühr"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0011BEB3837316C5}" {
+   Id "ELIFE-ATM_Processing"
+   Target_en_us "Withdrawing %1"
+   Target_de_de "%1 werden abgehoben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CFF898F6911BF358}" {
+   Id "ELIFE-ATM_Processing_Generic"
+   Target_en_us "Withdrawing your cash"
+   Target_de_de "Dein Bargeld wird abgehoben"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{53FC93D5AEABDEB2}" {
+   Id "ELIFE-ATM_Checking"
+   Target_en_us "We're checking your withdrawal. This can take up to a minute. Please wait."
+   Target_de_de "Wir prüfen deine Abhebung. Das kann bis zu einer Minute dauern. Bitte warte."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8341DBB65153A5ED}" {
+   Id "ELIFE-ATM_Complete"
+   Target_en_us "Withdrawal complete"
+   Target_de_de "Auszahlung abgeschlossen"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{59DE0C14C2CA0F34}" {
+   Id "ELIFE-ATM_PaidOut"
+   Target_en_us "Paid out"
+   Target_de_de "Ausgezahlt"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{020911702DF5B6CC}" {
+   Id "ELIFE-ATM_RemainingBalance"
+   Target_en_us "Remaining balance"
+   Target_de_de "Verbleibender Kontostand"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4A143836416A7AC4}" {
+   Id "ELIFE-ATM_Reason_OutOfRange"
+   Target_en_us "You're too far from the machine. Step closer and try again."
+   Target_de_de "Du bist zu weit vom Automaten entfernt. Geh näher heran und versuche es erneut."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D579950F3219FB23}" {
+   Id "ELIFE-ATM_Reason_NotOccupant"
+   Target_en_us "Your session at this machine has ended. Start again."
+   Target_de_de "Deine Sitzung an diesem Automaten ist beendet. Beginne von vorn."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{476083DF2C7A70DC}" {
+   Id "ELIFE-ATM_Reason_InvalidAmount"
+   Target_en_us "Enter an amount above zero."
+   Target_de_de "Gib einen Betrag über null ein."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C729CFF38798A74F}" {
+   Id "ELIFE-ATM_Reason_AmountTooHigh"
+   Target_en_us "Too high. The most you can withdraw at once is %1."
+   Target_de_de "Zu hoch. Du kannst höchstens %1 auf einmal abheben."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CD5553ECDFC83541}" {
+   Id "ELIFE-ATM_Reason_QuoteInvalid"
+   Target_en_us "That quote ran out. Choose your amount again."
+   Target_de_de "Das Angebot ist abgelaufen. Wähle deinen Betrag erneut."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8665FF421501D9A3}" {
+   Id "ELIFE-ATM_Reason_Busy"
+   Target_en_us "Another booking is running on this account. Wait for it to finish, then try again."
+   Target_de_de "Für dieses Konto läuft bereits eine Buchung. Warte, bis sie abgeschlossen ist, und versuche es dann erneut."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E007134CB5517EFA}" {
+   Id "ELIFE-ATM_Reason_DataUnavailable"
+   Target_en_us "The bank can't be reached. No money moved. Try again shortly."
+   Target_de_de "Die Bank ist nicht erreichbar. Es wurde kein Geld bewegt. Versuche es gleich noch einmal."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{29D2A38186BE6422}" {
+   Id "ELIFE-ATM_Reason_InsufficientFunds"
+   Target_en_us "Your balance doesn't cover the amount and the fee. No money moved."
+   Target_de_de "Dein Kontostand deckt Betrag und Gebühr nicht. Es wurde kein Geld bewegt."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{EAF636279F468FFC}" {
+   Id "ELIFE-ATM_Reason_Denied"
+   Target_en_us "The bank refused this withdrawal. No money moved."
+   Target_de_de "Die Bank hat die Abhebung abgelehnt. Es wurde kein Geld bewegt."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{55054DC533C7EED8}" {
+   Id "ELIFE-ATM_Reason_NotWithdrawn"
+   Target_en_us "Your withdrawal didn't go through. No money moved."
+   Target_de_de "Die Abhebung wurde nicht ausgeführt. Es wurde kein Geld bewegt."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A2DEB0A0DE46016F}" {
+   Id "ELIFE-ATM_Reason_ContactStaff"
+   Target_en_us "We couldn't confirm the outcome of your withdrawal. Cash paid out so far: %1. Contact staff."
+   Target_de_de "Wir konnten das Ergebnis deiner Abhebung nicht bestätigen. Bisher ausgezahlt: %1. Wende dich an das Team."
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FAC4CD40A6BE0AE8}" {
+   Id "ELIFE-ATM_Tx_Deposited"
+   Target_en_us "Deposit"
+   Target_de_de "Einzahlung"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{18D6E844AD5763E4}" {
+   Id "ELIFE-ATM_Tx_Withdrawn"
+   Target_en_us "Withdrawal"
+   Target_de_de "Abhebung"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D008AA65A1BCED5C}" {
+   Id "ELIFE-ATM_Tx_TransferredOut"
+   Target_en_us "Transfer out"
+   Target_de_de "Überweisung ausgehend"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3707236FAD71C497}" {
+   Id "ELIFE-ATM_Tx_TransferredIn"
+   Target_en_us "Transfer in"
+   Target_de_de "Überweisung eingehend"
+   Modified 1793293896
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A3F10C7E52D84B96}" {
+   Id "ELIFE-ATM_Hint_Cash_Title"
+   Target_en_us "Cash withdrawn"
+   Target_de_de "Bargeld abgehoben"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F58}" {
+   Id "ELIFE-ATM_Hint_Cash"
+   Target_en_us "%1 was added to your inventory."
+   Target_de_de "%1 wurde deinem Inventar hinzugefügt."
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5A}" {
+   Id "ELIFE-ATM_Hint_Cash_Ground"
+   Target_en_us "No room in your inventory: %1 is on the ground at your feet."
+   Target_de_de "Kein Platz im Inventar: %1 liegt vor deinen Füßen auf dem Boden."
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7D2E94B1C06A3F5B}" {
+   Id "ELIFE-ATM_Hint_Cash_Split"
+   Target_en_us "%1 is in your inventory. No room for the rest: %2 is on the ground at your feet."
+   Target_de_de "%1 ist in deinem Inventar. Kein Platz für den Rest: %2 liegt vor deinen Füßen auf dem Boden."
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F32A40A2D9D97D22}" {
+   Id "ELIFE-ATM_Hint_Deposit_Title"
+   Target_en_us "Cash deposited"
+   Target_de_de "Bargeld eingezahlt"
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9F17520884A7BF70}" {
+   Id "ELIFE-ATM_Hint_Deposit"
+   Target_en_us "%1 was taken from your inventory."
+   Target_de_de "%1 wurde aus deinem Inventar genommen."
+   Modified 1793600000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2B1311F2F235A1A3}" {
+   Id "ELIFE-ATM_Action_Deposit"
+   Target_en_us "Deposit"
+   Target_de_de "Einzahlen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3D03C718872572FC}" {
+   Id "ELIFE-ATM_Deposit_Title"
+   Target_en_us "Choose an amount to deposit"
+   Target_de_de "Einzahlungsbetrag wählen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{20E89F3EF30E35D5}" {
+   Id "ELIFE-ATM_CashCarried"
+   Target_en_us "Cash carried"
+   Target_de_de "Bargeld dabei"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{74A539D25F131DE3}" {
+   Id "ELIFE-ATM_Checking_Deposit"
+   Target_en_us "We're checking your deposit. This can take up to a minute. Please wait."
+   Target_de_de "Wir prüfen deine Einzahlung. Das kann bis zu einer Minute dauern. Bitte warte."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C6DA7C5397E5ECAF}" {
+   Id "ELIFE-ATM_Processing_Deposit"
+   Target_en_us "Depositing %1"
+   Target_de_de "%1 werden eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{82913D04373AA38B}" {
+   Id "ELIFE-ATM_Processing_Deposit_Generic"
+   Target_en_us "Depositing your cash"
+   Target_de_de "Dein Bargeld wird eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A6ADA35F6955840D}" {
+   Id "ELIFE-ATM_Deposited"
+   Target_en_us "Deposited"
+   Target_de_de "Eingezahlt"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3E6221AC186520A8}" {
+   Id "ELIFE-ATM_NewBalance"
+   Target_en_us "New balance"
+   Target_de_de "Neuer Kontostand"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4E209EA3B1D2E242}" {
+   Id "ELIFE-ATM_Deposit_Complete"
+   Target_en_us "Deposit complete"
+   Target_de_de "Einzahlung abgeschlossen"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6EDDA9924E958C40}" {
+   Id "ELIFE-ATM_Reason_InvalidAmount_Deposit"
+   Target_en_us "Enter an amount above the fee."
+   Target_de_de "Gib einen Betrag über der Gebühr ein."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D4F33F43ED14BB6C}" {
+   Id "ELIFE-ATM_Reason_AmountTooHigh_Deposit"
+   Target_en_us "Too high. The most you can deposit at once is %1."
+   Target_de_de "Zu hoch. Du kannst höchstens %1 auf einmal einzahlen."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{775A3DAE5C05033D}" {
+   Id "ELIFE-ATM_Reason_Denied_Deposit"
+   Target_en_us "The bank refused this deposit. Your cash was returned."
+   Target_de_de "Die Bank hat die Einzahlung abgelehnt. Dein Bargeld wurde zurückgegeben."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6D20086DE8063209}" {
+   Id "ELIFE-ATM_Reason_ContactStaff_Deposit"
+   Target_en_us "We couldn't confirm the outcome of your deposit. Cash held by the machine: %1. Contact staff."
+   Target_de_de "Wir konnten das Ergebnis deiner Einzahlung nicht bestätigen. Vom Automaten einbehalten: %1. Wende dich an das Team."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{1745C59C03F0E804}" {
+   Id "ELIFE-ATM_Reason_NotDeposited"
+   Target_en_us "Your deposit didn't go through. Your cash was returned."
+   Target_de_de "Die Einzahlung wurde nicht ausgeführt. Dein Bargeld wurde zurückgegeben."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7F9D27F8987156D7}" {
+   Id "ELIFE-ATM_Reason_NotEnoughCash"
+   Target_en_us "You're not carrying that much cash."
+   Target_de_de "So viel Bargeld hast du nicht dabei."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E67DE450D775E595}" {
+   Id "ELIFE-ATM_Reason_NotOffered"
+   Target_en_us "This machine doesn't take deposits. Use one in a bank branch."
+   Target_de_de "Dieser Automat nimmt keine Einzahlungen an. Nutze einen in einer Bankfiliale."
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6E7FC0955D6AF31D}" {
+   Id "ELIFE-ATM_Other_Hint_Pad"
+   Target_en_us "D-pad: pick a digit and change it, up to %1"
+   Target_de_de "Steuerkreuz: Ziffer wählen und ändern, bis zu %1"
+   Modified 1794068452
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{BF08D3F6C57E490F}" {
+   Id "ELIFE-Clerk_Transfer_To"
+   Target_en_us "To"
+   Target_de_de "An"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A4A208D9E64E8707}" {
+   Id "ELIFE-Clerk_Transfer_Number"
+   Target_en_us "Account number"
+   Target_de_de "Kontonummer"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{77015B8E19E63B6D}" {
+   Id "ELIFE-Clerk_Transfer_Amount"
+   Target_en_us "Amount"
+   Target_de_de "Betrag"
+   Modified 1794120000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{389D81956F412E85}" {
+   Id "ELIFE-Clerk_Label_BookingFee"
+   Target_en_us "Fee per booking"
+   Target_de_de "Gebühr pro Buchung"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{D876CDD7E48EA660}" {
+   Id "ELIFE-Clerk_Label_Fee"
+   Target_en_us "Fee"
+   Target_de_de "Gebühr"
+   Modified 1794122000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{91CD4C9A176860A8}" {
+   Id "ELIFE-Clerk_Label_Purpose"
+   Target_en_us "Purpose"
+   Target_de_de "Verwendungszweck"
+   Modified 1794174525
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2959C3E048EEE41F}" {
+   Id "ELIFE-Paper_TransferReceipt"
+   Target_en_us "Transfer receipt"
+   Target_de_de "Überweisungsbeleg"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{41CFB68E5BEB1B37}" {
+   Id "ELIFE-Paper_AccountPapers"
+   Target_en_us "Account papers"
+   Target_de_de "Kontounterlagen"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CBF82A7EB3EEE70F}" {
+   Id "ELIFE-Paper_AtmWithdrawal"
+   Target_en_us "ATM receipt: withdrawal"
+   Target_de_de "Automatenbeleg: Auszahlung"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{582F0159F824B95B}" {
+   Id "ELIFE-Paper_AtmDeposit"
+   Target_en_us "ATM receipt: deposit"
+   Target_de_de "Automatenbeleg: Einzahlung"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5BDACAC808402BC6}" {
+   Id "ELIFE-Paper_Reference"
+   Target_en_us "Reference"
+   Target_de_de "Referenz"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{9B2B8308B2874F58}" {
+   Id "ELIFE-Paper_From"
+   Target_en_us "From"
+   Target_de_de "Von"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{12BEA7076AEF0C53}" {
+   Id "ELIFE-Paper_Account"
+   Target_en_us "Account"
+   Target_de_de "Konto"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{10195A0572E4AC13}" {
+   Id "ELIFE-Paper_Hint"
+   Target_en_us "Inspect again to put it away."
+   Target_de_de "Erneut untersuchen, um es wegzulegen."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{919DF362F2329122}" {
+   Id "ELIFE-Item_BankPaper_Name"
+   Target_en_us "Bank paper"
+   Target_de_de "Bankbeleg"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{14EAC7F1D2AC4A32}" {
+   Id "ELIFE-Item_BankPaper_Description"
+   Target_en_us "A paper from the bank."
+   Target_de_de "Ein Schriftstück der Bank."
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DE39190F9BEEC751}" {
+   Id "ELIFE-Item_BankPaper_InspectHint"
+   Target_en_us "Inspect it to read it."
+   Target_de_de "Untersuchen, um es zu lesen."
+   Modified 1794177267
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{60C7E672E89CB611}" {
+   Id "ELIFE-ATM_Action_ReceiptYes"
+   Target_en_us "Receipt: yes"
+   Target_de_de "Beleg: ja"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C10F6D4498BA3758}" {
+   Id "ELIFE-ATM_Action_ReceiptNo"
+   Target_en_us "Receipt: no"
+   Target_de_de "Beleg: nein"
+   Modified 1794175604
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DF7AF8600F696BE5}" {
+   Id "ELIFE-Paper_TearUp"
+   Target_en_us "Tear up"
+   Target_de_de "Zerreißen"
+   Modified 1794176695
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0C8D6203654BDF19}" {
+   Id "ELIFE-Paper_Date"
+   Target_en_us "Date"
+   Target_de_de "Datum"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6B63F18375A7A2E7}" {
+   Id "ELIFE-Paper_Time"
+   Target_en_us "Time"
+   Target_de_de "Uhrzeit"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{CA3B7B3D22877AEE}" {
+   Id "ELIFE-Paper_Retain"
+   Target_en_us "PLEASE RETAIN FOR YOUR RECORDS"
+   Target_de_de "BITTE FÜR IHRE UNTERLAGEN AUFBEWAHREN"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2882AB064159E14E}" {
+   Id "ELIFE-Paper_ThankYou"
+   Target_en_us "THANK YOU"
+   Target_de_de "VIELEN DANK"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{5F359B53B81685BD}" {
+   Id "ELIFE-Paper_CustomerCopy"
+   Target_en_us "* * *  CUSTOMER COPY  * * *"
+   Target_de_de "* * *  KUNDENBELEG  * * *"
+   Modified 1794960000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{A593C5A3796C627B}" {
+   Id "ELIFE-Paper_CustomerServices"
+   Target_en_us "CUSTOMER SERVICES"
+   Target_de_de "KUNDENSERVICE"
+   Modified 1794963000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AE15402D92C15513}" {
+   Id "ELIFE-Paper_Salutation"
+   Target_en_us "Dear Customer,"
+   Target_de_de "Sehr geehrte Kundin, sehr geehrter Kunde,"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F72A762E1A14A123}" {
+   Id "ELIFE-Paper_Intro_Transfer"
+   Target_en_us "As requested at our counter, we have carried out the following transfer from your account."
+   Target_de_de "Wie am Schalter gewünscht, haben wir die folgende Überweisung von Ihrem Konto ausgeführt."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6043DFDEA88740A2}" {
+   Id "ELIFE-Paper_Intro_Account"
+   Target_en_us "Thank you for opening an account with us. Your account is ready for use from today; its details are listed below."
+   Target_de_de "Vielen Dank für die Eröffnung Ihres Kontos bei uns. Ihr Konto ist ab heute nutzbar; die Angaben finden Sie unten."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{2696522D458C8C8D}" {
+   Id "ELIFE-Paper_Keep"
+   Target_en_us "Please keep this letter in a safe place. If anything is incorrect, visit your branch as soon as possible."
+   Target_de_de "Bitte bewahren Sie dieses Schreiben sorgfältig auf. Sollte etwas nicht stimmen, wenden Sie sich bitte umgehend an Ihre Filiale."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{13E52BC080D9D293}" {
+   Id "ELIFE-Paper_Closing"
+   Target_en_us "Yours sincerely,"
+   Target_de_de "Mit freundlichen Grüßen"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{65BB0F106414B285}" {
+   Id "ELIFE-Paper_Signature"
+   Target_en_us "Customer Services"
+   Target_de_de "Ihr Kundenservice"
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DF89A3C4DA160982}" {
+   Id "ELIFE-Paper_Footer"
+   Target_en_us "This letter serves as proof of the details shown above."
+   Target_de_de "Dieses Schreiben dient als Nachweis der oben genannten Angaben."
+   Modified 1795020000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0717C34EB66A8242}" {
+   Id "ELIFE-Paper_FooterMachine"
+   Target_en_us "Produced by machine, valid with the stamp."
+   Target_de_de "Maschinell erstellt, gültig mit Stempel."
+   Modified 1795021000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8177853B7170FD8A}" {
+   Id "ELIFE-Npc_Busy"
+   Target_en_us "They are serving someone else. Please wait a moment."
+   Target_de_de "Gerade wird jemand anderes bedient. Bitte warten Sie einen Moment."
+   Modified 1794260679
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{F8427911290804FC}" {
+   Id "ELIFE-Npc_OutOfRange"
+   Target_en_us "Step closer."
+   Target_de_de "Treten Sie näher."
+   Modified 1794260679
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{50A9892C844EA136}" {
+   Id "ELIFE-Npc_Unavailable"
+   Target_en_us "Not available right now. Please try again later."
+   Target_de_de "Gerade nicht verfügbar. Bitte versuchen Sie es später erneut."
+   Modified 1794260679
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{FD9E1A1F1E9DAAF3}" {
+   Id "ELIFE-ATM_Name"
+   Target_en_us "ATM"
+   Target_de_de "Geldautomat"
+   Modified 1794339514
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{0B0F1A83651E5515}" {
+   Id "ELIFE-Hint_ATM_Inspect"
+   Target_en_us "Hold <action name='ELIFE_KeyInspect'/> to zoom in on the screen."
+   Target_de_de "Halte <action name='ELIFE_KeyInspect'/> gedrückt, um den Bildschirm heranzuzoomen."
+   Modified 1794339514
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{6A11AFACF725E667}" {
+   Id "ELIFE-Seat_Sit"
+   Target_en_us "Sit down"
+   Target_de_de "Hinsetzen"
+   Modified 1794350328
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{B217C77AC80CF67D}" {
+   Id "ELIFE-Seat_StandUp"
+   Target_en_us "Stand up"
+   Target_de_de "Aufstehen"
+   Modified 1794350328
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E0C702992BDA19DC}" {
+   Id "ELIFE-Sign_OpeningHours"
+   Target_en_us "Opening hours"
+   Target_de_de "Öffnungszeiten"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{DBCE4924B34A1D0A}" {
+   Id "ELIFE-Sign_Daily"
+   Target_en_us "Daily"
+   Target_de_de "Täglich"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{AA29A15D1EEA3A17}" {
+   Id "ELIFE-Sign_AlwaysOpen"
+   Target_en_us "Open 24 hours"
+   Target_de_de "Durchgehend geöffnet"
+   Modified 1794421000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{7C729F65DD8D13A3}" {
+   Id "ELIFE-Npc_Closed"
+   Target_en_us "Closed. Opens at %1."
+   Target_de_de "Geschlossen. Öffnet um %1."
+   Modified 1794410859
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{E04D9DA757666489}" {
+   Id "ELIFE-Npc_TalkClosed"
+   Target_en_us "%1 (closed · opens %2)"
+   Target_de_de "%1 (geschlossen · öffnet %2)"
+   Modified 1794410859
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{3F1A6C2B8D4E5071}" {
+   Id "ELIFE-Bed_LieDown"
+   Target_en_us "Lie down"
+   Target_de_de "Hinlegen"
+   Modified 1794460000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8B2D4F6A1C3E5092}" {
+   Id "ELIFE-Bed_GetUp"
+   Target_en_us "Get up"
+   Target_de_de "Aufstehen"
+   Modified 1794460000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{4A7C2E91D35B6F08}" {
+   Id "ELIFE-Map_Open"
+   Target_en_us "%1 · open"
+   Target_de_de "%1 · geöffnet"
+   Modified 1794500000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{8E3B5D17A2C94F60}" {
+   Id "ELIFE-Map_OpenUntil"
+   Target_en_us "%1 · open until %2"
+   Target_de_de "%1 · geöffnet bis %2"
+   Modified 1794500000
+   Author "Robin"
+   LastChanged "Robin"
+  }
+  CustomStringTableItem "{C1F6A8E4529D7B33}" {
+   Id "ELIFE-Map_ClosedOpens"
+   Target_en_us "%1 · closed · opens %2"
+   Target_de_de "%1 · geschlossen · öffnet %2"
+   Modified 1794500000
    Author "Robin"
    LastChanged "Robin"
   }

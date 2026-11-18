@@ -1,0 +1,15 @@
+MetaFileClass {
+ Name "{4F581C1DDB0D3796}Prefabs/Props/Furniture/BenchOffice_01/BenchOffice_01_Base.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass XBOX_ONE : PC {
+  }
+  EntityTemplateResourceClass XBOX_SERIES : PC {
+  }
+  EntityTemplateResourceClass PS4 : PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

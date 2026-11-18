@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{878AE53ABD81AD4B}anims/Beds/ELIFE_bed_lie_in_right.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "ELIFE_bed_lie.blend"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

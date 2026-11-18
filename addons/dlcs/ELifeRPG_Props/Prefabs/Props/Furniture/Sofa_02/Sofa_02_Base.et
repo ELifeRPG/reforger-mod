@@ -1,0 +1,171 @@
+GenericEntity : "{4CC2C69DE1AEF103}Prefabs/Props/Core/DestructibleMultiPhase_Props_Base.et" {
+ ID "521CB730D208867D"
+ components {
+  ELIFE_PosePropComponent "{A05FE9D64C8AD137}" {
+  }
+  ControllersManagerComponent "{E6456AED807013A5}" {
+  }
+  SCR_BaseCompartmentManagerComponent "{25C8142330B4AC44}" {
+   DoorInfoList {
+    CompartmentDoorInfo "{990639875CF0D7F8}" {
+     ContextName "seat_left"
+     EntryPositionInfo PointInfo "{925924C6982592EF}" {
+      Offset -0.5 0 0.77
+      Angles 0 180 0
+     }
+     ExitPositionInfo PointInfo "{4EC67984033CA006}" {
+      Offset -0.5 0 0.77
+      Angles 0 0 0
+     }
+     ExitTeleportPositionInfo PointInfo "{CA932F08307A2A3D}" {
+      Offset -0.5 0 0.77
+      Angles 0 0 0
+     }
+     GetInTeleport 1
+     GetOutTeleport 1
+     FakeDoor 1
+    }
+    CompartmentDoorInfo "{7EDE922C2D526254}" {
+     ContextName "seat_right"
+     EntryPositionInfo PointInfo "{503DDA8AF878493D}" {
+      Offset 0.5 0 0.77
+      Angles 0 180 0
+     }
+     ExitPositionInfo PointInfo "{7DA8FD4BA1BF91F6}" {
+      Offset 0.5 0 0.77
+      Angles 0 0 0
+     }
+     ExitTeleportPositionInfo PointInfo "{900E8D3CA2E755EE}" {
+      Offset 0.5 0 0.77
+      Angles 0 0 0
+     }
+     GetInTeleport 1
+     GetOutTeleport 1
+     FakeDoor 1
+    }
+   }
+   CompartmentSlots {
+    CargoCompartmentSlot Seat_0 {
+     CompartmentAction SCR_GetInUserAction "{28C0569160AF5543}" {
+      ParentContextList {
+       "seat_left"
+      }
+      UIInfo SCR_ActionUIInfo "{2A709224DAC2E634}" {
+       Name "#ELIFE-Seat_Sit"
+      }
+      Duration 0
+     }
+     GetOutAction ELIFE_StandUpAction "{E0AE1768ECFF4688}" {
+      ParentContextList {
+       "elife_seated"
+      }
+      UIInfo SCR_ActionUIInfo "{13F03A830F692F8B}" {
+       Name "#ELIFE-Seat_StandUp"
+      }
+      Duration 0
+     }
+     PassengerPositionInfo EntitySlotInfo "{A09B6865AFC1B197}" {
+      Offset -0.5 0 0.77
+      Angles 0 0 0
+     }
+     ForcedFreeLook 1
+     EjectUnconsciousAndDeadCharacters 0
+     SkipCharacterDoorAnimationsFromSeat 1
+     SeatType 0
+     DoorInfoList {
+      0
+     }
+     UIInfo UIInfo "{49B21D38A7C4E783}" {
+     }
+     CharacterHasCollision 0
+    }
+    CargoCompartmentSlot Seat_1 {
+     CompartmentAction SCR_GetInUserAction "{16E5FAE56F915C03}" {
+      ParentContextList {
+       "seat_right"
+      }
+      UIInfo SCR_ActionUIInfo "{49D79A85FE49B783}" {
+       Name "#ELIFE-Seat_Sit"
+      }
+      Duration 0
+     }
+     GetOutAction ELIFE_StandUpAction "{6AF8B1D070696C3D}" {
+      ParentContextList {
+       "elife_seated"
+      }
+      UIInfo SCR_ActionUIInfo "{71E3619024A595E6}" {
+       Name "#ELIFE-Seat_StandUp"
+      }
+      Duration 0
+     }
+     PassengerPositionInfo EntitySlotInfo "{737300C36D8C392A}" {
+      Offset 0.5 0 0.77
+      Angles 0 0 0
+     }
+     ForcedFreeLook 1
+     EjectUnconsciousAndDeadCharacters 0
+     SkipCharacterDoorAnimationsFromSeat 1
+     SeatType 0
+     DoorInfoList {
+      1
+     }
+     UIInfo UIInfo "{B9A01D2238E7C2B0}" {
+     }
+     CharacterHasCollision 0
+    }
+   }
+  }
+  ActionsManagerComponent "{31A5ABFFCADF6716}" {
+   ActionContexts {
+    UserActionContext "{FFDA101B29AA8D2D}" {
+     ContextName "seat_left"
+     Position PointInfo "{773D43F700EE238E}" {
+      Offset -0.5 0.45 0.25
+     }
+     Radius 0.4
+    }
+    UserActionContext "{F38F412B5D70BA9F}" {
+     ContextName "seat_right"
+     Position PointInfo "{89A78EC6CBC18475}" {
+      Offset 0.5 0.45 0.25
+     }
+     Radius 0.4
+    }
+    UserActionContext "{9EAB7F2A571A2C23}" {
+     ContextName "elife_seated"
+     Position PointInfo "{6C1CCA6FD488A44B}" {
+      Offset 0 0.8 0.7
+     }
+     Radius 1.2
+    }
+   }
+  }
+  CompartmentAnimationComponent "{E2FA3475033E0C23}" {
+   AnimGraph "{BCB289F2891A4E60}anims/Poses/ELIFE_Pose.agr"
+   AnimInstance "{8F15DA4BC1F12A0E}anims/Poses/ELIFE_Pose_prop.asi"
+   AnimInjection AnimationAttachmentInfo "{0166EB9F267344D7}" {
+    AnimGraph "{BCB289F2891A4E60}anims/Poses/ELIFE_Pose.agr"
+    AnimInstance "{B1CCA6BAD4F413D1}anims/Poses/ELIFE_Pose_player.asi"
+    BindingName "Vehicle"
+   }
+  }
+  SCR_VehicleCameraDataComponent "{D25DCCB7DA139C4A}" {
+   m_fBobScale 0
+   m_fShakeScale 0
+   m_fDist_Max 3
+   m_fDist_Min 2
+   m_fDist_Desired 2.5
+   m_fAngleThirdPerson 0
+   m_pCameraAlignData SCR_VehicleCameraAlignment "{385C6C370B4537CD}" {
+   }
+   m_pPivot PointInfo "{86F370E20B090E55}" {
+    Offset 0 1 0
+   }
+  }
+  Hierarchy "{4ED435C0630AB8B5}" {
+  }
+  RplComponent "{5624A88DC2D9928D}" {
+   Enabled 1
+  }
+ }
+}

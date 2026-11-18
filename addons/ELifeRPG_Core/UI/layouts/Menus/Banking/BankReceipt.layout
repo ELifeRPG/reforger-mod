@@ -1,0 +1,295 @@
+FrameWidgetClass {
+ Name "BankReceiptRoot"
+ {
+  ImageWidgetClass "{AC9D45420CF27673}" {
+   Name "Dim"
+   Slot FrameWidgetSlot "{D08C7D06FAA86381}" {
+    Anchor 0 0 1 1
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 0
+    OffsetRight 0
+    SizeY 0
+    OffsetBottom 0
+   }
+   Color 0 0 0 0.55
+  }
+  SizeLayoutWidgetClass "{BA6DA414E03D4DC1}" {
+   Name "PaperSize"
+   Slot FrameWidgetSlot "{BF2DB006A622F6EF}" {
+    Anchor 0.5 0.5 0.5 0.5
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    Alignment 0.5 0.5
+    SizeToContent 1
+   }
+   AllowWidthOverride 1
+   WidthOverride 460
+   {
+    OverlayWidgetClass "{7071712FA13EC32C}" {
+     Name "Paper"
+     Slot AlignableSlot "{10D75F40E3164328}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     {
+      ImageWidgetClass "{919E707BE3A3B5E0}" {
+       Name "PaperShadow"
+       Slot OverlayWidgetSlot "{3FAA86772614A5CE}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+        Padding 10 10 -10 -10
+       }
+       Color 0 0 0 0.35
+      }
+      ImageWidgetClass "{A4BCD37F0ECBD5B7}" {
+       Name "PaperFill"
+       Slot OverlayWidgetSlot "{EC07E8D34C0F354A}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+       }
+       Color 0.906 0.89 0.835 1
+      }
+      VerticalLayoutWidgetClass "{9D4C0069FAD7B1C1}" {
+       Name "Sheet"
+       Slot OverlayWidgetSlot "{1F9C074BF61A3FDD}" {
+        HorizontalAlign 3
+        VerticalAlign 3
+        Padding 36 34 36 28
+       }
+       "Fill Origin" Top
+       {
+        ImageWidgetClass "{6A4C148FBC77B717}" {
+         Name "Emblem"
+         Slot LayoutSlot "{A8820FDEAD7B4735}" {
+          HorizontalAlign 1
+          Padding 0 0 0 10
+         }
+         "Ignore Cursor" 1
+         Color 0.137 0.137 0.157 1
+         Size 80 80
+        }
+        TextWidgetClass "{379955D40874E274}" {
+         Name "Title"
+         Slot LayoutSlot "{643B045F06E2754C}" {
+          HorizontalAlign 3
+         }
+         Color 0.137 0.137 0.157 1
+         Text ""
+         "Font Size" 26
+         "Min Font Size" 26
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{0502C29DEE57F16D}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+        TextWidgetClass "{51DC762029759018}" {
+         Name "BankName"
+         Slot LayoutSlot "{F0790BF21ED8ACD9}" {
+          HorizontalAlign 3
+          Padding 0 2 0 0
+         }
+         Color 0.137 0.137 0.157 1
+         Text ""
+         "Font Size" 19
+         "Min Font Size" 19
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{797E847C0528629A}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        TextWidgetClass "{D3214529728264E6}" {
+         Name "RuleHead"
+         Slot LayoutSlot "{50BA0960F13A9BDC}" {
+          HorizontalAlign 3
+          Padding 0 4 0 4
+         }
+         Color 0.137 0.137 0.157 1
+         Text "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+         "Font Size" 20
+         "Min Font Size" 20
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{86005EA60B2C96E2}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        VerticalLayoutWidgetClass "{6C579AFB9B07D504}" {
+         Name "Rows"
+         Slot LayoutSlot "{6C68C21003A82BE1}" {
+          HorizontalAlign 3
+          Padding 0 0 0 0
+         }
+         "Fill Origin" Top
+        }
+        TextWidgetClass "{B6C326A12380AF9B}" {
+         Name "RuleAmount"
+         Slot LayoutSlot "{6F59B38695A990E3}" {
+          HorizontalAlign 3
+          Padding 0 4 0 4
+         }
+         Color 0.137 0.137 0.157 1
+         Text "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+         "Font Size" 20
+         "Min Font Size" 20
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{5FEBFC4027730C5A}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        HorizontalLayoutWidgetClass "{ABEBE412AA0A9680}" {
+         Name "AmountRow"
+         Slot LayoutSlot "{61E58781EACEE48F}" {
+          HorizontalAlign 3
+          Padding 0 2 0 2
+         }
+         {
+          TextWidgetClass "{0A8E5F97365E1CCC}" {
+           Name "AmountLabel"
+           Slot LayoutSlot "{1E919661767115A9}" {
+            VerticalAlign 1
+            Padding 0 0 18 0
+           }
+           Color 0.137 0.137 0.157 1
+           Text ""
+           "Font Size" 30
+           "Min Font Size" 30
+           "Horizontal Alignment" Left
+           FontProperties FontProperties "{51A9212502BD31A4}" {
+            Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+           }
+          }
+          TextWidgetClass "{7B8BC000B51E2396}" {
+           Name "AmountValue"
+           Slot LayoutSlot "{42F16793A2FF6B23}" {
+            VerticalAlign 1
+            SizeMode Fill
+           }
+           Color 0.137 0.137 0.157 1
+           Text ""
+           "Font Size" 34
+           "Min Font Size" 34
+           "Horizontal Alignment" Right
+           FontProperties FontProperties "{B970F495B86EE41D}" {
+            Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+           }
+          }
+         }
+        }
+        VerticalLayoutWidgetClass "{E85FBD464540E7DB}" {
+         Name "Charges"
+         Slot LayoutSlot "{F5D35FABDEFA8A98}" {
+          HorizontalAlign 3
+          Padding 0 0 0 0
+         }
+         "Fill Origin" Top
+        }
+        TextWidgetClass "{C49A9B705E3D5824}" {
+         Name "RuleDetails"
+         Slot LayoutSlot "{DD68D85625866551}" {
+          HorizontalAlign 3
+          Padding 0 4 0 4
+         }
+         Color 0.137 0.137 0.157 1
+         Text "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+         "Font Size" 20
+         "Min Font Size" 20
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{9F8E233B7BE78EDA}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        VerticalLayoutWidgetClass "{5967E129C4FE6E44}" {
+         Name "Details"
+         Slot LayoutSlot "{E6BDB7F57394EBB5}" {
+          HorizontalAlign 3
+          Padding 0 0 0 0
+         }
+         "Fill Origin" Top
+        }
+        TextWidgetClass "{FD2CCE50A2E69667}" {
+         Name "RuleFoot"
+         Slot LayoutSlot "{B54F6EB0A24074F9}" {
+          HorizontalAlign 3
+          Padding 0 4 0 4
+         }
+         Color 0.137 0.137 0.157 1
+         Text "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+         "Font Size" 20
+         "Min Font Size" 20
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{140123274F3D1BF8}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        TextWidgetClass "{D802D0C5A6C80CF9}" {
+         Name "Retain"
+         Slot LayoutSlot "{E760F4EEACAA919A}" {
+          HorizontalAlign 3
+          Padding 0 4 0 0
+         }
+         Color 0.137 0.137 0.157 1
+         Text "#ELIFE-Paper_Retain"
+         "Font Size" 19
+         "Min Font Size" 19
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{F2113487473C478C}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        TextWidgetClass "{43038D7857E927DF}" {
+         Name "ThankYou"
+         Slot LayoutSlot "{5FFB277724BC1714}" {
+          HorizontalAlign 3
+          Padding 0 8 0 0
+         }
+         Color 0.137 0.137 0.157 1
+         Text "#ELIFE-Paper_ThankYou"
+         "Font Size" 26
+         "Min Font Size" 26
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{0FAE6F2C8DF19B5A}" {
+          Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+         }
+        }
+        TextWidgetClass "{6D263623F96602C0}" {
+         Name "Copy"
+         Slot LayoutSlot "{726F63884398081D}" {
+          HorizontalAlign 3
+          Padding 0 8 0 0
+         }
+         Color 0.137 0.137 0.157 1
+         Text "#ELIFE-Paper_CustomerCopy"
+         "Font Size" 17
+         "Min Font Size" 17
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{B7B351DFB8AE40C8}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+        TextWidgetClass "{70899FE77DB6702F}" {
+         Name "Hint"
+         Slot LayoutSlot "{97717B48D19FE4AA}" {
+          HorizontalAlign 3
+          Padding 0 22 0 0
+         }
+         Color 0.012 0.016 0.03 0.6
+         Text ""
+         "Font Size" 18
+         "Min Font Size" 18
+         "Horizontal Alignment" Center
+         FontProperties FontProperties "{D08B49832F612965}" {
+          Font "{3E7733BAC8C831F6}UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.fnt"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

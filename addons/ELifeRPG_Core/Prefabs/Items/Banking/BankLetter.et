@@ -1,0 +1,8 @@
+GenericEntity : "{3E5B1C9A7D24F860}Prefabs/Items/Banking/BankPaper.et" {
+ ID "5A1F0E7C3B9D2846"
+ components {
+  MeshObject "{ABE9CB763FC480BE}" {
+   Object "{C654363B233480C2}Assets/Items/BankPaper/Letter.xob"
+  }
+ }
+}

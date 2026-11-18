@@ -6,6 +6,7 @@ class ELIFE_DataRedactor
 	protected const string LETTERS_LOWER = "abcdefghijklmnopqrstuvwxyz";
 	protected const string LETTERS_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	protected const string DIGITS = "0123456789";
+	protected const string NONZERO_DIGITS = "123456789";
 	protected const int LENGTH_VARIANCE_PERCENT = 30;
 
 	//------------------------------------------------------------------------------------------------
@@ -55,15 +56,34 @@ class ELIFE_DataRedactor
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! Redacts a money amount: same sign and digit count in cents, random digits.
-	static float RedactAmount(float real)
+	//! Same shape and digit count, random digits; the leading digit never becomes a new zero.
+	static string RedactMoneyText(string real)
 	{
-		int cents = Math.Round(Math.AbsFloat(real) * 100);
-		float redacted = RedactDigits(cents.ToString()).ToInt() / 100.0;
-		if (real < 0)
-			return -redacted;
+		string result = "";
+		bool first = true;
+		for (int i = 0; i < real.Length(); i++)
+		{
+			string ch = real.Substring(i, 1);
+			if (DIGITS.IndexOf(ch) == -1)
+			{
+				result += ch;
+				continue;
+			}
 
-		return redacted;
+			if (!first)
+			{
+				result += RandomChar(DIGITS);
+				continue;
+			}
+
+			first = false;
+			if (ch == "0")
+				result += ch;
+			else
+				result += RandomChar(NONZERO_DIGITS);
+		}
+
+		return result;
 	}
 
 	//------------------------------------------------------------------------------------------------

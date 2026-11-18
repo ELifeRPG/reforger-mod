@@ -1,0 +1,20 @@
+AnimSetTemplateSource {
+ Groups {
+  AnimSetTemplateSource_AnimationGroup "{C4134BD3DD8014C1}" {
+   Name "Idle"
+   Animations {
+    "Play"
+   }
+   Columns {
+    "Arms"
+    "Clasp"
+    "Look"
+    "Neck"
+    "Scratch"
+    "Stretch"
+    "Watch"
+    "Weight"
+   }
+  }
+ }
+}

@@ -1,0 +1,32 @@
+AnimSetInstanceSource "{160966BA5854E34B}" {
+ Template "{5F8E7776D446E320}anims/Poses/ELIFE_Pose.ast"
+ Lines {
+  AnimSetInstanceSource_Line "Rest.Sit.In" {
+   Resource "{F97BB8EC205A0ECC}anims/Poses/ELIFE_sit_in.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.Sit.Loop" {
+   Resource "{589506E6F4D42579}anims/anm/player/actions/sit_bed/p_erc_sit_bed_loop.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.Sit.Out" {
+   Resource "{A9C6C7CEB744C720}anims/Poses/ELIFE_sit_out.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieLeft.In" {
+   Resource "{D23BCA55DC4B3938}anims/Beds/ELIFE_bed_lie_in_left.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieLeft.Loop" {
+   Resource "{EC747B2B958E16B6}anims/Beds/ELIFE_bed_lie_loop_left.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieLeft.Out" {
+   Resource "{70B9617B610BBAF5}anims/Beds/ELIFE_bed_lie_out_left.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieRight.In" {
+   Resource "{878AE53ABD81AD4B}anims/Beds/ELIFE_bed_lie_in_right.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieRight.Loop" {
+   Resource "{5A7793F74B57BA3A}anims/Beds/ELIFE_bed_lie_loop_right.anm"
+  }
+  AnimSetInstanceSource_Line "Rest.LieRight.Out" {
+   Resource "{6CF26298479C82AB}anims/Beds/ELIFE_bed_lie_out_right.anm"
+  }
+ }
+}

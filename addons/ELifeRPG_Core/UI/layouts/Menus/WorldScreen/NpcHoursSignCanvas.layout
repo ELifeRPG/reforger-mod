@@ -1,0 +1,37 @@
+FrameWidgetClass {
+ Name "rootFrame"
+ "Ignore Cursor" 1
+ {
+  RTTextureWidgetClass "{CF7420B13ABB49D1}" {
+   Name "ContentRT"
+   Slot FrameWidgetSlot "{0B55DDF010142B0C}" {
+    OffsetLeft 0
+    OffsetTop 0
+    SizeX 1024
+    OffsetRight -1024
+    SizeY 704
+    OffsetBottom -704
+   }
+   {
+    SizeLayoutWidgetClass "{23BA051AEFC6DE68}" {
+     Name "ContentHost"
+     Slot FrameWidgetSlot "{7553304D5D1C4F1F}" {
+      Anchor 0 0 1 1
+      PositionX 0
+      OffsetLeft 0
+      PositionY 0
+      OffsetTop 0
+      SizeX 0
+      OffsetRight 0
+      SizeY 0
+      OffsetBottom 0
+     }
+     AllowWidthOverride 1
+     WidthOverride 1024
+     AllowHeightOverride 1
+     HeightOverride 704
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,20 @@
+GameProject {
+ ID "ELifeRPG_Props"
+ GUID "AF193338B10BF1C5"
+ TITLE "ELifeRPG_Props"
+ Dependencies {
+  "58D0FB3206B6F859" "5614BBCCBB55ED1C" "66EB6BA548DD28C2"
+ }
+ Configurations {
+  GameProjectConfig PC {
+  }
+  GameProjectConfig XBOX_ONE {
+  }
+  GameProjectConfig XBOX_SERIES {
+  }
+  GameProjectConfig PS4 {
+  }
+  GameProjectConfig HEADLESS {
+  }
+ }
+}

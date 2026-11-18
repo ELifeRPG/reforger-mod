@@ -110,6 +110,8 @@ class ELIFE_PhoneStyle
 	//------------------------------------------------------------------------------------------------
 	static Color Ink() { return Srgb(0.051, 0.059, 0.082); }                 //!< #0D0F15
 	static Color Surface() { return Srgb(0.090, 0.102, 0.137); }             //!< #171A23
+	//! A control resting on a Surface, e.g. the ATM's side tabs.
+	static Color SurfaceRaised() { return Srgb(0.137, 0.153, 0.204); }       //!< #232734
 	static Color Hairline() { return Srgb(0.216, 0.239, 0.298); }            //!< #373D4C
 	static Color TextPrimary() { return Srgb(0.925, 0.937, 0.965); }         //!< #ECEFF6
 	static Color TextSecondary() { return Srgb(0.639, 0.667, 0.737); }       //!< #A3AABC
@@ -150,6 +152,16 @@ class ELIFE_PhoneStyle
 	static Color AccentDeepSettings() { return Srgb(0.369, 0.412, 0.502); }  //!< #5E6980
 	static Color AccentDeepStore() { return Srgb(0.557, 0.404, 0.827); }     //!< #8E67D3
 
+	//! ATMs outside a branch, from the eLife logo blue; branch ATMs use the Bank pair.
+	static Color AccentAtm() { return Srgb(0.537, 0.710, 0.992); }           //!< #89B5FD
+	static Color AccentDeepAtm() { return Srgb(0.161, 0.420, 0.847); }       //!< #296BD8
+
+	//! Company money: violet, apart from the bank gold and the ATM blue, so nobody takes it for their own.
+	static Color AccentCompany() { return Srgb(0.776, 0.627, 0.976); }       //!< #C6A0F9
+	static Color SurfaceCompany() { return Srgb(0.200, 0.157, 0.290); }      //!< #33284A
+	//! On paper.
+	static Color InkCompany() { return Srgb(0.388, 0.204, 0.651); }          //!< #6334A6
+
 	//! Money in and out.
 	static Color Positive() { return AccentMessages(); }
 	static Color Negative() { return Srgb(0.894, 0.576, 0.549); }            //!< #E4938C
@@ -170,6 +182,9 @@ class ELIFE_PhoneStyle
 	//! Use its "circle" sprite for round shapes - circleFull.edds has no real alpha.
 	static const ResourceName ICON_SET_WRAPPER = "{3262679C50EF4F01}UI/Textures/Icons/icons_wrapperUI.imageset";
 	static const ResourceName ICON_SET_CHAT = "{1872FFA1133724A2}UI/Textures/Chat/chat.imageset";
+	//! Marks whose an account is: our own office building for a company (vanilla has none), vanilla's person otherwise.
+	static const ResourceName ICON_ACCOUNT_COMPANY = "{02953C89C02F1463}UI/Textures/Banking/ELIFE_AccountCompany.edds";
+	static const string ICON_ACCOUNT_PERSONAL = "player";
 
 	//------------------------------------------------------------------------------------------------
 	static Color AccentFor(EPhoneScreenState state)
@@ -447,6 +462,22 @@ class ELIFE_PhoneStyle
 		Widget widget = parent.FindAnyWidget(name);
 		if (widget)
 			widget.SetColor(color);
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! size: the icon's square box in the layout.
+	static bool LoadAccountIcon(notnull ImageWidget icon, bool company, float size)
+	{
+		bool loaded;
+		if (company)
+			loaded = icon.LoadImageTexture(0, ICON_ACCOUNT_COMPANY);
+		else
+			loaded = icon.LoadImageFromSet(0, ICON_SET_WRAPPER, ICON_ACCOUNT_PERSONAL);
+
+		if (loaded)
+			FitIcon(icon, size);
+
+		return loaded;
 	}
 
 	//------------------------------------------------------------------------------------------------

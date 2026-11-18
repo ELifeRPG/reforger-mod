@@ -1,0 +1,19 @@
+MetaFileClass {
+ Name "{264790678EC17723}anims/Idles/ELIFE_Idle_Neck.anm"
+ Configurations {
+  TXAResourceClass PC {
+   SourcePath "neck_00.npz"
+   SourceProfile "101_FullBodyABS"
+  }
+  TXAResourceClass XBOX_ONE : PC {
+  }
+  TXAResourceClass XBOX_SERIES : PC {
+  }
+  TXAResourceClass PS4 : PC {
+  }
+  TXAResourceClass PS5 : PC {
+  }
+  TXAResourceClass HEADLESS : PC {
+  }
+ }
+}

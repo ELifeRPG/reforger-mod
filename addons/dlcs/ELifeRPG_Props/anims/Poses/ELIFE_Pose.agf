@@ -1,0 +1,335 @@
+AnimSrcGraphFile {
+ Sheets {
+  AnimSrcGraphSheet Master {
+   Nodes {
+    AnimSrcNodeQueue MasterControl {
+     EditorPos 0 0
+     Child "PoseSTM"
+    }
+    AnimSrcNodeStateMachine PoseSTM {
+     Tags {
+      "TagVehicle"
+     }
+     EditorPos 0 1
+     states {
+      AnimSrcNodeState SitIn {
+       EditorPos 0 1.5
+       Child "SitInG"
+       StartCondition "SeatPositionType == 0"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState LieLeftIn {
+       EditorPos 2 1.5
+       Child "LieLeftInG"
+       StartCondition "SeatPositionType == 1"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState LieRightIn {
+       EditorPos 4 1.5
+       Child "LieRightInG"
+       StartCondition "SeatPositionType == 2"
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState Sit {
+       Tags {
+        "TagVehicleIdle"
+       }
+       EditorPos 0 2
+       Child "SitIdleG"
+       StartCondition ""
+       TimeStorage Inherit
+       IsExit 1
+      }
+      AnimSrcNodeState LieLeft {
+       Tags {
+        "TagVehicleIdle"
+       }
+       EditorPos 2 2
+       Child "LieLeftIdleG"
+       StartCondition ""
+       TimeStorage Inherit
+       IsExit 1
+      }
+      AnimSrcNodeState LieRight {
+       Tags {
+        "TagVehicleIdle"
+       }
+       EditorPos 4 2
+       Child "LieRightIdleG"
+       StartCondition ""
+       TimeStorage Inherit
+       IsExit 1
+      }
+      AnimSrcNodeState SitOut {
+       EditorPos 0 3
+       Child "SitOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState SitStoodUp {
+       Tags {
+        "TagELIFEStoodUp" "TagVehicleIdle"
+       }
+       EditorPos 1 3
+       Child "SitOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+      AnimSrcNodeState LieLeftOut {
+       EditorPos 2 3
+       Child "LieLeftOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState LieLeftStoodUp {
+       Tags {
+        "TagELIFEStoodUp" "TagVehicleIdle"
+       }
+       EditorPos 3 3
+       Child "LieLeftOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+      AnimSrcNodeState LieRightOut {
+       EditorPos 4 3
+       Child "LieRightOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+      }
+      AnimSrcNodeState LieRightStoodUp {
+       Tags {
+        "TagELIFEStoodUp" "TagVehicleIdle"
+       }
+       EditorPos 5 3
+       Child "LieRightOutG"
+       StartCondition ""
+       TimeStorage "Real Time"
+       IsExit 1
+      }
+     }
+     transitions {
+      AnimSrcNodeTransition "{5D1E7B20C3A94F11}" {
+       FromState "SitIn"
+       ToState "SitOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{1B7D4E92A0C63F01}" {
+       FromState "SitIn"
+       ToState "Sit"
+       Duration ""
+       StartTime ""
+       Condition "RemainingTimeLess(0.15)"
+       BlendFn "S"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{6F3A8D41B2C54F12}" {
+       FromState "LieLeftIn"
+       ToState "LieLeftOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{4E2A9C17D58B3F02}" {
+       FromState "LieLeftIn"
+       ToState "LieLeft"
+       Duration ""
+       StartTime ""
+       Condition "RemainingTimeLess(0.15)"
+       BlendFn "S"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{9A6C2E53D4B74F13}" {
+       FromState "LieRightIn"
+       ToState "LieRightOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{8C5F3A06E91D4B03}" {
+       FromState "LieRightIn"
+       ToState "LieRight"
+       Duration ""
+       StartTime ""
+       Condition "RemainingTimeLess(0.15)"
+       BlendFn "S"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{7F31A6C2E9D84B77}" {
+       FromState "SitStoodUp"
+       ToState "Sit"
+       Duration "0"
+       StartTime ""
+       Condition "!Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{A4C82E91F06D4B88}" {
+       FromState "LieLeftStoodUp"
+       ToState "LieLeft"
+       Duration "0"
+       StartTime ""
+       Condition "!Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{C9E05B3D72A14E99}" {
+       FromState "LieRightStoodUp"
+       ToState "LieRight"
+       Duration "0"
+       StartTime ""
+       Condition "!Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{3C1E7A52D8B04F11}" {
+       FromState "Sit"
+       ToState "SitOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{6A90D3E1B27C4E22}" {
+       FromState "SitOut"
+       ToState "SitStoodUp"
+       Duration ""
+       StartTime "GetLowerTime()"
+       Condition "RemainingTimeLess(0.5)"
+       BlendFn "S"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{9B4F21C7E05A4D33}" {
+       FromState "LieLeft"
+       ToState "LieLeftOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{2D7E8F60A13B4C44}" {
+       FromState "LieLeftOut"
+       ToState "LieLeftStoodUp"
+       Duration ""
+       StartTime "GetLowerTime()"
+       Condition "RemainingTimeLess(0.5)"
+       BlendFn "S"
+       PostEval 1
+      }
+      AnimSrcNodeTransition "{E15C9A3B7D624F55}" {
+       FromState "LieRight"
+       ToState "LieRightOut"
+       Duration ""
+       StartTime ""
+       Condition "Trigger01"
+       BlendFn "S"
+      }
+      AnimSrcNodeTransition "{58A3B0D9C47E4A66}" {
+       FromState "LieRightOut"
+       ToState "LieRightStoodUp"
+       Duration ""
+       StartTime "GetLowerTime()"
+       Condition "RemainingTimeLess(0.5)"
+       BlendFn "S"
+       PostEval 1
+      }
+     }
+    }
+    AnimSrcNodeGroupSelect SitIdleG {
+     EditorPos 0 4
+     Child "IdleSrc"
+     Group "Rest"
+     Column "Sit"
+    }
+    AnimSrcNodeGroupSelect SitInG {
+     EditorPos 0 -4
+     Child "InSrc"
+     Group "Rest"
+     Column "Sit"
+    }
+    AnimSrcNodeGroupSelect SitOutG {
+     EditorPos 1 -4
+     Child "OutSrc"
+     Group "Rest"
+     Column "Sit"
+    }
+    AnimSrcNodeGroupSelect LieLeftIdleG {
+     EditorPos 2 4
+     Child "IdleSrc"
+     Group "Rest"
+     Column "LieLeft"
+    }
+    AnimSrcNodeGroupSelect LieLeftInG {
+     EditorPos 2 -4
+     Child "InSrc"
+     Group "Rest"
+     Column "LieLeft"
+    }
+    AnimSrcNodeGroupSelect LieLeftOutG {
+     EditorPos 3 -4
+     Child "OutSrc"
+     Group "Rest"
+     Column "LieLeft"
+    }
+    AnimSrcNodeGroupSelect LieRightIdleG {
+     EditorPos 4 4
+     Child "IdleSrc"
+     Group "Rest"
+     Column "LieRight"
+    }
+    AnimSrcNodeGroupSelect LieRightInG {
+     EditorPos 4 -4
+     Child "InSrc"
+     Group "Rest"
+     Column "LieRight"
+    }
+    AnimSrcNodeGroupSelect LieRightOutG {
+     EditorPos 5 -4
+     Child "OutSrc"
+     Group "Rest"
+     Column "LieRight"
+    }
+    AnimSrcNodeSource IdleSrc {
+     EditorPos 0 5
+     Source "Rest.Loop"
+     Looptype Loop
+    }
+    AnimSrcNodeSource InSrc {
+     EditorPos 0 -5
+     Source "Rest.In"
+     Looptype "No Loop"
+     Predictions {
+      AnimSrcNodePrediction PredictionVehicleGetInEnter {
+       Name "PredictionVehicleGetInEnter"
+       Bone "EntityPosition"
+       PercentTime 0
+       MainPath 1
+      }
+      AnimSrcNodePrediction PredictionVehicleGetIn {
+       Name "PredictionVehicleGetIn"
+       Bone "EntityPosition"
+       PercentTime 1
+       MainPath 1
+      }
+     }
+    }
+    AnimSrcNodeSource OutSrc {
+     EditorPos 1 -5
+     Source "Rest.Out"
+     Looptype "No Loop"
+     Predictions {
+      AnimSrcNodePrediction PredictionVehicleGetIn {
+       Name "PredictionVehicleGetIn"
+       Bone "EntityPosition"
+       PercentTime 1
+       MainPath 1
+      }
+     }
+    }
+   }
+  }
+ }
+}

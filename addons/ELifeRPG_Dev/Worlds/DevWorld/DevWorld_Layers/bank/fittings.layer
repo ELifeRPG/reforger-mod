@@ -1,0 +1,71 @@
+GenericEntity BankFit_StaffCabinet : "{0C7319383777A107}Prefabs/Props/Furniture/CabinetMetal_01_grey_V3.et" {
+ coords 249.25 0.2 278.23
+ angles 0 -180 0
+}
+GenericEntity BankFit_CounterPlant : "{29BA0E995E24468D}Prefabs/Props/Furniture/PlantRoom_03.et" {
+ coords 245.7 1.2 276.2
+ angles 0 -180 0
+}
+GenericEntity BankFit_HatchTypewriter : "{4DBA189750F6F017}Prefabs/Props/Civilian/Typewriter_01/Typewriter_01_grey.et" {
+ coords 258.3 1.106 273.25
+ angles 0 90 0
+}
+GenericEntity BankFit_CounterPhone : "{641D6F151390FD47}Prefabs/Props/Furniture/PhoneTable_01_grey.et" {
+ coords 248.95 1.2 276.4
+}
+GenericEntity BankFit_HatchDesk : "{6B7B7CCC74AACA67}Prefabs/Props/Furniture/Desk_01_short.et" {
+ coords 257.957 0.2 272.72
+ angles 0 90 0
+}
+$grp GenericEntity : "{876B096F32584485}Prefabs/Props/Civilian/FileOffice_01_Stack.et" {
+ BankFit_HatchFiles {
+  coords 258.3 1.106 273.95
+  angles 0 100 0
+ }
+ BankFit_CounterFiles {
+  coords 250.7 1.2 276.4
+  angles 0 -170 0
+ }
+}
+GenericEntity BankFit_CounterLamp : "{9DBA8179AFD4FF9F}Prefabs/Props/Furniture/LightTable_02.et" {
+ coords 251.15 1.2 276.25
+}
+$grp GenericEntity : "{A9DC69EC1CE466A0}Prefabs/Props/Civilian/Computer_E_01/Computer_E_01_on.et" {
+ BankFit_CounterComputer1 {
+  coords 246.33 1.2 276.38
+  angles 0 30 0
+ }
+ BankFit_CounterComputer2 {
+  coords 248.08 1.2 276.38
+  angles 0 30 0
+ }
+ BankFit_CounterComputer3 {
+  coords 249.83 1.2 276.38
+  angles 0 30 0
+ }
+}
+GenericEntity BankFit_CounterFolder : "{B3C782D689A52412}Prefabs/Props/Civilian/FileOffice_01_Open.et" {
+ coords 247.15 1.2 276.3
+ angles 0 -180 0
+}
+GenericEntity BankFit_HatchDeskChair : "{D19D5E8950BC4DD1}Prefabs/Props/Furniture/ChairOffice_01.et" {
+ coords 259.05 0.2 273.55
+ angles 0 -90 0
+}
+GenericEntity BankFit_BreakClock : "{D51E223FD6EDB039}Prefabs/Props/Furniture/ClockWall_01.et" {
+ coords 247.1 2.3 278.92
+}
+$grp GenericEntity : "{F737777FF0A566D5}Prefabs/Props/Commercial/CabinetCardFile_01/CabinetCardFile_01_Base.et" {
+ BankFit_StaffCardFile1 {
+  coords 247.1 0.2 278.21
+  angles 0 -180 0
+ }
+ BankFit_StaffCardFile2 {
+  coords 246.6 0.2 278.21
+  angles 0 -180 0
+ }
+ BankFit_StaffCardFile3 {
+  coords 246.1 0.2 278.21
+  angles 0 -180 0
+ }
+}

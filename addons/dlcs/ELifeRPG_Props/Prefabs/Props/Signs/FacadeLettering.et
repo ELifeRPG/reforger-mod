@@ -1,0 +1,8 @@
+GenericEntity {
+ ID "BED356CE4CFD5B90"
+ components {
+  ELIFE_FacadeLetteringComponent "{C45165FC8F1D72ED}" {
+   m_sGlyphSet "{DF3A6CC497E4D90B}Configs/Signs/GlyphSet_Sans.conf"
+  }
+ }
+}

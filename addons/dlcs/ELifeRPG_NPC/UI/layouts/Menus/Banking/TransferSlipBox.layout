@@ -1,0 +1,52 @@
+SizeLayoutWidgetClass {
+ Name "SlipBox"
+ Slot LayoutSlot "{E219903368370047}" {
+  VerticalAlign 1
+  Padding 0 0 4 0
+ }
+ AllowWidthOverride 1
+ WidthOverride 30
+ AllowHeightOverride 1
+ HeightOverride 42
+ {
+  OverlayWidgetClass "{47911E4BFFD91044}" {
+   Name "BoxBody"
+   Slot LayoutSlot "{5273DBA5906558E7}" {
+   }
+   {
+    ImageWidgetClass "{DA92D615BB1D9C21}" {
+     Name "Fill"
+     Slot OverlayWidgetSlot "{3717150C7C83700C}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 0 0 0 0
+    }
+    PanelWidgetClass "{88F2FD7A19898928}" {
+     Name "Frame"
+     Slot OverlayWidgetSlot "{72D9F13A094BE26C}" {
+      HorizontalAlign 3
+      VerticalAlign 3
+     }
+     Color 0.012 0.016 0.03 1
+     style outline_2px
+    }
+    TextWidgetClass "{A0CE0021122974A3}" {
+     Name "Char"
+     Slot OverlayWidgetSlot "{ECC99653F910A6FB}" {
+      HorizontalAlign 1
+      VerticalAlign 1
+     }
+     Color 0.012 0.016 0.03 1
+     Text ""
+     "Font Size" 28
+     "Min Font Size" 28
+     "Horizontal Alignment" Center
+     FontProperties FontProperties "{DCBFC5CCD374CD7B}" {
+      Font "{EABA4FE9D014CCEF}UI/Fonts/RobotoCondensed/RobotoCondensed_Bold.fnt"
+     }
+    }
+   }
+  }
+ }
+}

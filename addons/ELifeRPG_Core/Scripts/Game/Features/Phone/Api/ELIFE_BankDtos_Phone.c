@@ -25,7 +25,7 @@ class ELIFE_BankAccountListDto : ELIFE_PhoneRawDto
 //! One account's statement: GetBankAccount() spliced in front of its bare-array transactions.
 class ELIFE_BankStatementDto : ELIFE_PhoneRawDto
 {
-	//! Pre-built so a parse always has somewhere to land; an empty bankAccountId means it hasn't.
+	//! Pre-built so a parse always has somewhere to land; an empty number means it hasn't.
 	ref ELIFE_BankAccountSummary account = new ELIFE_BankAccountSummary();
 	ref array<ref ELIFE_BankAccountTransaction> items = {};
 
@@ -62,30 +62,50 @@ modded class ELIFE_BankAccountSummary
 	}
 
 	//------------------------------------------------------------------------------------------------
+	//! The owning company's name for a company account, empty for a personal one.
+	string GetCompanyLabel()
+	{
+		if (!IsCompany())
+			return "";
+
+		return companyName;
+	}
+
+	//------------------------------------------------------------------------------------------------
+	//! The number as players see it.
+	string GetDisplayNumber()
+	{
+		return ELIFE_PhoneBankingService.GroupIban(number);
+	}
+
+	//------------------------------------------------------------------------------------------------
 	//! A fresh instance that may be Pack()ed - the parsed one can't be.
 	ELIFE_BankAccountSummary Copy()
 	{
 		ELIFE_BankAccountSummary copy = new ELIFE_BankAccountSummary();
-		copy.bankAccountId = bankAccountId;
 		copy.bankId = bankId;
 		copy.number = number;
 		copy.type = type;
 		copy.characterId = characterId;
 		copy.companyId = companyId;
-		copy.balance = balance;
+		copy.companyName = companyName;
+		copy.balanceStr = balanceStr;
+		copy.feeTermsStr = feeTermsStr;
 		return copy;
 	}
 
 	//------------------------------------------------------------------------------------------------
-	//! bankAccountId stays real - it's the statement's sub-state key, which bystanders follow too.
+	//! Keeps the bank, so the stand-in number still shows the real bank code.
 	ELIFE_BankAccountSummary Redact()
 	{
 		ELIFE_BankAccountSummary redacted = new ELIFE_BankAccountSummary();
-		redacted.bankAccountId = bankAccountId;
+		redacted.bankId = bankId;
 		redacted.number = ELIFE_DataRedactor.RedactDigits(number);
 		redacted.type = type;
 		redacted.companyId = companyId;
-		redacted.balance = ELIFE_DataRedactor.RedactAmount(balance);
+		//! Company names are public.
+		redacted.companyName = companyName;
+		redacted.balanceStr = ELIFE_DataRedactor.RedactMoneyText(balanceStr);
 		return redacted;
 	}
 }
@@ -100,7 +120,7 @@ modded class ELIFE_BankAccountTransaction
 	static const string KIND_TRANSFERRED_IN = "TransferredIn";
 
 	//------------------------------------------------------------------------------------------------
-	//! The API sends amounts unsigned; direction comes from the kind.
+	//! amountStr is already signed; the kind says the direction for colour and the like.
 	bool IsOutgoing()
 	{
 		return kind == KIND_WITHDRAWN || kind == KIND_TRANSFERRED_OUT;
@@ -111,8 +131,8 @@ modded class ELIFE_BankAccountTransaction
 	{
 		ELIFE_BankAccountTransaction redacted = new ELIFE_BankAccountTransaction();
 		redacted.kind = kind;
-		redacted.amount = ELIFE_DataRedactor.RedactAmount(amount);
-		redacted.fee = ELIFE_DataRedactor.RedactAmount(fee);
+		redacted.amountStr = ELIFE_DataRedactor.RedactMoneyText(amountStr);
+		redacted.feeStr = ELIFE_DataRedactor.RedactMoneyText(feeStr);
 		redacted.occurredAt = occurredAt;
 		return redacted;
 	}

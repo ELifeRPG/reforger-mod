@@ -1,0 +1,21 @@
+AnimSrcGraph {
+ AnimSetTemplate "{816652D24286E75B}anims/HandsUp/ELIFE_HandsUp.ast"
+ ControlTemplate AnimSrcGCT "{66444B26234935E3}" {
+  Variables {
+   AnimSrcGCTVarInt Gestures {
+    DefaultValue -1
+    MinValue -2
+    MaxValue 1000
+   }
+  }
+  Commands {
+   AnimSrcGCTCmd CMD_Gestures {
+   }
+  }
+ }
+ Debug AnimSrcGD "{2633AC6ADA75491F}" {
+ }
+ GraphFilesResourceNames {
+  "{65E61744BCA55DE2}anims/HandsUp/ELIFE_HandsUp.agf"
+ }
+}

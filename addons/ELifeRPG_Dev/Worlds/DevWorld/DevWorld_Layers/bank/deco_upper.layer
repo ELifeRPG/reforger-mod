@@ -1,0 +1,357 @@
+GenericEntity BankDeco_UpNorth_PaintingBig_02_V1_1 : "{0B5291B929E66D90}Prefabs/Props/Decorations/Paintings/PaintingBig_02_V1.et" {
+ coords 245.499 6.096 276.534
+ angles 0 90 0
+}
+GenericEntity BankDeco_UpNW_PlantRoom_04_1 : "{148E2BA12B48CFBA}Prefabs/Props/Furniture/PlantRoom_04.et" {
+ coords 263.045 3.997 273.046
+ angles 0 -100.11 0
+}
+$grp GenericEntity : "{1AB7A2C69A30391D}Prefabs/Props/Furniture/CoatRack_01.et" {
+ BankDeco_UpRest_CoatRack_01_1 {
+  coords 262.101 3.997 278.153
+  angles 0 -179.85 0
+ }
+ BankDeco_UpNW_CoatRack_01_1 {
+  coords 266.231 3.997 276.115
+  angles 0 -179.85 0
+ }
+}
+GenericEntity BankDeco_UpCorr_BinInterior_01_green_1 : "{25ED9C1A5F68A573}Prefabs/Props/Garbage/Bins/BinInterior_01_green.et" {
+ coords 256.767 3.997 282.567
+ angles 0 -180 0
+}
+$grp GenericEntity : "{29BA0E995E24468D}Prefabs/Props/Furniture/PlantRoom_03.et" {
+ BankDeco_UpNW_PlantRoom_03_1 {
+  coords 262.971 4.903 274.746
+  angles 0 -180 0
+ }
+ BankDeco_UpNorth_PlantRoom_03_1 {
+  coords 250.015 4.903 275.245
+  angles 0 -180 0
+ }
+ BankDeco_UpNorth_PlantRoom_03_2 {
+  coords 252.458 4.903 275.277
+  angles 0 -180 0
+ }
+}
+GenericEntity BankDeco_UpSE_MirrorBathroom_01_1 : "{2ED930A7BA4156F5}Prefabs/Props/Furniture/MirrorBathroom_01.et" {
+ coords 247.863 5.394 278.909
+ angles 0 0.73 0
+}
+GenericEntity BankDeco_UpSE_LightWall_01_1 : "{34F74A7DBAD46974}Prefabs/Props/Furniture/LightWall_01.et" {
+ coords 249.62 6.984 281.025
+ angles 0 -89.92 0
+}
+GenericEntity BankDeco_UpCorr_HydrantBox_01_1 : "{35C20E1631F85D88}Prefabs/Props/Services/Fire/HydrantBox_01.et" {
+ coords 254.004 5.387 278.895
+}
+GenericEntity BankDeco_UpNorth_PhoneTable_01_Base_1 : "{3CF7EAA0F05546FF}Prefabs/Props/Furniture/PhoneTable_01_Base.et" {
+ coords 248.53 4.903 274.663
+ angles 0 -79.08 0
+}
+$grp GenericEntity : "{4549BE7A1D414EDA}Prefabs/Props/Furniture/PlantRoom_01.et" {
+ BankDeco_UpRest_PlantRoom_01_1 {
+  coords 258.331 4.997 277.336
+  angles 0 152.97 0
+ }
+ BankDeco_UpNorth_PlantRoom_01_1 {
+  coords 254.224 3.997 275.418
+  angles 0 -76.79 0
+ }
+ BankDeco_UpNorth_PlantRoom_01_2 {
+  coords 246.254 3.997 273.313
+  angles 0 152.97 0
+ }
+}
+$grp GenericEntity : "{49012FE1DEF653EE}Prefabs/Props/Furniture/Sink_01.et" {
+ BankDeco_UpNorth_Sink_01_1 {
+  coords 257.605 4.162 277.17
+  angles 0 -90 0
+ }
+ BankDeco_UpSE_Sink_01_1 {
+  coords 247.858 4.2 278.908
+  angles 0 0.28 0
+ }
+}
+GenericEntity BankDeco_UpNorth_Cupboard_01_E_1 : "{4FB9F658712A9D61}Prefabs/Props/Furniture/Cupboard_01/Cupboard_01_E.et" {
+ coords 245.593 3.997 278.514
+ angles 0 -178.07 0
+}
+$grp GenericEntity : "{5378793BA5CEB780}Prefabs/Props/Furniture/Urinal_01.et" {
+ BankDeco_UpSE_Urinal_01_1 {
+  coords 248.927 4.497 282.883
+  angles 0 -180 0
+ }
+ BankDeco_UpSE_Urinal_01_2 {
+  coords 246.171 4.497 282.883
+  angles 0 -180 0
+ }
+ BankDeco_UpSE_Urinal_01_3 {
+  coords 248.002 4.497 282.883
+  angles 0 -180 0
+ }
+ BankDeco_UpSE_Urinal_01_4 {
+  coords 247.115 4.497 282.883
+  angles 0 -180 0
+ }
+}
+GenericEntity BankDeco_UpSE_Toilet_02_1 : "{63728F331E1BED60}Prefabs/Props/Furniture/Toilet_02.et" {
+ coords 246.152 3.997 278.895
+}
+$grp GenericEntity : "{728DD36004461456}Prefabs/Props/Furniture/Cupboard_01/Cupboard_01_B.et" {
+ BankDeco_UpRest_Cupboard_01_B_1 {
+  coords 257.852 3.997 276.654
+  angles 0 88.96 0
+ }
+ BankDeco_UpNW_Cupboard_01_B_1 {
+  coords 266.542 3.997 274.242
+  angles 0 -89.25 0
+ }
+ BankDeco_UpNorth_Cupboard_01_B_1 {
+  coords 251.681 3.997 278.47
+  angles 0 -179.66 0
+ }
+}
+$grp GenericEntity : "{85FC23A6E1F49BBE}Prefabs/Structures/BuildingParts/Eletrical/LightSwitch_02.et" {
+ BankDeco_UpRest_LightSwitch_02_1 {
+  coords 261.335 5.379 278.497
+  angles 0 -180 0
+ }
+ BankDeco_UpNW_LightSwitch_02_1 {
+  coords 265.446 5.32 278.497
+  angles 0 -180 0
+ }
+ BankDeco_UpNorth_LightSwitch_02_1 {
+  coords 257.605 5.329 276.484
+  angles 0 -90 0
+ }
+ BankDeco_UpNorth_LightSwitch_02_2 {
+  coords 254.8 5.352 278.497
+  angles 0 -180 0
+ }
+ BankDeco_UpNorth_LightSwitch_02_3 {
+  coords 254.996 5.352 278.497
+  angles 0 -180 0
+ }
+ BankDeco_UpNorth_LightSwitch_02_4 {
+  coords 257.605 5.329 276.308
+  angles 0 -90 0
+ }
+ BankDeco_UpSE_LightSwitch_02_1 {
+  coords 249.594 5.329 279.854
+  angles 0 -90 0
+ }
+ BankDeco_UpCorr_LightSwitch_02_1 {
+  coords 260.803 5.202 282.726
+  angles 0 -180 0
+ }
+ BankDeco_UpCorr_LightSwitch_02_2 {
+  coords 261.197 5.202 282.726
+  angles 0 -180 0
+ }
+ BankDeco_UpCorr_LightSwitch_02_3 {
+  coords 260.992 5.202 282.726
+  angles 0 -180 0
+ }
+}
+$grp GenericEntity : "{913D8EF8E32E2367}Prefabs/Props/Garbage/Bins/BinInterior_01_base.et" {
+ BankDeco_UpNW_BinInterior_01_base_1 {
+  coords 266.205 3.997 278.091
+  angles 0 152.97 0
+ }
+ BankDeco_UpNorth_BinInterior_01_base_1 {
+  coords 254.545 3.997 278.155
+  angles 0 152.97 0
+ }
+}
+GenericEntity BankDeco_UpCorr_NoticeBoardCork_01_1 : "{9ABAFFCBC76D824B}Prefabs/Props/Civilian/NoticeBoardCork_01.et" {
+ coords 258.029 5.044 278.914
+}
+$grp GenericEntity : "{A7E2685F2EC63A0D}Prefabs/Structures/BuildingParts/Heating/RadiatorCastIron_01/RadiatorCastIron_01_65.et" {
+ BankDeco_UpRest_RadiatorCastIron_01_65_1 {
+  coords 261.547 4.564 272.53
+  angles 0 1.57 0
+ }
+ BankDeco_UpNW_RadiatorCastIron_01_65_1 {
+  coords 266.77 4.579 274.961
+  angles 0 -89.37 0
+ }
+}
+GenericEntity BankDeco_UpNorth_Cupboard_01_D_1 : "{AA25BAA17DCF0A0A}Prefabs/Props/Furniture/Cupboard_01/Cupboard_01_D.et" {
+ coords 247.101 3.997 278.472
+ angles 0 -178.97 0
+}
+$grp GenericEntity : "{AC98FF880BD0F2C2}Prefabs/Props/Furniture/Chair_01/Chair_01_base.et" {
+ BankDeco_UpNW_Chair_01_base_1 {
+  coords 263.896 3.997 274.248
+  angles 0 3.45 0
+ }
+ BankDeco_UpNW_Chair_01_base_2 {
+  coords 263.429 3.997 275.785
+  angles 0 152.97 0
+ }
+ BankDeco_UpNorth_Chair_01_base_1 {
+  coords 253.396 3.997 274.724
+  angles 0 -8.32 0
+ }
+ BankDeco_UpNorth_Chair_01_base_2 {
+  coords 248.066 3.997 274.901
+  angles 0 92.28 0
+ }
+ BankDeco_UpNorth_Chair_01_base_3 {
+  coords 250.78 3.997 275.808
+  angles 0 -171.91 0
+ }
+ BankDeco_UpNorth_Chair_01_base_4 {
+  coords 249.237 3.997 275.835
+  angles 0 178.16 0
+ }
+ BankDeco_UpNorth_Chair_01_base_5 {
+  coords 249.974 3.997 274.549
+  angles 0 -1.17 0
+ }
+ BankDeco_UpNorth_Chair_01_base_6 {
+  coords 251.566 3.997 274.493
+  angles 0 1.62 0
+ }
+ BankDeco_UpNorth_Chair_01_base_7 {
+  coords 252.734 3.997 275.951
+  angles 0 166.34 0
+ }
+}
+$grp GenericEntity : "{CC26426052C1D1E6}Prefabs/Props/Furniture/PlantRoom_02.et" {
+ BankDeco_UpCorr_PlantRoom_02_1 {
+  coords 253.758 3.997 282.401
+  angles 0 -180 0
+ }
+ BankDeco_UpCorr_PlantRoom_02_2 {
+  coords 266.249 3.997 282.27
+  angles 0 -98.97 0
+ }
+}
+$grp GenericEntity : "{D0BD7A55306FC46B}Prefabs/Props/Furniture/Faucet_01/Faucet_01.et" {
+ BankDeco_UpNorth_Faucet_01_1 {
+  coords 257.605 5.292 277.139
+  angles 0 -90 0
+ }
+ BankDeco_UpSE_Faucet_01_1 {
+  coords 247.876 5.288 278.939
+  angles 0 0.57 0
+ }
+}
+GenericEntity BankDeco_UpCorr_TableSmall_01_LightWood_1 : "{D416ECE78FF7078E}Prefabs/Props/Furniture/TableSmall_01/TableSmall_01_LightWood.et" {
+ coords 263.647 3.997 282.333
+ angles 0 -180 0
+}
+$grp GenericEntity : "{D51E223FD6EDB039}Prefabs/Props/Furniture/ClockWall_01.et" {
+ BankDeco_UpRest_ClockWall_01_1 {
+  coords 260.187 6.113 272.704
+  angles 0 4.32 0
+ }
+ BankDeco_UpRest_ClockWall_01_2 {
+  coords 262.705 6.525 275.501
+  angles 0 90.24 0
+ }
+ BankDeco_UpNorth_ClockWall_01_1 {
+  coords 250.805 6.314 278.489
+  angles 0 -179.8 0
+ }
+}
+$grp GenericEntity : "{DAFA84A74B550694}Prefabs/Structures/BuildingParts/Heating/RadiatorCastIron_01/RadiatorCastIron_01_95.et" {
+ BankDeco_UpRest_RadiatorCastIron_01_95_1 {
+  coords 258.733 4.551 272.525
+  angles 0 0.3 0
+ }
+ BankDeco_UpNW_RadiatorCastIron_01_95_1 {
+  coords 264.334 4.549 272.536
+  angles 0 0.81 0
+ }
+ BankDeco_UpNorth_RadiatorCastIron_01_95_1 {
+  coords 255.985 4.522 272.584
+  angles 0 -0.47 0
+ }
+ BankDeco_UpNorth_RadiatorCastIron_01_95_2 {
+  coords 250.44 4.522 272.535
+  angles 0 0.41 0
+ }
+ BankDeco_UpNorth_RadiatorCastIron_01_95_3 {
+  coords 253.23 4.527 272.529
+  angles 0 -0.42 0
+ }
+ BankDeco_UpNorth_RadiatorCastIron_01_95_4 {
+  coords 245.271 4.531 274.956
+  angles 0 90.09 0
+ }
+ BankDeco_UpNorth_RadiatorCastIron_01_95_5 {
+  coords 247.618 4.531 272.517
+  angles 0 -1.53 0
+ }
+ BankDeco_UpSE_RadiatorCastIron_01_95_1 {
+  coords 245.301 4.498 280.643
+  angles 0 89.56 0
+ }
+ BankDeco_UpCorr_RadiatorCastIron_01_95_1 {
+  coords 266.771 4.581 280.634
+  angles 0 -90.14 0
+ }
+}
+GenericEntity BankDeco_UpRest_PaintingBig_01_V3_1 : "{E0A5A913B93AC7AA}Prefabs/Props/Decorations/Paintings/PaintingBig_01_V3.et" {
+ coords 262.505 6.236 277.045
+ angles 0 -90.05 0
+}
+$grp GenericEntity : "{F737777FF0A566D5}Prefabs/Props/Commercial/CabinetCardFile_01/CabinetCardFile_01_Base.et" {
+ BankDeco_UpNW_CabinetCardFile_01_Base_1 {
+  coords 266.312 3.997 277.47
+  angles 0 -90 0
+ }
+ BankDeco_UpNW_CabinetCardFile_01_Base_2 {
+  coords 266.312 3.997 277.003
+  angles 0 -90 0
+ }
+ BankDeco_UpNW_CabinetCardFile_01_Base_3 {
+  coords 266.312 3.997 276.524
+  angles 0 -90 0
+ }
+}
+GenericEntity BankDeco_UpNorth_Bookshelf_01_1 : "{F77F7F847CC6455F}Prefabs/Props/Furniture/Bookshelf_01/Bookshelf_01.et" {
+ coords 248.655 3.997 278.43
+ angles 0 -179.51 0
+}
+$grp GenericEntity : "{FA2806411E2B8AE7}Prefabs/Props/Furniture/Desk_01_Base.et" {
+ BankDeco_UpNW_Desk_01_Base_1 {
+  coords 262.763 3.997 274.862
+  angles 0 -179.63 0
+ }
+ BankDeco_UpNW_Desk_01_Base_2 {
+  coords 264.43 3.997 274.871
+  angles 0 0.38 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_1 {
+  coords 250.468 3.997 275.195
+  angles 0 -2.73 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_2 {
+  coords 248.782 3.997 275.125
+  angles 0 178.13 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_3 {
+  coords 250.481 3.997 275.206
+  angles 0 178.13 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_4 {
+  coords 253.848 3.997 275.324
+  angles 0 -2.09 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_5 {
+  coords 252.174 3.997 275.272
+  angles 0 178.13 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_6 {
+  coords 248.723 3.997 276.023
+  angles 0 -92.53 0
+ }
+ BankDeco_UpNorth_Desk_01_Base_7 {
+  coords 252.158 3.997 275.259
+  angles 0 -2.09 0
+ }
+}
