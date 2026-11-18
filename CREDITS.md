@@ -11,7 +11,7 @@ that ships the files. Source files under `assets/` are only in this repository.
 Addons not listed here (Core, Vegetation, Dev, the ELifeRPG meta-pack) ship no
 third-party assets.
 
-## ELifeRPG_Items
+## ELifeRPG_Vegetation
 
 ### Apple & Plum
 
@@ -19,7 +19,9 @@ third-party assets.
 - **Creator:** Loïc Norgeot
 - **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **Changes:** we took the apple and plum models out of the pack and converted them for Arma Reforger.
-- **Files:** `addons/ELifeRPG_Items/Assets/Items/Food/Apple/`, `addons/ELifeRPG_Items/Assets/Items/Food/Plum/` (sources: `assets/models/apple/`, `assets/models/plum/`)
+- **Files:** `addons/dlcs/ELifeRPG_Vegetation/Assets/Items/Food/Apple/`, `addons/dlcs/ELifeRPG_Vegetation/Assets/Items/Food/Plum/` (sources: `assets/models/apple/`, `assets/models/plum/`)
+
+## ELifeRPG_Core
 
 ### Paper tear sound
 
@@ -27,17 +29,7 @@ third-party assets.
 - **Creator:** HarpyHarpHarp
 - **License:** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **Changes:** we cut and levelled the sound.
-- **Files:** `addons/ELifeRPG_Items/Sounds/Items/Banking/Samples/ELIFE_Paper_Tear.wav`
-
-## ELifeRPG_Vehicles
-
-### Car Key
-
-- **Original:** ["Electronic Car Key"](https://skfb.ly/6UYyH)
-- **Creator:** neeb17
-- **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-- **Changes:** we converted the model for Arma Reforger.
-- **Files:** `addons/ELifeRPG_Vehicles/Assets/Items/Keys/CarKey/` (source: `assets/models/carkey/`)
+- **Files:** `addons/ELifeRPG_Core/Sounds/Items/Banking/Samples/ELIFE_Paper_Tear.wav`
 
 ## ELifeRPG_Props
 
@@ -47,7 +39,7 @@ third-party assets.
 - **Creator:** kavabanga
 - **License:** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **Changes:** we modified the model and converted it for Arma Reforger.
-- **Files:** `addons/ELifeRPG_Props/Assets/Props/Commercial/ATM_01/` (source: `assets/models/atm/`)
+- **Files:** `addons/dlcs/ELifeRPG_Props/Assets/Props/Commercial/ATM_01/` (source: `assets/models/atm/`)
 
 ### ATM sounds
 
@@ -55,7 +47,7 @@ third-party assets.
 - **Creator:** Czarcazas (ATM Beep), madvedj (banknote-counter.wav)
 - **License:** [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) (ATM Beep), [CC0](https://creativecommons.org/publicdomain/zero/1.0/) (banknote-counter.wav)
 - **Changes:** we cut one beep and levelled both sounds.
-- **Files:** `addons/ELifeRPG_Props/Sounds/ATM/`
+- **Files:** `addons/dlcs/ELifeRPG_Props/Sounds/ATM/`
 
 ## ELifeRPG_NPC
 
@@ -65,7 +57,7 @@ third-party assets.
 - **Creator:** hexgrad (Kokoro-82M), Resemble AI (Chatterbox)
 - **License:** [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (Kokoro-82M), [MIT](https://opensource.org/license/mit) (Chatterbox)
 - **Changes:** generated audio carries Chatterbox's inaudible Perth watermark.
-- **Files:** `addons/ELifeRPG_NPC/Sounds/VO/BankClerk/`
+- **Files:** `addons/dlcs/ELifeRPG_NPC/Sounds/VO/BankClerk/`
 
 ### Bank clerk sound effects
 
@@ -73,7 +65,7 @@ third-party assets.
 - **Creator:** Robhog, eddies2000, HarpyHarpHarp
 - **License:** [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
 - **Changes:** we cut and levelled the sounds.
-- **Files:** `addons/ELifeRPG_NPC/Sounds/VO/BankClerk/Samples/Sfx/`
+- **Files:** `addons/dlcs/ELifeRPG_NPC/Sounds/VO/BankClerk/Samples/Sfx/`
 
 ## When you publish the mod
 
@@ -82,22 +74,20 @@ credits have to be on the Workshop page of every addon that ships the asset.
 Put the matching block in that addon's description. The ELifeRPG meta-pack
 ships no assets itself; its page can point to the addon pages.
 
-ELifeRPG_Items:
+ELifeRPG_Vegetation:
 
 ```text
 Third-party assets:
 - Apple & Plum: "Lowpoly Fruits & Vegetables" by Loïc Norgeot (https://skfb.ly/6z6Ls), CC BY 4.0, converted for Arma Reforger
-- Paper tear sound: "Rustling Paper" by HarpyHarpHarp (https://freesound.org/s/449127/), CC0, cut and levelled
 License: CC BY 4.0 https://creativecommons.org/licenses/by/4.0/
 These assets are not covered by the mod's APL-SA license.
 ```
 
-ELifeRPG_Vehicles:
+ELifeRPG_Core:
 
 ```text
 Third-party assets:
-- Car Key: "Electronic Car Key" by neeb17 (https://skfb.ly/6UYyH), CC BY 4.0, converted for Arma Reforger
-License: CC BY 4.0 https://creativecommons.org/licenses/by/4.0/
+- Paper tear sound: "Rustling Paper" by HarpyHarpHarp (https://freesound.org/s/449127/), CC0, cut and levelled
 These assets are not covered by the mod's APL-SA license.
 ```
 

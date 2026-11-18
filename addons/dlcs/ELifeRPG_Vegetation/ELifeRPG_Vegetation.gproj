@@ -3,7 +3,7 @@ GameProject {
  GUID "12BC1DE093734B8A"
  TITLE "ELifeRPG_Vegetation"
  Dependencies {
-  "58D0FB3206B6F859" "5614BBCCBB55ED1C"
+  "58D0FB3206B6F859" "5614BBCCBB55ED1C" "66EB6BA548DD28C2"
  }
  Configurations {
   GameProjectConfig PC {
